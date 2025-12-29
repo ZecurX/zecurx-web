@@ -63,9 +63,9 @@ const itemVariants = {
 
 export default function IndustriesSection() {
     return (
-        <section className="relative w-full py-32 bg-black text-white overflow-hidden">
+        <section className="relative w-full py-32 bg-background text-foreground overflow-hidden">
             {/* Background Ambient Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none dark:bg-blue-900/20" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -76,10 +76,10 @@ export default function IndustriesSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-4xl md:text-5xl font-manrope font-medium text-white tracking-tight mb-6">
+                    <h2 className="text-4xl md:text-5xl font-manrope font-medium text-foreground tracking-tight mb-6">
                         We Serve
                     </h2>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                         Tailored security solutions for high-stakes sectors.
                     </p>
                 </motion.div>
@@ -95,7 +95,7 @@ export default function IndustriesSection() {
                         <motion.div
                             variants={itemVariants}
                             key={i}
-                            className="group relative rounded-3xl overflow-hidden bg-zinc-900/30 border border-white/5 hover:border-white/10 transition-all duration-500 h-[450px] flex flex-col justify-between p-8 backdrop-blur-sm"
+                            className="group relative rounded-3xl overflow-hidden bg-muted/30 border border-border hover:border-foreground/20 transition-all duration-500 h-[450px] flex flex-col justify-between p-8 backdrop-blur-sm"
                         >
                             {/* Hover Gradient Overlay */}
                             <div className={cn(
@@ -105,21 +105,21 @@ export default function IndustriesSection() {
 
                             {/* Top Content: Icon */}
                             <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                    <ind.icon className="w-7 h-7 text-gray-300 group-hover:text-white transition-colors duration-300" />
+                                <div className="w-14 h-14 rounded-2xl bg-muted border border-border flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                    <ind.icon className="w-7 h-7 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
                                 </div>
                             </div>
 
                             {/* Bottom Content: Text & CTA */}
                             <div className="relative z-10">
-                                <h3 className="text-2xl font-manrope font-semibold text-white mb-3 group-hover:translate-x-1 transition-transform duration-300">
+                                <h3 className="text-2xl font-manrope font-semibold text-foreground mb-3 group-hover:translate-x-1 transition-transform duration-300">
                                     {ind.name}
                                 </h3>
-                                <p className="text-gray-400 text-sm leading-relaxed mb-8 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <p className="text-muted-foreground text-sm leading-relaxed mb-8 opacity-80 group-hover:opacity-100 transition-opacity">
                                     {ind.desc}
                                 </p>
 
-                                <div className="flex items-center gap-2 text-sm font-medium text-white/50 group-hover:text-white transition-colors cursor-pointer w-max">
+                                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground/50 group-hover:text-foreground transition-colors cursor-pointer w-max">
                                     <span>Learn more</span>
                                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                                 </div>
