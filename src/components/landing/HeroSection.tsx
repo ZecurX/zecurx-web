@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { imgEllipse106 } from './assets';
 import HeroVideoCard from './HeroVideoCard';
 import { motion, useScroll, useTransform } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 
@@ -35,9 +36,13 @@ export default function HeroSection() {
             >
                 {mounted && (
                     <img
-                        src={theme === "light" ? "/assets/light-bg.png" : "/hero-bg.png"}
-                        alt="Hero Background"
-                        className="w-full h-full object-cover opacity-80"
+                        src={theme === "light" ? "/assets/light-bg.png" : "/assets/dark-bg.png"}
+                        alt="Hero 
+                        Background"
+                        className={cn(
+                            "w-full h-full object-cover opacity-80",
+                            theme === "light" ? "object-center scale-110" : "object-center"
+                        )}
                     />
                 )}
             </motion.div>
