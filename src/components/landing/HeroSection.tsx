@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { imgEllipse106 } from './assets';
 import HeroVideoCard from './HeroVideoCard';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export default function HeroSection() {
     const ref = useRef(null);
@@ -12,23 +13,33 @@ export default function HeroSection() {
         target: ref,
         offset: ["start start", "end start"]
     });
+    const { theme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
     const opacityBg = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
 
     return (
-        <section ref={ref} className="relative w-full min-h-screen bg-black overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20">
+        <section ref={ref} className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 transition-colors duration-500">
+
+
 
             {/* --- Parallax Image Background --- */}
             <motion.div
                 style={{ y: yBg, opacity: opacityBg }}
                 className="absolute inset-0 z-0"
             >
-                <img
-                    src="/hero-bg.png"
-                    alt="Hero Background"
-                    className="w-full h-full object-cover opacity-80"
-                />
+                {mounted && (
+                    <img
+                        src={theme === "light" ? "/assets/light-bg.png" : "/hero-bg.png"}
+                        alt="Hero Background"
+                        className="w-full h-full object-cover opacity-80"
+                    />
+                )}
             </motion.div>
 
             {/* Content Container */}
@@ -39,7 +50,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                    className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50 mb-8 relative z-20"
+                    className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 mb-8 relative z-20"
                 >
                     Security & Technology <br className="hidden md:block" />
                     That Grows With You.
@@ -50,7 +61,7 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-                    className="max-w-3xl text-lg md:text-xl text-gray-400 font-manrope font-light leading-relaxed"
+                    className="max-w-3xl text-lg md:text-xl text-muted-foreground font-manrope font-light leading-relaxed"
                 >
                     AI-driven cybersecurity services, secure software engineering, and enterprise-ready security architectures — built to protect critical assets, reduce risk, and enable confident growth.
                 </motion.p>
@@ -68,8 +79,8 @@ export default function HeroSection() {
                         className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-lg hover:scale-105 transition-transform duration-300 group"
                     >
                         Talk to a Security Expert
-                        <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                            <span className="text-white text-xl">↗</span>
+                        <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                            <span className="text-xl">↗</span>
                         </div>
                     </Button>
 
@@ -93,7 +104,7 @@ export default function HeroSection() {
 
 
             {/* Bottom Gradient Fade */}
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-20" />
+            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent z-20" />
         </section >
     );
 }

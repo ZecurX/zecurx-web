@@ -48,7 +48,7 @@ export default function WhatWeDoSection() {
     };
 
     return (
-        <section className="relative w-full py-24 bg-black text-white overflow-hidden">
+        <section className="relative w-full py-24 bg-background text-foreground overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
@@ -60,11 +60,11 @@ export default function WhatWeDoSection() {
                     className="text-center mb-20"
                 >
                     <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-6">
-                        <span className="bg-clip-text text-transparent bg-[linear-gradient(210deg,#B4B4B4_27%,#FFFFFF_53%,#B4B4B4_81%)]">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-muted-foreground">
                             What We Do
                         </span>
                     </h2>
-                    <p className="text-gray-400 max-w-2xl mx-auto text-lg font-inter">
+                    <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-inter">
                         ZecurX delivers end-to-end cybersecurity solutions across assessment, engineering, compliance, and professional training.
                     </p>
                 </motion.div>
@@ -82,8 +82,8 @@ export default function WhatWeDoSection() {
                                     className={cn(
                                         "w-12 h-12 rounded-full flex items-center justify-center text-lg font-manrope transition-all duration-300",
                                         activeIndex === i
-                                            ? "bg-white text-black font-bold scale-110 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                                            : "bg-zinc-900 text-gray-500 hover:bg-zinc-800 hover:text-gray-300"
+                                            ? "bg-foreground text-background font-bold scale-110 shadow-lg"
+                                            : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                                     )}
                                 >
                                     {i + 1}
@@ -104,14 +104,14 @@ export default function WhatWeDoSection() {
                                 >
                                     {/* Title (Fixed Height Header) */}
                                     <div className="min-h-[140px] flex items-center mb-6">
-                                        <h3 className="text-4xl md:text-5xl font-manrope font-medium text-white leading-tight">
+                                        <h3 className="text-4xl md:text-5xl font-manrope font-medium text-foreground leading-tight">
                                             {services[activeIndex].fullTitle}
                                         </h3>
                                     </div>
 
                                     {/* Description */}
                                     <div className="mb-8">
-                                        <p className="text-gray-400 text-xl leading-relaxed max-w-lg">
+                                        <p className="text-muted-foreground text-xl leading-relaxed max-w-lg">
                                             {services[activeIndex].description}
                                         </p>
                                     </div>
@@ -122,7 +122,7 @@ export default function WhatWeDoSection() {
                                             <React.Fragment key={i}>
                                                 {tag === "Code Review" && <div className="basis-full h-0" />}
                                                 <div
-                                                    className="px-4 py-2 rounded-lg bg-zinc-900/50 border border-white/10 text-sm text-gray-300 font-manrope"
+                                                    className="px-4 py-2 rounded-lg bg-muted border border-border text-sm text-foreground font-manrope"
                                                 >
                                                     {tag}
                                                 </div>
@@ -144,31 +144,31 @@ export default function WhatWeDoSection() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 1.05 }}
                                 transition={{ duration: 0.4 }}
-                                className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black border border-white/10 rounded-3xl overflow-hidden"
+                                className="absolute inset-0 bg-background border border-border rounded-3xl overflow-hidden shadow-2xl"
                             >
 
                                 {/* Background Effects */}
                                 <div className={cn(
-                                    "absolute top-[-20%] right-[-20%] w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-700",
-                                    activeIndex === 0 ? "bg-blue-600/20" :
-                                        activeIndex === 1 ? "bg-emerald-600/20" : "bg-purple-600/20"
+                                    "absolute top-[-20%] right-[-20%] w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-700 opacity-20",
+                                    activeIndex === 0 ? "bg-blue-600" :
+                                        activeIndex === 1 ? "bg-emerald-600" : "bg-purple-600"
                                 )} />
 
                                 <div className="absolute inset-0 flex items-center justify-center p-12">
                                     {/* Placeholder Image/Visual for the capability */}
-                                    <div className="relative w-full h-full bg-zinc-900/50 rounded-2xl border border-white/5 flex items-center justify-center overflow-hidden">
+                                    <div className="relative w-full h-full bg-muted/50 rounded-2xl border border-border flex items-center justify-center overflow-hidden">
                                         {/* Big Icon Faded */}
                                         <IconImage
                                             src={services[activeIndex].iconSrc}
                                             fallback={services[activeIndex].icon}
                                             alt={services[activeIndex].title}
                                             className="w-48 h-48 group-hover:scale-110 transition-transform duration-500"
-                                            iconClassName="text-white/5"
+                                            iconClassName="text-muted-foreground/10"
                                         />
 
                                         {/* Center Label */}
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <span className="text-2xl font-manrope font-light text-white/20 uppercase tracking-widest z-10">
+                                            <span className="text-2xl font-manrope font-light text-foreground/20 uppercase tracking-widest z-10">
                                                 {services[activeIndex].title}
                                             </span>
                                         </div>
@@ -182,9 +182,9 @@ export default function WhatWeDoSection() {
                                         className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105"
                                     >
                                         Book a Demo
-                                        <img src={imgGroup218} alt="" className="w-4 h-4" />
+                                        <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
                                     </Button>
-                                    <Button variant="ghost" className="h-12 px-4 rounded-full flex items-center gap-2 hover:bg-white/5 hover:text-white border border-transparent hover:border-white/10">
+                                    <Button variant="ghost" className="h-12 px-4 rounded-full flex items-center gap-2 hover:bg-muted hover:text-foreground border border-transparent hover:border-border">
                                         Learn More
                                     </Button>
                                 </div>
