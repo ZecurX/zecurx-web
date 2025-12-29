@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 
 export default function Footer() {
     return (
-        <div className="relative h-[800px] md:h-[600px] bg-black" style={{ clipPath: "inset(0 0 0 0)" }}>
-            <footer className="fixed bottom-0 left-0 w-full h-[800px] md:h-[600px] bg-[#050505] text-white flex flex-col justify-between overflow-hidden">
+        <div className="relative h-[800px] md:h-[600px] bg-background text-foreground" style={{ clipPath: "inset(0 0 0 0)" }}>
+            <footer className="fixed bottom-0 left-0 w-full h-[800px] md:h-[600px] bg-background text-foreground flex flex-col justify-between overflow-hidden border-t border-border">
 
                 {/* Content Container */}
                 <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-20">
@@ -24,9 +24,9 @@ export default function Footer() {
                         >
                             <div className="flex items-center gap-3">
                                 <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-10 h-10 object-contain" />
-                                <span className="font-manrope font-bold text-2xl tracking-tight text-white">ZecurX</span>
+                                <span className="font-manrope font-bold text-2xl tracking-tight text-foreground">ZecurX</span>
                             </div>
-                            <p className="text-zinc-500 text-sm leading-relaxed max-w-xs font-medium">
+                            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs font-medium">
                                 Transform your business with comprehensive cybersecurity solutions designed by industry experts.
                             </p>
 
@@ -51,11 +51,11 @@ export default function Footer() {
                                     viewport={{ once: true }}
                                     className="flex flex-col gap-4"
                                 >
-                                    <h4 className="font-manrope font-semibold text-xs uppercase tracking-wider text-zinc-500">{col.title}</h4>
+                                    <h4 className="font-manrope font-semibold text-xs uppercase tracking-wider text-muted-foreground">{col.title}</h4>
                                     <ul className="flex flex-col gap-3">
                                         {col.items.map((item) => (
                                             <li key={item}>
-                                                <a href="#" className="text-zinc-400 hover:text-white transition-colors text-sm leading-snug block hover:translate-x-1 duration-300">
+                                                <a href="#" className="text-muted-foreground/80 hover:text-foreground transition-colors text-sm leading-snug block hover:translate-x-1 duration-300">
                                                     {item}
                                                 </a>
                                             </li>
@@ -67,18 +67,18 @@ export default function Footer() {
                     </div>
 
                     {/* Bottom Row */}
-                    <div className="mt-24 border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-600 font-medium">
+                    <div className="mt-24 border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground font-medium">
                         <p>&copy; 2025 ZecurX. All rights reserved.</p>
                         <div className="flex gap-8 mt-4 md:mt-0">
-                            <a href="#" className="hover:text-zinc-400 transition-colors">Terms of Service</a>
-                            <a href="#" className="hover:text-zinc-400 transition-colors">Privacy Policy</a>
+                            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
+                            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
                         </div>
                     </div>
                 </div>
 
                 {/* Giant Watermark */}
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[20%] pointer-events-none opacity-[0.03]">
-                    <span className="text-[25vw] font-manrope font-bold leading-none tracking-tighter text-white">
+                    <span className="text-[25vw] font-manrope font-bold leading-none tracking-tighter text-foreground">
                         ZecurX
                     </span>
                 </div>

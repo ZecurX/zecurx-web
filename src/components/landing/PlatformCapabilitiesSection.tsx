@@ -57,14 +57,14 @@ export default function PlatformCapabilitiesSection() {
     };
 
     return (
-        <section className="relative w-full py-24 bg-black text-white">
+        <section className="relative w-full py-24 bg-background text-foreground">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-manrope font-medium text-gray-300">
+                    <h2 className="text-3xl md:text-5xl font-manrope font-medium text-foreground">
                         A Unified Enterprise Security Platform
                     </h2>
-                    <p className="mt-4 text-gray-400 max-w-3xl mx-auto text-lg">
+                    <p className="mt-4 text-muted-foreground max-w-3xl mx-auto text-lg">
                         A consolidated security approach that improves visibility, reduces operational complexity, and strengthens resilience across your digital ecosystem.
                     </p>
                 </div>
@@ -81,11 +81,11 @@ export default function PlatformCapabilitiesSection() {
                                     onClick={() => setActiveIndex(i)}
                                     onMouseEnter={() => setActiveIndex(i)}
                                 >
-                                    <h3 className={`text-2xl md:text-4xl font-manrope font-medium transition-all duration-300 ${isActive ? 'text-white' : 'text-zinc-800 hover:text-zinc-600'}`}>
+                                    <h3 className={`text-2xl md:text-4xl font-manrope font-medium transition-all duration-300 ${isActive ? 'text-foreground' : 'text-muted-foreground/40 hover:text-muted-foreground/70'}`}>
                                         {cap.title}
                                     </h3>
                                     {isActive && (
-                                        <ChevronRight className="w-6 h-6 text-white opacity-0 animate-fadeIn" />
+                                        <ChevronRight className="w-6 h-6 text-foreground opacity-0 animate-fadeIn" />
                                     )}
                                 </div>
                             );
@@ -95,7 +95,7 @@ export default function PlatformCapabilitiesSection() {
                     {/* Right: Feature Showcase Card */}
                     <div className="relative lg:pl-10">
                         <div className="sticky top-32">
-                            <div className="relative overflow-hidden rounded-3xl bg-zinc-900/50 border border-white/10 backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between group">
+                            <div className="relative overflow-hidden rounded-3xl bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between group">
 
                                 {/* Dynamic Background Gradient */}
                                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-400/20 transition-colors duration-700"></div>
@@ -108,24 +108,24 @@ export default function PlatformCapabilitiesSection() {
                                     </div>
 
                                     {/* Content */}
-                                    <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-white mb-6 animate-fadeIn key={activeIndex}">
+                                    <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6 animate-fadeIn key={activeIndex}">
                                         {capabilities[activeIndex].title}
                                     </h3>
-                                    <p className="text-gray-400 text-lg leading-relaxed max-w-md animate-fadeIn delay-100 key={activeIndex + 'desc'}">
+                                    <p className="text-muted-foreground text-lg leading-relaxed max-w-md animate-fadeIn delay-100 key={activeIndex + 'desc'}">
                                         {capabilities[activeIndex].description}
                                     </p>
                                 </div>
 
                                 {/* Interactive Bottom Area */}
-                                <div className="mt-12 pt-8 border-t border-white/5 flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
+                                <div className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
                                     <button
                                         onClick={handleScrollToContact}
-                                        className="bg-white text-black px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2"
+                                        className="bg-foreground text-background px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2"
                                     >
                                         Book a Demo
-                                        <img src={imgGroup218} alt="" className="w-4 h-4" />
+                                        <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
                                     </button>
-                                    <button className="text-sm font-medium text-gray-400 hover:text-white flex items-center gap-2 transition-colors group/btn">
+                                    <button className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors group/btn">
                                         Explore Feature
                                         <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
                                     </button>
