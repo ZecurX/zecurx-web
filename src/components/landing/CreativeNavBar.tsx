@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 // Navigation Data
 const navData = {
@@ -173,7 +174,7 @@ export default function CreativeNavBar() {
             <nav
                 className={cn(
                     "w-full transition-all duration-300",
-                    isScrolled ? "bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/5" : "bg-transparent"
+                    isScrolled ? "bg-background/95 backdrop-blur-xl border-b border-border" : "bg-transparent"
                 )}
             >
                 <div className="max-w-7xl mx-auto px-6">
@@ -182,7 +183,7 @@ export default function CreativeNavBar() {
                         {/* LOGO */}
                         <a href="/" className="flex items-center gap-3">
                             <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-9 h-9 object-contain" />
-                            <span className="text-white font-manrope font-bold text-xl">ZecurX</span>
+                            <span className="text-foreground font-manrope font-bold text-xl">ZecurX</span>
                         </a>
 
                         {/* PRIMARY NAVIGATION */}
@@ -192,7 +193,7 @@ export default function CreativeNavBar() {
                                     key={key}
                                     className={cn(
                                         "relative flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors",
-                                        activeDropdown === key ? "text-white" : "text-gray-400 hover:text-white"
+                                        activeDropdown === key ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                                     )}
                                     onMouseEnter={() => setActiveDropdown(key)}
                                 >
@@ -207,12 +208,13 @@ export default function CreativeNavBar() {
 
                         {/* SECONDARY NAVIGATION */}
                         <div className="flex items-center gap-6">
-                            <a href="#" className="text-[13px] font-medium text-gray-400 hover:text-white transition-colors">
+                            <a href="#" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
                                 Academy
                             </a>
-                            <a href="#" className="px-5 py-2 bg-white text-black text-[13px] font-semibold rounded-lg hover:bg-gray-100 transition-colors">
+                            <a href="#" className="px-5 py-2 bg-foreground text-background text-[13px] font-semibold rounded-lg hover:bg-foreground/90 transition-colors">
                                 Contact Sales
                             </a>
+                            <ThemeToggle />
                         </div>
                     </div>
 
@@ -220,52 +222,57 @@ export default function CreativeNavBar() {
                     <div className="lg:hidden flex items-center justify-between h-16">
                         <a href="/" className="flex items-center gap-2">
                             <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-8 h-8" />
-                            <span className="text-white font-manrope font-bold text-lg">ZecurX</span>
+                            <span className="text-foreground font-manrope font-bold text-lg">ZecurX</span>
                         </a>
-                        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white p-2">
+                        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-foreground p-2">
                             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
                     </div>
                 </div>
-            </nav>
+            </nav >
 
             {/* MEGA MENU DROPDOWN - Directly connected to nav */}
             <AnimatePresence>
-                {activeDropdown && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-full overflow-hidden"
-                    >
-                        <div className="bg-[#0c0c0c] border-b border-white/10">
-                            <div className="max-w-7xl mx-auto px-6 py-8">
-                                {navData[activeDropdown as keyof typeof navData] && (
-                                    <MegaMenuContent data={navData[activeDropdown as keyof typeof navData]} />
-                                )}
+                {
+                    activeDropdown && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="w-full overflow-hidden"
+                        >
+                            <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-lg">
+                                <div className="max-w-7xl mx-auto px-6 py-8">
+                                    {navData[activeDropdown as keyof typeof navData] && (
+                                        <MegaMenuContent data={navData[activeDropdown as keyof typeof navData]} />
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        </motion.div>
+                    )
+                }
+            </AnimatePresence >
+
 
             {/* Backdrop overlay when menu is open */}
             <AnimatePresence>
-                {activeDropdown && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.15 }}
-                        className="fixed inset-0 bg-black/50"
-                        style={{ zIndex: -1 }}
-                        onClick={() => setActiveDropdown(null)}
-                        onMouseEnter={() => setActiveDropdown(null)}
-                    />
-                )}
-            </AnimatePresence>
-        </div>
+                {
+                    activeDropdown && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="fixed top-[68px] inset-x-0 bottom-0 bg-black/50"
+                            style={{ zIndex: -1 }}
+                            onClick={() => setActiveDropdown(null)}
+                            onMouseEnter={() => setActiveDropdown(null)}
+                        />
+                    )
+                }
+            </AnimatePresence >
+        </div >
     );
 }
 
@@ -283,35 +290,35 @@ function MegaMenuContent({ data }: MegaMenuContentProps) {
         <div className="flex gap-16">
             {/* Left */}
             <div className="w-48 flex-shrink-0">
-                <h3 className="text-lg font-semibold text-white mb-1">{data.label}</h3>
-                <p className="text-xs text-gray-500 mb-5">{data.tagline}</p>
-                <a href={data.cta.href} className="inline-flex items-center gap-1.5 text-xs font-medium text-white hover:text-gray-300 transition-colors group">
+                <h3 className="text-lg font-semibold text-foreground mb-1">{data.label}</h3>
+                <p className="text-xs text-muted-foreground mb-5">{data.tagline}</p>
+                <a href={data.cta.href} className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors group">
                     {data.cta.label}
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                 </a>
             </div>
 
             {/* Divider */}
-            <div className="w-px bg-white/10" />
+            <div className="w-px bg-border" />
 
             {/* Columns */}
             <div className="flex-1 grid grid-cols-2 gap-12">
                 {data.columns.map((column, colIdx) => (
                     <div key={colIdx}>
-                        <h4 className="text-[10px] font-semibold text-gray-600 uppercase tracking-widest mb-4">{column.title}</h4>
+                        <h4 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-4">{column.title}</h4>
                         <div className="space-y-0.5">
                             {column.items.map((item, i) => (
                                 <a
                                     key={i}
                                     href="#"
-                                    className="flex items-center gap-3 py-2.5 px-3 -mx-3 rounded-lg hover:bg-white/5 transition-colors group"
+                                    className="flex items-center gap-3 py-2.5 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors group"
                                 >
-                                    <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-white/10 transition-all">
+                                    <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all">
                                         <item.icon className="w-4 h-4" />
                                     </div>
                                     <div>
-                                        <div className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{item.title}</div>
-                                        <div className="text-[11px] text-gray-600">{item.desc}</div>
+                                        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{item.title}</div>
+                                        <div className="text-[11px] text-muted-foreground">{item.desc}</div>
                                     </div>
                                 </a>
                             ))}

@@ -40,9 +40,9 @@ const logos = [
 
 export default function TrustedBySection() {
     return (
-        <div className="w-full bg-black py-12 border-y border-white/5">
+        <div className="w-full bg-background py-12 border-y border-border">
             <section className="relative mx-auto max-w-7xl px-6">
-                <p className="text-center font-manrope font-medium text-gray-500 text-sm tracking-widest uppercase mb-8">
+                <p className="text-center font-manrope font-medium text-muted-foreground text-sm tracking-widest uppercase mb-8">
                     Trusted by security teams at
                 </p>
 

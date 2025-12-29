@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -29,13 +30,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        <SmoothScrollProvider>
-          {children}
-        </SmoothScrollProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
