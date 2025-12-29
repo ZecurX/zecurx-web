@@ -78,11 +78,20 @@ We want to maintain a unified codebase. Reusing components ensures that design u
 
 All text, copy, and structural outlines for new pages are stored in the **`doc/` folder**.
 
--   **DO NOT write placeholder text (Lorem Ipsum).**
--   **DO NOT invent new copy.**
--   **ALWAYS** refer to the corresponding markdown file in `doc/` for the page you are building.
-    -   Example: If building `/services`, read `doc/services.md` (or similar) first.
-    -   Example: If building `/resources`, check `doc/resource.md`.
+**Where to get Content & Structure Inspiration?**
+When generating content for standard pages (Services, Why ZecurX, Resources, etc.), refer to these industry leaders. **Refactor and adapt** their professional tone and structure to fit ZecurX:
+
+1.  **[Palo Alto Networks](https://www.paloaltonetworks.com/)**
+2.  **[CrowdStrike](https://www.crowdstrike.com/en-us/)**
+3.  **[Fortinet](https://www.fortinet.com/)**
+4.  **[Accenture Security](https://www.accenture.com/in-en/services/cybersecurity)**
+5.  **[EPAM](https://www.epam.com/)**
+
+**Instructions for Content Generation:**
+-   **Analyze**: Look at how these sites structure their "Services" or "About" pages.
+-   **Synthesize**: Use their high-level structure (e.g., "Problem -> Solution -> Benefit" flow) as a template.
+-   **Adapt**: Rewrite the content to match ZecurX's "Cyber-Physical Obsidian" branding—more futuristic, concise, and premium.
+-   **Verify**: Ensure the final copy aligns with the outlines in `doc/`.
 
 ### 5. Upcoming Pages Roadmap
 
