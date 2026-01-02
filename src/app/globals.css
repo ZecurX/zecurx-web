@@ -50,8 +50,17 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Offset for fixed navbar when scrolling to anchors */
+[id] {
+  scroll-margin-top: 100px;
 }
 
 :root {
