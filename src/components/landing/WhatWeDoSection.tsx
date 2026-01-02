@@ -150,7 +150,7 @@ export default function WhatWeDoSection() {
                                 {/* Background Effects */}
                                 <div className={cn(
                                     "absolute top-[-20%] right-[-20%] w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-700 opacity-20",
-                                    activeIndex === 0 ? "bg-blue-600" :
+                                    activeIndex === 0 ? "bg-blue-400" :
                                         activeIndex === 1 ? "bg-emerald-600" : "bg-purple-600"
                                 )} />
 

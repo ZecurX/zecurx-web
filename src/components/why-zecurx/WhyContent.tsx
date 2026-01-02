@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Cpu, Target, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Quote, Users, Award, GitCompare } from "lucide-react";
+import { ShieldCheck, Cpu, Target, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Quote, Users, Award, GitCompare, ArrowRight } from "lucide-react";
 
 const testimonials = [
     {
@@ -58,10 +58,10 @@ export default function WhyContent() {
         return () => clearInterval(interval);
     }, [isPaused, nextTestimonial]);
 
-    const cardClassName = "relative overflow-hidden bg-muted/10 border border-border/50 p-8 rounded-2xl hover:bg-muted/20 transition-colors";
+    const cardClassName = "group relative overflow-hidden bg-gradient-to-b from-muted/50 to-background border border-border/40 p-8 rounded-3xl hover:border-blue-400/30 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5";
 
     return (
-        <section ref={containerRef} className="relative w-full py-12 overflow-hidden bg-background text-foreground">
+        <section ref={containerRef} className="relative w-full py-24 overflow-hidden bg-background text-foreground">
             {/* --- Parallax Background Elements --- */}
             <motion.div
                 style={{ y: backgroundY }}
@@ -70,32 +70,37 @@ export default function WhyContent() {
                 <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(circle,currentColor_1px,transparent_1px)] [background-size:24px_24px]" />
             </motion.div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-32">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-40">
 
                 {/* SECTION 1: Overview (Why ZecurX?) */}
                 <div id="overview" className="scroll-mt-24">
-                    <div className="mb-12 border-l-4 border-blue-500 pl-6">
-                        <h2 className="text-4xl font-bold text-foreground">Why ZecurX?</h2>
-                        <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
-                            ZecurX protects the people, processes, and technologies that drive modern enterprise. Powered by world-class security expertise.
-                        </p>
+                    <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="max-w-2xl">
+                            <h2 className="text-4xl md:text-5xl font-manrope font-semibold text-foreground tracking-tight">
+                                Engineered for <span className="text-blue-400">Resilience</span>
+                            </h2>
+                            <p className="text-lg text-muted-foreground mt-4 leading-relaxed">
+                                ZecurX protects the people, processes, and technologies that drive modern enterprise. Powered by world-class security expertise.
+                            </p>
+                        </div>
+                        <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-border to-transparent ml-12 mb-4" />
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border-y border-border bg-background/50 backdrop-blur-sm">
                         {[
                             {
                                 title: "Threat Driven",
-                                desc: "Security informed by how real attackers think, move, and exploit — not assumptions. We map defenses directly to adversary TTPs.",
+                                desc: "Security informed by how real attackers think, move, and exploit — not assumptions.",
                                 icon: Target
                             },
                             {
                                 title: "AI Powered",
-                                desc: "Harnesses the power of big data and artificial intelligence to empower your team with instant visibility and automated response.",
+                                desc: "Harnesses the power of big data and artificial intelligence for instant visibility.",
                                 icon: Cpu
                             },
                             {
                                 title: "Unified Platform",
-                                desc: "Eliminates complexity with a consolidated security approach that improves visibility and strengthens resilience.",
+                                desc: "Eliminates complexity with a consolidated security approach that strengthens resilience.",
                                 icon: ShieldCheck
                             }
                         ].map((item, i) => (
@@ -105,14 +110,13 @@ export default function WhyContent() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className={cardClassName}
+                                className="group p-8 md:p-12 hover:bg-muted/5 transition-colors duration-300"
                             >
-                                <div className="absolute -right-20 -top-20 -bottom-20 w-60 bg-gradient-to-l from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
-                                <div className="relative z-10">
-                                    <item.icon className="w-10 h-10 text-blue-500 mb-6" />
-                                    <h3 className="text-xl font-bold mb-3 text-foreground">{item.title}</h3>
-                                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                                <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                    <item.icon className="w-6 h-6 text-blue-400" />
                                 </div>
+                                <h3 className="text-xl font-manrope font-bold mb-3 text-foreground">{item.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -120,116 +124,83 @@ export default function WhyContent() {
 
                 {/* SECTION 2: Leadership */}
                 <div id="leadership" className="scroll-mt-24">
-                    <div className="mb-12 border-l-4 border-blue-500 pl-6">
-                        <h2 className="text-4xl font-bold text-foreground">Leadership & Expertise</h2>
-                        <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
-                            Led by security professionals with hands-on technical experience, not just managerial oversight.
-                        </p>
-                    </div>
+                    <div className="grid lg:grid-cols-2 gap-16 items-start">
+                        <div className="sticky top-32">
+                            <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6">Leadership & Expertise</h2>
+                            <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                                Led by security professionals with hands-on technical experience, not just managerial oversight. We've been in the trenches.
+                            </p>
+                        </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {[
-                            {
-                                title: "Technical-First Leadership",
-                                desc: "Our leadership team comes from red team operations, secure architecture, and incident response backgrounds.",
-                                icon: Users
-                            },
-                            {
-                                title: "Research-Driven Innovation",
-                                desc: "We invest in academic partnerships and research initiatives to stay ahead of emerging threats.",
-                                icon: BookOpen
-                            }
-                        ].map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className={cardClassName}
-                            >
-                                <div className="absolute -right-20 -top-20 -bottom-20 w-60 bg-gradient-to-l from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
-                                <div className="relative z-10">
-                                    <item.icon className="w-10 h-10 text-blue-500 mb-6" />
-                                    <h3 className="text-xl font-bold mb-3 text-foreground">{item.title}</h3>
-                                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
-                                </div>
-                            </motion.div>
-                        ))}
+                        <div className="space-y-12">
+                            {[
+                                {
+                                    title: "Technical-First Leadership",
+                                    desc: "Our leadership team comes from red team operations, secure architecture, and incident response backgrounds. We understand the technical reality of defense.",
+                                    icon: Users
+                                },
+                                {
+                                    title: "Research-Driven Innovation",
+                                    desc: "We invest heavily in academic partnerships and independent research initiatives to stay ahead of emerging threats before they become mainstream.",
+                                    icon: BookOpen
+                                }
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.2 }}
+                                    className="flex gap-6"
+                                >
+                                    <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-muted/30 flex items-center justify-center border border-border">
+                                        <item.icon className="w-8 h-8 text-foreground" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-manrope font-bold mb-3 text-foreground">{item.title}</h3>
+                                        <p className="text-lg text-muted-foreground leading-relaxed">{item.desc}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
                 {/* SECTION 3: Certifications */}
                 <div id="certifications" className="scroll-mt-24">
-                    <div className="mb-12 border-l-4 border-blue-500 pl-6">
-                        <h2 className="text-4xl font-bold text-foreground">Certifications & Compliance</h2>
-                        <p className="text-lg text-muted-foreground mt-2 max-w-2xl">
+                    <div className="mb-16 flex flex-col items-center text-center">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground text-xs font-medium mb-6 uppercase tracking-wider">
+                            <ShieldCheck className="w-3 h-3" />
+                            Compliance Ready
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-manrope font-semibold text-foreground mb-4">Global Standards</h2>
+                        <p className="text-lg text-muted-foreground max-w-2xl">
                             We align with globally recognized security frameworks to ensure trust, compliance, and audit readiness.
                         </p>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
                         {[
-                            {
-                                name: "ISO/IEC 27001",
-                                desc: "International standard for information security management systems (ISMS).",
-                                category: "Security Management"
-                            },
-                            {
-                                name: "NIST CSF",
-                                desc: "Cybersecurity framework for managing and reducing infrastructure risks.",
-                                category: "Risk Framework"
-                            },
-                            {
-                                name: "OWASP Top 10",
-                                desc: "Standard awareness document for web application security risks.",
-                                category: "Application Security"
-                            },
-                            {
-                                name: "CIS Controls",
-                                desc: "Prioritized set of actions to protect organizations from cyber attacks.",
-                                category: "Security Controls"
-                            },
-                            {
-                                name: "SOC 2 Type II",
-                                desc: "Trust service criteria for security, availability, and confidentiality.",
-                                category: "Audit Compliance"
-                            },
-                            {
-                                name: "GDPR",
-                                desc: "European regulation for data protection and privacy rights.",
-                                category: "Data Privacy"
-                            },
-                            {
-                                name: "HIPAA",
-                                desc: "US healthcare data protection and privacy requirements.",
-                                category: "Healthcare Security"
-                            },
-                            {
-                                name: "PCI DSS",
-                                desc: "Payment card industry data security standards for transactions.",
-                                category: "Payment Security"
-                            }
+                            { name: "ISO/IEC 27001", category: "Security Management" },
+                            { name: "NIST CSF", category: "Risk Framework" },
+                            { name: "OWASP Top 10", category: "Application Security" },
+                            { name: "CIS Controls", category: "Security Controls" },
+                            { name: "SOC 2 Type II", category: "Audit Compliance" },
+                            { name: "GDPR", category: "Data Privacy" },
+                            { name: "HIPAA", category: "Healthcare Security" },
+                            { name: "PCI DSS", category: "Payment Security" }
                         ].map((cert, i) => (
                             <motion.div
                                 key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: i * 0.05 }}
-                                className="relative overflow-hidden p-6 rounded-2xl bg-muted/10 border border-border/50 hover:bg-muted/20 transition-colors group"
+                                transition={{ delay: i * 0.03 }}
+                                className="group relative overflow-hidden px-6 py-3 rounded-full bg-muted/30 border border-border hover:border-blue-400/50 transition-all duration-300 hover:bg-muted/50 flex items-center gap-3 cursor-default"
                             >
-                                <div className="absolute -right-20 -top-20 -bottom-20 w-60 bg-gradient-to-l from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                                            <Award className="w-5 h-5 text-blue-500" />
-                                        </div>
-                                        <div className="text-xs font-medium text-blue-500 uppercase tracking-wider">{cert.category}</div>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-foreground mb-2">{cert.name}</h3>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">{cert.desc}</p>
-                                </div>
+                                <div className="w-2 h-2 rounded-full bg-blue-400/50 group-hover:bg-blue-400 transition-colors" />
+                                <span className="text-sm font-medium text-foreground">{cert.name}</span>
+                                <span className="text-xs text-muted-foreground border-l border-border pl-3 group-hover:text-foreground/70 transition-colors">{cert.category}</span>
                             </motion.div>
                         ))}
                     </div>
@@ -237,12 +208,12 @@ export default function WhyContent() {
 
                 {/* SECTION 4: Methodology (The ZecurX Difference) */}
                 <div id="methodology" className="scroll-mt-24">
-                    <div className="mb-12 text-center md:text-left">
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground">The ZecurX Difference</h2>
-                        <p className="text-muted-foreground mt-2">Technology augmented with deep security expertise</p>
+                    <div className="mb-16">
+                        <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6">The ZecurX Difference</h2>
+                        <p className="text-xl text-muted-foreground max-w-3xl">Technology augmented with deep security expertise. We don't just alert you to problems; we help you fix them.</p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="flex flex-col border-t border-border">
                         {[
                             {
                                 title: "World-Class Intelligence",
@@ -262,23 +233,29 @@ export default function WhyContent() {
                                 link: "Explore Managed Security",
                                 icon: ShieldCheck
                             }
-                        ].map((card, i) => (
+                        ].map((item, i) => (
                             <motion.div
                                 key={i}
-                                initial={{ opacity: 0, y: 20 }}
+                                initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className={`${cardClassName} flex flex-col justify-between min-h-[280px]`}
+                                className="group relative border-b border-border py-12 md:py-16 px-4 hover:bg-muted/5 transition-colors cursor-pointer"
                             >
-                                <div className="absolute -right-20 -top-20 -bottom-20 w-60 bg-gradient-to-l from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
-                                <div className="relative z-10">
-                                    <card.icon className="w-10 h-10 text-blue-500 mb-6" />
-                                    <h3 className="text-xl font-bold mb-3 text-foreground">{card.title}</h3>
-                                    <p className="text-muted-foreground leading-relaxed">{card.desc}</p>
-                                </div>
-                                <div className="relative z-10 flex items-center gap-2 text-sm font-semibold text-blue-500 hover:text-blue-600 cursor-pointer transition-colors mt-6">
-                                    {card.link} <span className="text-lg">→</span>
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                    <div className="flex items-start gap-6 md:gap-12">
+                                        <span className="text-sm font-mono text-muted-foreground/50 pt-2">0{i + 1}</span>
+                                        <div>
+                                            <h3 className="text-2xl md:text-4xl font-manrope font-medium text-foreground group-hover:text-blue-400 transition-colors mb-4">{item.title}</h3>
+                                            <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed group-hover:text-foreground/80 transition-colors">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-4 md:pl-12">
+                                        <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-blue-400 group-hover:border-blue-400 transition-all duration-300">
+                                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-white -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                                        </div>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -286,10 +263,10 @@ export default function WhyContent() {
                 </div>
 
                 {/* SECTION 5: Comparison (3 Reasons + Testimonials) */}
-                <div id="comparison" className="scroll-mt-24 grid lg:grid-cols-2 gap-16 items-center">
+                <div id="comparison" className="scroll-mt-24 grid lg:grid-cols-2 gap-16 items-center pb-24">
                     <div>
-                        <h2 className="text-4xl font-bold text-foreground mb-8">3 reasons to choose ZecurX</h2>
-                        <div className="space-y-10">
+                        <h2 className="text-4xl font-manrope font-bold text-foreground mb-12">Why industry leaders choose ZecurX</h2>
+                        <div className="space-y-8">
                             {[
                                 {
                                     title: "Better Protection",
@@ -304,13 +281,13 @@ export default function WhyContent() {
                                     desc: "Get better protection while simplifying your stack. An extensible platform that grows with you without adding complexity."
                                 }
                             ].map((reason, i) => (
-                                <div key={i} className="flex gap-5">
-                                    <div className="mt-1">
-                                        <CheckCircle2 className="w-6 h-6 text-green-500" />
+                                <div key={i} className="flex gap-6 group">
+                                    <div className="mt-1 w-12 h-12 rounded-full bg-blue-400/10 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-400 group-hover:text-white transition-all duration-300">
+                                        <CheckCircle2 className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold mb-2 text-foreground">{reason.title}</h3>
-                                        <p className="text-muted-foreground">{reason.desc}</p>
+                                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-blue-400 transition-colors">{reason.title}</h3>
+                                        <p className="text-muted-foreground leading-relaxed">{reason.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -319,26 +296,27 @@ export default function WhyContent() {
 
                     {/* Testimonial Carousel */}
                     <div
-                        className="relative overflow-hidden bg-muted/30 border border-border/50 rounded-3xl p-8 md:p-10"
+                        className="relative overflow-hidden bg-gradient-to-br from-muted/50 to-background border border-border rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-black/5"
                         onMouseEnter={() => setIsPaused(true)}
                         onMouseLeave={() => setIsPaused(false)}
                     >
-                        <div className="absolute -right-20 -top-20 -bottom-20 w-60 bg-gradient-to-l from-blue-500/5 to-transparent blur-3xl pointer-events-none" />
+                        {/* Decorative Quote Icon */}
+                        <Quote className="absolute top-8 right-8 w-24 h-24 text-foreground/5 -rotate-12 pointer-events-none" />
 
                         <div className="relative z-10">
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-bold text-foreground">What our customers say</h3>
+                            <div className="flex items-center justify-between mb-8">
+                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Client Stories</h3>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={prevTestimonial}
-                                        className="w-10 h-10 rounded-full bg-muted/50 hover:bg-muted border border-border/50 flex items-center justify-center text-foreground transition-colors"
+                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm"
                                         aria-label="Previous testimonial"
                                     >
                                         <ChevronLeft className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={nextTestimonial}
-                                        className="w-10 h-10 rounded-full bg-muted/50 hover:bg-muted border border-border/50 flex items-center justify-center text-foreground transition-colors"
+                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm"
                                         aria-label="Next testimonial"
                                     >
                                         <ChevronRight className="w-5 h-5" />
@@ -346,45 +324,49 @@ export default function WhyContent() {
                                 </div>
                             </div>
 
-                            <div className="min-h-[220px] relative">
+                            <div className="min-h-[240px] relative flex flex-col justify-between">
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={currentIndex}
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="text-center"
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
                                     >
-                                        <Quote className="w-10 h-10 text-blue-500/30 mx-auto mb-4" />
-                                        <p className="text-lg md:text-xl italic text-muted-foreground mb-6 leading-relaxed">
+                                        <p className="text-xl md:text-2xl font-manrope font-medium text-foreground mb-8 leading-relaxed">
                                             "{testimonials[currentIndex].quote}"
                                         </p>
-                                        <div className="font-bold text-foreground">{testimonials[currentIndex].name}</div>
-                                        <div className="text-sm text-muted-foreground">{testimonials[currentIndex].role}</div>
-                                        <div className="text-xs text-blue-500 mt-2">{testimonials[currentIndex].services}</div>
+                                        
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white font-bold text-lg">
+                                                {testimonials[currentIndex].name.charAt(0)}
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-foreground text-lg">{testimonials[currentIndex].name}</div>
+                                                <div className="text-sm text-muted-foreground">{testimonials[currentIndex].role}</div>
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 </AnimatePresence>
                             </div>
 
-                            {/* Dots indicator */}
-                            <div className="flex justify-center gap-2 mt-6">
-                                {testimonials.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setCurrentIndex(i)}
-                                        className={`w-2 h-2 rounded-full transition-all ${i === currentIndex
-                                            ? "bg-blue-500 w-6"
-                                            : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                                            }`}
-                                        aria-label={`Go to testimonial ${i + 1}`}
-                                    />
-                                ))}
-                            </div>
-
-                            <div className="mt-8 pt-8 border-t border-border/50 text-center">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold transition-colors w-full sm:w-auto">
-                                    Get Started with ZecurX
+                            <div className="mt-10 pt-8 border-t border-border/50 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                                <div className="flex gap-1.5">
+                                    {testimonials.map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setCurrentIndex(i)}
+                                            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex
+                                                ? "bg-blue-400 w-8"
+                                                : "bg-border w-2 hover:bg-blue-400/50"
+                                                }`}
+                                            aria-label={`Go to testimonial ${i + 1}`}
+                                        />
+                                    ))}
+                                </div>
+                                <button className="w-full sm:w-auto bg-foreground text-background hover:bg-foreground/90 px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-xl text-sm flex items-center justify-center gap-2">
+                                    Start Your Journey
+                                    <ArrowRight className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
