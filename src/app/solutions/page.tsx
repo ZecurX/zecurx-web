@@ -6,6 +6,7 @@ import Footer from "@/components/landing/Footer";
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -47,28 +48,12 @@ const solutions = [
         featured: true,
     },
     {
-        id: "identity-security",
-        title: "Identity Security",
-        tagline: "Unified Protection",
-        description: "Stop identity attacks with unified protection for every identity—human, non-human, AI, and SaaS.",
-        stat: "80%",
-        statLabel: "Breach Prevention",
-    },
-    {
         id: "zero-trust",
         title: "Zero Trust",
         tagline: "Never Trust, Always Verify",
         description: "Move beyond perimeter-based security to continuous verification and least-privilege access.",
         stat: "100%",
         statLabel: "Verification",
-    },
-    {
-        id: "endpoint-protection",
-        title: "Endpoint Security",
-        tagline: "AI-Powered Protection",
-        description: "Unified endpoint protection powered by AI with real-time visibility across all endpoints.",
-        stat: "24/7",
-        statLabel: "Monitoring",
     },
     {
         id: "ransomware-defense",
@@ -87,12 +72,12 @@ const solutions = [
         statLabel: "Cloud Platforms",
     },
     {
-        id: "threat-intelligence",
-        title: "Threat Intelligence",
-        tagline: "Proactive Defense",
-        description: "Real-time insights into attacker tactics, techniques, and procedures.",
-        stat: "Real-time",
-        statLabel: "Insights",
+        id: "compliance",
+        title: "Compliance",
+        tagline: "Regulatory Alignment",
+        description: "Achieve and maintain compliance with industry regulations and security frameworks.",
+        stat: "20+",
+        statLabel: "Frameworks",
     },
 ];
 
@@ -117,9 +102,6 @@ export default function SolutionsPage() {
     const gridColor = mounted
         ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)')
         : 'transparent';
-
-    const featuredSolutions = solutions.filter(s => s.featured);
-    const regularSolutions = solutions.filter(s => !s.featured);
 
     return (
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
@@ -177,59 +159,7 @@ export default function SolutionsPage() {
                 </div>
             </section>
 
-            {/* Featured Solutions - Large Cards */}
-            <section className="relative z-10 px-6 pb-8">
-                <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="grid md:grid-cols-2 gap-6"
-                    >
-                        {featuredSolutions.map((solution, index) => (
-                            <motion.a
-                                key={solution.id}
-                                id={solution.id}
-                                href={`#${solution.id}`}
-                                variants={itemVariants}
-                                className="group relative block p-8 md:p-10 rounded-3xl bg-muted/50 backdrop-blur-sm border border-border hover:border-foreground/20 transition-all duration-300 min-h-[320px] flex flex-col justify-between overflow-hidden"
-                            >
-                                {/* Hover Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-foreground/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                <div className="relative z-10">
-                                    <p className="text-primary font-manrope font-semibold tracking-widest text-xs uppercase mb-4">
-                                        {solution.tagline}
-                                    </p>
-                                    <h2 className="text-3xl md:text-4xl font-manrope font-medium text-foreground mb-4">
-                                        {solution.title}
-                                    </h2>
-                                    <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
-                                        {solution.description}
-                                    </p>
-                                </div>
-
-                                <div className="relative z-10 flex items-end justify-between mt-8">
-                                    <div>
-                                        <span className="text-4xl md:text-5xl font-manrope font-bold text-foreground">
-                                            {solution.stat}
-                                        </span>
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                            {solution.statLabel}
-                                        </p>
-                                    </div>
-                                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                        <ArrowUpRight className="w-5 h-5 text-foreground/80 group-hover:rotate-45 transition-all duration-300" />
-                                    </div>
-                                </div>
-                            </motion.a>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Regular Solutions - Grid matching home page card style */}
+            {/* Solutions Grid - Unified Professional Layout */}
             <section className="relative z-10 px-6 pb-24">
                 <div className="max-w-7xl mx-auto">
                     <motion.div
@@ -237,79 +167,52 @@ export default function SolutionsPage() {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
-                        {regularSolutions.map((solution) => (
-                            <motion.a
-                                key={solution.id}
-                                id={solution.id}
-                                href={`#${solution.id}`}
-                                variants={itemVariants}
-                                className="group relative p-6 rounded-2xl bg-muted/30 backdrop-blur-md border border-border hover:border-foreground/10 transition-all duration-300 overflow-hidden"
-                            >
-                                {/* Hover Gradient */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                <div className="relative z-10">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                            <CheckCircle2 className="w-5 h-5 text-primary group-hover:text-primary transition-colors" />
-                                        </div>
-                                        <ArrowUpRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-foreground group-hover:rotate-45 transition-all duration-300" />
-                                    </div>
-
-                                    <h3 className="text-lg font-manrope font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                                        {solution.title}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground font-manrope mb-4">
-                                        {solution.tagline}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                                        {solution.description}
-                                    </p>
-
-                                    <div className="flex items-baseline gap-2 pt-4 border-t border-border/50">
-                                        <span className="text-2xl font-manrope font-bold text-foreground">
-                                            {solution.stat}
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">
-                                            {solution.statLabel}
-                                        </span>
-                                    </div>
-                                </div>
-                            </motion.a>
-                        ))}
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Stats Section */}
-            <section className="relative z-10 px-6 py-16 border-t border-border">
-                <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12"
-                    >
-                        {[
-                            { value: "8", label: "Security Solutions" },
-                            { value: "24/7", label: "AI Monitoring" },
-                            { value: "99.9%", label: "Uptime SLA" },
-                            { value: "<4hr", label: "Response Time" },
-                        ].map((stat, i) => (
+                        {solutions.map((solution, index) => (
                             <motion.div
-                                key={i}
+                                key={solution.id}
                                 variants={itemVariants}
-                                className="text-center"
+                                className={index < 2 ? "lg:col-span-1" : ""}
                             >
-                                <div className="text-3xl md:text-4xl font-manrope font-bold text-foreground mb-1">
-                                    {stat.value}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                    {stat.label}
-                                </div>
+                                <Link
+                                    id={solution.id}
+                                    href={`/solutions/${solution.id}`}
+                                    className="group relative block h-full p-8 rounded-2xl bg-muted/40 backdrop-blur-sm border border-border/50 hover:border-foreground/20 hover:bg-muted/60 transition-all duration-500 overflow-hidden"
+                                >
+                                    {/* Subtle gradient overlay on hover */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                    {/* Corner accent */}
+                                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                    <div className="relative z-10 flex flex-col h-full">
+                                        {/* Header with tagline */}
+                                        <span className="text-primary font-manrope font-semibold tracking-widest text-[10px] uppercase mb-4">
+                                            {solution.tagline}
+                                        </span>
+
+                                        {/* Title */}
+                                        <h3 className="text-2xl font-manrope font-medium text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
+                                            {solution.title}
+                                        </h3>
+
+                                        {/* Description */}
+                                        <p className="text-muted-foreground text-sm leading-relaxed flex-grow mb-6">
+                                            {solution.description}
+                                        </p>
+
+                                        {/* Arrow indicator */}
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs text-muted-foreground/60 font-manrope uppercase tracking-wide group-hover:text-primary/60 transition-colors">
+                                                Learn more
+                                            </span>
+                                            <div className="w-10 h-10 rounded-full bg-muted/80 flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+                                                <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:rotate-45 transition-all duration-300" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Link>
                             </motion.div>
                         ))}
                     </motion.div>

@@ -45,20 +45,25 @@ export default function HeroSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-                    className="flex flex-col md:flex-row items-center gap-6 mt-8"
+                    className="flex flex-col md:flex-row items-center gap-4 mt-8"
                 >
-                    {/* Primary Button */}
+                    {/* Primary Button - Request Demo */}
                     <Button
                         size="lg"
                         className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-lg hover:scale-105 transition-transform duration-300 group"
                     >
-                        Talk to a Security Expert
+                        Request Demo
                         <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
                             <span className="text-xl">↗</span>
                         </div>
                     </Button>
 
-                    {/* Secondary Button */}
+                    {/* Secondary Button - Contact */}
+                    <Button variant="outline" size="lg" className="rounded-full text-base font-medium px-8">
+                        Contact Us
+                    </Button>
+
+                    {/* Tertiary Button */}
                     <Button variant="secondary" size="lg" className="rounded-full text-base font-medium">
                         Explore ZecurX Academy →
                     </Button>
