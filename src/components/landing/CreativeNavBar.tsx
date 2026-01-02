@@ -13,19 +13,6 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
-// Helper function to scroll to an element by ID with offset for fixed navbar
-const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-        const navbarHeight = 100; // Account for fixed navbar
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-            top: elementPosition - navbarHeight,
-            behavior: 'smooth'
-        });
-    }
-};
-
 // Navigation Data
 const navData = {
     platform: {
@@ -102,22 +89,22 @@ const navData = {
     industries: {
         label: "Industries",
         tagline: "Sector-Specific Security",
-        cta: { label: "View Industries", href: "#" },
+        cta: { label: "View Industries", href: "/industries" },
         columns: [
             {
                 title: "Enterprise",
                 items: [
-                    { icon: Cpu, title: "Technology", desc: "Tech & SaaS" },
-                    { icon: Coins, title: "Financial Services", desc: "Banking & fintech" },
-                    { icon: Heart, title: "Healthcare", desc: "HIPAA compliance" },
+                    { icon: Cpu, title: "Technology", desc: "Tech & SaaS", href: "/industries?tab=tech" },
+                    { icon: Coins, title: "Financial Services", desc: "Banking & fintech", href: "/industries?tab=bfsi" },
+                    { icon: Heart, title: "Healthcare", desc: "HIPAA compliance", href: "/industries?tab=healthcare" },
                 ]
             },
             {
                 title: "Public & Growth",
                 items: [
-                    { icon: Landmark, title: "Government", desc: "Critical infrastructure" },
-                    { icon: GraduationCap, title: "Education", desc: "Research protection" },
-                    { icon: Rocket, title: "Startups", desc: "Scalable security" },
+                    { icon: Landmark, title: "Government", desc: "Critical infrastructure", href: "/industries?tab=gov" },
+                    { icon: GraduationCap, title: "Education", desc: "Research protection", href: "/industries?tab=edu" },
+                    { icon: Rocket, title: "Startups", desc: "Scalable security", href: "/industries?tab=tech" },
                 ]
             },
         ]
@@ -125,21 +112,21 @@ const navData = {
     whyZecurx: {
         label: "Why ZecurX",
         tagline: "Trust & Expertise",
-        cta: { label: "Learn About Us", href: "#" },
+        cta: { label: "Learn About Us", href: "/why-zecurx" },
         columns: [
             {
                 title: "Company",
                 items: [
-                    { icon: Building2, title: "Overview", desc: "Our mission" },
-                    { icon: Users, title: "Leadership", desc: "Security experts" },
-                    { icon: Award, title: "Certifications", desc: "ISO, NIST & more" },
+                    { icon: Building2, title: "Overview", desc: "Our mission", href: "/why-zecurx#overview" },
+                    { icon: Users, title: "Leadership", desc: "Security experts", href: "/why-zecurx#leadership" },
+                    { icon: Award, title: "Certifications", desc: "ISO, NIST & more", href: "/why-zecurx#certifications" },
                 ]
             },
             {
                 title: "Differentiation",
                 items: [
-                    { icon: CheckCircle, title: "Methodology", desc: "Proven frameworks" },
-                    { icon: GitCompare, title: "ZecurX vs Others", desc: "Why choose us" },
+                    { icon: CheckCircle, title: "Methodology", desc: "Proven frameworks", href: "/why-zecurx#methodology" },
+                    { icon: GitCompare, title: "ZecurX vs Others", desc: "Why choose us", href: "/why-zecurx#comparison" },
                 ]
             },
         ]
