@@ -134,7 +134,7 @@ const navData = {
     resources: {
         label: "Resources",
         tagline: "Knowledge & Insights",
-        cta: { label: "Browse Resources", href: "#" },
+        cta: { label: "Browse Resources", href: "/resources" },
         columns: [
             {
                 title: "Content",
