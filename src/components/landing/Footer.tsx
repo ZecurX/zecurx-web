@@ -70,8 +70,9 @@ export default function Footer() {
                     <div className="mt-24 border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground font-medium">
                         <p>&copy; 2025 ZecurX. All rights reserved.</p>
                         <div className="flex gap-8 mt-4 md:mt-0">
-                            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
-                            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
+                            <a href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</a>
+                            <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
+                            <a href="/cookie-policy" className="hover:text-foreground transition-colors">Cookie Policy</a>
                         </div>
                     </div>
                 </div>

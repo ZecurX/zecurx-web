@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
     ChevronDown, Shield, Globe, Lock, Cpu, Eye,
     Zap, Cloud, KeyRound, Code, Target, Brain, Settings, ShieldCheck,
@@ -17,24 +18,24 @@ const navData = {
     platform: {
         label: "Platform",
         tagline: "Enterprise Security Capabilities",
-        cta: { label: "Explore Platform", href: "#" },
+        cta: { label: "Explore Platform", href: "/platform" },
         columns: [
             {
                 title: "Core Security",
                 items: [
-                    { icon: Shield, title: "Endpoint Security", desc: "Advanced threat protection" },
-                    { icon: Cloud, title: "Cloud Security", desc: "CNAPP & cloud workloads" },
-                    { icon: KeyRound, title: "Identity Security", desc: "Zero trust access" },
-                    { icon: Code, title: "Application Security", desc: "Secure SDLC" },
+                    { icon: Shield, title: "Endpoint Security", desc: "Advanced threat protection", href: "/platform#endpoint-security" },
+                    { icon: Cloud, title: "Cloud Security", desc: "CNAPP & cloud workloads", href: "/platform#cloud-security" },
+                    { icon: KeyRound, title: "Identity Security", desc: "Zero trust access", href: "/platform#identity-security" },
+                    { icon: Code, title: "Application Security", desc: "Secure SDLC", href: "/platform#application-security" },
                 ]
             },
             {
                 title: "Intelligence & Automation",
                 items: [
-                    { icon: Target, title: "Threat Intelligence", desc: "Proactive hunting" },
-                    { icon: Brain, title: "AI Detection", desc: "ML-powered analytics" },
-                    { icon: Settings, title: "Security Automation", desc: "SOAR capabilities" },
-                    { icon: ShieldCheck, title: "Data Protection", desc: "DLP & encryption" },
+                    { icon: Target, title: "Threat Intelligence", desc: "Proactive hunting", href: "/platform#threat-intelligence" },
+                    { icon: Brain, title: "AI Detection", desc: "ML-powered analytics", href: "/platform#ai-detection" },
+                    { icon: Settings, title: "Security Automation", desc: "SOAR capabilities", href: "/platform#security-automation" },
+                    { icon: ShieldCheck, title: "Data Protection", desc: "DLP & encryption", href: "/platform#data-protection" },
                 ]
             },
         ]
@@ -42,22 +43,22 @@ const navData = {
     solutions: {
         label: "Solutions",
         tagline: "Business-Aligned Security",
-        cta: { label: "View All Solutions", href: "#" },
+        cta: { label: "View All Solutions", href: "/solutions" },
         columns: [
             {
                 title: "Strategic",
                 items: [
-                    { icon: Zap, title: "Digital Transformation", desc: "Secure modernization" },
-                    { icon: Brain, title: "AI-Powered SOC", desc: "Next-gen operations" },
-                    { icon: Lock, title: "Zero Trust", desc: "Architecture design" },
+                    { icon: Zap, title: "Digital Transformation", desc: "Secure modernization", href: "/solutions#digital-transformation" },
+                    { icon: Brain, title: "AI-Powered SOC", desc: "Next-gen operations", href: "/solutions#ai-powered-soc" },
+                    { icon: Lock, title: "Zero Trust", desc: "Architecture design", href: "/solutions#zero-trust" },
                 ]
             },
             {
                 title: "Defense",
                 items: [
-                    { icon: Shield, title: "Ransomware Defense", desc: "Prevention & recovery" },
-                    { icon: Cloud, title: "Cloud Security", desc: "Multi-cloud protection" },
-                    { icon: FileText, title: "Compliance", desc: "Regulatory alignment" },
+                    { icon: Shield, title: "Ransomware Defense", desc: "Prevention & recovery", href: "/solutions#ransomware-defense" },
+                    { icon: Cloud, title: "Cloud Security", desc: "Multi-cloud protection", href: "/solutions#cloud-security" },
+                    { icon: FileText, title: "Compliance", desc: "Regulatory alignment", href: "/solutions#compliance" },
                 ]
             },
         ]
@@ -155,6 +156,7 @@ const navData = {
 };
 
 export default function CreativeNavBar() {
+    const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -245,7 +247,11 @@ export default function CreativeNavBar() {
                             <div className="bg-background/95 backdrop-blur-xl border-b border-border shadow-lg">
                                 <div className="max-w-7xl mx-auto px-6 py-8">
                                     {navData[activeDropdown as keyof typeof navData] && (
-                                        <MegaMenuContent data={navData[activeDropdown as keyof typeof navData]} />
+                                        <MegaMenuContent
+                                            data={navData[activeDropdown as keyof typeof navData]}
+                                            onLinkClick={() => setActiveDropdown(null)}
+                                            currentPathname={pathname}
+                                        />
                                     )}
                                 </div>
                             </div>
@@ -281,18 +287,51 @@ interface MegaMenuContentProps {
         label: string;
         tagline: string;
         cta: { label: string; href: string };
-        columns: { title: string; items: { icon: any; title: string; desc: string }[] }[];
+        columns: { title: string; items: { icon: any; title: string; desc: string; href?: string }[] }[];
     };
+    onLinkClick?: () => void;
+    currentPathname: string;
 }
 
-function MegaMenuContent({ data }: MegaMenuContentProps) {
+function MegaMenuContent({ data, onLinkClick, currentPathname }: MegaMenuContentProps) {
+    const router = useRouter();
+
+    const handleNavigate = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault();
+        onLinkClick?.();
+
+        // Check if href contains a hash
+        if (href.includes('#')) {
+            const [path, hash] = href.split('#');
+            const targetPath = path || currentPathname;
+
+            // If we're already on the target page, update hash and dispatch event
+            if (currentPathname === targetPath) {
+                window.location.hash = hash;
+            } else {
+                // Navigate to the page first, then update hash
+                router.push(href);
+                // Manually dispatch hashchange after navigation completes
+                setTimeout(() => {
+                    window.dispatchEvent(new HashChangeEvent('hashchange'));
+                }, 100);
+            }
+        } else {
+            router.push(href);
+        }
+    };
+
     return (
         <div className="flex gap-16">
             {/* Left */}
             <div className="w-48 flex-shrink-0">
                 <h3 className="text-lg font-semibold text-foreground mb-1">{data.label}</h3>
                 <p className="text-xs text-muted-foreground mb-5">{data.tagline}</p>
-                <a href={data.cta.href} className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors group">
+                <a
+                    href={data.cta.href}
+                    onClick={(e) => handleNavigate(e, data.cta.href)}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors group"
+                >
                     {data.cta.label}
                     <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                 </a>
@@ -310,7 +349,8 @@ function MegaMenuContent({ data }: MegaMenuContentProps) {
                             {column.items.map((item, i) => (
                                 <a
                                     key={i}
-                                    href={(item as any).href || "#"}
+                                    href={item.href || "#"}
+                                    onClick={(e) => handleNavigate(e, item.href || "#")}
                                     className="flex items-center gap-3 py-2.5 px-3 -mx-3 rounded-lg hover:bg-muted/50 transition-colors group"
                                 >
                                     <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-all">

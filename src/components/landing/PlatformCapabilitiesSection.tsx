@@ -101,12 +101,6 @@ export default function PlatformCapabilitiesSection() {
                                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-400/20 transition-colors duration-700"></div>
 
                                 <div>
-                                    {/* Tech Badge */}
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono mb-8">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></div>
-                                        CAPABILITY_ID_{capabilities[activeIndex].id.toString().padStart(2, '0')}
-                                    </div>
-
                                     {/* Content */}
                                     <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6 animate-fadeIn key={activeIndex}">
                                         {capabilities[activeIndex].title}
