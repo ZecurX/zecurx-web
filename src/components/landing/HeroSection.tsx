@@ -1,51 +1,20 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from 'react';
-import { imgEllipse106 } from './assets';
+import React from 'react';
 import HeroVideoCard from './HeroVideoCard';
-import { motion, useScroll, useTransform } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "next-themes";
 
 export default function HeroSection() {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end start"]
-    });
-    const { theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const opacityBg = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
 
     return (
-        <section ref={ref} className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 transition-colors duration-500">
+        <section className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 transition-colors duration-500">
 
-
-
-            {/* --- Parallax Image Background --- */}
-            <motion.div
-                style={{ y: yBg, opacity: opacityBg }}
-                className="absolute inset-0 z-0"
-            >
-                {mounted && (
-                    <img
-                        src={theme === "light" ? "/assets/light-bg.png" : "/assets/dark-bg.png"}
-                        alt="Hero 
-                        Background"
-                        className={cn(
-                            "w-full h-full object-cover opacity-80",
-                            theme === "light" ? "object-center scale-110" : "object-center"
-                        )}
-                    />
-                )}
-            </motion.div>
+            {/* Modern Grid Texture */}
+            <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+            
+            {/* Subtle Top Glow */}
+            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
             {/* Content Container */}
             <div className="flex flex-col items-center justify-center space-y-8 z-10 text-center mt-20">

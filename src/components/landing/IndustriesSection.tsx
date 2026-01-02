@@ -13,7 +13,7 @@ const industries = [
         desc: "Comprehensive security for large-scale organizations.",
         icon: Building2,
         iconSrc: "/assets/icons/enterprise.svg",
-        gradient: "from-blue-500/20 to-cyan-500/20"
+        gradient: "from-blue-400/20 to-cyan-400/20"
     },
     {
         id: "gov",
