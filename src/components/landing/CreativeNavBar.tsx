@@ -23,19 +23,19 @@ const navData = {
             {
                 title: "Core Security",
                 items: [
-                    { icon: Shield, title: "Endpoint Security", desc: "Advanced threat protection", href: "/platform#endpoint-security" },
-                    { icon: Cloud, title: "Cloud Security", desc: "CNAPP & cloud workloads", href: "/platform#cloud-security" },
-                    { icon: KeyRound, title: "Identity Security", desc: "Zero trust access", href: "/platform#identity-security" },
-                    { icon: Code, title: "Application Security", desc: "Secure SDLC", href: "/platform#application-security" },
+                    { icon: Shield, title: "Endpoint Security", desc: "Advanced threat protection", href: "/platform/endpoint-security" },
+                    { icon: Cloud, title: "Cloud Security", desc: "CNAPP & cloud workloads", href: "/platform/cloud-security" },
+                    { icon: KeyRound, title: "Identity Security", desc: "Zero trust access", href: "/platform/identity-security" },
+                    { icon: Code, title: "Application Security", desc: "Secure SDLC", href: "/platform/application-security" },
                 ]
             },
             {
                 title: "Intelligence & Automation",
                 items: [
-                    { icon: Target, title: "Threat Intelligence", desc: "Proactive hunting", href: "/platform#threat-intelligence" },
-                    { icon: Brain, title: "AI Detection", desc: "ML-powered analytics", href: "/platform#ai-detection" },
-                    { icon: Settings, title: "Security Automation", desc: "SOAR capabilities", href: "/platform#security-automation" },
-                    { icon: ShieldCheck, title: "Data Protection", desc: "DLP & encryption", href: "/platform#data-protection" },
+                    { icon: Target, title: "Threat Intelligence", desc: "Proactive hunting", href: "/platform/threat-intelligence" },
+                    { icon: Brain, title: "AI Detection", desc: "ML-powered analytics", href: "/platform/ai-detection" },
+                    { icon: Settings, title: "Security Automation", desc: "SOAR capabilities", href: "/platform/security-automation" },
+                    { icon: ShieldCheck, title: "Data Protection", desc: "DLP & encryption", href: "/platform/data-protection" },
                 ]
             },
         ]
@@ -48,17 +48,17 @@ const navData = {
             {
                 title: "Strategic",
                 items: [
-                    { icon: Zap, title: "Digital Transformation", desc: "Secure modernization", href: "/solutions#digital-transformation" },
-                    { icon: Brain, title: "AI-Powered SOC", desc: "Next-gen operations", href: "/solutions#ai-powered-soc" },
-                    { icon: Lock, title: "Zero Trust", desc: "Architecture design", href: "/solutions#zero-trust" },
+                    { icon: Zap, title: "Digital Transformation", desc: "Secure modernization", href: "/solutions/digital-transformation" },
+                    { icon: Brain, title: "AI-Powered SOC", desc: "Next-gen operations", href: "/solutions/ai-powered-soc" },
+                    { icon: Lock, title: "Zero Trust", desc: "Architecture design", href: "/solutions/zero-trust" },
                 ]
             },
             {
                 title: "Defense",
                 items: [
-                    { icon: Shield, title: "Ransomware Defense", desc: "Prevention & recovery", href: "/solutions#ransomware-defense" },
-                    { icon: Cloud, title: "Cloud Security", desc: "Multi-cloud protection", href: "/solutions#cloud-security" },
-                    { icon: FileText, title: "Compliance", desc: "Regulatory alignment", href: "/solutions#compliance" },
+                    { icon: Shield, title: "Ransomware Defense", desc: "Prevention & recovery", href: "/solutions/ransomware-defense" },
+                    { icon: Cloud, title: "Cloud Security", desc: "Multi-cloud protection", href: "/solutions/cloud-security" },
+                    { icon: FileText, title: "Compliance", desc: "Regulatory alignment", href: "/solutions/compliance" },
                 ]
             },
         ]
