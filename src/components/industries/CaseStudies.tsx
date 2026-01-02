@@ -39,13 +39,13 @@ export default function CaseStudies() {
                             Real-world results from organizations that trust ZecurX.
                         </p>
                     </div>
-                    <button className="flex items-center gap-2 text-foreground font-medium hover:text-blue-500 transition-colors">
+                    <button className="flex items-center gap-2 text-foreground font-medium hover:text-blue-400 transition-colors">
                         <span>View all case studies</span>
                         <ArrowUpRight className="w-4 h-4" />
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border border-y border-border bg-background/50 backdrop-blur-sm">
                     {caseStudies.map((study, i) => (
                         <motion.div
                             key={i}
@@ -53,18 +53,18 @@ export default function CaseStudies() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1, duration: 0.5 }}
-                            className="p-8 rounded-3xl bg-muted/20 border border-border hover:border-foreground/20 transition-all duration-300 group"
+                            className="p-8 md:p-12 hover:bg-muted/5 transition-colors duration-300 group"
                         >
-                            <div className="text-xs font-semibold tracking-wider text-blue-500 dark:text-blue-400 uppercase mb-4">
+                            <div className="text-xs font-semibold tracking-wider text-blue-400 dark:text-blue-300 uppercase mb-4">
                                 {study.tag}
                             </div>
-                            <div className="text-6xl md:text-7xl font-bold font-manrope text-foreground mb-6 tracking-tighter">
+                            <div className="text-5xl md:text-6xl font-bold font-manrope text-foreground mb-6 tracking-tighter">
                                 {study.metric}
                             </div>
-                            <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-500 transition-colors">
+                            <h3 className="text-lg font-semibold mb-3 group-hover:text-blue-400 transition-colors">
                                 {study.label}
                             </h3>
-                            <p className="text-muted-foreground leading-relaxed">
+                            <p className="text-muted-foreground leading-relaxed text-sm">
                                 {study.desc}
                             </p>
                         </motion.div>

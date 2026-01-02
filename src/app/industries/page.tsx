@@ -8,7 +8,7 @@ import CaseStudies from "@/components/industries/CaseStudies";
 
 export default function IndustriesPage() {
     return (
-        <main className="bg-background min-h-screen">
+        <main className="min-h-screen">
             <CreativeNavBar />
             <IndustryHero />
             <Suspense>
