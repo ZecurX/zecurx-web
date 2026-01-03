@@ -7,7 +7,7 @@ import {
     Building2, Landmark, GraduationCap, Rocket, Heart, Coins,
     Users, Award, CheckCircle, GitCompare, FileText,
     BookOpen, FileSearch, Lightbulb, BookMarked, Video,
-    ArrowRight, Menu, X
+    ArrowRight, Menu, X, Terminal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -66,24 +66,30 @@ const navData = {
     services: {
         label: "Services",
         tagline: "Expert Security Delivery",
-        cta: { label: "Explore Services", href: "#" },
+        cta: { label: "Explore Services", href: "/services" },
         columns: [
             {
                 title: "Offensive",
                 items: [
-                    { icon: Target, title: "Penetration Testing", desc: "Red team assessments" },
-                    { icon: Eye, title: "Vulnerability Management", desc: "Continuous scanning" },
+                    { icon: Target, title: "Penetration Testing", desc: "Red team assessments", href: "/services#ptaas" },
+                    { icon: Eye, title: "Vulnerability Management", desc: "Continuous scanning", href: "/services#vuln-audits" },
                 ]
             },
             {
                 title: "Engineering",
                 items: [
-                    { icon: Code, title: "Secure Development", desc: "Security by design" },
-                    { icon: Globe, title: "Web & App Security", desc: "Application hardening" },
-                    { icon: Settings, title: "DevSecOps", desc: "CI/CD security" },
-                    { icon: Users, title: "Consulting", desc: "Strategic advisory" },
+                    { icon: Code, title: "Secure Development", desc: "Security by design", href: "/services#secure-dev" },
+                    { icon: Globe, title: "Web & App Security", desc: "Application hardening", href: "/services#secure-dev" }, // Mapping to same as user only has "Secure Web & App Dev"
+                    { icon: Settings, title: "DevSecOps", desc: "CI/CD security", href: "/services#secure-dev" }, // Mapping generic terms to closest fit
+                    { icon: Users, title: "Consulting", desc: "Strategic advisory", href: "/services#engineering" }, // General section for now
                 ]
             },
+            {
+                title: "Tools",
+                items: [
+                    { icon: Terminal, title: "VulnHunter Suite", desc: "Recon & Analysis", href: "/tools" },
+                ]
+            }
         ]
     },
     industries: {
@@ -298,25 +304,41 @@ function MegaMenuContent({ data, onLinkClick, currentPathname }: MegaMenuContent
 
     const handleNavigate = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault();
-        onLinkClick?.();
 
         // Check if href contains a hash
         if (href.includes('#')) {
             const [path, hash] = href.split('#');
-            const targetPath = path || currentPathname;
+            // Normalize paths (remove trailing slashes for comparison)
+            const normalize = (p: string) => p.replace(/\/+$/, '');
+            const targetPath = path ? normalize(path) : normalize(currentPathname);
+            const currentPath = normalize(currentPathname);
 
-            // If we're already on the target page, update hash and dispatch event
-            if (currentPathname === targetPath) {
-                window.location.hash = hash;
-            } else {
-                // Navigate to the page first, then update hash
-                router.push(href);
-                // Manually dispatch hashchange after navigation completes
+            // If we're already on the target page
+            if (currentPath === targetPath) {
+                // Close menu first to clear view
+                onLinkClick?.();
+
+                // Allow a tiny microtask pause for menu close (if affects layout), then scroll
                 setTimeout(() => {
-                    window.dispatchEvent(new HashChangeEvent('hashchange'));
-                }, 100);
+                    const element = document.getElementById(hash);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Update URL hash strictly
+                        window.history.pushState(null, '', `#${hash}`);
+                    } else {
+                        // Fallback: just set hash and let browser try
+                        window.location.hash = hash;
+                    }
+                }, 10);
+            } else {
+                onLinkClick?.();
+                // Navigate to the page first
+                router.push(href);
             }
         } else {
+            onLinkClick?.();
+            // Force scroll to top for standard navigation to ensure "fresh" load feel
+            window.scrollTo({ top: 0, behavior: 'instant' });
             router.push(href);
         }
     };
@@ -341,7 +363,7 @@ function MegaMenuContent({ data, onLinkClick, currentPathname }: MegaMenuContent
             <div className="w-px bg-border" />
 
             {/* Columns */}
-            <div className="flex-1 grid grid-cols-2 gap-12">
+            <div className={`flex-1 grid grid-cols-2 lg:grid-cols-${data.columns.length > 2 ? '3' : '2'} gap-8`}>
                 {data.columns.map((column, colIdx) => (
                     <div key={colIdx}>
                         <h4 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-4">{column.title}</h4>
