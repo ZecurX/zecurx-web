@@ -2,12 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Settings, Zap, Shield, Code, Eye, Target } from 'lucide-react';
+import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
+import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
 
 const securityAutomationData = {
-    badge: "Security Automation",
-    title: "SOAR",
-    subtitle: "Capabilities",
-    description: "Automation embedded across detection, investigation, and response workflows. AI-driven playbooks automate repetitive tasks for strategic focus.",
+    badge: "Platform Feature",
+    title: "Security",
+    subtitle: "Automation",
+    description: "Automate repetitive tasks and orchestrate your response to incidents. Reduce MTTD and MTTR while freeing up analysts for high-value work.",
     capabilities: [
         {
             icon: <Settings className="w-6 h-6" />,
@@ -43,26 +45,25 @@ const securityAutomationData = {
     features: [
         {
             title: "Lower Operational Costs",
-            description: "Automate the repetitive tasks that consume analyst time, allowing your team to focus on high-value work.",
-            image: "/images/features/security-dashboard.png",
+            description: "Reduce the manual effort required for alert triage and incident response by up to 80%.",
+            component: <StaticAutomationFlow />,
             points: [
-                "80% reduction in manual tasks",
-                "Automated ticket creation and routing",
-                "Self-healing infrastructure",
-                "Automated compliance reporting"
+                "Automated alert enrichment",
+                "Playbook-driven response",
+                "Case management integration",
+                "Reporting automation"
             ]
         },
         {
-            title: "Faster Response Cycles",
-            description: "Automation enables response at machine speed, containing threats before they can cause damage.",
-            image: "/images/features/ai-detection.png",
+            title: "Orchestrate Security",
+            description: "Connect your entire security stack and automate workflows across disparate tools.",
             points: [
-                "Sub-second automated actions",
-                "24/7 automated response",
-                "Consistent execution every time",
-                "Reduced human error"
+                "300+ out-of-the-box integrations",
+                "Visual playbook builder",
+                "Customizable workflow triggers",
+                "Multi-tenant support"
             ]
-        },
+        }
     ],
     stats: []
 };

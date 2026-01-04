@@ -2,6 +2,9 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { FileText, Shield, CheckCircle, Eye, Settings, Lock } from "lucide-react";
+import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
+import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
+import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
 
 const complianceData = {
     badge: "Security Solution",
@@ -44,7 +47,6 @@ const complianceData = {
         {
             title: "Streamline Your Compliance Program",
             description: "Manual compliance is expensive and error-prone. Our automated platform reduces the burden on your team while improving accuracy and consistency.",
-            image: "/images/features/compliance.png",
             points: [
                 "Unified dashboard for all compliance frameworks",
                 "Automated control testing and evidence collection",
@@ -55,7 +57,7 @@ const complianceData = {
         {
             title: "Map Controls Once, Comply Many Times",
             description: "Most compliance frameworks share common control requirements. Our platform leverages this overlap, allowing you to map controls once and demonstrate compliance across multiple standards.",
-            image: "/images/features/security-analytics.png",
+            component: <StaticComplianceGrid />,
             points: [
                 "Cross-framework control mapping and inheritance",
                 "Reusable evidence across multiple audits",
@@ -66,7 +68,7 @@ const complianceData = {
         {
             title: "Demonstrate Continuous Compliance",
             description: "Point-in-time audits don’t reflect your true security posture. Our continuous monitoring capabilities demonstrate ongoing compliance and help you catch issues before auditors do.",
-            image: "/images/features/data-protection.png",
+            component: <StaticAutomationFlow />,
             points: [
                 "Real-time compliance score and trending",
                 "Automated alerts for compliance drift",

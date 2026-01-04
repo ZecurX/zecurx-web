@@ -1,85 +1,86 @@
 "use client";
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
-import { Shield, Lock, RefreshCw, Eye, Database, AlertTriangle } from "lucide-react";
+import { Shield, Lock, RefreshCw, Eye, Database, AlertTriangle, HardDrive, Activity, Server, FileText } from "lucide-react";
+import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
+import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
+import { StaticDataFlow } from "@/components/diagrams/static/StaticDataFlow";
 
 const ransomwareDefenseData = {
     badge: "Security Solution",
     title: "Ransomware",
     subtitle: "Defense",
-    description: "Multi-layered defense combining prevention, detection, and rapid recovery. Protect your organization from the devastating impact of ransomware with proactive security controls and resilient recovery capabilities.",
+    description: "Stop ransomware before it encrypts your data. Our multi-layered defense combines AI-driven prevention, deception technology, and automated recovery to ensure business continuity.",
     capabilities: [
         {
             icon: <Shield className="w-6 h-6" />,
-            title: "Attack Prevention",
-            description: "AI-powered threat prevention that blocks ransomware at multiple stages of the attack chain."
-        },
-        {
-            icon: <Eye className="w-6 h-6" />,
-            title: "Early Detection",
-            description: "Behavioral analytics that identify ransomware activity before encryption begins."
+            title: "Pre-Execution Prevention",
+            description: "Block ransomware variants before they can execute using AI-based static analysis."
         },
         {
             icon: <Lock className="w-6 h-6" />,
-            title: "Endpoint Protection",
-            description: "Advanced endpoint security with anti-tampering and rollback capabilities."
+            title: "Behavioral Blocking",
+            description: "Detect and stop encryption behaviors in real-time, even for zero-day ransomware."
         },
         {
-            icon: <AlertTriangle className="w-6 h-6" />,
-            title: "Threat Intelligence",
-            description: "Real-time intelligence on emerging ransomware variants and attack techniques."
+            icon: <HardDrive className="w-6 h-6" />,
+            title: "Automated Recovery",
+            description: "Shadow copy protection and instant rollback to restore data to its pre-encrypted state."
         },
         {
-            icon: <RefreshCw className="w-6 h-6" />,
-            title: "Rapid Recovery",
-            description: "Automated recovery workflows that restore operations in hours, not days."
+            icon: <Activity className="w-6 h-6" />,
+            title: "Deception",
+            description: "Deploy ransomware honeypots to detect early lateral movement and intruder activity."
         },
         {
-            icon: <Database className="w-6 h-6" />,
-            title: "Backup Protection",
-            description: "Immutable backup architectures that ensure recoverability even after compromise."
+            icon: <Server className="w-6 h-6" />,
+            title: "Server Protection",
+            description: "Specialized protection for critical servers and databases against targeted ransomware."
+        },
+        {
+            icon: <FileText className="w-6 h-6" />,
+            title: "File Integrity Monitoring",
+            description: "Monitor critical files for unauthorized changes or encryption attempts."
         }
     ],
     features: [
         {
-            title: "Stop Ransomware Before It Starts",
-            description: "The best ransomware defense is preventing the attack from succeeding in the first place. Our multi-layered prevention approach blocks threats at every stage—from initial access to lateral movement to encryption.",
-            image: "/images/features/ransomware-defense.png",
+            title: "Stop Ransomware at the Door",
+            description: "Prevent initial access with advanced exploit protection and AI-driven malware analysis.",
+            component: <StaticNetworkDefense />,
             points: [
-                "Email security that blocks phishing and malicious attachments",
-                "Endpoint protection with AI-powered threat prevention",
-                "Network segmentation that limits blast radius",
-                "Vulnerability management to eliminate attack vectors"
+                "Block exploit kits and drive-by downloads",
+                "Prevent credential theft and abuse",
+                "Analyze email attachments and links in a sandbox",
+                "Identify and patch vulnerabilities automatically"
             ]
         },
         {
-            title: "Detect and Contain at Machine Speed",
-            description: "When prevention fails, speed is everything. Our behavioral detection identifies ransomware activity in seconds and automatically contains affected systems to prevent spread.",
-            image: "/images/features/threat-hunting.png",
+            title: "Detect & Block Encryption",
+            description: "Our behavioral engine monitors for encryption activities and kills malicious processes in milliseconds.",
             points: [
-                "Behavioral analytics tuned for ransomware TTPs",
-                "Automatic endpoint isolation upon detection",
-                "Real-time alerts with full attack context",
-                "24/7 SOC monitoring and response"
+                "Real-time analysis of file system activity",
+                "Kill malicious processes instantly upon detection",
+                "Isolate infected endpoints from the network",
+                "Prevent lateral movement to other systems"
             ]
         },
         {
             title: "Recover with Confidence",
-            description: "Ransomware incidents are measured in downtime and data loss. Our recovery capabilities minimize both with protected backups and tested recovery procedures.",
-            image: "/images/features/data-protection.png",
+            description: "Ensure business resilience with automated backups and instant rollback capabilities.",
             points: [
-                "Immutable backup storage immune to encryption",
-                "Automated recovery orchestration and validation",
-                "Forensic analysis to ensure complete remediation",
-                "Post-incident hardening recommendations"
+                "Tamper-proof shadow copy protection",
+                "One-click rollback of encrypted files",
+                "exclude known safe processes to prevent false positives",
+                "Detailed forensics reports for post-incident analysis"
             ]
         }
     ],
     stats: [
-        { value: "<4hr", label: "Response SLA" },
-        { value: "99.9%", label: "Prevention Rate" },
-        { value: "24/7", label: "SOC Coverage" },
-        { value: "Zero", label: "Data Loss Goal" }
+        { value: "100%", label: "Ransomware Blocked" },
+        { value: "<1ms", label: "Blocking Speed" },
+        { value: "0", label: "Data Lost" },
+        { value: "24/7", label: "Automated Defense" }
     ]
 };
 

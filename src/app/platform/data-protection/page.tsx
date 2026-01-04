@@ -1,7 +1,11 @@
 "use client";
 
-import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { ShieldCheck, Lock, Eye, Shield, Database, Zap } from 'lucide-react';
+import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
+import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
+import { StaticDataFlow } from "@/components/diagrams/static/StaticDataFlow";
+
+import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
 
 const dataProtectionData = {
     badge: "Data Protection",
@@ -44,7 +48,7 @@ const dataProtectionData = {
         {
             title: "Reduced Data Leakage",
             description: "Stop data breaches before they happen with comprehensive visibility and control over sensitive data.",
-            image: "/images/features/data-protection.png",
+            component: <StaticDataFlow />,
             points: [
                 "Content-aware DLP policies",
                 "Real-time data monitoring",
@@ -55,7 +59,6 @@ const dataProtectionData = {
         {
             title: "Regulatory Compliance",
             description: "Meet data protection requirements for GDPR, CCPA, HIPAA, PCI-DSS, and other regulations.",
-            image: "/images/features/compliance.png",
             points: [
                 "Pre-built compliance policies",
                 "Automated compliance reporting",
@@ -63,6 +66,16 @@ const dataProtectionData = {
                 "Data retention management"
             ]
         },
+        {
+            title: "Encryption Everywhere",
+            description: "Protect data at rest and in transit, ensuring that even if data is stolen, it remains unreadable and useless to attackers.",
+            points: [
+                "Automated key management and rotation",
+                "Transparent database encryption",
+                "File and folder level encryption",
+                "Secure data sharing and collaboration"
+            ]
+        }
     ],
     stats: []
 };
