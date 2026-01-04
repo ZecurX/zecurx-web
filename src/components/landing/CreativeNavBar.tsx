@@ -71,17 +71,17 @@ const navData = {
             {
                 title: "Offensive",
                 items: [
-                    { icon: Target, title: "Penetration Testing", desc: "Red team assessments", href: "/services#ptaas" },
-                    { icon: Eye, title: "Vulnerability Management", desc: "Continuous scanning", href: "/services#vuln-audits" },
+                    { icon: Target, title: "Penetration Testing", desc: "Red team assessments", href: "/services/offensive/penetration-testing" },
+                    { icon: Eye, title: "Vulnerability Management", desc: "Continuous scanning", href: "/services/offensive/vulnerability-management" },
                 ]
             },
             {
                 title: "Engineering",
                 items: [
-                    { icon: Code, title: "Secure Development", desc: "Security by design", href: "/services#secure-dev" },
-                    { icon: Globe, title: "Web & App Security", desc: "Application hardening", href: "/services#secure-dev" }, // Mapping to same as user only has "Secure Web & App Dev"
-                    { icon: Settings, title: "DevSecOps", desc: "CI/CD security", href: "/services#secure-dev" }, // Mapping generic terms to closest fit
-                    { icon: Users, title: "Consulting", desc: "Strategic advisory", href: "/services#engineering" }, // General section for now
+                    { icon: Code, title: "Secure Development", desc: "Security by design", href: "/services/engineering/secure-development" },
+                    { icon: Globe, title: "Web & App Security", desc: "Application hardening", href: "/services/engineering/web-app-security" },
+                    { icon: Settings, title: "DevSecOps", desc: "CI/CD security", href: "/services/engineering/devsecops" },
+                    { icon: Users, title: "Consulting", desc: "Strategic advisory", href: "/services/engineering/consulting" },
                 ]
             },
             {

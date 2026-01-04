@@ -1,184 +1,25 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import {
-    Target, Eye, Search, ShieldAlert, Code, Globe,
-    Settings, Users, Brain, Rocket, UserPlus,
-    Award, Smartphone, Layers, ShieldCheck, CheckCircle,
-    Radar, FolderSearch, Lock, ArrowRight
+    Target, Eye, Code, Globe, Settings, Users,
+    Rocket, Radar, FolderSearch, Lock, ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
-import Footer from '@/components/landing/Footer'; // Assuming Footer is here, based on file structure
-
-// Service Data
-const serviceCategories = [
-    {
-        title: "Offensive Security Services",
-        id: "offensive",
-        description: "Proactive identification and mitigation of vulnerabilities through real-world attack simulations.",
-        services: [
-            {
-                title: "Penetration Testing as a Service (PTaaS)",
-                id: "ptaas",
-                description: "End-to-end offensive testing of web apps, APIs, cloud, networks, IoT, and Active Directory environments. Delivered with real-time dashboards, PoC videos, and remediation guidance.",
-                icon: Target,
-                benefits: [
-                    "Real vulnerability exploitation",
-                    "Executive + technical reporting",
-                    "On-demand retesting cycles",
-                    "Faster compliance alignment (ISO/NIST/OWASP)"
-                ]
-            },
-            {
-                title: "Red Team Assessments",
-                id: "red-team",
-                description: "Simulated multi-layered attacks to test detection, response, and security awareness across the organization.",
-                icon: ShieldAlert, // Using ShieldAlert for Red Team
-                benefits: [
-                    "Real-world adversarial emulation",
-                    "Breach impact visualization",
-                    "Internal threat hunting triggers",
-                    "Customized TTPs (MITRE ATT&CK)"
-                ]
-            },
-            {
-                title: "Vulnerability & Risk Audits",
-                id: "vuln-audits",
-                description: "Comprehensive audits of infrastructure, applications, and assets using OWASP, NIST, and ISO standards.",
-                icon: Search,
-                benefits: [
-                    "Asset-level risk scoring",
-                    "Gap analysis & compliance mapping",
-                    "Prioritized remediation checklist",
-                    "Internal audit readiness"
-                ]
-            },
-            {
-                title: "Security Operations & Threat Hunting",
-                id: "threat-hunting",
-                description: "Behavior-based threat detection, continuous monitoring, and proactive response planning.",
-                icon: ShieldCheck,
-                benefits: [
-                    "Detect APTs, insider threats, and anomalies",
-                    "Use of AI and log analytics",
-                    "Integration with SIEM/SOAR",
-                    "Monthly Threat Intel Reports"
-                ]
-            }
-        ]
-    },
-    {
-        title: "Secure Development Services",
-        id: "engineering",
-        description: "Embedding security into the software development lifecycle to build resilient applications.",
-        services: [
-            {
-                title: "Secure Web & App Development",
-                id: "secure-dev",
-                description: "Custom enterprise solutions developed with DevSecOps pipelines and security-first coding principles.",
-                icon: Globe,
-                benefits: [
-                    "Role-based access & hardened endpoints",
-                    "Secure architecture design",
-                    "CI/CD & code integrity pipelines",
-                    "Scalable & API-friendly infrastructure"
-                ]
-            },
-            {
-                title: "Security-Centric Code Review",
-                id: "code-review",
-                description: "Manual + automated review of source code to identify logic, injection, and memory issues.",
-                icon: Code,
-                benefits: [
-                    "SAST & DAST integration",
-                    "OWASP Top 10 & CWE aligned",
-                    "Remediation walkthroughs",
-                    "Shift-left security enhancement"
-                ]
-            },
-            {
-                title: "Secure Cloud Solutions",
-                id: "cloud-security",
-                description: "Cloud-native app design, deployment hardening, and continuous security review on AWS, Azure, and GCP.",
-                icon: Layers, // Cloud concept
-                benefits: [
-                    "Identity & secrets management",
-                    "Infrastructure-as-code security",
-                    "Multi-tenant isolation",
-                    "Cloud compliance mapping"
-                ]
-            },
-            {
-                title: "Enterprise Dashboards & Portals",
-                id: "enterprise-portals",
-                description: "Role-based portals for internal teams, students, or enterprise clients — analytics, control, and security baked-in.",
-                icon: Settings,
-                benefits: [
-                    "Real-time access control",
-                    "Data visualization + audit trails",
-                    "Integration with SSO, LDAP",
-                    "Academic + business use cases"
-                ]
-            }
-        ]
-    },
-    {
-        title: "AI-Driven Training Services",
-        id: "training",
-        description: "Empowering teams with cutting-edge cybersecurity skills through AI-enhanced learning.",
-        services: [
-            {
-                title: "160-Hour Enterprise Cybersecurity Training",
-                id: "training-160h",
-                description: "Offline + cloud lab training combining AI, offensive security, and certification preparation.",
-                icon: Brain,
-                benefits: [
-                    "Hands-on lab modules",
-                    "CTFs + real attack simulations",
-                    "License-verifiable certification",
-                    "Trainer-led sessions with ranks"
-                ]
-            },
-            {
-                title: "Faculty Development Program (FDP)",
-                id: "fdp",
-                description: "Upskilling academic staff in cybersecurity teaching, red teaming, and secure programming.",
-                icon: UserPlus,
-                benefits: [
-                    "Includes certification for faculty",
-                    "5-member package with post-training support",
-                    "Covers offensive + defensive modules"
-                ]
-            },
-            {
-                title: "Custom Workshops & Seminars",
-                id: "workshops",
-                description: "On-site or online workshops covering offensive security, hacking awareness, and digital trust.",
-                icon: Users,
-                benefits: [
-                    "Customized for students or corporates",
-                    "Live hacking demos",
-                    "Delivered by certified trainers"
-                ]
-            },
-            {
-                title: "Certification Programs: zxCPEH, zxCPPT",
-                id: "certifications",
-                description: "ZecurX's proprietary certifications, aligned with industry demands, with real-time verification.",
-                icon: Award,
-                benefits: [
-                    "Practical CTF-based assessments",
-                    "License ID tracking on ZecurX",
-                    "Globally competitive content"
-                ]
-            }
-        ]
-    }
-];
+import Footer from '@/components/landing/Footer';
 
 export default function ServicesPage() {
+    const containerRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start end", "end start"]
+    });
+
+    const y1 = useTransform(scrollYProgress, [0, 1], [0, 0]);
+    const y2 = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
     useEffect(() => {
         // Handle hash scrolling on mount with retry mechanism
         const handleHashScroll = () => {
@@ -250,65 +91,78 @@ export default function ServicesPage() {
             </section>
 
             {/* SERVICES SECTIONS */}
-            <div className="pb-24 space-y-24">
-                {serviceCategories.map((category, categoryIdx) => (
-                    <section key={categoryIdx} id={category.id} className="relative scroll-mt-28">
-                        <div className="max-w-7xl mx-auto px-6">
-                            {/* Category Header */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5 }}
-                                className="mb-12"
-                            >
-                                <h2 className="text-3xl font-bold text-foreground mb-4">{category.title}</h2>
-                                <p className="text-muted-foreground max-w-2xl">{category.description}</p>
-                            </motion.div>
-
-                            {/* Cards Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                                {category.services.map((service, serviceIdx) => (
-                                    <motion.div
-                                        key={serviceIdx}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.4, delay: serviceIdx * 0.1 }}
-                                        id={service.id}
-                                        className="group relative p-8 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 hover:border-primary/20 transition-colors duration-300 scroll-mt-32"
-                                    >
-                                        <div className="flex items-start gap-4 mb-6">
-                                            <div className="p-3 rounded-lg bg-background border border-border group-hover:bg-primary/5 group-hover:border-primary/20 transition-colors">
-                                                <service.icon className="w-6 h-6 text-primary" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                                                    {service.title}
-                                                </h3>
-                                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                                    {service.description}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-3">
-                                            <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider">Key Benefits</h4>
-                                            <ul className="space-y-2">
-                                                {service.benefits.map((benefit, i) => (
-                                                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                                                        <CheckCircle className="w-4 h-4 text-green-500/80 mt-0.5 flex-shrink-0" />
-                                                        <span>{benefit}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
+            <div ref={containerRef} className="pb-24 max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+                    {/* OFFENSIVE COLUMN */}
+                    <motion.div style={{ y: y1 }}>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-8"
+                        >
+                            Offensive
+                        </motion.h2>
+                        <div className="space-y-6">
+                            <ServiceCard
+                                href="/services/offensive/penetration-testing"
+                                icon={Target}
+                                title="Penetration Testing"
+                                description="Red team assessments and simulated attacks."
+                                delay={0.1}
+                            />
+                            <ServiceCard
+                                href="/services/offensive/vulnerability-management"
+                                icon={Eye}
+                                title="Vulnerability Management"
+                                description="Continuous scanning and asset identification."
+                                delay={0.2}
+                            />
                         </div>
-                    </section>
-                ))}
+                    </motion.div>
+
+                    {/* ENGINEERING COLUMN */}
+                    <motion.div style={{ y: y2 }}>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-8"
+                        >
+                            Engineering
+                        </motion.h2>
+                        <div className="space-y-6">
+                            <ServiceCard
+                                href="/services/engineering/secure-development"
+                                icon={Code}
+                                title="Secure Development"
+                                description="Security by design principles."
+                                delay={0.1}
+                            />
+                            <ServiceCard
+                                href="/services/engineering/web-app-security"
+                                icon={Globe}
+                                title="Web & App Security"
+                                description="Application hardening and protection."
+                                delay={0.2}
+                            />
+                            <ServiceCard
+                                href="/services/engineering/devsecops"
+                                icon={Settings}
+                                title="DevSecOps"
+                                description="Automated security in CI/CD pipelines."
+                                delay={0.3}
+                            />
+                            <ServiceCard
+                                href="/services/engineering/consulting"
+                                icon={Users}
+                                title="Consulting"
+                                description="Strategic security advisory."
+                                delay={0.4}
+                            />
+                        </div>
+                    </motion.div>
+                </div>
             </div>
 
             {/* TOOLS TEASER SECTION */}
@@ -383,5 +237,40 @@ export default function ServicesPage() {
 
             <Footer />
         </main>
+    );
+}
+
+import Link from 'next/link';
+
+function ServiceCard({ href, icon: Icon, title, description, delay }: { href: string, icon: any, title: string, description: string, delay: number }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay }}
+        >
+            <Link
+                href={href}
+                className="block group relative p-8 rounded-2xl bg-muted/5 border border-border/50 hover:bg-muted/10 hover:border-blue-500/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            >
+                <div className="flex items-center gap-6">
+                    <div className="p-4 rounded-xl bg-background border border-border group-hover:border-blue-500/20 group-hover:scale-110 transition-all duration-300">
+                        <Icon className="w-8 h-8 text-foreground group-hover:text-blue-500 transition-colors" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-blue-500 transition-colors">
+                            {title}
+                        </h3>
+                        <p className="text-base text-muted-foreground">
+                            {description}
+                        </p>
+                    </div>
+                    <div className="ml-auto opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
+                        <ArrowRight className="w-5 h-5 text-blue-500" />
+                    </div>
+                </div>
+            </Link>
+        </motion.div>
     );
 }
