@@ -26,6 +26,7 @@ interface FeatureData {
         description: string;
         points: string[];
         image?: string;
+        component?: React.ReactNode;
     }[];
     stats: {
         value: string;
@@ -207,57 +208,79 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
             {/* Features Section */}
             <section className="relative z-10 px-6 py-16">
                 <div className="max-w-7xl mx-auto">
-                    {data.features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: index * 0.1 }}
-                            viewport={{ once: true }}
-                            className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-12 items-center mb-24 last:mb-0`}
-                        >
-                            {/* Content */}
-                            <div className="flex-1">
-                                <h3 className="text-2xl md:text-3xl font-manrope font-medium text-foreground mb-4">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                                    {feature.description}
-                                </p>
-                                <ul className="space-y-3">
-                                    {feature.points.map((point, i) => (
-                                        <li key={i} className="flex items-start gap-3">
-                                            <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                                            <span className="text-foreground/80">{point}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                    {(() => {
+                        const visualFeatureIndex = data.features.findIndex(f => f.component || f.image);
+                        const visualFeature = data.features[visualFeatureIndex];
+                        const textFeatures = data.features.filter((_, i) => i !== visualFeatureIndex);
+                        const topFeature = textFeatures[0];
+                        const bottomFeature = textFeatures[1];
 
-                            {/* Visual */}
-                            <div className="flex-1 w-full max-w-md lg:max-w-lg">
-                                <div className="relative aspect-[16/10] rounded-2xl bg-muted/50 border border-border overflow-hidden">
-                                    {feature.image ? (
-                                        <Image
-                                            src={feature.image}
-                                            alt={feature.title}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    ) : (
-                                        <>
-                                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center">
-                                                    <CheckCircle2 className="w-8 h-8 text-primary/50" />
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
+                        const FeatureBlock = ({ feature }: { feature: typeof data.features[0] }) => (
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6 }}
+                                viewport={{ once: true }}
+                                className="flex flex-col gap-8 items-center text-center max-w-4xl mx-auto mb-24 last:mb-0"
+                            >
+                                <div>
+                                    <h3 className="text-2xl md:text-4xl font-manrope font-medium text-foreground mb-6">
+                                        {feature.title}
+                                    </h3>
+                                    <p className="text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
+                                        {feature.description}
+                                    </p>
+                                    <ul className="grid sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+                                        {feature.points.map((point, i) => (
+                                            <li key={i} className="flex items-start gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                                                <span className="text-foreground/80">{point}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
+                            </motion.div>
+                        );
+
+                        return (
+                            <div className="flex flex-col gap-12">
+                                {/* Top Text Feature */}
+                                {topFeature && <FeatureBlock feature={topFeature} />}
+
+                                {/* Central Visual */}
+                                {visualFeature && (visualFeature.component || visualFeature.image) && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.8 }}
+                                        viewport={{ once: true }}
+                                        className="w-full max-w-2xl mx-auto px-4 mb-24 relative z-10"
+                                    >
+                                        <div className="relative aspect-[16/9] rounded-3xl bg-white dark:bg-muted/5 border border-border/10 dark:border-border/5 shadow-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/5">
+                                            {/* Light mode gradient overlay for depth */}
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-blue-50/50 via-transparent to-transparent opacity-100 dark:opacity-0 pointer-events-none" />
+
+                                            {visualFeature.component ? (
+                                                <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent">
+                                                    {visualFeature.component}
+                                                </div>
+                                            ) : (
+                                                <Image
+                                                    src={visualFeature.image!}
+                                                    alt={visualFeature.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* Bottom Text Feature */}
+                                {bottomFeature && <FeatureBlock feature={bottomFeature} />}
                             </div>
-                        </motion.div>
-                    ))}
+                        );
+                    })()}
                 </div>
             </section>
 

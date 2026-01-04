@@ -1,68 +1,69 @@
 "use client";
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
-import { KeyRound, Shield, Users, Eye, Lock, Zap } from 'lucide-react';
+import { UserCheck, Shield, Key, Eye, Lock, Fingerprint } from 'lucide-react';
+import { StaticIdentityVerification } from "@/components/diagrams/static/StaticIdentityVerification";
+import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
 
 const identitySecurityData = {
-    badge: "Identity Security",
-    title: "Zero Trust",
-    subtitle: "Identity Protection",
-    description: "Focus on identity behavior, privilege usage, and access risk—not just authentication. AI detects identity abuse and triggers automated access restrictions.",
+    badge: "Platform Feature",
+    title: "Identity",
+    subtitle: "Security",
+    description: "Secure identities across your enterprise. Detect compromised credentials and lateral movement with identity-centric security.",
     capabilities: [
         {
-            icon: <KeyRound className="w-6 h-6" />,
-            title: "Privileged Access Management",
-            description: "Secure and monitor privileged accounts with just-in-time access, session recording, and credential vaulting."
+            icon: <UserCheck className="w-6 h-6" />,
+            title: "Identity Threat Detection",
+            description: "Detect identity-based attacks like credential theft, privilege escalation, and lateral movement in real-time."
         },
         {
-            icon: <Users className="w-6 h-6" />,
-            title: "Identity Governance",
-            description: "Automated access reviews, certification campaigns, and lifecycle management for all identities."
-        },
-        {
-            icon: <Eye className="w-6 h-6" />,
-            title: "Behavior Analytics",
-            description: "AI-powered detection of anomalous identity behavior, impossible travel, and credential abuse patterns."
+            icon: <Key className="w-6 h-6" />,
+            title: "Access Management",
+            description: "Enforce least privilege access with granular controls and dynamic policies based on user risk."
         },
         {
             icon: <Shield className="w-6 h-6" />,
             title: "MFA Enforcement",
-            description: "Adaptive multi-factor authentication that adjusts based on risk context and user behavior."
+            description: "Adaptive Multi-Factor Authentication that steps up challenges based on risk scoring."
+        },
+        {
+            icon: <Eye className="w-6 h-6" />,
+            title: "Visibility",
+            description: "Complete visibility into all accounts, roles, and entitlements across cloud and on-premises environments."
         },
         {
             icon: <Lock className="w-6 h-6" />,
-            title: "Single Sign-On",
-            description: "Secure SSO for all applications with centralized access policies and real-time visibility."
+            title: "SSO Integration",
+            description: "Seamless integration with major Identity Providers (IdPs) like Okta, Azure AD, and Ping."
         },
         {
-            icon: <Zap className="w-6 h-6" />,
-            title: "Automated Response",
-            description: "Instant response to identity threats—disable accounts, revoke sessions, or require re-authentication."
+            icon: <Fingerprint className="w-6 h-6" />,
+            title: "Biometric Support",
+            description: "Support for modern passwordless authentication methods using FIDO2 and biometrics."
         },
     ],
     features: [
         {
-            title: "Reduced Identity Attacks",
-            description: "Identity is the new perimeter. Our platform protects against credential theft, phishing, and account takeover attacks.",
-            image: "/images/features/identity-security.png",
+            title: "Prevent Account Takeover",
+            description: "Stop attackers from using stolen credentials. Our AI analyzes user behavior to detect anomalies and block unauthorized access.",
+            component: <StaticIdentityVerification />,
             points: [
-                "Real-time credential abuse detection",
-                "Phishing-resistant authentication",
-                "Dark web credential monitoring",
-                "Compromised password detection"
+                "Behavioral baseline profiling",
+                "Impossible travel detection",
+                "Risky IP and device blocking",
+                "Automated account lockout"
             ]
         },
         {
-            title: "Improved Access Governance",
-            description: "Ensure the right people have the right access to the right resources—no more, no less.",
-            image: "/images/features/access-control.png",
+            title: "Unified Identity View",
+            description: "Get a single view of identity risk across your entire organization. Correlate identity data with endpoint and network telemetry.",
             points: [
-                "Automated access reviews",
-                "Role-based access control",
-                "Segregation of duties enforcement",
-                "Access certification campaigns"
+                "360-degree user risk scoring",
+                "Cross-domain correlation",
+                "Privileged user monitoring",
+                "Identity hygiene reporting"
             ]
-        },
+        }
     ],
     stats: []
 };

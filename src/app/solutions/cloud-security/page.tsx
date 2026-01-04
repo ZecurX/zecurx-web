@@ -3,6 +3,10 @@
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Cloud, Shield, Eye, Settings, Lock, Code } from "lucide-react";
 
+import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
+import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
+import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
+
 const cloudSecurityData = {
     badge: "Security Solution",
     title: "Cloud",
@@ -44,7 +48,7 @@ const cloudSecurityData = {
         {
             title: "Unified Visibility Across Multi-Cloud",
             description: "You can’t protect what you can’t see. Our agentless platform provides comprehensive visibility across your entire cloud footprint, discovering assets, mapping relationships, and identifying risks.",
-            image: "/images/features/cloud-security.png",
+            component: <StaticInfrastructureMap />,
             points: [
                 "Single console for AWS, Azure, and GCP environments",
                 "Automatic asset discovery and inventory management",
@@ -55,7 +59,6 @@ const cloudSecurityData = {
         {
             title: "Secure the Full Cloud Stack",
             description: "Cloud security requires protecting multiple layers—from infrastructure to applications to data. Our CNAPP approach provides integrated protection across the entire stack.",
-            image: "/images/features/endpoint-protection.png",
             points: [
                 "Cloud Security Posture Management (CSPM)",
                 "Cloud Workload Protection Platform (CWPP)",
@@ -66,7 +69,6 @@ const cloudSecurityData = {
         {
             title: "Enable Secure Cloud Development",
             description: "Security shouldn’t slow down development. Our platform integrates into CI/CD pipelines, enabling developers to build securely without friction.",
-            image: "/images/features/app-security.png",
             points: [
                 "IaC scanning in pull requests with fix suggestions",
                 "Container image scanning before registry push",

@@ -2,6 +2,8 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Target, Eye, Shield, Globe, Zap, Brain } from 'lucide-react';
+import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
+import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
 
 const threatIntelligenceData = {
     badge: "Threat Intelligence",
@@ -29,40 +31,29 @@ const threatIntelligenceData = {
             title: "Dark Web Monitoring",
             description: "Monitor dark web forums, marketplaces, and paste sites for mentions of your organization."
         },
-        {
-            icon: <Brain className="w-6 h-6" />,
-            title: "AI Correlation",
-            description: "Machine learning models that correlate threat data to identify campaigns targeting your industry."
-        },
-        {
-            icon: <Zap className="w-6 h-6" />,
-            title: "Threat Briefings",
-            description: "Regular intelligence briefings on emerging threats and recommended defensive actions."
-        },
-    ],
+    ], // Added comma here and fixed the syntax error from '}' to ']'
     features: [
         {
-            title: "Early Attack Detection",
-            description: "Identify attacks in their early stages before they cause significant impact. Intelligence-driven detection catches what automated tools miss.",
-            image: "/images/features/threat-hunting.png",
+            title: "Real-Time Threat Feeds",
+            description: "Stay ahead of attackers with continuously updated threat indicators sourced from millions of global sensors.",
+            component: <StaticThreatMesh />,
             points: [
-                "Pre-attack reconnaissance detection",
-                "Campaign tracking and attribution",
-                "Industry-specific threat profiles",
-                "Attack chain analysis"
+                "Automated ingestion of IOCs (Indicators of Compromise)",
+                "Correlation with your internal telemetry",
+                "Contextualized threat scoring",
+                "Integration with third-party feeds"
             ]
         },
         {
             title: "Reduced Dwell Time",
-            description: "The average attacker dwells in networks for months. Our threat hunting reduces this to hours or days.",
-            image: "/images/features/incident-response.png",
+            description: "Detect hidden threats faster by matching your network activity against known adversary tactics, techniques, and procedures (TTPs).",
             points: [
-                "Scheduled and on-demand hunting",
-                "Hypothesis-driven investigations",
-                "Behavioral anomaly detection",
-                "Historical data analysis"
+                "Mapping to MITRE ATT&CK framework",
+                "Proactive hunting for dormant threats",
+                "Automated retrospective analysis",
+                "Detailed adversary profiles"
             ]
-        },
+        }
     ],
     stats: []
 };
