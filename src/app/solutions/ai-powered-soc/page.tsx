@@ -2,6 +2,10 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Brain, Eye, Zap, Target, Shield, Settings } from "lucide-react";
+import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
+
+import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
+import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
 
 const aiPoweredSocData = {
     badge: "Security Solution",
@@ -44,7 +48,7 @@ const aiPoweredSocData = {
         {
             title: "Turn Every Analyst Into a Force Multiplier",
             description: "Security talent is scarce and expensive. Our AI augments your team's capabilities, enabling junior analysts to perform at senior levels and freeing senior analysts to focus on advanced threats.",
-            image: "/images/features/ai-detection.png",
+            component: <StaticAnalystDashboard />,
             points: [
                 "AI-assisted investigations that provide instant context and recommendations",
                 "Automated documentation and reporting that saves hours of manual work",
@@ -55,7 +59,6 @@ const aiPoweredSocData = {
         {
             title: "Detect What Others Miss",
             description: "Traditional signature-based detection can't keep pace with modern threats. Our AI continuously learns from global threat intelligence and your environment to detect sophisticated attacks that evade conventional tools.",
-            image: "/images/features/threat-hunting.png",
             points: [
                 "Behavioral analytics that detect living-off-the-land attacks",
                 "Entity behavior analysis for insider threat detection",
@@ -66,7 +69,6 @@ const aiPoweredSocData = {
         {
             title: "Respond at Machine Speed",
             description: "When every second counts, manual response isn't enough. Our AI-orchestrated response capabilities contain threats automatically while keeping humans in control of critical decisions.",
-            image: "/images/features/incident-response.png",
             points: [
                 "Sub-second automated containment of confirmed threats",
                 "Intelligent escalation based on threat severity and business context",

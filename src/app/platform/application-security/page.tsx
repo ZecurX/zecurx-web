@@ -2,12 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Code, Shield, Eye, Settings, Lock, Zap } from 'lucide-react';
+import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
+import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
 
 const applicationSecurityData = {
-    badge: "Application Security",
-    title: "Secure SDLC",
-    subtitle: "Application Protection",
-    description: "Security integrated across the application lifecycle, from development to production. AI prioritizes exploitable risks and automates remediation recommendations.",
+    badge: "Platform Feature",
+    title: "Application",
+    subtitle: "Security",
+    description: "Secure your applications from code to cloud. Findings are prioritized by risk, allowing developers to fix what matters most.",
     capabilities: [
         {
             icon: <Code className="w-6 h-6" />,
@@ -42,27 +44,26 @@ const applicationSecurityData = {
     ],
     features: [
         {
-            title: "Faster App Releases",
-            description: "Security that enables velocity, not restricts it. Automated scanning and prioritization keeps development moving fast.",
-            image: "/images/features/app-security.png",
+            title: "Reduced Vulnerabilities",
+            description: "Find and fix vulnerabilities early in the SDLC with automated scanning and remediation guidance.",
+            component: <StaticCicdPipeline />,
             points: [
-                "Automated security gates in CI/CD",
-                "Developer-friendly remediation guidance",
-                "IDE integration for real-time feedback",
-                "Risk-based prioritization of findings"
+                "SAST/DAST integration",
+                "Software Composition Analysis (SCA)",
+                "API security testing",
+                "Infrastructure as Code scanning"
             ]
         },
         {
-            title: "Reduced Vulnerabilities",
-            description: "Catch vulnerabilities before they reach production. Our shift-left approach prevents issues from becoming incidents.",
-            image: "/images/features/vulnerability-scan.png",
+            title: "Faster Release Cycles",
+            description: "Automate security within your DevOps pipeline without slowing down deployment velocity.",
             points: [
-                "Pre-commit hooks for security scanning",
-                "Pull request security reviews",
-                "Automated dependency updates",
-                "Vulnerability SLA tracking"
+                "IDE integration for real-time feedback",
+                "Automated build-breaking policies",
+                "Compliance policy as code",
+                "Developer-friendly remediation"
             ]
-        },
+        }
     ],
     stats: []
 };

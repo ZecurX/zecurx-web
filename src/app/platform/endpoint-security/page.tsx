@@ -2,6 +2,8 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Shield, Cpu, Eye, Zap, Lock, Target } from 'lucide-react';
+import { StaticIdentityVerification } from "@/components/diagrams/static/StaticIdentityVerification";
+import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
 
 const endpointSecurityData = {
     badge: "Endpoint Security",
@@ -29,40 +31,29 @@ const endpointSecurityData = {
             title: "Lateral Movement Detection",
             description: "Identify and block attackers attempting to move laterally through your network after initial compromise."
         },
-        {
-            icon: <Zap className="w-6 h-6" />,
-            title: "Automated Response",
-            description: "Instant remediation actions to contain threats before they cause damage—isolate, quarantine, or rollback."
-        },
-        {
-            icon: <Lock className="w-6 h-6" />,
-            title: "Device Control",
-            description: "Granular control over USB devices, peripherals, and removable media to prevent data exfiltration."
-        },
     ],
     features: [
         {
-            title: "Reduced Breach Probability",
-            description: "Our behavior-based approach catches threats that signature-based solutions miss, significantly reducing the probability of a successful breach.",
-            image: "/images/features/endpoint-protection.png",
+            title: "Prevent Malware Execution",
+            description: "Stop known and unknown threats with AI-driven static analysis and behavioral blocking.",
             points: [
-                "Zero-day threat detection without signatures",
-                "Behavioral analysis of processes and applications",
-                "Proactive threat hunting capabilities",
-                "Real-time risk scoring for all endpoints"
+                "Pre-execution blocking of malware and ransomware",
+                "Script control to prevent fileless attacks",
+                "Device control for USB and peripheral security",
+                "Memory protection against exploit techniques"
             ]
         },
         {
             title: "Faster Incident Containment",
-            description: "When threats are detected, our platform enables rapid containment to minimize impact and prevent spread across your environment.",
-            image: "/images/features/security-dashboard.png",
+            description: "Isolate compromised devices instantly to stop the spread of attacks.",
+            component: <StaticNetworkDefense />,
             points: [
-                "One-click endpoint isolation",
-                "Automated remediation playbooks",
-                "Forensic data collection for investigation",
-                "Rollback capabilities for ransomware attacks"
+                "One-click network isolation",
+                "Automated quarantine of malicious files",
+                "Remote sheel for investigation and remediation",
+                "Real-time query of endpoint state"
             ]
-        },
+        }
     ],
     stats: []
 };
