@@ -2,17 +2,51 @@
 
 import React from 'react';
 import HeroVideoCard from './HeroVideoCard';
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
 
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = React.useState(false);
+
+    // Parallax Effect
+    const { scrollY } = useScroll();
+    const backgroundY = useTransform(scrollY, [0, 500], ["0%", "20%"]);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Default to dark if not mounted to prevent flash, or simplistic default.
+    // Actually, usually beneficial to render nothing or a neutral specific one until mounted to avoid mismatch.
+    // However, for SEO/Performance, maybe CSS variables are better?
+    // Given the constraints and the user request, I'll use inline style or class logic.
+    const backgroundImage = mounted && resolvedTheme === 'light'
+        ? '/assets/light-bg.png'
+        : '/assets/dark-bg.png';
+
     return (
         <section className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 transition-colors duration-500">
 
-            {/* Modern Grid Texture */}
-            <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-            
+            {/* Background Image */}
+            {mounted && (
+                <motion.div
+                    className="absolute inset-0 z-0 h-full w-full bg-cover bg-center bg-no-repeat pointer-events-none"
+                    style={{
+                        backgroundImage: `url(${backgroundImage})`,
+                        y: backgroundY
+                    }}
+                />
+            )}
+
+            {/* Fallback/Loading or just empty until mounted? 
+                If we don't render anything, it might flash white/black.
+                Better to render a default (e.g. dark) if server-side, but 'mounted' protects against mismatch errors.
+                Let's stick to mounted check for safety. 
+            */}
+
             {/* Subtle Top Glow */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -59,13 +93,8 @@ export default function HeroSection() {
                     </Button>
 
                     {/* Secondary Button - Contact */}
-                    <Button variant="outline" size="lg" className="rounded-full text-base font-medium px-8">
+                    <Button variant="outline" size="lg" className="rounded-full text-base font-medium px-8 bg-transparent hover:bg-accent/10 border-white/20 text-white">
                         Contact Us
-                    </Button>
-
-                    {/* Tertiary Button */}
-                    <Button variant="secondary" size="lg" className="rounded-full text-base font-medium">
-                        Explore ZecurX Academy →
                     </Button>
                 </motion.div>
 
