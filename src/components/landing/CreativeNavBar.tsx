@@ -145,16 +145,16 @@ const navData = {
             {
                 title: "Content",
                 items: [
-                    { icon: BookOpen, title: "Blog", desc: "Latest insights" },
-                    { icon: FileSearch, title: "Whitepapers", desc: "Deep-dive reports" },
-                    { icon: Lightbulb, title: "Research", desc: "Threat intelligence" },
+                    { icon: BookOpen, title: "Blog", desc: "Latest insights", href: "/resources/blog" },
+                    { icon: FileSearch, title: "Whitepapers", desc: "Deep-dive reports", href: "/resources/whitepapers" },
+                    { icon: Lightbulb, title: "Research", desc: "Threat intelligence", href: "/resources/research" },
                 ]
             },
             {
                 title: "Learning",
                 items: [
-                    { icon: BookMarked, title: "Security Guides", desc: "Best practices" },
-                    { icon: Video, title: "Webinars", desc: "Expert sessions" },
+                    { icon: BookMarked, title: "Security Guides", desc: "Best practices", href: "/resources/guides" },
+                    { icon: Video, title: "Webinars", desc: "Expert sessions", href: "/resources/webinars" },
                 ]
             },
         ]
