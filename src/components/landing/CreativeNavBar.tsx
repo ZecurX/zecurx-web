@@ -92,25 +92,24 @@ const navData = {
             }
         ]
     },
-    industries: {
-        label: "Industries",
-        tagline: "Sector-Specific Security",
-        cta: { label: "View Industries", href: "/industries" },
+    resources: {
+        label: "Resources",
+        tagline: "Knowledge & Insights",
+        cta: { label: "Browse Resources", href: "/resources" },
         columns: [
             {
-                title: "Enterprise",
+                title: "Content",
                 items: [
-                    { icon: Cpu, title: "Technology", desc: "Tech & SaaS", href: "/industries?tab=tech" },
-                    { icon: Coins, title: "Financial Services", desc: "Banking & fintech", href: "/industries?tab=bfsi" },
-                    { icon: Heart, title: "Healthcare", desc: "HIPAA compliance", href: "/industries?tab=healthcare" },
+                    { icon: BookOpen, title: "Blog", desc: "Latest insights", href: "/resources/blog" },
+                    { icon: FileSearch, title: "Whitepapers", desc: "Deep-dive reports", href: "/resources/whitepapers" },
+                    { icon: Lightbulb, title: "Research", desc: "Threat intelligence", href: "/resources/research" },
                 ]
             },
             {
-                title: "Public & Growth",
+                title: "Learning",
                 items: [
-                    { icon: Landmark, title: "Government", desc: "Critical infrastructure", href: "/industries?tab=gov" },
-                    { icon: GraduationCap, title: "Education", desc: "Research protection", href: "/industries?tab=edu" },
-                    { icon: Rocket, title: "Startups", desc: "Scalable security", href: "/industries?tab=tech" },
+                    { icon: BookMarked, title: "Security Guides", desc: "Best practices", href: "/resources/guides" },
+                    { icon: Video, title: "Webinars", desc: "Expert sessions", href: "/resources/webinars" },
                 ]
             },
         ]
@@ -137,24 +136,25 @@ const navData = {
             },
         ]
     },
-    resources: {
-        label: "Resources",
-        tagline: "Knowledge & Insights",
-        cta: { label: "Browse Resources", href: "/resources" },
+    industries: {
+        label: "Industries",
+        tagline: "Sector-Specific Security",
+        cta: { label: "View Industries", href: "/industries" },
         columns: [
             {
-                title: "Content",
+                title: "Enterprise",
                 items: [
-                    { icon: BookOpen, title: "Blog", desc: "Latest insights", href: "/resources/blog" },
-                    { icon: FileSearch, title: "Whitepapers", desc: "Deep-dive reports", href: "/resources/whitepapers" },
-                    { icon: Lightbulb, title: "Research", desc: "Threat intelligence", href: "/resources/research" },
+                    { icon: Cpu, title: "Technology", desc: "Tech & SaaS", href: "/industries?tab=tech" },
+                    { icon: Coins, title: "Financial Services", desc: "Banking & fintech", href: "/industries?tab=bfsi" },
+                    { icon: Heart, title: "Healthcare", desc: "HIPAA compliance", href: "/industries?tab=healthcare" },
                 ]
             },
             {
-                title: "Learning",
+                title: "Public & Growth",
                 items: [
-                    { icon: BookMarked, title: "Security Guides", desc: "Best practices", href: "/resources/guides" },
-                    { icon: Video, title: "Webinars", desc: "Expert sessions", href: "/resources/webinars" },
+                    { icon: Landmark, title: "Government", desc: "Critical infrastructure", href: "/industries?tab=gov" },
+                    { icon: GraduationCap, title: "Education", desc: "Research protection", href: "/industries?tab=edu" },
+                    { icon: Rocket, title: "Startups", desc: "Scalable security", href: "/industries?tab=tech" },
                 ]
             },
         ]
@@ -196,22 +196,38 @@ export default function CreativeNavBar() {
 
                         {/* PRIMARY NAVIGATION */}
                         <div className="flex items-center">
-                            {Object.entries(navData).map(([key, data]) => (
-                                <button
-                                    key={key}
-                                    className={cn(
-                                        "relative flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors",
-                                        activeDropdown === key ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                                    )}
-                                    onMouseEnter={() => setActiveDropdown(key)}
-                                >
-                                    {data.label}
-                                    <ChevronDown className={cn(
-                                        "w-3 h-3 transition-transform duration-200",
-                                        activeDropdown === key && "rotate-180"
-                                    )} />
-                                </button>
-                            ))}
+                            {Object.entries(navData).map(([key, data]) => {
+                                if (key === 'industries' || key === 'whyZecurx') {
+                                    return (
+                                        <a
+                                            key={key}
+                                            href={data.cta.href}
+                                            className={cn(
+                                                "relative flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors",
+                                                "text-muted-foreground hover:text-foreground"
+                                            )}
+                                        >
+                                            {data.label}
+                                        </a>
+                                    );
+                                }
+                                return (
+                                    <button
+                                        key={key}
+                                        className={cn(
+                                            "relative flex items-center gap-1 px-4 py-2 text-[13px] font-medium transition-colors",
+                                            activeDropdown === key ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                                        )}
+                                        onMouseEnter={() => setActiveDropdown(key)}
+                                    >
+                                        {data.label}
+                                        <ChevronDown className={cn(
+                                            "w-3 h-3 transition-transform duration-200",
+                                            activeDropdown === key && "rotate-180"
+                                        )} />
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         {/* SECONDARY NAVIGATION */}
