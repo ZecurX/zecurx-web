@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { imgGroup218 } from "@/components/landing/assets";
+import Link from "next/link";
 
 // Resource Categories Data
 const blogTopics = [
@@ -72,6 +73,7 @@ const featuredResources = [
         title: "ZecurX Blog",
         shortDesc: "Latest insights",
         detailedDesc: "Stay ahead of the curve with expert analysis on the dynamic cybersecurity landscape. Our engineers and analysts break down the latest threat vectors, industry trends, and defensive strategies.",
+        href: "/resources/blog",
     },
     {
         type: "Whitepapers",
@@ -79,6 +81,7 @@ const featuredResources = [
         title: "Whitepapers",
         shortDesc: "Deep-dive reports",
         detailedDesc: "Deep-dive technical documents and strategic reports that provide comprehensive insights into complex security challenges, architecture best practices, and industry compliance.",
+        href: "/resources/whitepapers",
     },
     {
         type: "Research",
@@ -86,6 +89,7 @@ const featuredResources = [
         title: "Research & Insights",
         shortDesc: "Threat intelligence",
         detailedDesc: "Data-driven reports and proprietary threat intelligence findings that reveal the current state of the cyber landscape and predict future attack methodologies.",
+        href: "/resources/research",
     },
     {
         type: "Guides",
@@ -93,6 +97,7 @@ const featuredResources = [
         title: "Security Guides",
         shortDesc: "Best practices",
         detailedDesc: "Practical, step-by-step playbooks designed to help IT teams and security leaders implement best practices, harden systems, and prepare for incident response.",
+        href: "/resources/guides",
     },
     {
         type: "Webinars",
@@ -100,6 +105,7 @@ const featuredResources = [
         title: "Webinars",
         shortDesc: "Expert sessions",
         detailedDesc: "On-demand and live sessions featuring industry veterans discussing real-world case studies, regulatory updates, and demonstrations of next-gen security technologies.",
+        href: "/resources/webinars",
     },
 ];
 
@@ -142,26 +148,27 @@ export default function ResourcesContent() {
                         {/* Right Column - Cards Grid (matching Image 2 style) */}
                         <div className="lg:col-span-3 grid md:grid-cols-2 gap-4">
                             {featuredResources.slice(0, 4).map((resource, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="group relative overflow-hidden rounded-2xl bg-muted/30 border border-border p-6 hover:border-border/80 hover:bg-muted/50 transition-all duration-300 cursor-pointer"
-                                >
-                                    {/* Icon Circle */}
-                                    <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center mb-6 group-hover:border-foreground/30 transition-colors">
-                                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                                    </div>
+                                <Link key={i} href={resource.href}>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.1 }}
+                                        className="group relative overflow-hidden rounded-2xl bg-muted/30 border border-border p-6 hover:border-border/80 hover:bg-muted/50 transition-all duration-300 cursor-pointer h-full"
+                                    >
+                                        {/* Icon Circle */}
+                                        <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center mb-6 group-hover:border-foreground/30 transition-colors">
+                                            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                                        </div>
 
-                                    <h3 className="text-xl font-manrope font-semibold text-foreground mb-2">
-                                        {resource.title}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        {resource.shortDesc}
-                                    </p>
-                                </motion.div>
+                                        <h3 className="text-xl font-manrope font-semibold text-foreground mb-2">
+                                            {resource.title}
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground">
+                                            {resource.shortDesc}
+                                        </p>
+                                    </motion.div>
+                                </Link>
                             ))}
                         </div>
                     </div>
@@ -207,10 +214,12 @@ export default function ResourcesContent() {
                     </div>
 
                     <div className="text-center">
-                        <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105 mx-auto">
-                            Read Latest Insights
-                            <ArrowRight className="w-4 h-4" />
-                        </Button>
+                        <Link href="/resources/blog">
+                            <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105 mx-auto">
+                                Read Latest Insights
+                                <ArrowRight className="w-4 h-4" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
@@ -228,10 +237,12 @@ export default function ResourcesContent() {
                             <p className="text-xl text-muted-foreground leading-relaxed mb-8">
                                 In-depth cybersecurity research, analytical reports, and threat intelligence documents designed to help organizations understand risks and make informed security decisions.
                             </p>
-                            <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
-                                View Research Reports
-                                <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
-                            </Button>
+                            <Link href="/resources/research">
+                                <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
+                                    View Research Reports
+                                    <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
+                                </Button>
+                            </Link>
                         </div>
 
                         <div className="space-y-4">
@@ -339,14 +350,18 @@ export default function ResourcesContent() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                        <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
-                            <Calendar className="w-4 h-4" />
-                            Register for Events
-                        </Button>
-                        <Button variant="secondary" className="h-12 px-6 rounded-full flex items-center gap-2 text-sm">
-                            <Play className="w-4 h-4" />
-                            Watch On-Demand
-                        </Button>
+                        <Link href="/resources/webinars">
+                            <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
+                                <Calendar className="w-4 h-4" />
+                                Register for Events
+                            </Button>
+                        </Link>
+                        <Link href="/resources/webinars">
+                            <Button variant="secondary" className="h-12 px-6 rounded-full flex items-center gap-2 text-sm">
+                                <Play className="w-4 h-4" />
+                                Watch On-Demand
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
