@@ -1,72 +1,73 @@
 "use client";
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
-import { Brain, Eye, Shield, Zap, Target, Settings } from 'lucide-react';
+import { Brain, Search, AlertTriangle, Shield, CheckCircle, Lock } from 'lucide-react';
+import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
+import { StaticDataFlow } from "@/components/diagrams/static/StaticDataFlow";
 
 const aiDetectionData = {
-    badge: "AI Detection & Response",
-    title: "ML-Powered",
-    subtitle: "Security Analytics",
-    description: "High-confidence detections with contextual intelligence, not alert volume. AI-driven correlation reduces false positives and automates response actions.",
+    badge: "Platform Feature",
+    title: "AI",
+    subtitle: "Detection",
+    description: "Stay ahead of sophisticated attacks with AI-driven threat detection. Our models learn your environment to identify anomalies and stop zero-day threats in real-time.",
     capabilities: [
         {
             icon: <Brain className="w-6 h-6" />,
-            title: "Machine Learning Detection",
-            description: "Advanced ML models trained on real-world attacks to detect sophisticated threats with high accuracy."
+            title: "Machine Learning",
+            description: "Supervised and unsupervised learning models ensuring high fidelity detection."
         },
         {
-            icon: <Eye className="w-6 h-6" />,
-            title: "Behavioral Analytics",
-            description: "Baseline normal behavior and detect anomalies that indicate compromise or insider threats."
+            icon: <Search className="w-6 h-6" />,
+            title: "Anomaly Detection",
+            description: "Behavioral analytics to spot deviations from normal user and system activity."
         },
         {
-            icon: <Target className="w-6 h-6" />,
-            title: "Alert Correlation",
-            description: "AI correlates related alerts into unified incidents, reducing alert fatigue by 90%."
+            icon: <AlertTriangle className="w-6 h-6" />,
+            title: "Zero-Day Protection",
+            description: "Detect never-before-seen threats without relying on signatures."
         },
         {
             icon: <Shield className="w-6 h-6" />,
-            title: "Contextual Enrichment",
-            description: "Automatic enrichment of detections with threat intelligence, asset context, and risk scoring."
+            title: "Automated Triage",
+            description: "AI prioritizes alerts to reduce noise and focus analysts on real threats."
         },
         {
-            icon: <Zap className="w-6 h-6" />,
-            title: "Automated Response",
-            description: "AI-driven response actions that contain threats automatically based on confidence levels."
+            icon: <CheckCircle className="w-6 h-6" />,
+            title: "High Accuracy",
+            description: "Continuous model retraining to minimize false positives and negatives."
         },
         {
-            icon: <Settings className="w-6 h-6" />,
-            title: "Continuous Learning",
-            description: "Models that continuously learn from analyst feedback to improve detection accuracy over time."
+            icon: <Lock className="w-6 h-6" />,
+            title: "Insider Threat",
+            description: "Detect malicious or negligent insider activity before data leaves."
         },
     ],
     features: [
         {
-            title: "Faster Incident Response",
-            description: "AI accelerates every phase of incident response—from detection to investigation to remediation.",
-            image: "/images/features/ai-detection.png",
+            title: "Detect the Undetectable",
+            description: "Traditional security tools miss what they don't know. Our AI sees patterns and behaviors that signal a threat, even if it has no signature.",
+            component: <StaticAnalystDashboard />,
             points: [
-                "Automated initial triage",
-                "AI-generated investigation summaries",
-                "Recommended response actions",
-                "One-click remediation"
+                "Behavioral baselining for users and entities",
+                "Detection of living-off-the-land attacks",
+                "Identification of slow-and-low data exfiltration",
+                "Real-time correlation across attack vectors"
             ]
         },
         {
-            title: "Reduced Alert Fatigue",
-            description: "Stop chasing false positives. Our AI ensures your team focuses only on real threats.",
-            image: "/images/features/security-analytics.png",
+            title: "Explainable AI",
+            description: "Don't just get an alert—understand why. Our platform provides transparent reasoning for every AI determination.",
             points: [
-                "99% reduction in false positives",
-                "Unified incident view",
-                "Priority-based alert queue",
-                "Noise suppression for known-good activity"
+                "Natural language explanation of alerts",
+                "Visual timeline of contributing events",
+                "Mapping to MITRE ATT&CK framework",
+                "Confidence scoring for every detection"
             ]
-        },
+        }
     ],
     stats: []
 };
 
-export default function AIDetectionPage() {
+export default function AiDetectionPage() {
     return <FeaturePageLayout data={aiDetectionData} />;
 }
