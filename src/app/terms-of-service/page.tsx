@@ -80,21 +80,10 @@ export default function TermsOfServicePage() {
     }, []);
 
     return (
-        <main ref={ref} className="bg-background min-h-screen text-foreground selection:bg-blue-500/30 relative overflow-hidden">
+        <main ref={ref} className="bg-background min-h-screen text-foreground selection:bg-foreground/20 relative overflow-hidden">
 
-            {/* --- Parallax Image Background --- */}
-            <motion.div
-                style={{ y: yBg, opacity: opacityBg }}
-                className="absolute inset-0 z-0 h-[100vh] w-full"
-            >
-                {mounted && (
-                    <img
-                        src={theme === "light" ? "/assets/light-bg.png" : "/assets/dark-bg.png"}
-                        alt="Hero Background"
-                        className="w-full h-full object-cover scale-125 opacity-80"
-                    />
-                )}
-            </motion.div>
+            {/* Background Texture */}
+            <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
             <CreativeNavBar />
 
@@ -105,7 +94,7 @@ export default function TermsOfServicePage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-manrope font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60"
+                        className="text-4xl md:text-6xl font-manrope font-extrabold tracking-tight mb-6 text-foreground"
                     >
                         Terms of Service
                     </motion.h1>
@@ -130,7 +119,7 @@ export default function TermsOfServicePage() {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="bg-card/80 backdrop-blur-xl border border-border rounded-2xl p-8 md:p-12 shadow-lg"
                     >
-                        <p className="text-muted-foreground mb-10 leading-relaxed text-base border-l-4 border-blue-500 pl-6 py-2 bg-muted/30 rounded-r-lg">
+                        <p className="text-muted-foreground mb-10 leading-relaxed text-base border-l-4 border-foreground pl-6 py-2 bg-muted/30 rounded-r-lg">
                             By accessing or using our services, you agree to be bound by these Terms. Please read them carefully.
                         </p>
 
@@ -152,7 +141,7 @@ export default function TermsOfServicePage() {
                                         <ul className="space-y-3">
                                             {section.content.map((item, i) => (
                                                 <li key={i} className="flex items-start gap-3 text-muted-foreground leading-relaxed">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2.5 flex-shrink-0" />
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-foreground mt-2.5 flex-shrink-0" />
                                                     {item}
                                                 </li>
                                             ))}
@@ -185,7 +174,7 @@ export default function TermsOfServicePage() {
                                     href="mailto:support@zecurx.com"
                                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/50 border border-border hover:bg-muted transition-colors duration-300 text-foreground font-medium"
                                 >
-                                    <Mail className="w-4 h-4 text-blue-500" />
+                                    <Mail className="w-4 h-4 text-foreground" />
                                     support@zecurx.com
                                 </a>
                             </div>

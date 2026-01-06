@@ -5,6 +5,7 @@ import HeroVideoCard from './HeroVideoCard';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HeroSection() {
 
@@ -48,7 +49,7 @@ export default function HeroSection() {
             */}
 
             {/* Subtle Top Glow */}
-            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
 
             {/* Content Container */}
             <div className="flex flex-col items-center justify-center space-y-8 z-10 text-center mt-20">
@@ -82,20 +83,28 @@ export default function HeroSection() {
                     className="flex flex-col md:flex-row items-center gap-4 mt-8"
                 >
                     {/* Primary Button - Request Demo */}
-                    <Button
-                        size="lg"
-                        className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-lg hover:scale-105 transition-transform duration-300 group"
-                    >
-                        Request Demo
-                        <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                            <span className="text-xl">↗</span>
-                        </div>
-                    </Button>
+                    <Link href="/book-demo">
+                        <Button
+                            size="lg"
+                            className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-lg hover:scale-105 transition-transform duration-300 group"
+                        >
+                            Request Demo
+                            <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                                <span className="text-xl">↗</span>
+                            </div>
+                        </Button>
+                    </Link>
 
                     {/* Secondary Button - Contact */}
-                    <Button variant="outline" size="lg" className="rounded-full text-base font-medium px-8 bg-transparent hover:bg-accent/10 border-white/20 text-white">
-                        Contact Us
-                    </Button>
+                    <Link href="/contact">
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            className="rounded-full text-base font-medium px-8 bg-transparent hover:bg-muted border-foreground/20 text-foreground"
+                        >
+                            Contact Us
+                        </Button>
+                    </Link>
                 </motion.div>
 
             </div>
