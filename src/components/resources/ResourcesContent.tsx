@@ -26,7 +26,6 @@ import {
     ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { imgGroup218 } from "@/components/landing/assets";
 import Link from "next/link";
 
 // Resource Categories Data
@@ -205,8 +204,8 @@ export default function ResourcesContent() {
                                 transition={{ delay: i * 0.1 }}
                                 className="group flex items-center gap-4 p-5 rounded-2xl bg-muted/30 border border-border hover:border-border/80 hover:bg-muted/50 transition-all duration-300 cursor-pointer"
                             >
-                                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/10 transition-colors">
-                                    <topic.icon className="w-5 h-5 text-muted-foreground group-hover:text-blue-400 transition-colors" />
+                                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-foreground/5 transition-colors">
+                                    <topic.icon className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                                 </div>
                                 <span className="font-medium text-foreground">{topic.label}</span>
                             </motion.div>
@@ -240,7 +239,7 @@ export default function ResourcesContent() {
                             <Link href="/resources/research">
                                 <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
                                     View Research Reports
-                                    <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
+                                    <ArrowRight className="w-4 h-4" />
                                 </Button>
                             </Link>
                         </div>
@@ -270,7 +269,7 @@ export default function ResourcesContent() {
                 <div id="case-studies" className="scroll-mt-24">
                     <div className="relative overflow-hidden rounded-3xl bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12">
                         {/* Background Glow */}
-                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-foreground/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
 
                         <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
                             <div>
@@ -285,7 +284,7 @@ export default function ResourcesContent() {
                                 </p>
                                 <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
                                     Explore Case Studies
-                                    <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
+                                    <ArrowRight className="w-4 h-4" />
                                 </Button>
                             </div>
 
@@ -357,7 +356,7 @@ export default function ResourcesContent() {
                             </Button>
                         </Link>
                         <Link href="/resources/webinars">
-                            <Button variant="secondary" className="h-12 px-6 rounded-full flex items-center gap-2 text-sm">
+                            <Button variant="outline" className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105 border-foreground/10 text-foreground hover:bg-foreground/5">
                                 <Play className="w-4 h-4" />
                                 Watch On-Demand
                             </Button>
@@ -381,7 +380,7 @@ export default function ResourcesContent() {
                             </p>
                             <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
                                 Visit Knowledge Base
-                                <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
+                                <ArrowRight className="w-4 h-4" />
                             </Button>
                         </div>
 

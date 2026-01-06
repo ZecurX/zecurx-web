@@ -14,105 +14,99 @@ const tools = [
         title: "Subdomain Finder",
         description: "Uncover hidden subdomains with lightning speed. Essential for mapping the attack surface of an organization.",
         icon: Search,
-        href: "#"
+        href: "/tools/subdomain-finder"
     },
     {
         title: "Directory Scanner",
         description: "Discovers hidden website directories and paths. Finds admin panels, backup files, and sensitive configurations.",
         icon: FolderSearch,
-        href: "#"
+        href: "/tools/directory-scanner"
     },
     {
         title: "Port Radar",
         description: "Identifies open network service ports. Determine which services are running and potentially vulnerable.",
         icon: Radar,
-        href: "#"
+        href: "/tools/port-radar"
     },
     {
         title: "TLS/SSL Analyzer",
         description: "Checks certificate security and configuration. Ensures your encryption standards meet modern safety requirements.",
         icon: Lock,
-        href: "#"
+        href: "/tools/ssl-analyzer"
     },
     {
         title: "Param Finder",
         description: "Detects website parameters for testing. Critical for finding XSS, SQLi, and other injection vulnerabilities.",
         icon: Code2,
-        href: "#"
+        href: "/tools/param-finder"
     },
     {
         title: "Header Scanner",
         description: "Analyzes HTTP response security headers. Verifies presence of HSTS, CSP, X-Frame-Options, and more.",
         icon: FileSearch,
-        href: "#"
+        href: "/tools/header-scanner"
     }
 ];
 
 export default function ToolsPage() {
     return (
-        <main className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+        <main className="min-h-screen bg-background text-foreground selection:bg-foreground/20">
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="max-w-4xl mx-auto"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary mb-6">
-                            <Terminal className="w-3 h-3" />
-                            <span>VulnHunter Suite</span>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-                            Tools for the Modern <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">
-                                Ethical Hacker
-                            </span>
+                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 font-manrope text-foreground">
+                            VulnHunter<br />
+                            <span className="text-muted-foreground">Suite</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                            Fueling the next generation of security researchers with intelligent automated reconnaissance and analysis tools.
+                        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal font-manrope">
+                            Advanced reconnaissance and asset monitoring tools used by our own red teams.
+                            Now available for your security operations.
                         </p>
                     </motion.div>
                 </div>
             </section>
 
             {/* TOOLS GRID */}
-            <section className="pb-32">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <section className="pb-32 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border/20 border border-border/20 rounded-2xl overflow-hidden">
                         {tools.map((tool, idx) => (
-                            <motion.div
+                            <motion.a
                                 key={idx}
+                                href={tool.href}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                                className="group relative p-8 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 hover:border-primary/20 transition-colors duration-300 flex flex-col"
+                                className="group relative p-10 bg-background hover:bg-muted/30 transition-colors duration-300 flex flex-col h-full"
                             >
-                                <div className="mb-6 inline-flex p-3 rounded-lg bg-background border border-border group-hover:bg-primary/5 group-hover:border-primary/20 transition-colors">
-                                    <tool.icon className="w-6 h-6 text-primary" />
+                                <div className="flex justify-between items-start mb-12">
+                                    <tool.icon className="w-8 h-8 text-foreground/80 group-hover:text-foreground transition-colors" strokeWidth={1.5} />
+                                    <ArrowRight className="w-5 h-5 text-muted-foreground -rotate-45 group-hover:rotate-0 group-hover:text-foreground transition-all duration-300" />
                                 </div>
 
-                                <h3 className="text-xl font-bold text-foreground mb-3 leading-tight group-hover:text-primary transition-colors">
+                                <h3 className="text-xl font-medium text-foreground mb-3 group-hover:translate-x-1 transition-transform duration-300">
                                     {tool.title}
                                 </h3>
 
-                                <p className="text-sm text-muted-foreground leading-relaxed mb-8 flex-grow">
+                                <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
                                     {tool.description}
                                 </p>
-
-                                <a
-                                    href={tool.href}
-                                    className="inline-flex items-center gap-2 text-sm font-semibold text-foreground hover:text-primary transition-colors group/link"
-                                >
-                                    Launch Tool
-                                    <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
-                                </a>
-                            </motion.div>
+                            </motion.a>
                         ))}
                     </div>
                 </div>

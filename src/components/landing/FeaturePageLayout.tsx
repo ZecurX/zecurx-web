@@ -87,13 +87,13 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
 
             {/* Background Ambience */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] dark:bg-blue-500/10" />
+                <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] bg-foreground/5 rounded-full blur-[120px] dark:bg-foreground/10" />
             </div>
 
             <CreativeNavBar />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-16 px-6 relative z-10">
+            <section className="pt-24 md:pt-32 pb-12 md:pb-16 px-4 md:px-6 relative z-10">
                 <div className="max-w-7xl mx-auto">
                     <motion.span
                         initial={{ opacity: 0, y: 20 }}
@@ -107,7 +107,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-6"
+                        className="text-4xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-6"
                     >
                         {data.title}
                         {data.subtitle && (
@@ -123,7 +123,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-3xl mb-10"
+                        className="text-lg md:text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-3xl mb-8 md:mb-10"
                     >
                         {data.description}
                     </motion.p>
@@ -135,22 +135,24 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         transition={{ duration: 0.6, delay: 0.3 }}
                         className="flex flex-col sm:flex-row gap-4"
                     >
-                        <Button
-                            size="lg"
-                            className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-base hover:scale-105 transition-transform duration-300 group"
-                        >
-                            Request Demo
-                            <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                <span className="text-lg">↗</span>
-                            </div>
-                        </Button>
+                        <Link href="/book-demo">
+                            <Button
+                                size="lg"
+                                className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-base hover:scale-105 transition-transform duration-300 group"
+                            >
+                                Request Demo
+                                <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
+                                    <span className="text-lg">↗</span>
+                                </div>
+                            </Button>
+                        </Link>
                         <Button
                             variant="outline"
                             size="lg"
                             className="rounded-full text-base font-medium"
                             asChild
                         >
-                            <Link href="#">
+                            <Link href="/contact">
                                 Contact Us
                                 <ArrowUpRight className="w-4 h-4 ml-2" />
                             </Link>
@@ -302,7 +304,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         </p>
                     </div>
                     <Link
-                        href="#"
+                        href="/contact"
                         className="group inline-flex items-center gap-2 text-lg font-manrope font-semibold text-foreground hover:text-primary transition-colors"
                     >
                         Contact Us
