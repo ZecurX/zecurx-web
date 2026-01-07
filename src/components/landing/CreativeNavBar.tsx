@@ -157,121 +157,126 @@ export default function CreativeNavBar() {
                             <ThemeToggle />
                         </div>
                     </div>
-
-                    {/* Mobile Navigation */}
-                    <div className="lg:hidden flex items-center justify-between h-14">
-                        <Link href="/" className="flex items-center gap-2">
-                            <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-7 h-7" />
-                            <span className="text-foreground font-manrope font-bold text-base">ZecurX</span>
-                        </Link>
-                        <div className="flex items-center gap-2">
-                            <ThemeToggle />
-                            <button
-                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="p-2 text-foreground"
-                            >
-                                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
-                {/* Redesigned Desktop Dropdown */}
-                <AnimatePresence>
-                    {activeDropdown && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute left-0 w-full bg-background border-b border-border/30"
+                {/* Mobile Navigation */}
+                <div className="lg:hidden flex items-center justify-between h-14">
+                    <Link href="/" className="flex items-center gap-2">
+                        <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-7 h-7" />
+                        <span className="text-foreground font-manrope font-bold text-base">ZecurX</span>
+                    </Link>
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="p-2 text-foreground"
                         >
-                            <div className="max-w-6xl mx-auto px-6 py-8">
-                                <DropdownContent
-                                    data={navData[activeDropdown as keyof typeof navData]}
-                                    onNavigate={handleNavigation}
-                                />
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </nav>
+                            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-            {/* Mobile Menu */}
+            {/* Redesigned Desktop Dropdown */}
             <AnimatePresence>
-                {mobileMenuOpen && (
+                {activeDropdown && (
                     <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 bg-background pt-14 overflow-y-auto lg:hidden"
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute left-0 w-full bg-background border-b border-border/30"
                     >
-                        <div className="px-6 py-8 space-y-6">
-                            {Object.entries(navData).map(([key, data]) => (
-                                <div key={key} className="space-y-3">
-                                    <Link
-                                        href={data.href}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="block text-lg font-semibold text-foreground"
-                                    >
-                                        {data.label}
-                                    </Link>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {data.items.slice(0, 4).map((item) => (
-                                            <Link
-                                                key={item.title}
-                                                href={item.href}
-                                                onClick={() => setMobileMenuOpen(false)}
-                                                className="flex items-center gap-2 p-3 rounded-lg bg-muted/30 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                            >
-                                                <item.icon className="w-4 h-4" />
-                                                {item.title}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                            <div className="pt-4 border-t border-border space-y-3">
-                                <Link
-                                    href="/why-zecurx"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="block text-lg font-semibold text-foreground"
-                                >
-                                    Why ZecurX
-                                </Link>
-                                <Link
-                                    href="/industries"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="block text-lg font-semibold text-foreground"
-                                >
-                                    Industries
-                                </Link>
-                            </div>
-                            <Link
-                                href="/contact"
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="block w-full py-3 bg-foreground text-background text-center font-medium rounded-lg"
-                            >
-                                Contact Sales
-                            </Link>
+                        <div className="max-w-6xl mx-auto px-6 py-8">
+                            <DropdownContent
+                                data={navData[activeDropdown as keyof typeof navData]}
+                                onNavigate={handleNavigation}
+                            />
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
+        </nav >
 
-            {/* Backdrop */}
+            {/* Mobile Menu */ }
             <AnimatePresence>
-                {activeDropdown && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
-                        style={{ top: '64px' }}
-                        onClick={() => setActiveDropdown(null)}
-                    />
-                )}
-            </AnimatePresence>
+    {
+        mobileMenuOpen && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-40 bg-background pt-14 overflow-y-auto lg:hidden"
+            >
+                <div className="px-6 py-8 space-y-6">
+                    {Object.entries(navData).map(([key, data]) => (
+                        <div key={key} className="space-y-3">
+                            <Link
+                                href={data.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="block text-lg font-semibold text-foreground"
+                            >
+                                {data.label}
+                            </Link>
+                            <div className="grid grid-cols-2 gap-2">
+                                {data.items.slice(0, 4).map((item) => (
+                                    <Link
+                                        key={item.title}
+                                        href={item.href}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center gap-2 p-3 rounded-lg bg-muted/30 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                    >
+                                        <item.icon className="w-4 h-4" />
+                                        {item.title}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                    <div className="pt-4 border-t border-border space-y-3">
+                        <Link
+                            href="/why-zecurx"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="block text-lg font-semibold text-foreground"
+                        >
+                            Why ZecurX
+                        </Link>
+                        <Link
+                            href="/industries"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="block text-lg font-semibold text-foreground"
+                        >
+                            Industries
+                        </Link>
+                    </div>
+                    <Link
+                        href="/contact"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full py-3 bg-foreground text-background text-center font-medium rounded-lg"
+                    >
+                        Contact Sales
+                    </Link>
+                </div>
+            </motion.div>
+        )
+    }
+            </AnimatePresence >
+
+        {/* Backdrop */ }
+        <AnimatePresence>
+    {
+        activeDropdown && (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+                style={{ top: '64px' }}
+                onClick={() => setActiveDropdown(null)}
+            />
+        )
+    }
+            </AnimatePresence >
         </>
     );
 }
