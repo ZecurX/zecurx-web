@@ -42,9 +42,11 @@ interface RazorpayInstance {
 }
 
 interface RazorpayCheckoutProps {
-    courseId: string;
-    courseName: string;
+    itemId: string;
+    itemName: string;
+    itemDescription?: string;
     amount: number;
+    metadata?: Record<string, any>;
     onSuccess?: (paymentId: string) => void;
     onFailure?: (error: string) => void;
     children: React.ReactNode;
@@ -53,9 +55,11 @@ interface RazorpayCheckoutProps {
 }
 
 export default function RazorpayCheckout({
-    courseId,
-    courseName,
+    itemId,
+    itemName,
+    itemDescription,
     amount,
+    metadata,
     onSuccess,
     onFailure,
     children,
@@ -92,7 +96,7 @@ export default function RazorpayCheckout({
             const orderRes = await fetch('/api/razorpay/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount, courseId, courseName }),
+                body: JSON.stringify({ amount, itemId, itemName, metadata }),
             });
 
             if (!orderRes.ok) {
@@ -107,8 +111,8 @@ export default function RazorpayCheckout({
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: 'ZecurX Academy',
-                description: courseName,
+                name: 'ZecurX',
+                description: itemDescription || itemName,
                 order_id: orderData.orderId,
                 handler: async (response: RazorpayResponse) => {
                     // Verify payment on server

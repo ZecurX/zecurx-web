@@ -4,12 +4,12 @@ import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { amount, courseId, courseName } = body;
+        const { amount, itemId, itemName, metadata } = body;
 
         // Validate required fields
-        if (!amount || !courseId || !courseName) {
+        if (!amount || !itemId || !itemName) {
             return NextResponse.json(
-                { error: 'Missing required fields: amount, courseId, courseName' },
+                { error: 'Missing required fields: amount, itemId, itemName' },
                 { status: 400 }
             );
         }
@@ -28,8 +28,9 @@ export async function POST(request: NextRequest) {
             currency: CURRENCY,
             receipt: `rcpt_${Date.now().toString().slice(-8)}_${Math.random().toString(36).substring(2, 6)}`,
             notes: {
-                courseId,
-                courseName,
+                itemId,
+                itemName,
+                ...metadata
             },
         });
 
@@ -37,8 +38,8 @@ export async function POST(request: NextRequest) {
             orderId: order.id,
             amount: order.amount,
             currency: order.currency,
-            courseName,
-            courseId,
+            itemName,
+            itemId,
         });
     } catch (error) {
         console.error('Error creating Razorpay order:', error);
