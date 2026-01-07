@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from 'react';
-import { imgGroup218 } from './assets';
-import { ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { ChevronRight, ArrowUpRight } from 'lucide-react';
 
 const capabilities = [
     {
@@ -47,14 +48,19 @@ const capabilities = [
 ];
 
 export default function PlatformCapabilitiesSection() {
-    const [activeIndex, setActiveIndex] = useState(1); // Default to index 1 (Cloud Security) to match design
+    const router = useRouter();
+    const [activeIndex, setActiveIndex] = useState(1);
 
-    const handleScrollToContact = () => {
-        const contactSection = document.getElementById('contact');
-        if (contactSection) {
-            contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
+    const platformRoutes = [
+        '/platform/endpoint-security',
+        '/platform/cloud-security',
+        '/platform/identity-security',
+        '/platform/application-security',
+        '/platform/threat-intelligence',
+        '/platform/ai-detection',
+        '/platform/security-automation',
+        '/platform/data-protection',
+    ];
 
     return (
         <section className="relative w-full py-24 bg-background text-foreground">
@@ -98,7 +104,7 @@ export default function PlatformCapabilitiesSection() {
                             <div className="relative overflow-hidden rounded-3xl bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between group">
 
                                 {/* Dynamic Background Gradient */}
-                                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-400/20 transition-colors duration-700"></div>
+                                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-foreground/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-foreground/10 transition-colors duration-700"></div>
 
                                 <div>
                                     {/* Content */}
@@ -113,13 +119,16 @@ export default function PlatformCapabilitiesSection() {
                                 {/* Interactive Bottom Area */}
                                 <div className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
                                     <button
-                                        onClick={handleScrollToContact}
+                                        onClick={() => router.push('/book-demo')}
                                         className="bg-foreground text-background px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2"
                                     >
                                         Book a Demo
-                                        <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
+                                        <ArrowUpRight className="w-4 h-4" />
                                     </button>
-                                    <button className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors group/btn">
+                                    <button
+                                        onClick={() => router.push(platformRoutes[activeIndex])}
+                                        className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors group/btn"
+                                    >
                                         Explore Feature
                                         <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
                                     </button>

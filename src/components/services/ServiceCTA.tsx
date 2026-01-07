@@ -28,7 +28,7 @@ export default function ServiceCTA({ title, description, ctaLabel, ctaHref }: Se
 
                 <Link
                     href={ctaHref}
-                    className="inline-flex items-center gap-2 text-lg font-semibold text-blue-500 hover:text-blue-400 transition-colors group"
+                    className="inline-flex items-center gap-2 text-lg font-semibold text-foreground hover:text-foreground/80 transition-colors group"
                 >
                     {ctaLabel}
                     <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

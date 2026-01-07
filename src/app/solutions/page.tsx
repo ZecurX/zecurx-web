@@ -13,18 +13,18 @@ const containerVariants = {
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.15,
-            delayChildren: 0.1
+            staggerChildren: 0.05,
+            delayChildren: 0.05
         }
     }
 };
 
 const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 15 },
     visible: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.6 }
+        transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const }
     }
 };
 
@@ -34,7 +34,7 @@ const solutions = [
         title: "Digital Transformation",
         tagline: "Secure Modernization",
         description: "Enable secure modernization while adopting cloud, automation, and emerging technologies.",
-        stat: "60%",
+        stat: "Proven",
         statLabel: "Risk Reduction",
         featured: true,
     },
@@ -43,8 +43,8 @@ const solutions = [
         title: "AI-Powered SOC",
         tagline: "Next-Gen Operations",
         description: "Modernize your security operations with intelligence-driven detection and AI-powered response.",
-        stat: "95%",
-        statLabel: "Faster Response",
+        stat: "Faster",
+        statLabel: "Response Time",
         featured: true,
     },
     {
@@ -52,7 +52,7 @@ const solutions = [
         title: "Zero Trust",
         tagline: "Never Trust, Always Verify",
         description: "Move beyond perimeter-based security to continuous verification and least-privilege access.",
-        stat: "100%",
+        stat: "Strict",
         statLabel: "Verification",
     },
     {
@@ -60,7 +60,7 @@ const solutions = [
         title: "Ransomware Defense",
         tagline: "Multi-Layer Defense",
         description: "Multi-layered defense combining prevention, detection, and rapid recovery.",
-        stat: "<4hr",
+        stat: "Rapid",
         statLabel: "Response SLA",
     },
     {
@@ -68,7 +68,7 @@ const solutions = [
         title: "Cloud Security",
         tagline: "Multi-Cloud Protection",
         description: "Secure your multi-cloud environments—AWS, Azure, GCP—with comprehensive visibility.",
-        stat: "3+",
+        stat: "All",
         statLabel: "Cloud Platforms",
     },
     {
@@ -76,8 +76,8 @@ const solutions = [
         title: "Compliance",
         tagline: "Regulatory Alignment",
         description: "Achieve and maintain compliance with industry regulations and security frameworks.",
-        stat: "20+",
-        statLabel: "Frameworks",
+        stat: "Multi",
+        statLabel: "Framework Support",
     },
 ];
 
@@ -106,56 +106,43 @@ export default function SolutionsPage() {
     return (
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
 
-            {/* Grid Background */}
-            <div
-                className="absolute inset-0 z-0"
-                style={{
-                    backgroundImage: `linear-gradient(to right, ${gridColor} 1px, transparent 1px), 
-                                     linear-gradient(to bottom, ${gridColor} 1px, transparent 1px)`,
-                    backgroundSize: '60px 60px',
-                    maskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 100%)',
-                }}
-            />
-
-            {/* Background Ambience - subtle blue glow only */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[10%] right-[-5%] w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] dark:bg-blue-500/10" />
-            </div>
-
             <CreativeNavBar />
 
             {/* Hero Header */}
-            <section className="pt-32 pb-6 px-6 relative z-10">
-                <div className="max-w-7xl mx-auto">
-                    <motion.span
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block"
-                    >
-                        Security Solutions
-                    </motion.span>
-                    <motion.h1
+            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
+
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
+                    <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-8"
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="max-w-5xl mx-auto"
                     >
-                        Protect. <br />
-                        <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted-foreground">
-                            Defend. Secure.
-                        </span>
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl"
-                    >
-                        Comprehensive cybersecurity aligned with your business priorities.
-                        Enabling <span className="text-foreground font-medium">growth, resilience, and compliance</span> at enterprise scale.
-                    </motion.p>
+                        <motion.span
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-muted-foreground text-sm font-medium mb-8 backdrop-blur-sm"
+                        >
+                            Security Solutions
+                        </motion.span>
+
+                        <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
+                            Protect. Defend. <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">Secure.</span>
+                        </h1>
+
+                        <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed max-w-2xl mx-auto">
+                            Comprehensive cybersecurity aligned with your business priorities.
+                            Enabling growth, resilience, and compliance at enterprise scale.
+                        </p>
+                    </motion.div>
                 </div>
             </section>
 

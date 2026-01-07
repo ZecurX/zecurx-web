@@ -96,44 +96,33 @@ export default function PlatformPage() {
     return (
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
 
-            {/* Grid Background */}
-            <div
-                className="absolute inset-0 z-0 pointer-events-none"
-                style={{
-                    backgroundImage: `linear-gradient(to right, ${gridColor} 1px, transparent 1px), 
-                                     linear-gradient(to bottom, ${gridColor} 1px, transparent 1px)`,
-                    backgroundSize: '80px 80px',
-                    maskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, black 40%, transparent 100%)',
-                }}
-            />
-
-            {/* Ambient Glow */}
-            <div className="absolute top-0 right-0 w-[800px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none transform translate-x-1/3 -translate-y-1/3" />
-
             <CreativeNavBar />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-20 px-6 relative z-10">
-                <div className="max-w-7xl mx-auto text-center">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-6"
-                    >
-                        Unified Security <br className="hidden md:block" />
-                        <span className="font-semibold">Architecture</span>
-                    </motion.h1>
+            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl mx-auto"
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="max-w-5xl mx-auto"
                     >
-                        A comprehensive, AI-driven platform designed to predict, prevent, and respond to modern cyber threats across your entire digital estate.
-                    </motion.p>
+                        <h1 className="text-5xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-6">
+                            Unified Security <br className="hidden md:block" />
+                            <span className="font-semibold">Architecture</span>
+                        </h1>
+
+                        <p className="text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl mx-auto">
+                            A comprehensive, AI-driven platform designed to predict, prevent, and respond to modern cyber threats across your entire digital estate.
+                        </p>
+                    </motion.div>
                 </div>
             </section>
 
@@ -184,13 +173,13 @@ export default function PlatformPage() {
                     <p className="text-muted-foreground mb-8 text-lg">
                         See how the ZecurX platform can transform your security posture with a personalized demo.
                     </p>
-                    <a
-                        href="#"
+                    <Link
+                        href="/book-demo"
                         className="inline-flex items-center gap-2 text-lg font-semibold text-primary hover:text-primary/80 transition-colors group"
                     >
                         Request Platform Demo
                         <ArrowUpRight className="w-5 h-5" />
-                    </a>
+                    </Link>
                 </div>
             </section>
 
