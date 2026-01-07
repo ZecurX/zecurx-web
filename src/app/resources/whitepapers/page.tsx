@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ResourcesWhitepapersPage() {
     return (
-        <main className="bg-background min-h-screen selection:bg-blue-400/30">
+        <main className="bg-background min-h-screen selection:bg-foreground/80/30">
             <CreativeNavBar />
             <WhitepapersPage />
             <Footer />

@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { Building2, Landmark, GraduationCap, Rocket, ArrowUpRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -13,7 +14,7 @@ const industries = [
         desc: "Comprehensive security for large-scale organizations.",
         icon: Building2,
         iconSrc: "/assets/icons/enterprise.svg",
-        gradient: "from-blue-400/20 to-cyan-400/20"
+        gradient: "from-foreground/5 to-foreground/10"
     },
     {
         id: "gov",
@@ -21,7 +22,7 @@ const industries = [
         desc: "Compliance-driven security for critical infrastructure.",
         icon: Landmark,
         iconSrc: "/assets/icons/gov.svg",
-        gradient: "from-emerald-500/20 to-teal-500/20"
+        gradient: "from-foreground/5 to-foreground/10"
     },
     {
         id: "edu",
@@ -29,7 +30,7 @@ const industries = [
         desc: "Protecting research data and student privacy.",
         icon: GraduationCap,
         iconSrc: "/assets/icons/edu.svg",
-        gradient: "from-orange-500/20 to-red-500/20"
+        gradient: "from-foreground/5 to-foreground/10"
     },
     {
         id: "tech",
@@ -37,7 +38,7 @@ const industries = [
         desc: "Secure architecture for high-growth tech companies.",
         icon: Rocket,
         iconSrc: "/assets/icons/tech.svg",
-        gradient: "from-purple-500/20 to-pink-500/20"
+        gradient: "from-foreground/5 to-foreground/10"
     }
 ];
 
@@ -64,8 +65,6 @@ const itemVariants = {
 export default function IndustriesSection() {
     return (
         <section className="relative w-full py-32 bg-background text-foreground overflow-hidden">
-            {/* Background Ambient Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-blue-900/10 blur-[120px] rounded-full pointer-events-none dark:bg-blue-900/20" />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -95,7 +94,7 @@ export default function IndustriesSection() {
                         <motion.div
                             variants={itemVariants}
                             key={i}
-                            className="group relative rounded-3xl overflow-hidden bg-muted/30 border border-border hover:border-foreground/20 transition-all duration-500 h-[450px] flex flex-col justify-between p-8 backdrop-blur-sm"
+                            className="group relative rounded-3xl overflow-hidden bg-muted/30 border border-border hover:border-foreground/20 transition-all duration-500 min-h-[350px] md:h-[450px] flex flex-col justify-between p-6 md:p-8 backdrop-blur-sm"
                         >
                             {/* Hover Gradient Overlay */}
                             <div className={cn(
@@ -119,10 +118,13 @@ export default function IndustriesSection() {
                                     {ind.desc}
                                 </p>
 
-                                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground/50 group-hover:text-foreground transition-colors cursor-pointer w-max">
+                                <Link
+                                    href={`/industries?tab=${ind.id}`}
+                                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground/50 group-hover:text-foreground transition-colors w-max"
+                                >
                                     <span>Learn more</span>
                                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                </div>
+                                </Link>
                             </div>
                         </motion.div>
                     ))}

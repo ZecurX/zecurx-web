@@ -232,7 +232,7 @@ export default function IndustryTabs() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="relative z-10 bg-background border border-border p-8 md:p-12 rounded-3xl min-h-[500px] flex flex-col justify-between group hover:border-blue-400/30 transition-colors duration-500"
+                                    className="relative z-10 bg-background border border-border p-8 md:p-12 rounded-3xl min-h-[500px] flex flex-col justify-between group hover:border-foreground/80/30 transition-colors duration-500"
                                 >
                                     {/* Decorative Corner */}
                                     <div className="absolute top-8 right-8 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
@@ -241,7 +241,7 @@ export default function IndustryTabs() {
                                     
                                     <div className="relative z-10">
                                         <div className="flex items-center gap-4 mb-8">
-                                            <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">
+                                            <span className="text-xs font-mono text-foreground/80 uppercase tracking-widest">
                                                 // {activeIndustry.id.toUpperCase()}_SECTOR
                                             </span>
                                             <div className="h-px flex-1 bg-border" />
@@ -262,8 +262,8 @@ export default function IndustryTabs() {
                                                 </p>
                                             </div>
 
-                                            <div className="space-y-3 p-6 bg-blue-400/5 rounded-2xl border border-blue-400/20">
-                                                <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-wide mb-2">
+                                            <div className="space-y-3 p-6 bg-foreground/80/5 rounded-2xl border border-foreground/80/20">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-foreground/80 uppercase tracking-wide mb-2">
                                                     <ShieldCheck className="w-3 h-3" />
                                                     ZecurX Defense
                                                 </div>

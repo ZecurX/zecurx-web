@@ -15,7 +15,7 @@ export default function PenetrationTestingPage() {
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-20 overflow-hidden">
                 <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
@@ -24,12 +24,12 @@ export default function PenetrationTestingPage() {
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-medium text-blue-500 mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/10 border border-foreground/20 text-xs font-medium text-foreground mb-6">
                             <Target className="w-3 h-3" />
                             <span>Offensive Security</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
-                            Advanced <span className="text-blue-500">Penetration Testing</span> & <br />
+                            Advanced Penetration Testing & <br />
                             Adversary Emulation
                         </h1>
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
@@ -53,7 +53,7 @@ export default function PenetrationTestingPage() {
                                     Modern threats are dynamic and persistent. Static scanners and automated tools miss the nuanced, logic-based vulnerabilities that sophisticated attackers exploit.
                                 </p>
                                 <p>
-                                    ZecurX’s Offensive Security team leverages the latest threat intelligence and TTPs (Tactics, Techniques, and Procedures) used by active APT groups. Our goal isn't just to find bugs, but to demonstrate business impact and provide a roadmap to resilience.
+                                    ZecurX's Offensive Security team leverages the latest threat intelligence and TTPs (Tactics, Techniques, and Procedures) used by active APT groups. Our goal isn't just to find bugs, but to demonstrate business impact and provide a roadmap to resilience.
                                 </p>
                             </div>
                         </div>
@@ -134,7 +134,7 @@ export default function PenetrationTestingPage() {
                             </ul>
                         </div>
                         <div className="relative rounded-2xl overflow-hidden border border-border/50 bg-muted/10 p-8">
-                            <div className="absolute inset-0 bg-blue-500/5 pattern-dots pointer-events-none" />
+                            <div className="absolute inset-0 bg-foreground/5 pattern-dots pointer-events-none" />
                             <h3 className="text-xl font-bold text-foreground mb-4 relative z-10">Sample Finding</h3>
                             <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs text-muted-foreground relative z-10 shadow-sm">
                                 <p className="text-red-500 font-bold mb-2">CRITICAL: IDOR in User Profile</p>
@@ -166,7 +166,7 @@ export default function PenetrationTestingPage() {
 function StatCard({ number, label }: { number: string, label: string }) {
     return (
         <div className="p-6 rounded-xl bg-muted/10 border border-border/50 text-center">
-            <div className="text-3xl font-bold text-blue-500 mb-1">{number}</div>
+            <div className="text-3xl font-bold text-foreground mb-1">{number}</div>
             <div className="text-sm text-muted-foreground">{label}</div>
         </div>
     );
@@ -174,8 +174,8 @@ function StatCard({ number, label }: { number: string, label: string }) {
 
 function CapabilityCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
     return (
-        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-blue-500/30 hover:shadow-lg transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6 text-blue-500 group-hover:scale-110 transition-transform">
+        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-foreground/30 hover:shadow-lg transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center mb-6 text-foreground group-hover:scale-110 transition-transform">
                 <Icon className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
@@ -187,7 +187,7 @@ function CapabilityCard({ icon: Icon, title, description }: { icon: any, title: 
 function BenefitItem({ title, description }: { title: string, description: string }) {
     return (
         <li className="flex gap-4">
-            <div className="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+            <div className="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-foreground">
                 <CheckCircle className="w-4 h-4" />
             </div>
             <div>
