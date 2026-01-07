@@ -232,7 +232,7 @@ export default function CreativeNavBar() {
 
                         {/* SECONDARY NAVIGATION */}
                         <div className="flex items-center gap-6">
-                            <a href="#" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+                            <a href="/academy" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
                                 Academy
                             </a>
                             <a href="#" className="px-5 py-2 bg-foreground text-background text-[13px] font-semibold rounded-lg hover:bg-foreground/90 transition-colors">
