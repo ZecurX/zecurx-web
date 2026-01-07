@@ -142,12 +142,14 @@ export default function CreativeNavBar() {
 
                         {/* Right Actions */}
                         <div className="flex items-center gap-3">
-                            <Link
-                                href="/academy"
+                            <a
+                                href="https://lms.zecurx.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                             >
                                 Academy
-                            </Link>
+                            </a>
                             <Link
                                 href="/contact"
                                 className="px-4 py-2 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors"
