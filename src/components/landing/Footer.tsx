@@ -31,7 +31,7 @@ export default function Footer() {
                                 Transform your business with comprehensive cybersecurity solutions designed by industry experts.
                             </p>
                             <div className="space-y-2 text-sm text-muted-foreground">
-                                <a href="mailto:info@zecurx.com" className="block hover:text-foreground transition-colors">info@zecurx.com</a>
+                                <a href="mailto:official@zecurx.com" className="block hover:text-foreground transition-colors">official@zecurx.com</a>
                                 <a href="tel:+917488813601" className="block hover:text-foreground transition-colors">+91 7488813601</a>
                                 <p>Bel Road, Bengaluru 560094, India</p>
                             </div>

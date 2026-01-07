@@ -75,8 +75,8 @@ export default function ContactPage() {
                                         <div>
                                             <h3 className="text-lg font-medium mb-1">Email Us</h3>
                                             <p className="text-muted-foreground mb-3 text-sm">For general questions and partnership opportunities.</p>
-                                            <Link href="mailto:info@zecurx.com" className="inline-flex items-center gap-2 font-medium hover:underline">
-                                                info@zecurx.com <ArrowUpRight className="w-4 h-4" />
+                                            <Link href="mailto:official@zecurx.com" className="inline-flex items-center gap-2 font-medium hover:underline">
+                                                official@zecurx.com <ArrowUpRight className="w-4 h-4" />
                                             </Link>
                                         </div>
                                     </div>
