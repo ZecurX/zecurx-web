@@ -58,7 +58,7 @@ export default function WhyContent() {
         return () => clearInterval(interval);
     }, [isPaused, nextTestimonial]);
 
-    const cardClassName = "group relative overflow-hidden bg-gradient-to-b from-muted/50 to-background border border-border/40 p-8 rounded-3xl hover:border-blue-400/30 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-900/5";
+    const cardClassName = "group relative overflow-hidden bg-gradient-to-b from-muted/50 to-background border border-border/40 p-8 rounded-3xl hover:border-foreground/20 transition-all duration-500 hover:shadow-2xl hover:shadow-foreground/5";
 
     return (
         <section ref={containerRef} className="relative w-full py-24 overflow-hidden bg-background text-foreground">
@@ -77,7 +77,7 @@ export default function WhyContent() {
                     <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="max-w-2xl">
                             <h2 className="text-4xl md:text-5xl font-manrope font-semibold text-foreground tracking-tight">
-                                Engineered for <span className="text-blue-400">Resilience</span>
+                                Engineered for <span className="text-foreground">Resilience</span>
                             </h2>
                             <p className="text-lg text-muted-foreground mt-4 leading-relaxed">
                                 ZecurX protects the people, processes, and technologies that drive modern enterprise. Powered by world-class security expertise.
@@ -112,8 +112,8 @@ export default function WhyContent() {
                                 transition={{ delay: i * 0.1 }}
                                 className="group p-8 md:p-12 hover:bg-muted/5 transition-colors duration-300"
                             >
-                                <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                    <item.icon className="w-6 h-6 text-blue-400" />
+                                <div className="w-12 h-12 rounded-xl bg-foreground/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                    <item.icon className="w-6 h-6 text-foreground" />
                                 </div>
                                 <h3 className="text-xl font-manrope font-bold mb-3 text-foreground">{item.title}</h3>
                                 <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -196,9 +196,9 @@ export default function WhyContent() {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.03 }}
-                                className="group relative overflow-hidden px-6 py-3 rounded-full bg-muted/30 border border-border hover:border-blue-400/50 transition-all duration-300 hover:bg-muted/50 flex items-center gap-3 cursor-default"
+                                className="group relative overflow-hidden px-6 py-3 rounded-full bg-muted/30 border border-border hover:border-foreground/20 transition-all duration-300 hover:bg-muted/50 flex items-center gap-3 cursor-default"
                             >
-                                <div className="w-2 h-2 rounded-full bg-blue-400/50 group-hover:bg-blue-400 transition-colors" />
+                                <div className="w-2 h-2 rounded-full bg-foreground/20 group-hover:bg-foreground transition-colors" />
                                 <span className="text-sm font-medium text-foreground">{cert.name}</span>
                                 <span className="text-xs text-muted-foreground border-l border-border pl-3 group-hover:text-foreground/70 transition-colors">{cert.category}</span>
                             </motion.div>
@@ -246,14 +246,14 @@ export default function WhyContent() {
                                     <div className="flex items-start gap-6 md:gap-12">
                                         <span className="text-sm font-mono text-muted-foreground/50 pt-2">0{i + 1}</span>
                                         <div>
-                                            <h3 className="text-2xl md:text-4xl font-manrope font-medium text-foreground group-hover:text-blue-400 transition-colors mb-4">{item.title}</h3>
+                                            <h3 className="text-2xl md:text-4xl font-manrope font-medium text-foreground group-hover:text-foreground transition-colors mb-4">{item.title}</h3>
                                             <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed group-hover:text-foreground/80 transition-colors">{item.desc}</p>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="flex items-center gap-4 md:pl-12">
-                                        <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-blue-400 group-hover:border-blue-400 transition-all duration-300">
-                                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-white -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                                        <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center group-hover:bg-foreground group-hover:border-foreground transition-all duration-300">
+                                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-background -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                                         </div>
                                     </div>
                                 </div>
@@ -282,11 +282,11 @@ export default function WhyContent() {
                                 }
                             ].map((reason, i) => (
                                 <div key={i} className="flex gap-6 group">
-                                    <div className="mt-1 w-12 h-12 rounded-full bg-blue-400/10 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-400 group-hover:text-white transition-all duration-300">
-                                        <CheckCircle2 className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
+                                    <div className="mt-1 w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center flex-shrink-0 group-hover:bg-foreground group-hover:text-background transition-all duration-300">
+                                        <CheckCircle2 className="w-6 h-6 text-foreground group-hover:text-background transition-colors" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-blue-400 transition-colors">{reason.title}</h3>
+                                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-foreground transition-colors">{reason.title}</h3>
                                         <p className="text-muted-foreground leading-relaxed">{reason.desc}</p>
                                     </div>
                                 </div>
@@ -336,9 +336,9 @@ export default function WhyContent() {
                                         <p className="text-xl md:text-2xl font-manrope font-medium text-foreground mb-8 leading-relaxed">
                                             "{testimonials[currentIndex].quote}"
                                         </p>
-                                        
+
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-300 flex items-center justify-center text-white font-bold text-lg">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-foreground to-muted-foreground flex items-center justify-center text-background font-bold text-lg">
                                                 {testimonials[currentIndex].name.charAt(0)}
                                             </div>
                                             <div>
@@ -357,8 +357,8 @@ export default function WhyContent() {
                                             key={i}
                                             onClick={() => setCurrentIndex(i)}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex
-                                                ? "bg-blue-400 w-8"
-                                                : "bg-border w-2 hover:bg-blue-400/50"
+                                                ? "bg-foreground w-8"
+                                                : "bg-border w-2 hover:bg-foreground/50"
                                                 }`}
                                             aria-label={`Go to testimonial ${i + 1}`}
                                         />

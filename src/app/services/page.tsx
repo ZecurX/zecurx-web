@@ -4,233 +4,170 @@ import React, { useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
     Target, Eye, Code, Globe, Settings, Users,
-    Rocket, Radar, FolderSearch, Lock, ArrowRight
+    Rocket, Radar, FolderSearch, Lock, ArrowRight, ShieldCheck, Terminal
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function ServicesPage() {
-    const containerRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"]
-    });
-
-    const y1 = useTransform(scrollYProgress, [0, 1], [0, 0]);
-    const y2 = useTransform(scrollYProgress, [0, 1], [100, -100]);
-
-    useEffect(() => {
-        // Handle hash scrolling on mount with retry mechanism
-        const handleHashScroll = () => {
-            if (window.location.hash) {
-                const id = window.location.hash.substring(1);
-
-                // Try immediately and then with delays to account for hydration/animations
-                const scrollToElement = () => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        // Use 'auto' for instant jump on page load to avoid "laggy" feel
-                        element.scrollIntoView({ behavior: 'auto', block: 'start' });
-                        return true;
-                    }
-                    return false;
-                };
-
-                // Attempt scroll sequence
-                if (!scrollToElement()) {
-                    setTimeout(() => {
-                        if (!scrollToElement()) {
-                            setTimeout(() => {
-                                if (!scrollToElement()) {
-                                    // Final desperate attempt
-                                    setTimeout(scrollToElement, 1000);
-                                }
-                            }, 300);
-                        }
-                    }, 100);
-                }
-            }
-        };
-
-        handleHashScroll();
-
-        // Listen for hash changes
-        window.addEventListener('hashchange', handleHashScroll);
-        return () => window.removeEventListener('hashchange', handleHashScroll);
-    }, []);
-
     return (
-        <main className="min-h-screen bg-background">
+        <main className="min-h-screen bg-background text-foreground font-inter selection:bg-foreground selection:text-background">
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto relative z-10">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-3xl mx-auto text-center"
+                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                        className="max-w-4xl mx-auto"
                     >
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
-                            Comprehensive <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
-                                Cybersecurity Expertise
-                            </span>
+                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 font-manrope text-foreground">
+                            Security.<br />
+                            <span className="text-muted-foreground">Engineered.</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-                            From offensive security to secure engineering and AI-driven training,
-                            ZecurX delivers end-to-end solutions to protect your digital assets.
+                        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal font-manrope">
+                            We don't just find vulnerabilities; we engineer resilience.
+                            From offensive simulations to secure architecture, ZecurX delivers
+                            precision cybersecurity services.
                         </p>
                     </motion.div>
                 </div>
             </section>
 
-            {/* SERVICES SECTIONS */}
-            <div ref={containerRef} className="pb-24 max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-                    {/* OFFENSIVE COLUMN */}
-                    <motion.div style={{ y: y1 }}>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-8"
-                        >
-                            Offensive
-                        </motion.h2>
-                        <div className="space-y-6">
-                            <ServiceCard
-                                href="/services/offensive/penetration-testing"
-                                icon={Target}
-                                title="Penetration Testing"
-                                description="Red team assessments and simulated attacks."
-                                delay={0.1}
-                            />
-                            <ServiceCard
-                                href="/services/offensive/vulnerability-management"
-                                icon={Eye}
-                                title="Vulnerability Management"
-                                description="Continuous scanning and asset identification."
-                                delay={0.2}
-                            />
-                        </div>
-                    </motion.div>
+            <div className="w-full h-px bg-border/40 max-w-7xl mx-auto" />
 
-                    {/* ENGINEERING COLUMN */}
-                    <motion.div style={{ y: y2 }}>
-                        <motion.h2
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-8"
-                        >
-                            Engineering
-                        </motion.h2>
-                        <div className="space-y-6">
-                            <ServiceCard
-                                href="/services/engineering/secure-development"
-                                icon={Code}
-                                title="Secure Development"
-                                description="Security by design principles."
-                                delay={0.1}
-                            />
-                            <ServiceCard
-                                href="/services/engineering/web-app-security"
-                                icon={Globe}
-                                title="Web & App Security"
-                                description="Application hardening and protection."
-                                delay={0.2}
-                            />
-                            <ServiceCard
-                                href="/services/engineering/devsecops"
-                                icon={Settings}
-                                title="DevSecOps"
-                                description="Automated security in CI/CD pipelines."
-                                delay={0.3}
-                            />
-                            <ServiceCard
-                                href="/services/engineering/consulting"
-                                icon={Users}
-                                title="Consulting"
-                                description="Strategic security advisory."
-                                delay={0.4}
-                            />
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
+            {/* SERVICES GRID */}
+            <section className="py-32 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-32">
 
-            {/* TOOLS TEASER SECTION */}
-            <section className="py-24 relative overflow-hidden bg-muted/20">
-                <div className="absolute inset-0 bg-primary/5 -skew-y-2 transform origin-top-left" />
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 rounded-3xl bg-background/50 border border-border/50 p-12 backdrop-blur-sm shadow-xl">
-                        <div className="lg:w-1/2">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-medium text-blue-500 mb-6">
-                                <Rocket className="w-3 h-3" />
-                                <span>Advanced Capabilities</span>
+                        {/* OFFENSIVE */}
+                        <div>
+                            <div className="mb-12 border-b border-foreground/10 pb-6">
+                                <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground">
+                                    01 / Offensive Security
+                                </h2>
                             </div>
-                            <h2 className="text-3xl font-bold text-foreground mb-4">
-                                Powered by ZecurX <span className="text-primary">Cyber Tools</span>
-                            </h2>
-                            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                                Augment your security operations with the VulnHunter Suite. From subdomain discovery to port scanning, our automated tools give you the hacker's perspective.
-                            </p>
-                            <a
-                                href="/tools"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-105 duration-200"
-                            >
-                                <span className="mr-1">Explore Cyber Tools</span>
-                                <ArrowRight className="w-4 h-4" />
-                            </a>
-                        </div>
-                        <div className="lg:w-1/2 w-full">
-                            {/* Abstract Visual Representation of Tools */}
-                            <div className="grid grid-cols-2 gap-4">
-                                {[
-                                    { name: "Subdomain Finder", icon: Target },
-                                    { name: "Port Radar", icon: Radar },
-                                    { name: "Directory Scanner", icon: FolderSearch },
-                                    { name: "SSL Analyzer", icon: Lock }
-                                ].map((tool, i) => (
-                                    <div key={i} className="p-5 rounded-xl bg-background/80 border border-border/50 flex items-center gap-4 hover:border-primary/30 transition-colors">
-                                        <div className="p-2.5 rounded-lg bg-primary/10 text-primary">
-                                            <tool.icon className="w-5 h-5" />
-                                        </div>
-                                        <span className="text-sm font-semibold text-foreground">{tool.name}</span>
-                                    </div>
-                                ))}
+                            <div className="space-y-12">
+                                <MinimalServiceCard
+                                    href="/services/offensive/penetration-testing"
+                                    title="Penetration Testing"
+                                    description="Adversary simulation designed to expose real-world risks before attackers leverage them."
+                                    icon={Target}
+                                />
+                                <MinimalServiceCard
+                                    href="/services/offensive/vulnerability-management"
+                                    title="Vulnerability Management"
+                                    description="Continuous asset discovery and risk prioritization for a proactive defense posture."
+                                    icon={Eye}
+                                />
                             </div>
                         </div>
+
+                        {/* ENGINEERING */}
+                        <div>
+                            <div className="mb-12 border-b border-foreground/10 pb-6">
+                                <h2 className="text-sm font-mono uppercase tracking-widest text-muted-foreground">
+                                    02 / Security Engineering
+                                </h2>
+                            </div>
+                            <div className="space-y-12">
+                                <MinimalServiceCard
+                                    href="/services/engineering/secure-development"
+                                    title="Secure Development"
+                                    description="Embedding security into the SDLC. Code reviews, threat modeling, and secure design patterns."
+                                    icon={Code}
+                                />
+                                <MinimalServiceCard
+                                    href="/services/engineering/web-app-security"
+                                    title="Web & App Security"
+                                    description="Hardening critical applications against OWASP Top 10 and advanced attack vectors."
+                                    icon={Globe}
+                                />
+                                <MinimalServiceCard
+                                    href="/services/engineering/devsecops"
+                                    title="DevSecOps Implementation"
+                                    description="Automating security controls within CI/CD pipelines for velocity without compromise."
+                                    icon={Terminal}
+                                />
+                                <MinimalServiceCard
+                                    href="/services/engineering/consulting"
+                                    title="Strategic Consulting"
+                                    description="vCISO services, compliance readiness, and security roadmap development."
+                                    icon={Users}
+                                />
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
 
-            {/* CTA SECTION */}
-            <section className="py-24 border-t border-border/50">
-                <div className="max-w-4xl mx-auto px-6 text-center">
-                    <h2 className="text-3xl font-bold text-foreground mb-6">Ready to Secure Your Future?</h2>
-                    <p className="text-muted-foreground mb-8">
-                        Explore our customized solutions tailored to your organization's unique security needs.
+            {/* TOOLS HIGHLIGHT - Minimal */}
+            <section className="py-32 px-6 bg-background relative overflow-hidden">
+
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+                        <div>
+                            <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-6 text-foreground">
+                                The VulnHunter Suite
+                            </h2>
+                            <p className="text-lg text-muted-foreground max-w-xl">
+                                Our proprietary toolkit for automated reconnaissance and asset monitoring.
+                            </p>
+                        </div>
+                        <Link href="/tools">
+                            <Button variant="outline" className="rounded-full border-border/50 text-foreground hover:bg-muted h-12 px-8">
+                                Explore Tools
+                                <ArrowRight className="ml-2 w-4 h-4" />
+                            </Button>
+                        </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border/20 border border-border/20">
+                        <ToolItem name="Subdomain Finder" icon={Target} />
+                        <ToolItem name="Port Radar" icon={Radar} />
+                        <ToolItem name="Directory Scanner" icon={FolderSearch} />
+                        <ToolItem name="SSL Analyzer" icon={Lock} />
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA SECTION - Clean */}
+            <section className="py-40 px-6 text-center">
+                <div className="max-w-3xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-8">
+                        Secure your infrastructure.
+                    </h2>
+                    <p className="text-xl text-muted-foreground mb-12 font-light">
+                        Partner with ZecurX for a security posture that scales with your ambition.
                     </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a
-                            href="/contact"
-                            className="px-8 py-3 bg-foreground text-background font-semibold rounded-lg hover:bg-foreground/90 transition-colors"
-                        >
-                            Contact Sales
-                        </a>
-                        <a
-                            href="/platform"
-                            className="px-8 py-3 bg-muted text-foreground font-semibold rounded-lg hover:bg-muted/80 transition-colors"
-                        >
-                            View Platform
-                        </a>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                        <Link href="/contact">
+                            <Button size="lg" className="rounded-full h-14 px-10 text-lg">
+                                Contact Sales
+                            </Button>
+                        </Link>
+                        <Link href="/platform">
+                            <Button variant="outline" size="lg" className="rounded-full h-14 px-10 text-lg border-2">
+                                View Platform
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </section>
@@ -240,37 +177,34 @@ export default function ServicesPage() {
     );
 }
 
-import Link from 'next/link';
-
-function ServiceCard({ href, icon: Icon, title, description, delay }: { href: string, icon: any, title: string, description: string, delay: number }) {
+function MinimalServiceCard({ href, title, description, icon: Icon }: { href: string, title: string, description: string, icon: any }) {
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay }}
-        >
-            <Link
-                href={href}
-                className="block group relative p-8 rounded-2xl bg-muted/5 border border-border/50 hover:bg-muted/10 hover:border-blue-500/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-                <div className="flex items-center gap-6">
-                    <div className="p-4 rounded-xl bg-background border border-border group-hover:border-blue-500/20 group-hover:scale-110 transition-all duration-300">
-                        <Icon className="w-8 h-8 text-foreground group-hover:text-blue-500 transition-colors" />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-bold text-foreground mb-1 group-hover:text-blue-500 transition-colors">
-                            {title}
-                        </h3>
-                        <p className="text-base text-muted-foreground">
-                            {description}
-                        </p>
-                    </div>
-                    <div className="ml-auto opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300">
-                        <ArrowRight className="w-5 h-5 text-blue-500" />
-                    </div>
+        <Link href={href} className="group block">
+            <div className="flex items-start justify-between">
+                <div className="space-y-4 max-w-md">
+                    <h3 className="text-2xl font-manrope font-medium group-hover:text-blue-600 transition-colors flex items-center gap-3">
+                        {title}
+                    </h3>
+                    <p className="text-muted-foreground text-lg leading-relaxed group-hover:text-foreground transition-colors">
+                        {description}
+                    </p>
                 </div>
-            </Link>
-        </motion.div>
-    );
+                <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full border border-border group-hover:border-blue-600 group-hover:bg-blue-50 transition-all">
+                    <Icon className="w-5 h-5 text-muted-foreground group-hover:text-blue-600 transition-colors" />
+                </div>
+            </div>
+            <div className="mt-8 h-px w-full bg-border/40 group-hover:bg-blue-600/30 transition-colors" />
+        </Link>
+    )
+}
+
+function ToolItem({ name, icon: Icon }: { name: string, icon: any }) {
+    return (
+        <div className="bg-background/50 p-8 flex flex-col items-center text-center gap-4 hover:bg-muted/50 transition-colors cursor-default group backdrop-blur-sm">
+            <div className="p-3 rounded-full bg-muted text-foreground group-hover:scale-110 transition-transform">
+                <Icon className="w-6 h-6" />
+            </div>
+            <span className="text-lg font-medium text-foreground">{name}</span>
+        </div>
+    )
 }

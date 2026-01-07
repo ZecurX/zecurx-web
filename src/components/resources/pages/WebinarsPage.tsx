@@ -84,7 +84,7 @@ export default function WebinarsPage() {
             {/* Hero Section */}
             <section className="relative w-full min-h-[40vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
                     <motion.div
@@ -100,7 +100,7 @@ export default function WebinarsPage() {
 
                         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                             Events &<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Webinars</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground/80 to-cyan-300">Webinars</span>
                         </h1>
 
                         <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed max-w-3xl mx-auto">
@@ -145,10 +145,10 @@ export default function WebinarsPage() {
                                     transition={{ delay: i * 0.1 }}
                                     className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-6"
                                 >
-                                    <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-blue-500/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2"></div>
+                                    <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-foreground/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2"></div>
 
                                     <div className="relative z-10">
-                                        <span className="px-2 py-0.5 text-xs bg-blue-500/10 text-blue-400 rounded mb-4 inline-block">
+                                        <span className="px-2 py-0.5 text-xs bg-foreground/10 text-foreground/80 rounded mb-4 inline-block">
                                             {webinar.type}
                                         </span>
 
@@ -199,13 +199,13 @@ export default function WebinarsPage() {
                                     transition={{ delay: i * 0.1 }}
                                     className="group flex items-center gap-4 p-5 rounded-2xl bg-muted/30 border border-border hover:border-border/80 hover:bg-muted/50 transition-all cursor-pointer"
                                 >
-                                    <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/10 transition-colors">
-                                        <Play className="w-5 h-5 text-muted-foreground group-hover:text-blue-400 transition-colors" />
+                                    <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 group-hover:bg-foreground/10 transition-colors">
+                                        <Play className="w-5 h-5 text-muted-foreground group-hover:text-foreground/80 transition-colors" />
                                     </div>
 
                                     <div className="flex-1 min-w-0">
                                         <span className="text-xs text-muted-foreground">{webinar.type}</span>
-                                        <h4 className="font-semibold text-foreground group-hover:text-blue-400 transition-colors truncate">
+                                        <h4 className="font-semibold text-foreground group-hover:text-foreground/80 transition-colors truncate">
                                             {webinar.title}
                                         </h4>
                                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
