@@ -2,7 +2,6 @@ import HeroSection from "@/components/landing/HeroSection";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 // import NavBar from "@/components/landing/NavBar";
 import WhatWeDoSection from "@/components/landing/WhatWeDoSection";
-import TrustedBySection from "@/components/landing/TrustedBySection";
 import PlatformCapabilitiesSection from "@/components/landing/PlatformCapabilitiesSection";
 import WhyZecurXSection from "@/components/landing/WhyZecurXSection";
 import IndustriesSection from "@/components/landing/IndustriesSection";
@@ -14,7 +13,6 @@ export default function Home() {
     <main className="min-h-screen">
       <CreativeNavBar />
       <HeroSection />
-      <TrustedBySection />
       <WhatWeDoSection />
       <PlatformCapabilitiesSection />
       <WhyZecurXSection />
