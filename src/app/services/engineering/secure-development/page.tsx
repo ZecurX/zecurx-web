@@ -15,7 +15,7 @@ export default function SecureDevelopmentPage() {
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-20 overflow-hidden">
                 <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
@@ -24,13 +24,13 @@ export default function SecureDevelopmentPage() {
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-medium text-blue-500 mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/10 border border-foreground/20 text-xs font-medium text-foreground mb-6">
                             <Code className="w-3 h-3" />
                             <span>Engineering Services</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
                             Secure by Design. <br />
-                            <span className="text-blue-500">Resilient by Default.</span>
+                            <span className="text-foreground">Resilient by Default.</span>
                         </h1>
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Embed security into the DNA of your applications. We help you shift left, reducing remediation costs and building trust from the first line of code.
@@ -66,16 +66,16 @@ export default function SecureDevelopmentPage() {
                                 <span>DEPLOY</span>
                             </div>
                             <div className="h-2 bg-muted rounded-full overflow-hidden relative">
-                                <div className="absolute inset-0 bg-blue-500/20" />
-                                <div className="absolute top-0 bottom-0 left-[20%] right-[60%] bg-blue-500" />
+                                <div className="absolute inset-0 bg-foreground/20" />
+                                <div className="absolute top-0 bottom-0 left-[20%] right-[60%] bg-foreground" />
                             </div>
                             <div className="mt-8 grid grid-cols-1 gap-4">
                                 <div className="flex items-center gap-3 p-3 rounded bg-background border border-border">
-                                    <ShieldCheck className="w-5 h-5 text-blue-500" />
+                                    <ShieldCheck className="w-5 h-5 text-foreground" />
                                     <span className="font-semibold text-foreground">Threat Modeling</span>
                                 </div>
                                 <div className="flex items-center gap-3 p-3 rounded bg-background border border-border">
-                                    <FileCode className="w-5 h-5 text-blue-500" />
+                                    <FileCode className="w-5 h-5 text-foreground" />
                                     <span className="font-semibold text-foreground">Secure Code Review</span>
                                 </div>
                             </div>
@@ -143,8 +143,8 @@ export default function SecureDevelopmentPage() {
 
 function CapabilityCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
     return (
-        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-blue-500/30 hover:shadow-lg transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6 text-blue-500 group-hover:scale-110 transition-transform">
+        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-foreground/30 hover:shadow-lg transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-foreground/10 flex items-center justify-center mb-6 text-foreground group-hover:scale-110 transition-transform">
                 <Icon className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>

@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Shield, Target, Search, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { imgGroup218 } from './assets';
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { IconImage } from "@/components/ui/IconImage";
@@ -15,7 +15,7 @@ const services = [
         description: 'Threat detection, vulnerability assessment, pentesting, and compliance audits — informed by how attackers think, move, and exploit.',
         tags: ["Risk Assessments", "Threat Modeling", "Adversary Simulation", "Compliance"],
         icon: Shield,
-        iconSrc: "/assets/icons/security.png"
+        iconSrc: "/assets/icons/security.svg"
     },
     {
         id: 1,
@@ -24,7 +24,7 @@ const services = [
         description: 'Secure SDLC, DevSecOps implementation, and cloud-native security architecture built into systems by design, not added as an afterthought.',
         tags: ["Secure SDLC", "DevSecOps", "Cloud Security", "Code Review"],
         icon: Target,
-        iconSrc: "/assets/icons/dev.png"
+        iconSrc: "/assets/icons/dev.svg"
     },
     {
         id: 2,
@@ -33,19 +33,13 @@ const services = [
         description: 'AI-powered risk identification, automated remediation, and behavioral insights for faster detection, smarter response, and lower operational risk.',
         tags: ["AI Risk ID", "Auto-Remediation", "Behavioral Insights", "Smarter Response"],
         icon: Search,
-        iconSrc: "/assets/icons/ai.png"
+        iconSrc: "/assets/icons/ai.svg"
     }
 ];
 
 export default function WhatWeDoSection() {
+    const router = useRouter();
     const [activeIndex, setActiveIndex] = useState(0);
-
-    const handleScrollToContact = () => {
-        const contactSection = document.getElementById('contact');
-        if (contactSection) {
-            contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
 
     return (
         <section className="relative w-full py-24 bg-background text-foreground overflow-hidden">
@@ -92,7 +86,7 @@ export default function WhatWeDoSection() {
                         </div>
 
                         {/* Fixed Height Content Container */}
-                        <div className="h-[450px] flex flex-col justify-start relative w-full">
+                        <div className="min-h-[350px] md:h-[450px] flex flex-col justify-start relative w-full">
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={activeIndex}
@@ -103,15 +97,15 @@ export default function WhatWeDoSection() {
                                     className="w-full flex-grow flex flex-col"
                                 >
                                     {/* Title (Fixed Height Header) */}
-                                    <div className="min-h-[140px] flex items-center mb-6">
-                                        <h3 className="text-4xl md:text-5xl font-manrope font-medium text-foreground leading-tight">
+                                    <div className="min-h-[100px] md:min-h-[140px] flex items-center mb-4 md:mb-6">
+                                        <h3 className="text-3xl md:text-5xl font-manrope font-medium text-foreground leading-tight">
                                             {services[activeIndex].fullTitle}
                                         </h3>
                                     </div>
 
                                     {/* Description */}
-                                    <div className="mb-8">
-                                        <p className="text-muted-foreground text-xl leading-relaxed max-w-lg">
+                                    <div className="mb-6 md:mb-8">
+                                        <p className="text-muted-foreground text-lg md:text-xl leading-relaxed max-w-lg">
                                             {services[activeIndex].description}
                                         </p>
                                     </div>
@@ -136,59 +130,66 @@ export default function WhatWeDoSection() {
                     </div>
 
                     {/* Right Column: Feature Card */}
-                    <div className="relative h-[500px] w-full group">
+                    <div className="relative h-[400px] md:h-[500px] w-full group">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeIndex}
-                                initial={{ opacity: 0, scale: 0.95 }}
+                                initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 1.05 }}
+                                exit={{ opacity: 0, scale: 1.02 }}
                                 transition={{ duration: 0.4 }}
                                 className="absolute inset-0 bg-background border border-border rounded-3xl overflow-hidden shadow-2xl"
                             >
+                                {/* Minimal Background Texture */}
+                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-                                {/* Background Effects */}
-                                <div className={cn(
-                                    "absolute top-[-20%] right-[-20%] w-[400px] h-[400px] rounded-full blur-[100px] transition-colors duration-700 opacity-20",
-                                    activeIndex === 0 ? "bg-blue-400" :
-                                        activeIndex === 1 ? "bg-emerald-600" : "bg-purple-600"
-                                )} />
+                                <div className="absolute inset-0 p-10 md:p-14 flex flex-col justify-between z-10">
 
-                                <div className="absolute inset-0 flex items-center justify-center p-12">
-                                    {/* Placeholder Image/Visual for the capability */}
-                                    <div className="relative w-full h-full bg-muted/50 rounded-2xl border border-border flex items-center justify-center overflow-hidden">
-                                        {/* Big Icon Faded */}
-                                        <IconImage
-                                            src={services[activeIndex].iconSrc}
-                                            fallback={services[activeIndex].icon}
-                                            alt={services[activeIndex].title}
-                                            className="w-48 h-48 group-hover:scale-110 transition-transform duration-500"
-                                            iconClassName="text-muted-foreground/10"
-                                        />
-
-                                        {/* Center Label */}
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <span className="text-2xl font-manrope font-light text-foreground/20 uppercase tracking-widest z-10">
-                                                {services[activeIndex].title}
-                                            </span>
+                                    {/* Content: Technical Breakdown */}
+                                    <div className="space-y-8 mt-4">
+                                        <div className="space-y-2">
+                                            <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-4">Core Capabilities</div>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                {services[activeIndex].tags.map((tag, i) => (
+                                                    <motion.div
+                                                        key={tag}
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: i * 0.1 }}
+                                                        className="flex items-center gap-4 group/item"
+                                                    >
+                                                        <div className="h-px w-8 bg-border group-hover/item:bg-foreground/50 transition-colors" />
+                                                        <span className="text-xl md:text-3xl font-manrope font-light text-foreground/80 group-hover/item:text-foreground transition-colors">
+                                                            {tag}
+                                                        </span>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Floating CTA Buttons (Bottom Left of Card) */}
-                                <div className="absolute bottom-8 left-8 flex items-center gap-4 z-20">
-                                    <Button
-                                        onClick={handleScrollToContact}
-                                        className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105"
-                                    >
-                                        Book a Demo
-                                        <img src={imgGroup218} alt="" className="w-4 h-4 invert dark:invert-0" />
-                                    </Button>
-                                    <Button variant="ghost" className="h-12 px-4 rounded-full flex items-center gap-2 hover:bg-muted hover:text-foreground border border-transparent hover:border-border">
-                                        Learn More
-                                    </Button>
+                                    {/* Floating CTA Buttons */}
+                                    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                                        <Button
+                                            onClick={() => router.push('/book-demo')}
+                                            className="h-12 px-8 rounded-full bg-foreground text-background font-medium text-sm hover:scale-105 transition-transform flex items-center gap-2"
+                                        >
+                                            Book a Demo
+                                            <ArrowRight className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                if (activeIndex === 0) window.location.href = '/services';
+                                                else if (activeIndex === 1) window.location.href = '/services';
+                                                else if (activeIndex === 2) window.location.href = '/platform';
+                                            }}
+                                            variant="ghost"
+                                            className="h-12 px-6 rounded-full flex items-center gap-2 hover:bg-muted font-medium border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground"
+                                        >
+                                            Details
+                                        </Button>
+                                    </div>
                                 </div>
-
                             </motion.div>
                         </AnimatePresence>
                     </div>

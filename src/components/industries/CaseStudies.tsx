@@ -39,7 +39,7 @@ export default function CaseStudies() {
                             Real-world results from organizations that trust ZecurX.
                         </p>
                     </div>
-                    <button className="flex items-center gap-2 text-foreground font-medium hover:text-blue-400 transition-colors">
+                    <button className="flex items-center gap-2 text-foreground font-medium hover:text-foreground/80 transition-colors">
                         <span>View all case studies</span>
                         <ArrowUpRight className="w-4 h-4" />
                     </button>
@@ -55,13 +55,13 @@ export default function CaseStudies() {
                             transition={{ delay: i * 0.1, duration: 0.5 }}
                             className="p-8 md:p-12 hover:bg-muted/5 transition-colors duration-300 group"
                         >
-                            <div className="text-xs font-semibold tracking-wider text-blue-400 dark:text-blue-300 uppercase mb-4">
+                            <div className="text-xs font-semibold tracking-wider text-foreground/80 dark:text-blue-300 uppercase mb-4">
                                 {study.tag}
                             </div>
                             <div className="text-5xl md:text-6xl font-bold font-manrope text-foreground mb-6 tracking-tighter">
                                 {study.metric}
                             </div>
-                            <h3 className="text-lg font-semibold mb-3 group-hover:text-blue-400 transition-colors">
+                            <h3 className="text-lg font-semibold mb-3 group-hover:text-foreground/80 transition-colors">
                                 {study.label}
                             </h3>
                             <p className="text-muted-foreground leading-relaxed text-sm">

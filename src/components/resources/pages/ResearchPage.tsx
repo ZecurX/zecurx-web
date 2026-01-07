@@ -68,7 +68,7 @@ export default function ResearchPage() {
             {/* Hero Section */}
             <section className="relative w-full min-h-[40vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
                     <motion.div
@@ -84,7 +84,7 @@ export default function ResearchPage() {
 
                         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                             Research<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">& Insights</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground/80 to-cyan-300">& Insights</span>
                         </h1>
 
                         <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed max-w-3xl mx-auto">
@@ -125,11 +125,11 @@ export default function ResearchPage() {
                             animate={{ opacity: 1, y: 0 }}
                             className="relative overflow-hidden rounded-3xl bg-muted/50 border border-border p-8 md:p-12 mb-12"
                         >
-                            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
+                            <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-foreground/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
 
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="px-3 py-1 text-xs font-medium bg-blue-500/10 text-blue-400 rounded-full">
+                                    <span className="px-3 py-1 text-xs font-medium bg-foreground/10 text-foreground/80 rounded-full">
                                         Featured
                                     </span>
                                     <span className="text-sm text-muted-foreground">{report.date}</span>
@@ -171,7 +171,7 @@ export default function ResearchPage() {
                                             {report.date}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-manrope font-semibold text-foreground group-hover:text-blue-400 transition-colors">
+                                    <h3 className="text-xl font-manrope font-semibold text-foreground group-hover:text-foreground/80 transition-colors">
                                         {report.title}
                                     </h3>
                                     <p className="text-sm text-muted-foreground mt-1">{report.description}</p>

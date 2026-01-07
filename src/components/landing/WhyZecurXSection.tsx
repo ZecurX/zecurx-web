@@ -119,7 +119,7 @@ export default function WhyZecurXSection() {
                     className="border-t border-border pt-24 relative"
                 >
                     {/* Absolute blending gradient for this specific section header */}
-                    <div className="absolute top-[20%] left-[-10%] w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+                    <div className="absolute top-[20%] left-[-10%] w-[300px] h-[300px] bg-foreground/10 rounded-full blur-[100px] pointer-events-none"></div>
 
                     <div className="flex flex-col md:flex-row justify-between items-start gap-12 relative z-10">
                         <motion.div variants={itemVariants} className="md:w-1/3">

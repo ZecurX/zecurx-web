@@ -15,7 +15,7 @@ export default function ConsultingPage() {
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-20 overflow-hidden">
                 <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
@@ -24,13 +24,13 @@ export default function ConsultingPage() {
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-medium text-blue-500 mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/10 border border-foreground/20 text-xs font-medium text-foreground mb-6">
                             <Users className="w-3 h-3" />
                             <span>Engineering Services</span>
                         </div>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
                             Strategic Security <br />
-                            <span className="text-blue-500">Advisory & Governance</span>
+                            <span className="text-foreground">Advisory & Governance</span>
                         </h1>
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Navigate the complex cybersecurity landscape with confidence. We align your security strategy with business objectives, ensuring resilience, compliance, and sustained trust.
@@ -127,7 +127,7 @@ export default function ConsultingPage() {
 function StatCard({ number, label }: { number: string, label: string }) {
     return (
         <div className="p-6 rounded-xl bg-muted/10 border border-border/50 text-center">
-            <div className="text-3xl font-bold text-blue-500 mb-1">{number}</div>
+            <div className="text-3xl font-bold text-foreground mb-1">{number}</div>
             <div className="text-sm text-muted-foreground">{label}</div>
         </div>
     );
@@ -135,8 +135,8 @@ function StatCard({ number, label }: { number: string, label: string }) {
 
 function CapabilityCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
     return (
-        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-blue-500/30 hover:shadow-lg transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-6 text-blue-500 group-hover:scale-110 transition-transform">
+        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-foreground/30 hover:shadow-lg transition-all duration-300">
+            <div className="w-12 h-12 rounded-lg bg-foreground/10 flex items-center justify-center mb-6 text-foreground group-hover:scale-110 transition-transform">
                 <Icon className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
