@@ -232,6 +232,9 @@ export default function CreativeNavBar() {
 
                         {/* SECONDARY NAVIGATION */}
                         <div className="flex items-center gap-6">
+                            <a href="/shop" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+                                Shop
+                            </a>
                             <a href="/academy" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
                                 Academy
                             </a>

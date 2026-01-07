@@ -141,8 +141,8 @@ export default function CourseCard({
                         </div>
                     ) : (
                         <RazorpayCheckout
-                            courseId={id}
-                            courseName={title}
+                            itemId={id}
+                            itemName={title}
                             amount={price}
                             onSuccess={handleSuccess}
                             onFailure={handleFailure}
