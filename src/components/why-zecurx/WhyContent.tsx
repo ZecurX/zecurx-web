@@ -169,10 +169,6 @@ export default function WhyContent() {
                 {/* SECTION 3: Certifications */}
                 <div id="certifications" className="scroll-mt-24">
                     <div className="mb-16 flex flex-col items-center text-center">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted border border-border text-muted-foreground text-xs font-medium mb-6 uppercase tracking-wider">
-                            <ShieldCheck className="w-3 h-3" />
-                            Compliance Ready
-                        </div>
                         <h2 className="text-3xl md:text-4xl font-manrope font-semibold text-foreground mb-4">Global Standards</h2>
                         <p className="text-lg text-muted-foreground max-w-2xl">
                             We align with globally recognized security frameworks to ensure trust, compliance, and audit readiness.

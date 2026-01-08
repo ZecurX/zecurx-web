@@ -15,107 +15,140 @@ const courses = [
     {
         id: 'cybersec-genai-bundle',
         title: 'CyberSecurity + Generative AI Bundle',
-        description: 'Master the future of security with this comprehensive 3-month program combining core cybersecurity skills with cutting-edge Generative AI defense strategies.',
+        description: 'Master the future of security with this comprehensive program combining core cybersecurity skills with cutting-edge Generative AI defense strategies.',
         price: 9500,
         originalPrice: 12999,
-        duration: '3 Months (Weekend Batches)',
-        students: 120,
+        duration: '3 Months',
+        students: 150,
         level: 'Beginner' as const,
         features: [
             'Full practical exposure on live targets',
             'AI for Threat Detection & Response',
             'Prompt Engineering for Security Ops',
             'Hands-on Labs & Capstone Project',
-            'Internship Opportunity for Top Performers',
+            'Internship Opportunity',
         ],
         popular: true,
+        // brochureLink: '/brochures/Bundle.pdf', // Missing
     },
     {
-        id: 'zx-ceh',
-        title: 'zxCEH (Certified Ethical Hacker)',
-        description: 'ZecurX\'s flagship ethical hacking program. Learn advanced penetration testing methodologies used by nation-state actors and red teams.',
-        price: 24999,
-        originalPrice: 34999,
-        duration: '60 hours',
-        students: 485,
+        id: 'zx-cpeh',
+        title: 'zxCPEH - Certified Professional Ethical Hacker',
+        description: 'Advanced ethical hacking methodology. Learn to think like an adversary to secure critical infrastructure.',
+        price: 25000,
+        originalPrice: 35499,
+        duration: '60 Hours',
+        students: 500,
         level: 'Intermediate' as const,
         features: [
-            'Advanced Exploitation Techniques',
+            'Advanced Exploitation',
+            'Network & Web Security',
+            'Privilege Escalation',
             'Active Directory Attacks',
-            'Buffer Overflow & Exploit Dev',
-            'Red Team Report Writing',
-            'Exam Voucher Included',
+            'Project-Based Learning',
         ],
-        popular: false,
+        brochureLink: '/brochures/zxCPEH_Brochure_v3.pdf',
     },
     {
-        id: 'soc-analyst',
-        title: 'SOC Analyst L1 & L2',
-        description: 'Become a proficient Security Operations Center analyst. Master SIEM tools, threat hunting, and incident response playbooks.',
-        price: 19999,
-        originalPrice: 27999,
-        duration: '50 hours',
-        students: 312,
-        level: 'Beginner' as const,
-        features: [
-            'SIEM Mastery (Splunk, ELK)',
-            'Live Attack Analysis',
-            'Threat Intelligence Feeds',
-            'Phishing Analysis & Forensics',
-            'Complete Career Guidance',
-        ],
-    },
-    {
-        id: 'web-app-security',
-        title: 'Web Application Security',
-        description: 'Deep dive into OWASP Top 10 and beyond. Learn to find and fix critical vulnerabilities in modern web applications and APIs.',
-        price: 12999,
-        originalPrice: 17999,
-        duration: '35 hours',
-        students: 245,
-        level: 'Intermediate' as const,
-        features: [
-            'OWASP Top 10 Deep Dive',
-            'API Security (GraphQL/REST)',
-            'Secure Code Review',
-            'Burp Suite Pro Mastery',
-            'Bug Bounty Hunter Tips',
-        ],
-    },
-    {
-        id: 'cloud-security',
-        title: 'Cloud Security Fundamentals',
-        description: 'Secure AWS, Azure, and GCP environments. Learn identify and access management, cloud compliance, and container security.',
-        price: 18999,
-        originalPrice: 24999,
-        duration: '45 hours',
-        students: 180,
+        id: 'zx-cppt',
+        title: 'zxCPPT - Certified Professional Pen Tester',
+        description: 'Professional penetration testing certification. Master the art of identifying potential security breaches.',
+        price: 35400,
+        originalPrice: 49999,
+        duration: '80 Hours',
+        students: 200,
         level: 'Advanced' as const,
         features: [
-            'Multi-cloud Architecture',
-            'Kubernetes & Docker Security',
-            'Cloud Compliance Frameworks',
-            'Serverless Security',
-            'Infrastructure as Code (IaC)',
+            'Red Teaming Methodology',
+            'Advanced Evasion Techniques',
+            'Report Writing & Documentation',
+            'Custom Exploit Development',
+            'Industry Standard Tools',
         ],
+        brochureLink: '/brochures/zxCPPT_Brochure_v3.pdf',
     },
     {
-        id: 'corporate-training',
-        title: 'Corporate Security Awareness',
-        description: 'Tailored training for organizations to build a human firewall. Phishing simulations, password hygiene, and social engineering defense.',
-        price: 4999,
-        originalPrice: 7999,
+        id: 'zx-gaip',
+        title: 'zxGAIP - Generative AI Professional',
+        description: 'Leverage Generative AI for security operations, automation, and threat intelligence.',
+        price: 25000,
+        originalPrice: 35499,
+        duration: '40 Hours',
+        students: 120,
+        level: 'Intermediate' as const,
+        features: [
+            'LLMs for Security',
+            'Automated Threat Hunting',
+            'Secure AI Deployment',
+            'AI Risk Management',
+            'Real-world Case Studies',
+        ],
+        // brochureLink: '/brochures/zxGAIP.pdf', // Missing
+    },
+    {
+        id: 'zx-ccp',
+        title: 'zxCCP - Certified Cybersecurity Practitioner',
+        description: 'Practical cybersecurity skills for professionals. Focus on defense, incident handling, and everyday security operations.',
+        price: "Institution Only",
         duration: 'Custom',
-        students: 1500,
         level: 'Beginner' as const,
         features: [
-            'Role-based Training Modules',
-            'Phishing Simulation Campaigns',
-            'Compliance (GDPR/ISO 27001)',
-            'Executive Briefings',
-            'Analytics & Reporting',
+            'Incident Response Basics',
+            'Security Controls Implementation',
+            'Policy & Compliance',
+            'Log Analysis',
+            'Institutional Training',
         ],
+        brochureLink: '/brochures/Course_Brochure_zxCCP.pdf',
     },
+    {
+        id: 'zx-ccf',
+        title: 'zxCCF - Certified Cybersecurity Foundations',
+        description: 'Foundational knowledge for a career in cybersecurity. Understand the landscape, threats, and basic protections.',
+        price: "Institution Only",
+        duration: 'Custom',
+        level: 'Beginner' as const,
+        features: [
+            'Core Security Concepts',
+            'Network Fundamentals',
+            'Cryptography Basics',
+            'Security Ethics',
+            'Career Roadmap',
+        ],
+        brochureLink: '/brochures/Course_Brochure_zxCCF.pdf',
+    },
+    {
+        id: 'zx-cce',
+        title: 'zxCCE - Certified Cybersecurity Expert',
+        description: 'Expert-level training for leadership roles. Strategy, governance, and advanced security architecture.',
+        price: "Institution Only",
+        duration: 'Custom',
+        level: 'Expert' as const,
+        features: [
+            'Security Governance',
+            'Risk Management',
+            'C-Level Communication',
+            'Enterprise Architecture',
+            'Strategic Planning',
+        ],
+        brochureLink: '/brochures/Course_Brochure_zxCCE.pdf',
+    },
+    {
+        id: 'zx-cfd',
+        title: 'zxCFD - Certified Fullstack Dev',
+        description: 'Become a security-aware fullstack developer. Build robust, secure applications from the ground up.',
+        price: "Contact for Pricing",
+        duration: 'Coming Soon',
+        level: 'Intermediate' as const,
+        features: [
+            'Secure Coding Practices',
+            'Modern Stack (Next.js, Node)',
+            'Database Security',
+            'API Development',
+            'DevSecOps Basics',
+        ],
+        // brochureLink: '/brochures/zxCFD.pdf', // Missing
+    }
 ];
 
 const stats = [
@@ -131,66 +164,49 @@ export default function AcademyPage() {
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-grid-white opacity-[0.02] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+            <section className="relative pt-40 pb-20 overflow-hidden">
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808015_1px,transparent_1px),linear-gradient(to_bottom,#80808015_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        className="max-w-3xl mx-auto text-center"
+                        transition={{ duration: 0.6 }}
+                        className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm font-medium text-primary mb-6">
-                            <GraduationCap className="w-4 h-4" />
-                            <span>ZecurX Academy</span>
-                        </div>
-
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
-                            Master <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
-                                Cybersecurity Excellence
-                            </span>
+                        <h1 className="text-6xl md:text-8xl font-bold text-foreground mb-8 tracking-tighter">
+                            ZecurX Academy
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">
-                            Industry-leading cybersecurity training programs designed by experts.
-                            From foundational skills to elite certifications, accelerate your security career.
+                        <p className="text-xl md:text-2xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl mb-12">
+                            Elite cybersecurity training for the modern threat landscape. Master the skills that matter.
                         </p>
 
-                        <div className="flex flex-wrap justify-center gap-4">
+                        <div className="flex flex-wrap gap-6">
                             <a
                                 href="#courses"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] transition-all duration-200"
+                                className="inline-flex items-center gap-2 text-foreground font-semibold border-b border-foreground pb-1 hover:opacity-70 transition-opacity"
                             >
-                                <span>Browse Courses</span>
+                                <span>Explore Curriculum</span>
                                 <ArrowRight className="w-4 h-4" />
-                            </a>
-                            <a
-                                href="/contact"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-muted text-foreground font-semibold rounded-lg hover:bg-muted/80 transition-colors border border-border"
-                            >
-                                <span>Enterprise Training</span>
                             </a>
                         </div>
                     </motion.div>
 
-                    {/* Stats Row */}
+                    {/* Minimal Stats */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6"
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-12 border-t border-border pt-12"
                     >
                         {stats.map((stat, index) => (
-                            <div
-                                key={index}
-                                className="text-center p-6 rounded-2xl bg-card/30 border border-border/50 backdrop-blur-sm hover:border-primary/20 transition-colors"
-                            >
-                                <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary" />
-                                <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
-                                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                            <div key={index} className="flex flex-col gap-2">
+                                <span className="text-4xl font-bold text-foreground tracking-tight">{stat.value}</span>
+                                <span className="text-sm text-muted-foreground uppercase tracking-widest font-semibold">{stat.label}</span>
                             </div>
                         ))}
                     </motion.div>
@@ -198,24 +214,21 @@ export default function AcademyPage() {
             </section>
 
             {/* VALUE PROPOSITION */}
-            <section className="py-24 bg-muted/30 relative">
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
-                    <div className="grid md:grid-cols-3 gap-8">
+            <section className="py-24 border-y border-border">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid md:grid-cols-3 gap-12 lg:gap-24">
                         {[
                             {
-                                icon: Shield,
                                 title: 'Industry Recognized',
-                                description: 'Our courses align with globally recognized certifications like CEH, CISSP, OSCP, and CompTIA.',
+                                description: 'Curriculum aligned with global standards like CEH, CISSP, OSCP, and CompTIA.',
                             },
                             {
-                                icon: Target,
                                 title: 'Hands-On Labs',
-                                description: 'Practice in real-world environments with our dedicated cybersecurity lab infrastructure.',
+                                description: 'Real-world attack simulations and defense scenarios in our dedicated cloud infrastructure.',
                             },
                             {
-                                icon: Rocket,
                                 title: 'Career Acceleration',
-                                description: 'Certified professionals earn 15-30% higher salaries and are preferred by 89% of employers.',
+                                description: 'Proven track record of placing graduates in top security roles with 15-30% salary hikes.',
                             },
                         ].map((item, index) => (
                             <motion.div
@@ -224,15 +237,9 @@ export default function AcademyPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.1 }}
-                                className="flex gap-5 p-8 rounded-2xl bg-background border border-border/50 hover:border-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
                             >
-                                <div className="p-3.5 h-fit rounded-xl bg-primary/10 text-primary">
-                                    <item.icon className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-bold text-foreground mb-3">{item.title}</h3>
-                                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-                                </div>
+                                <h3 className="text-lg font-bold text-foreground mb-4">{item.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -240,68 +247,64 @@ export default function AcademyPage() {
             </section>
 
             {/* COURSES SECTION */}
-            <section id="courses" className="py-24 relative">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-[100px] pointer-events-none opacity-50" />
-
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <section id="courses" className="py-32">
+                <div className="max-w-7xl mx-auto px-6">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-center mb-16"
+                        className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
                     >
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                            Professional Training Programs
-                        </h2>
-                        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-                            Structured pathways that transform beginners into elite practitioners
-                            with industry-recognized credentials.
-                        </p>
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
+                                Professional Programs
+                            </h2>
+                            <p className="text-muted-foreground max-w-xl text-lg font-light">
+                                From foundational security to advanced red teaming.
+                            </p>
+                        </div>
                     </motion.div>
 
-                    {/* New Grid Layout for large cards */}
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="flex flex-wrap justify-center gap-8">
                         {courses.map((course, index) => (
-                            <CourseCard
+                            <div
                                 key={course.id}
-                                {...course}
-                                delay={index * 0.1}
-                            />
+                                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]"
+                            >
+                                <CourseCard
+                                    {...course}
+                                    delay={index * 0.1}
+                                />
+                            </div>
                         ))}
                     </div>
                 </div>
             </section>
 
             {/* ENTERPRISE CTA */}
-            <section className="py-24 border-t border-border/50 bg-muted/20">
-                <div className="max-w-4xl mx-auto px-6 text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className="text-3xl font-bold text-foreground mb-4">
-                            Enterprise Training Solutions
+            <section className="py-32 bg-foreground text-background">
+                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">
+                            Enterprise Training
                         </h2>
-                        <p className="text-muted-foreground mb-8 max-w-2xl mx-auto text-lg">
-                            Transform your workforce from a vulnerability into a security asset.
-                            Custom training programs, role-based upskilling, and AI-powered simulations for teams of all sizes.
+                        <p className="text-background/80 text-xl font-light leading-relaxed mb-12 max-w-md">
+                            Customized security capability building for engineering and operations teams.
                         </p>
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <a
-                                href="/contact"
-                                className="px-8 py-4 bg-foreground text-background font-semibold rounded-lg hover:bg-foreground/90 transition-all shadow-lg hover:scale-105 duration-200"
-                            >
-                                Talk to Sales
-                            </a>
-                            <a
-                                href="/services"
-                                className="px-8 py-4 bg-background text-foreground border border-border font-semibold rounded-lg hover:bg-muted transition-colors"
-                            >
-                                View All Services
-                            </a>
-                        </div>
-                    </motion.div>
+                        <a
+                            href="/contact"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-background text-foreground font-semibold hover:bg-background/90 transition-colors"
+                        >
+                            <span>Contact Sales</span>
+                            <ArrowRight className="w-4 h-4" />
+                        </a>
+                    </div>
+                    <div className="hidden md:block">
+                        {/* Abstract visual or empty for whitespace balance */}
+                        <div className="w-full h-px bg-background/20 mb-8" />
+                        <div className="w-full h-px bg-background/20 mb-8 ml-12" />
+                        <div className="w-full h-px bg-background/20 ml-24" />
+                    </div>
                 </div>
             </section>
 

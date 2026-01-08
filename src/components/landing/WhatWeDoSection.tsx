@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { IconImage } from "@/components/ui/IconImage";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 const services = [
     {
@@ -138,15 +139,13 @@ export default function WhatWeDoSection() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 1.02 }}
                                 transition={{ duration: 0.4 }}
-                                className="absolute inset-0 bg-background border border-border rounded-3xl overflow-hidden shadow-2xl"
+                                className="absolute inset-0"
                             >
-                                {/* Minimal Background Texture */}
-                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+                                <Card className="bg-background border border-border shadow-2xl overflow-hidden h-full flex flex-col justify-between p-10 md:p-14">
+                                    {/* Minimal Background Texture */}
+                                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-                                <div className="absolute inset-0 p-10 md:p-14 flex flex-col justify-between z-10">
-
-                                    {/* Content: Technical Breakdown */}
-                                    <div className="space-y-8 mt-4">
+                                    <CardContent className="space-y-8 mt-4 p-0 relative z-10">
                                         <div className="space-y-2">
                                             <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-4">Core Capabilities</div>
                                             <div className="grid grid-cols-1 gap-4">
@@ -166,10 +165,9 @@ export default function WhatWeDoSection() {
                                                 ))}
                                             </div>
                                         </div>
-                                    </div>
+                                    </CardContent>
 
-                                    {/* Floating CTA Buttons */}
-                                    <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                                    <CardFooter className="flex flex-wrap items-center gap-3 md:gap-4 p-0 relative z-10 pt-8">
                                         <Button
                                             onClick={() => router.push('/book-demo')}
                                             className="h-12 px-8 rounded-full bg-foreground text-background font-medium text-sm hover:scale-105 transition-transform flex items-center gap-2"
@@ -188,8 +186,8 @@ export default function WhatWeDoSection() {
                                         >
                                             Details
                                         </Button>
-                                    </div>
-                                </div>
+                                    </CardFooter>
+                                </Card>
                             </motion.div>
                         </AnimatePresence>
                     </div>

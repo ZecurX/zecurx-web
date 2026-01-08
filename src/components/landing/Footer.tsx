@@ -7,143 +7,88 @@ import Link from "next/link";
 
 export default function Footer() {
     return (
-        <div className="relative h-[700px] md:h-[500px] bg-background text-foreground" style={{ clipPath: "inset(0 0 0 0)" }}>
-            <footer className="fixed bottom-0 left-0 w-full h-[700px] md:h-[500px] bg-background text-foreground flex flex-col justify-between overflow-hidden border-t border-border">
+        <div
+            className="relative md:h-[400px]"
+            style={{ clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)" }}
+        >
+            <div className="w-full">
+                <footer className="h-full bg-background text-foreground border-t border-border flex flex-col justify-end">
+                    <div className="max-w-7xl mx-auto w-full px-6 py-12 md:py-16">
+                        {/* Top Section: Logo & Columns */}
+                        <div className="grid grid-cols-1 xl:grid-cols-4 gap-12 xl:gap-8 mb-auto">
 
-                {/* Content Container */}
-                <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-20">
-
-                    {/* Top Row: Logo & Columns */}
-                    <div className="flex flex-col xl:flex-row justify-between gap-12 xl:gap-24">
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8 }}
-                            viewport={{ once: true }}
-                            className="xl:w-1/4 space-y-6"
-                        >
-                            <div className="flex items-center gap-3">
-                                <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-10 h-10 object-contain" />
-                                <span className="font-manrope font-bold text-2xl tracking-tight text-foreground">ZecurX</span>
+                            {/* Brand Column */}
+                            <div className="space-y-6">
+                                <Link href="/" className="flex items-center gap-2.5">
+                                    <div className="relative w-8 h-8">
+                                        <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-full h-full object-contain" />
+                                    </div>
+                                    <span className="font-manrope font-bold text-xl tracking-tight text-foreground">ZecurX</span>
+                                </Link>
+                                <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
+                                    Security & Technology That Grows With You. Enterprise-grade protection for the modern era.
+                                </p>
                             </div>
-                            <p className="text-muted-foreground text-sm leading-relaxed max-w-xs font-medium">
-                                Transform your business with comprehensive cybersecurity solutions designed by industry experts.
-                            </p>
-                            <div className="space-y-2 text-sm text-muted-foreground">
-                                <a href="mailto:info@zecurx.com" className="block hover:text-foreground transition-colors">info@zecurx.com</a>
-                                <a href="tel:+917488813601" className="block hover:text-foreground transition-colors">+91 7488813601</a>
-                                <p>Bel Road, Bengaluru 560094, India</p>
-                            </div>
-                        </motion.div>
 
-                        {/* Links Grid */}
-                        <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-8 gap-y-12">
-                            {[
-                                {
-                                    title: 'Platform',
-                                    items: [
-                                        { label: 'Enterprise Security', href: '/platform/endpoint-security' },
-                                        { label: 'Threat Detection', href: '/platform/threat-intelligence' },
-                                        { label: 'Security Architecture', href: '/platform' },
-                                        { label: 'Risk & Compliance', href: '/solutions/compliance' }
-                                    ]
-                                },
-                                {
-                                    title: 'Services',
-                                    items: [
-                                        { label: 'Security Assessments', href: '/services/offensive/vulnerability-management' },
-                                        { label: 'Penetration Testing', href: '/services/offensive/penetration-testing' },
-                                        { label: 'Red Teaming', href: '/services#offensive' },
-                                        { label: 'Incident Response', href: '/services' },
-                                        { label: 'Governance', href: '/services/engineering/consulting' }
-                                    ]
-                                },
-                                {
-                                    title: 'Industries',
-                                    items: [
-                                        { label: 'Finance', href: '/industries' },
-                                        { label: 'Healthcare', href: '/industries' },
-                                        { label: 'Education', href: '/industries' },
-                                        { label: 'Technology', href: '/industries' },
-                                        { label: 'Government', href: '/industries' },
-                                        { label: 'Manufacturing', href: '/industries' }
-                                    ]
-                                },
-                                {
-                                    title: 'Company',
-                                    items: [
-                                        { label: 'About Us', href: '/why-zecurx' },
-                                        { label: 'Mission', href: '/why-zecurx' },
-                                        { label: 'Leadership', href: '/why-zecurx' },
-                                        { label: 'Careers', href: '/' },
-                                        { label: 'Contact', href: '/contact' },
-                                        { label: 'Partners', href: '/' }
-                                    ]
-                                },
-                                {
-                                    title: 'Resources',
-                                    items: [
-                                        { label: 'Blog', href: '/resources/blog' },
-                                        { label: 'Research', href: '/resources/research' },
-                                        { label: 'Case Studies', href: '/resources' },
-                                        { label: 'Webinars', href: '/resources/webinars' },
-                                        { label: 'FAQ', href: '/resources' }
-                                    ]
-                                },
-                                {
-                                    title: 'Academy',
-                                    items: [
-                                        { label: 'Certifications', href: '#' },
-                                        { label: 'Training', href: '#' },
-                                        { label: 'Workshops', href: '#' },
-                                        { label: 'For Academia', href: '#' },
-                                        { label: 'Verify Certificate', href: '#' }
-                                    ]
-                                },
-                            ].map((col, i) => (
-                                <motion.div
-                                    key={col.title}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.5, delay: i * 0.1 }}
-                                    viewport={{ once: true }}
-                                    className="flex flex-col gap-4"
-                                >
-                                    <h4 className="font-manrope font-semibold text-xs uppercase tracking-wider text-muted-foreground">{col.title}</h4>
-                                    <ul className="flex flex-col gap-3">
-                                        {col.items.map((item) => (
-                                            <li key={item.label}>
-                                                <Link href={item.href} className="text-muted-foreground/80 hover:text-foreground transition-colors text-sm leading-snug block hover:translate-x-1 duration-300">
-                                                    {item.label}
-                                                </Link>
-                                            </li>
-                                        ))}
+                            {/* Links Grid - Aligned with Navbar */}
+                            <div className="xl:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+                                {/* Platform */}
+                                <div className="space-y-4">
+                                    <h4 className="font-manrope font-semibold text-sm text-foreground">Platform</h4>
+                                    <ul className="space-y-3">
+                                        <li><Link href="/platform/endpoint-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Endpoint Security</Link></li>
+                                        <li><Link href="/platform/cloud-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Cloud Security</Link></li>
+                                        <li><Link href="/platform/identity-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Identity Security</Link></li>
+                                        <li><Link href="/platform/application-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">App Security</Link></li>
                                     </ul>
-                                </motion.div>
-                            ))}
+                                </div>
+
+                                {/* Solutions */}
+                                <div className="space-y-4">
+                                    <h4 className="font-manrope font-semibold text-sm text-foreground">Solutions</h4>
+                                    <ul className="space-y-3">
+                                        <li><Link href="/solutions/digital-transformation" className="text-sm text-muted-foreground hover:text-primary transition-colors">Digital Transformation</Link></li>
+                                        <li><Link href="/solutions/zero-trust" className="text-sm text-muted-foreground hover:text-primary transition-colors">Zero Trust</Link></li>
+                                        <li><Link href="/solutions/ransomware-defense" className="text-sm text-muted-foreground hover:text-primary transition-colors">Ransomware Defense</Link></li>
+                                        <li><Link href="/solutions/compliance" className="text-sm text-muted-foreground hover:text-primary transition-colors">Compliance</Link></li>
+                                    </ul>
+                                </div>
+
+                                {/* Services */}
+                                <div className="space-y-4">
+                                    <h4 className="font-manrope font-semibold text-sm text-foreground">Services</h4>
+                                    <ul className="space-y-3">
+                                        <li><Link href="/services/offensive/penetration-testing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Penetration Testing</Link></li>
+                                        <li><Link href="/services/offensive/vulnerability-management" className="text-sm text-muted-foreground hover:text-primary transition-colors">Vulnerability Mgmt</Link></li>
+                                        <li><Link href="/services/engineering/devsecops" className="text-sm text-muted-foreground hover:text-primary transition-colors">DevSecOps</Link></li>
+                                        <li><Link href="/services/engineering/consulting" className="text-sm text-muted-foreground hover:text-primary transition-colors">Consulting</Link></li>
+                                    </ul>
+                                </div>
+
+                                {/* Company & Resources */}
+                                <div className="space-y-4">
+                                    <h4 className="font-manrope font-semibold text-sm text-foreground">Company</h4>
+                                    <ul className="space-y-3">
+                                        <li><Link href="/why-zecurx" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link></li>
+                                        <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link></li>
+                                        <li><Link href="/resources/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+                                        <li><Link href="/resources/research" className="text-sm text-muted-foreground hover:text-primary transition-colors">Research</Link></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Bottom Section */}
+                        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+                            <p>&copy; {new Date().getFullYear()} ZecurX. All rights reserved.</p>
+                            <div className="flex gap-6">
+                                <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+                                <Link href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</Link>
+                            </div>
                         </div>
                     </div>
-
-                    {/* Bottom Row */}
-                    <div className="mt-24 border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-muted-foreground font-medium">
-                        <p>&copy; 2025 ZecurX. All rights reserved.</p>
-                        <div className="flex gap-8 mt-4 md:mt-0">
-                            <a href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</a>
-                            <a href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</a>
-                            <a href="/cookie-policy" className="hover:text-foreground transition-colors">Cookie Policy</a>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Giant Watermark */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[20%] pointer-events-none opacity-[0.03]">
-                    <span className="text-[25vw] font-manrope font-bold leading-none tracking-tighter text-foreground">
-                        ZecurX
-                    </span>
-                </div>
-
-            </footer>
+                </footer>
+            </div>
         </div>
     );
 }

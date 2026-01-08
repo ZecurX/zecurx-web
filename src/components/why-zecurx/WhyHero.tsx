@@ -21,14 +21,6 @@ export default function WhyHero() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="max-w-5xl mx-auto"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-muted-foreground text-sm font-medium mb-8 backdrop-blur-sm">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground"></span>
-                        </span>
-                        Proven Security Outcomes
-                    </div>
-
                     <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                         One Platform. Every Threat.<br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">Superior Protection.</span>
