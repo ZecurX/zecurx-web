@@ -23,6 +23,8 @@ const courses = [
         level: 'Beginner' as const,
         features: [
             'Full practical exposure on live targets',
+            'ISO Verified Certification',
+            'ISO Certified Exam Voucher',
             'AI for Threat Detection & Response',
             'Prompt Engineering for Security Ops',
             'Hands-on Labs & Capstone Project',
@@ -41,6 +43,8 @@ const courses = [
         students: 500,
         level: 'Intermediate' as const,
         features: [
+            'ISO Verified Certification',
+            'ISO Certified Exam Voucher',
             'Advanced Exploitation',
             'Network & Web Security',
             'Privilege Escalation',
@@ -59,6 +63,8 @@ const courses = [
         students: 200,
         level: 'Advanced' as const,
         features: [
+            'ISO Verified Certification',
+            'ISO Certified Exam Voucher',
             'Red Teaming Methodology',
             'Advanced Evasion Techniques',
             'Report Writing & Documentation',
@@ -77,6 +83,8 @@ const courses = [
         students: 120,
         level: 'Intermediate' as const,
         features: [
+            'ISO Verified Certification',
+            'ISO Certified Exam Voucher',
             'LLMs for Security',
             'Automated Threat Hunting',
             'Secure AI Deployment',
@@ -141,6 +149,8 @@ const courses = [
         duration: 'Coming Soon',
         level: 'Intermediate' as const,
         features: [
+            'ISO Verified Certification',
+            'ISO Certified Exam Voucher',
             'Secure Coding Practices',
             'Modern Stack (Next.js, Node)',
             'Database Security',
@@ -220,7 +230,7 @@ export default function AcademyPage() {
                         {[
                             {
                                 title: 'Industry Recognized',
-                                description: 'Curriculum aligned with global standards like CEH, CISSP, OSCP, and CompTIA.',
+                                description: 'ISO Certified curriculum aligned with global standards like CEH, CISSP, OSCP, and CompTIA.',
                             },
                             {
                                 title: 'Hands-On Labs',
