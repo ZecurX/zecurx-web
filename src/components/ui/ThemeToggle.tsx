@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
-    const { theme, setTheme } = useTheme()
+    const { theme, setTheme, resolvedTheme } = useTheme()
     const [mounted, setMounted] = React.useState(false)
 
     React.useEffect(() => {
@@ -17,7 +17,8 @@ export function ThemeToggle() {
 
     if (!mounted) return null
 
-    const isDark = theme === "dark"
+    // Determine checks based on current state
+    const isDark = theme === 'system' ? resolvedTheme === 'dark' : theme === 'dark'
 
     return (
         <button

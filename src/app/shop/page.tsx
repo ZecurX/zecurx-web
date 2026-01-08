@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Shield, Zap, Cpu, ArrowRight, Package, AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import { Shield, Zap, Package, ArrowRight, ShoppingBag } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import RazorpayCheckout from '@/components/academy/RazorpayCheckout';
+import ProductCard from '@/components/shop/ProductCard';
 
 const products = [
     {
@@ -29,142 +30,137 @@ const products = [
 
 export default function ShopPage() {
     return (
-        <main className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+        <main className="min-h-screen bg-background">
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+            <section className="relative pt-40 pb-20 overflow-hidden">
+                {/* Modern Grid Texture */}
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808015_1px,transparent_1px),linear-gradient(to_bottom,#80808015_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.6 }}
+                        className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-medium text-primary mb-6">
-                            <ShoppingBag className="w-3 h-3" />
-                            <span>Cyber Hardware</span>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-                            The ZecurX <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">Gear Shop</span>
+                        <h1 className="text-6xl md:text-8xl font-bold text-foreground mb-8 tracking-tighter">
+                            ZecurX Shop
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                            Equip yourself with professional-grade hardware for advanced security research and penetration testing.
+                        <p className="text-xl md:text-2xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl mb-12">
+                            Professional-grade hardware for advanced security research and penetration testing.
                         </p>
+
+                        <div className="flex flex-wrap gap-6">
+                            <a
+                                href="#products"
+                                className="inline-flex items-center gap-2 text-foreground font-semibold border-b border-foreground pb-1 hover:opacity-70 transition-opacity"
+                            >
+                                <span>Browse Gear</span>
+                                <ArrowRight className="w-4 h-4" />
+                            </a>
+                        </div>
                     </motion.div>
                 </div>
             </section>
 
-            {/* PRODUCTS GRID */}
-            <section className="pb-32">
+            {/* TRUST SECTION */}
+            <section className="py-24 border-y border-border">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 gap-12">
-                        {products.map((product, idx) => (
+                    <div className="grid md:grid-cols-3 gap-12 lg:gap-24">
+                        {[
+                            {
+                                icon: Shield,
+                                title: 'Authentic Gear',
+                                description: 'Certified authentic hardware sourced directly from original manufacturers.',
+                            },
+                            {
+                                icon: Package,
+                                title: 'Priority Shipping',
+                                description: 'Discrete packaging with express tracked shipping for all hardware orders.',
+                            },
+                            {
+                                icon: Zap,
+                                title: 'Instant Activation',
+                                description: 'Get immediate access to ZecurX Academy tutorials for your new tool.',
+                            },
+                        ].map((item, index) => (
                             <motion.div
-                                key={product.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                                className="group relative grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 rounded-3xl bg-muted/20 border border-border/50 overflow-hidden"
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1 }}
                             >
-                                {/* Background Glow */}
-                                <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500" />
-
-                                {/* Image Side */}
-                                <div className="relative aspect-square rounded-2xl overflow-hidden border border-border bg-background/50">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute top-4 left-4 flex gap-2">
-                                        {product.tags.map(tag => (
-                                            <span key={tag} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-black/50 backdrop-blur-md border border-white/10 rounded-md">
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    {product.stock <= 5 && (
-                                        <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full text-red-500 text-xs font-semibold">
-                                            <AlertCircle className="w-3 h-3" />
-                                            Limited Stock: {product.stock} units left
-                                        </div>
-                                    )}
+                                <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mb-6 border border-border/50">
+                                    <item.icon className="w-6 h-6 text-foreground/80" />
                                 </div>
-
-                                {/* Content Side */}
-                                <div className="flex flex-col justify-center">
-                                    <h2 className="text-3xl font-bold mb-4">{product.name}</h2>
-                                    <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-                                        {product.description}
-                                    </p>
-
-                                    <div className="grid grid-cols-2 gap-4 mb-8">
-                                        {product.features.map((feature, fIdx) => (
-                                            <div key={fIdx} className="flex items-center gap-2 text-sm text-foreground/80">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                                {feature}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="mt-auto flex flex-col sm:flex-row items-center gap-6 pt-8 border-t border-border/50">
-                                        <div>
-                                            <div className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-semibold text-[10px]">Price</div>
-                                            <div className="text-4xl font-bold">₹{product.price.toLocaleString('en-IN')}</div>
-                                        </div>
-
-                                        <div className="flex-1 w-full flex flex-col gap-2">
-                                            <RazorpayCheckout
-                                                itemId={product.id}
-                                                itemName={product.name}
-                                                itemDescription={`Purchase of ${product.name}`}
-                                                amount={product.price}
-                                                metadata={{ type: 'hardware' }}
-                                                className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-primary-foreground font-bold rounded-2xl hover:bg-primary/90 transition-all hover:scale-[1.02] shadow-xl shadow-primary/20"
-                                            >
-                                                <ShoppingBag className="w-5 h-5" />
-                                                Buy Now
-                                            </RazorpayCheckout>
-                                            <p className="text-[10px] text-center text-muted-foreground italic">
-                                                Secure payment processed via Razorpay. Fast delivery nationwide.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h3 className="text-lg font-bold text-foreground mb-4">{item.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* TRUST SECTION */}
-            <section className="py-24 border-t border-border/50 bg-muted/10">
+            {/* PRODUCTS GRID */}
+            <section id="products" className="py-32">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                                <Shield className="w-8 h-8 text-primary" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">Authentic Gear</h3>
-                            <p className="text-sm text-muted-foreground">Certified authentic hardware sourced directly from original manufacturers.</p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
+                    >
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
+                                Essential Hardware
+                            </h2>
+                            <p className="text-muted-foreground max-w-xl text-lg font-light">
+                                Tools of the trade for the modern security professional.
+                            </p>
                         </div>
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                                <Package className="w-8 h-8 text-primary" />
+                    </motion.div>
+
+                    <div className="flex flex-wrap justify-center sm:justify-start gap-8">
+                        {products.map((product, index) => (
+                            <div
+                                key={product.id}
+                                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]"
+                            >
+                                <ProductCard {...product} delay={index * 0.1} />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Priority Shipping</h3>
-                            <p className="text-sm text-muted-foreground">Discrete packaging with express tracked shipping for all hardware orders.</p>
-                        </div>
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
-                                <Zap className="w-8 h-8 text-primary" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">Instant Activation</h3>
-                            <p className="text-sm text-muted-foreground">Get immediate access to ZecurX Academy tutorials for your new tool.</p>
-                        </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ENTERPRISE CTA */}
+            <section className="py-32 bg-foreground text-background">
+                <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight">
+                            Bulk Procurement
+                        </h2>
+                        <p className="text-background/80 text-xl font-light leading-relaxed mb-12 max-w-md">
+                            Equip your entire Red Team with industry-standard hardware.
+                        </p>
+                        <a
+                            href="/contact"
+                            className="inline-flex items-center gap-2 px-8 py-4 bg-background text-foreground font-semibold hover:bg-background/90 transition-colors"
+                        >
+                            <span>Contact Sales</span>
+                            <ArrowRight className="w-4 h-4" />
+                        </a>
+                    </div>
+                    <div className="hidden md:block">
+                        <div className="w-full h-px bg-background/20 mb-8" />
+                        <div className="w-full h-px bg-background/20 mb-8 ml-12" />
+                        <div className="w-full h-px bg-background/20 ml-24" />
                     </div>
                 </div>
             </section>

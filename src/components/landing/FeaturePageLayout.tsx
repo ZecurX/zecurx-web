@@ -10,6 +10,13 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+    CardDescription,
+} from "@/components/ui/card";
 
 interface FeatureData {
     badge: string;
@@ -106,7 +113,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.1 }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
                         className="text-4xl md:text-7xl font-manrope font-light text-foreground leading-[1.1] mb-6"
                     >
                         {data.title}
@@ -122,7 +129,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                         className="text-lg md:text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-3xl mb-8 md:mb-10"
                     >
                         {data.description}
@@ -132,7 +139,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                         className="flex flex-col sm:flex-row gap-4"
                     >
                         <Link href="/book-demo">
@@ -190,17 +197,20 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                             <motion.div
                                 key={index}
                                 variants={itemVariants}
-                                className="group p-6 rounded-2xl bg-muted/30 backdrop-blur-md border border-border hover:border-foreground/10 transition-all duration-300"
+                                className="h-full"
                             >
-                                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform duration-300">
-                                    {capability.icon}
-                                </div>
-                                <h3 className="text-lg font-manrope font-semibold text-foreground mb-2">
-                                    {capability.title}
-                                </h3>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {capability.description}
-                                </p>
+                                <Card className="h-full flex flex-col hover:bg-muted/60 transition-colors border-border/40">
+                                    <CardHeader className="pb-4">
+                                        <CardTitle className="text-xl font-manrope font-medium text-foreground">
+                                            {capability.title}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <CardDescription className="text-base font-light leading-relaxed text-muted-foreground/80">
+                                            {capability.description}
+                                        </CardDescription>
+                                    </CardContent>
+                                </Card>
                             </motion.div>
                         ))}
                     </motion.div>
