@@ -183,7 +183,13 @@ export default function CreativeNavBar() {
                     {/* Mobile Navigation */}
                     <div className="lg:hidden flex items-center justify-between h-14">
                         <Link href="/" className="flex items-center gap-2">
-                            <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-7 h-7" />
+                            <Image
+                                src="/images/zecurx-logo.png"
+                                alt="ZecurX"
+                                width={28}
+                                height={28}
+                                className="object-contain"
+                            />
                             <span className="text-foreground font-manrope font-bold text-base">ZecurX</span>
                         </Link>
                         <div className="flex items-center gap-2">

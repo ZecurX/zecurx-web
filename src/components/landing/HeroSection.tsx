@@ -4,6 +4,7 @@ import React from 'react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HeroSection() {
 
@@ -32,19 +33,25 @@ export default function HeroSection() {
 
                         {/* Dark Mode Image */}
                         <div className="absolute inset-0 hidden dark:block">
-                            <img
+                            <Image
                                 src="/images/dashboard-hero.png"
                                 alt="Dashboard Preview"
-                                className="w-full h-full object-cover object-top opacity-100"
+                                fill
+                                priority
+                                quality={90}
+                                className="object-cover object-top opacity-100"
                             />
                         </div>
 
                         {/* Light Mode Image */}
                         <div className="absolute inset-0 dark:hidden">
-                            <img
+                            <Image
                                 src="/images/dashboard-hero-light.png"
                                 alt="Dashboard Preview"
-                                className="w-full h-full object-cover object-top opacity-100"
+                                fill
+                                priority
+                                quality={90}
+                                className="object-cover object-top opacity-100"
                             />
                         </div>
                     </div>
