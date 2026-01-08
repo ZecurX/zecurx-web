@@ -35,7 +35,7 @@ const internships = [
 ];
 
 function InternshipCard({ role, index }: { role: typeof internships[0], index: number }) {
-    const [duration, setDuration] = React.useState<'3months' | '6months'>('3months');
+    const [duration, setDuration] = React.useState<'3months' | '6months'>('6months');
 
     const pricing = {
         '3months': { price: 3200, label: '3 Months' },
