@@ -50,7 +50,7 @@ export default function BookDemoPage() {
     };
 
     return (
-        <main className="bg-background min-h-screen text-foreground selection:bg-foreground/20 relative">
+        <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
             <CreativeNavBar />
 
             <section className="relative w-full min-h-screen flex flex-col lg:flex-row pt-24 lg:pt-0">
@@ -62,10 +62,10 @@ export default function BookDemoPage() {
                             <span className="inline-block px-4 py-1.5 rounded-full border border-border bg-foreground/5 text-sm font-medium text-muted-foreground mb-6">
                                 Schedule a Demo
                             </span>
-                            <h1 className="text-4xl lg:text-6xl font-manrope font-semibold tracking-tight leading-[1.1] mb-6">
+                            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                                 See ZecurX in <span className="text-muted-foreground">Action.</span>
                             </h1>
-                            <p className="text-xl text-muted-foreground leading-relaxed">
+                            <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed">
                                 Experience how our unified security platform minimizes risk, automates compliance, and accelerates your security engineering workflows.
                             </p>
                         </div>

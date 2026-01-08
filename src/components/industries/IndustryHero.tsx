@@ -21,14 +21,6 @@ export default function IndustryHero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="max-w-5xl mx-auto"
         >
-          <div className="flex items-center gap-3 mb-8">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground"></span>
-            </span>
-            <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Industry-Specific Security</span>
-          </div>
-
           <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 mb-8 relative z-20">
             Securing <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">Critical Infrastructure</span> <br className="hidden md:block" /> Across Every Sector.
           </h1>

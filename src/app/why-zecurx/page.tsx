@@ -6,7 +6,7 @@ import WhyContent from "@/components/why-zecurx/WhyContent";
 
 export default function WhyZecurXPage() {
     return (
-        <main className="bg-background min-h-screen selection:bg-primary/30">
+        <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
             <CreativeNavBar />
             <WhyHero />
             <WhyContent />

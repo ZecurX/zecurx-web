@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ChevronRight, ArrowUpRight } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 const capabilities = [
     {
@@ -101,23 +102,21 @@ export default function PlatformCapabilitiesSection() {
                     {/* Right: Feature Showcase Card */}
                     <div className="relative lg:pl-10">
                         <div className="sticky top-32">
-                            <div className="relative overflow-hidden rounded-3xl bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between group">
-
-                                {/* Dynamic Background Gradient */}
-                                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-foreground/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-foreground/10 transition-colors duration-700"></div>
-
-                                <div>
+                            <Card className="bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between">
+                                <CardHeader className="p-0">
                                     {/* Content */}
                                     <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6 animate-fadeIn key={activeIndex}">
                                         {capabilities[activeIndex].title}
                                     </h3>
+                                </CardHeader>
+                                <CardContent className="p-0">
                                     <p className="text-muted-foreground text-lg leading-relaxed max-w-md animate-fadeIn delay-100 key={activeIndex + 'desc'}">
                                         {capabilities[activeIndex].description}
                                     </p>
-                                </div>
+                                </CardContent>
 
                                 {/* Interactive Bottom Area */}
-                                <div className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
+                                <CardFooter className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
                                     <button
                                         onClick={() => router.push('/book-demo')}
                                         className="bg-foreground text-background px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2"
@@ -132,9 +131,9 @@ export default function PlatformCapabilitiesSection() {
                                         Explore Feature
                                         <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
                                     </button>
-                                </div>
+                                </CardFooter>
 
-                            </div>
+                            </Card>
                         </div>
                     </div>
                 </div>

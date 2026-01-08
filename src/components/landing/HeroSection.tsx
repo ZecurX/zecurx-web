@@ -1,11 +1,10 @@
 "use client";
 
 import React from 'react';
-import HeroVideoCard from './HeroVideoCard';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HeroSection() {
 
@@ -20,105 +19,98 @@ export default function HeroSection() {
         setMounted(true);
     }, []);
 
-    // Default to dark if not mounted to prevent flash, or simplistic default.
-    // Actually, usually beneficial to render nothing or a neutral specific one until mounted to avoid mismatch.
-    // However, for SEO/Performance, maybe CSS variables are better?
-    // Given the constraints and the user request, I'll use inline style or class logic.
-    const backgroundImage = mounted && resolvedTheme === 'light'
-        ? '/assets/light-bg.png'
-        : '/assets/dark-bg.png';
-
     return (
-        <section className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 transition-colors duration-500">
+        <section className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 pt-32 pb-20 transition-colors duration-500">
 
-            {/* Background Image */}
-            {mounted && (
-                <motion.div
-                    className="absolute inset-0 z-0 h-full w-full bg-cover bg-center bg-no-repeat pointer-events-none"
-                    style={{
-                        backgroundImage: `url(${backgroundImage})`,
-                        y: backgroundY
-                    }}
-                />
-            )}
+            {/* Background Image / Glow */}
+            <div className="absolute inset-0 z-0 h-full w-full pointer-events-none select-none">
 
-            {/* Fallback/Loading or just empty until mounted? 
-                If we don't render anything, it might flash white/black.
-                Better to render a default (e.g. dark) if server-side, but 'mounted' protects against mismatch errors.
-                Let's stick to mounted check for safety. 
-            */}
+                {/* Dashboard Image Backdrop */}
+                <div className="absolute max-w-[1400px] left-1/2 -translate-x-1/2 top-0 h-[900px] w-full opacity-100">
+                    <div className="relative w-full h-full">
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/95 via-40% to-background z-20" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background z-20" />
 
-            {/* Subtle Top Glow */}
-            <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
+                        {/* Dark Mode Image */}
+                        <div className="absolute inset-0 hidden dark:block">
+                            <Image
+                                src="/images/dashboard-hero.png"
+                                alt="Dashboard Preview"
+                                fill
+                                priority
+                                quality={90}
+                                className="object-cover object-top opacity-100"
+                            />
+                        </div>
+
+                        {/* Light Mode Image */}
+                        <div className="absolute inset-0 dark:hidden">
+                            <Image
+                                src="/images/dashboard-hero-light.png"
+                                alt="Dashboard Preview"
+                                fill
+                                priority
+                                quality={90}
+                                className="object-cover object-top opacity-100"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Subtle Top Glow */}
+                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none z-10" />
+            </div>
 
             {/* Content Container */}
-            <div className="flex flex-col items-center justify-center space-y-8 z-10 text-center mt-20">
+            <div className="flex flex-col items-center justify-center space-y-8 z-20 text-center mt-10 max-w-5xl mx-auto">
+
+
 
                 {/* Headline */}
                 <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                    className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 mb-8 relative z-20"
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                    className="text-5xl sm:text-7xl md:text-8xl font-bold font-manrope tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/90 to-foreground/50 mb-6"
                 >
-                    Security & Technology <br className="hidden md:block" />
-                    That Grows With You.
+                    Security that actually <br className="hidden md:block" />
+                    works for you.
                 </motion.h1>
 
                 {/* Subtext */}
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-                    className="max-w-3xl text-lg md:text-xl text-muted-foreground font-manrope font-light leading-relaxed"
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                    className="max-w-3xl text-lg md:text-xl text-muted-foreground font-light leading-relaxed"
                 >
-                    AI-driven cybersecurity services, secure software engineering, and enterprise-ready security architectures — built to protect critical assets, reduce risk, and enable confident growth.
+                    Unified visibility, automated detection, and seamless response. <br className="hidden md:block" />
+                    Protect your infrastructure with the world's most advanced AI security platform.
                 </motion.p>
 
                 {/* Buttons */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-                    className="flex flex-col md:flex-row items-center gap-4 mt-8"
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+                    className="flex items-center gap-4 mt-8 relative z-30"
                 >
                     {/* Primary Button - Request Demo */}
                     <Link href="/book-demo">
-                        <Button
-                            size="lg"
-                            className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-lg hover:scale-105 transition-transform duration-300 group"
-                        >
-                            Request Demo
-                            <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                <span className="text-xl">↗</span>
-                            </div>
-                        </Button>
+                        <button className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity cursor-pointer shadow-lg">
+                            Start for free
+                        </button>
                     </Link>
 
                     {/* Secondary Button - Contact */}
                     <Link href="/contact">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="rounded-full text-base font-medium px-8 bg-transparent hover:bg-muted border-foreground/20 text-foreground"
-                        >
-                            Contact Us
-                        </Button>
+                        <button className="px-8 py-4 bg-transparent border border-foreground/20 text-foreground font-semibold rounded-full hover:bg-foreground/5 transition-colors backdrop-blur-sm cursor-pointer">
+                            Book a demo
+                        </button>
                     </Link>
                 </motion.div>
 
             </div>
-
-            {/* Video Card */}
-            <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: "easeOut", delay: 0.8 }}
-                className="z-10 mt-12 w-full max-w-5xl"
-            >
-                <HeroVideoCard />
-            </motion.div>
-
 
             {/* Bottom Gradient Fade */}
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent z-20" />

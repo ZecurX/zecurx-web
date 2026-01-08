@@ -48,7 +48,7 @@ export default function ContactPage() {
     };
 
     return (
-        <main className="bg-background min-h-screen text-foreground selection:bg-foreground/20 relative">
+        <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
             <CreativeNavBar />
 
             <section className="relative w-full pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -57,10 +57,10 @@ export default function ContactPage() {
 
                     {/* Left: Info */}
                     <div>
-                        <h1 className="text-5xl md:text-7xl font-manrope font-semibold tracking-tight mb-8">
+                        <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                             Get in Touch.
                         </h1>
-                        <p className="text-xl text-muted-foreground leading-relaxed mb-12 max-w-lg">
+                        <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed mb-12 max-w-lg">
                             Have questions about our platform or services? Our team is ready to help you secure your enterprise.
                         </p>
 
@@ -117,7 +117,7 @@ export default function ContactPage() {
                     </div>
 
                     {/* Right: Form */}
-                    <div className="bg-background border border-border rounded-3xl p-8 md:p-12">
+                    <div className="bg-background border border-border rounded-3xl p-8 md:p-12 h-fit">
                         {isSuccess ? (
                             <div className="flex flex-col items-center justify-center h-full text-center py-12">
                                 <CheckCircle2 className="w-16 h-16 text-green-500 mb-4" />
