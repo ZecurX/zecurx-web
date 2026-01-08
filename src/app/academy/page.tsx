@@ -162,10 +162,10 @@ const courses = [
 ];
 
 const stats = [
-    { icon: Users, value: '10,000+', label: 'Students Trained' },
+    { icon: Users, value: '1,200+', label: 'Students Trained' },
     { icon: Award, value: '95%', label: 'Pass Rate' },
-    { icon: BookOpen, value: '25+', label: 'Courses' },
-    { icon: GraduationCap, value: '50+', label: 'Expert Instructors' },
+    { icon: BookOpen, value: '10+', label: 'Courses' },
+    { icon: GraduationCap, value: '10+', label: 'Expert Instructors' },
 ];
 
 export default function AcademyPage() {
