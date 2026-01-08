@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
     ChevronDown, Shield, Globe, Lock, Cpu, Eye,
     Zap, Cloud, KeyRound, Code, Target, Brain, Settings, ShieldCheck,
@@ -79,6 +80,18 @@ export default function CreativeNavBar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Lock body scroll when mobile menu is open
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [mobileMenuOpen]);
+
     const handleNavigation = (href: string) => {
         setActiveDropdown(null);
         setMobileMenuOpen(false);
@@ -101,7 +114,16 @@ export default function CreativeNavBar() {
                     <div className="hidden lg:flex items-center justify-between h-16">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2.5">
-                            <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-8 h-8 object-contain" />
+                            <div className="relative w-8 h-8">
+                                <Image
+                                    src="/images/zecurx-logo.png"
+                                    alt="ZecurX"
+                                    fill
+                                    className="object-contain"
+                                    sizes="32px"
+                                    priority
+                                />
+                            </div>
                             <span className="text-foreground font-manrope font-bold text-lg tracking-tight">ZecurX</span>
                         </Link>
 
@@ -111,7 +133,7 @@ export default function CreativeNavBar() {
                                 <button
                                     key={key}
                                     className={cn(
-                                        "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                                        "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer",
                                         activeDropdown === key
                                             ? "text-foreground bg-muted/50"
                                             : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
@@ -161,14 +183,20 @@ export default function CreativeNavBar() {
                     {/* Mobile Navigation */}
                     <div className="lg:hidden flex items-center justify-between h-14">
                         <Link href="/" className="flex items-center gap-2">
-                            <img src="/images/zecurx-logo.png" alt="ZecurX" className="w-7 h-7" />
+                            <Image
+                                src="/images/zecurx-logo.png"
+                                alt="ZecurX"
+                                width={28}
+                                height={28}
+                                className="object-contain"
+                            />
                             <span className="text-foreground font-manrope font-bold text-base">ZecurX</span>
                         </Link>
                         <div className="flex items-center gap-2">
                             <ThemeToggle />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="p-2 text-foreground"
+                                className="p-2 text-foreground cursor-pointer"
                             >
                                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                             </button>
@@ -234,6 +262,20 @@ export default function CreativeNavBar() {
                                 ))}
                                 <div className="pt-4 border-t border-border space-y-3">
                                     <Link
+                                        href="/shop"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block text-lg font-semibold text-foreground"
+                                    >
+                                        Shop
+                                    </Link>
+                                    <Link
+                                        href="/academy"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block text-lg font-semibold text-foreground"
+                                    >
+                                        Academy
+                                    </Link>
+                                    <Link
                                         href="/why-zecurx"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block text-lg font-semibold text-foreground"
@@ -292,50 +334,51 @@ interface DropdownContentProps {
 
 function DropdownContent({ data, onNavigate }: DropdownContentProps) {
     return (
-        <div className="grid grid-cols-12 gap-8">
-            {/* Left: Overview */}
-            <div className="col-span-3 border-r border-border/40 pr-8">
-                <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground/70 mb-3 block">
-                    {data.label}
-                </span>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                    {data.description}
-                </p>
-                <button
-                    onClick={() => onNavigate(data.href)}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-foreground group"
-                >
-                    <span className="border-b border-foreground/30 group-hover:border-foreground transition-colors pb-0.5">
-                        View all
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </button>
+        <div className="flex flex-col">
+            {/* Header Section */}
+            <div className="px-6 py-5 border-b border-border/10 flex items-center justify-between bg-muted/5">
+                <div>
+                    <h3 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground/80">
+                        {data.label}
+                    </h3>
+                </div>
             </div>
 
-            {/* Right: Links Grid */}
-            <div className="col-span-9 grid grid-cols-3 gap-x-6 gap-y-1">
+            {/* Strict Grid System */}
+            <div className="grid grid-cols-2 lg:grid-cols-3 bg-border/20 gap-px border-b border-border/20">
                 {data.items.map((item, index) => (
                     <motion.button
                         key={item.title}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ duration: 0.2, delay: index * 0.02 }}
                         onClick={() => onNavigate(item.href)}
-                        className="flex items-center gap-3 px-3 py-3 -mx-3 rounded-lg hover:bg-muted/40 transition-all text-left group"
+                        className="group relative flex flex-col justify-between p-5 bg-background hover:bg-muted/30 transition-all text-left h-[100px] cursor-pointer"
                     >
-                        <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0">
-                            <item.icon className="w-4 h-4" strokeWidth={1.5} />
-                        </div>
-                        <div className="min-w-0">
-                            <div className="font-medium text-sm text-foreground truncate">
+                        <div className="flex justify-between items-start w-full">
+                            <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors pr-4">
                                 {item.title}
-                            </div>
-                            <div className="text-xs text-muted-foreground truncate">
-                                {item.desc}
-                            </div>
+                            </span>
+                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 -rotate-45 group-hover:rotate-0 group-hover:text-primary transition-all duration-300" />
                         </div>
+
+                        <span className="text-xs text-muted-foreground/60 line-clamp-1 group-hover:text-muted-foreground transition-colors">
+                            {item.desc}
+                        </span>
                     </motion.button>
                 ))}
+
+            </div>
+
+            {/* Footer Section */}
+            <div className="bg-muted/5 border-t border-border/10 p-4 flex justify-start">
+                <button
+                    onClick={() => onNavigate(data.href)}
+                    className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors pl-2 cursor-pointer"
+                >
+                    View All {data.label}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
             </div>
         </div>
     );

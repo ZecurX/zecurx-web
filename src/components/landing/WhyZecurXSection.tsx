@@ -2,6 +2,13 @@
 import React from 'react';
 import { Shield, Target, Zap, CheckCircle2 } from 'lucide-react';
 import { motion } from "framer-motion";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent
+} from "@/components/ui/card";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -78,35 +85,32 @@ export default function WhyZecurXSection() {
                 >
                     {[
                         {
-                            icon: Target,
+                            num: "01",
                             title: "Understanding Attacker Behavior",
                             desc: "Security informed by how attackers actually think, move, and exploit systems."
                         },
                         {
-                            icon: Shield,
+                            num: "02",
                             title: "Engineering Resilient Systems",
                             desc: "Building security into the DNA of your technology, not adding it as an afterthought."
                         },
                         {
-                            icon: Zap,
+                            num: "03",
                             title: "Embedding Security Culture",
                             desc: "Integrating security into technology and culture for sustainable protection."
                         }
                     ].map((item, i) => (
-                        <motion.div variants={itemVariants} key={i} className="p-8 rounded-3xl bg-muted/50 backdrop-blur-sm border border-border hover:border-foreground/20 transition-colors group relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-b from-foreground/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className="relative z-10">
-                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                    <item.icon className="w-6 h-6 text-foreground/80" strokeWidth={1.5} />
+                        <Card key={i} className="bg-muted/50 backdrop-blur-sm border-border hover:border-foreground/20 group">
+                            <CardHeader>
+                                <div className="text-6xl font-manrope font-light text-muted-foreground/20 mb-4 group-hover:text-primary/20 transition-colors duration-300">
+                                    {item.num}
                                 </div>
-                                <h3 className="text-xl font-manrope font-semibold text-foreground mb-4">
-                                    {item.title}
-                                </h3>
-                                <p className="text-muted-foreground leading-relaxed">
-                                    {item.desc}
-                                </p>
-                            </div>
-                        </motion.div>
+                                <CardTitle className="text-xl mb-4">{item.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <CardDescription>{item.desc}</CardDescription>
+                            </CardContent>
+                        </Card>
                     ))}
                 </motion.div>
 
@@ -141,25 +145,16 @@ export default function WhyZecurXSection() {
                                 { title: "AI-Driven Solutions", sub: "Automation & Intelligence" },
                                 { title: "Professional Training", sub: "Certification Programs" }
                             ].map((item, i) => (
-                                <motion.div variants={itemVariants} key={i} className="group relative p-6 rounded-2xl bg-muted/30 backdrop-blur-md border border-border hover:border-foreground/10 transition-all duration-300 overflow-hidden">
-                                    {/* Hover Gradient */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                    <div className="relative z-10 flex flex-col h-full justify-between">
-                                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                            <CheckCircle2 className="w-5 h-5 text-primary group-hover:text-primary transition-colors" />
-                                        </div>
-
-                                        <div>
-                                            <h4 className="text-lg font-manrope font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-                                                {item.title}
-                                            </h4>
-                                            <p className="text-sm text-muted-foreground font-manrope group-hover:text-muted-foreground/80 transition-colors">
-                                                {item.sub}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                <Card key={i} className="bg-muted/30 backdrop-blur-md border border-border hover:border-foreground/10 p-8 h-full flex flex-col justify-center group">
+                                    <CardContent className="p-0">
+                                        <CardTitle className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
+                                            {item.title}
+                                        </CardTitle>
+                                        <CardDescription className="text-sm font-manrope text-muted-foreground group-hover:text-foreground/80 transition-colors">
+                                            {item.sub}
+                                        </CardDescription>
+                                    </CardContent>
+                                </Card>
                             ))}
                         </motion.div>
                     </div>

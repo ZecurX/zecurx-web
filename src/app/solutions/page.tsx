@@ -2,6 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+    CardFooter,
+    CardTagline
+} from "@/components/ui/card";
 import Footer from "@/components/landing/Footer";
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { motion } from "framer-motion";
@@ -124,15 +133,6 @@ export default function SolutionsPage() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="max-w-5xl mx-auto"
                     >
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-muted-foreground text-sm font-medium mb-8 backdrop-blur-sm"
-                        >
-                            Security Solutions
-                        </motion.span>
-
                         <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
                             Protect. Defend. <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">Secure.</span>
@@ -163,42 +163,29 @@ export default function SolutionsPage() {
                                 className={index < 2 ? "lg:col-span-1" : ""}
                             >
                                 <Link
-                                    id={solution.id}
                                     href={`/solutions/${solution.id}`}
-                                    className="group relative block h-full p-8 rounded-2xl bg-muted/40 backdrop-blur-sm border border-border/50 hover:border-foreground/20 hover:bg-muted/60 transition-all duration-500 overflow-hidden"
                                 >
-                                    {/* Subtle gradient overlay on hover */}
-                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTagline>{solution.tagline}</CardTagline>
+                                            <CardTitle>{solution.title}</CardTitle>
+                                        </CardHeader>
 
-                                    {/* Corner accent */}
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        <CardContent>
+                                            <CardDescription className="mb-6">
+                                                {solution.description}
+                                            </CardDescription>
+                                        </CardContent>
 
-                                    <div className="relative z-10 flex flex-col h-full">
-                                        {/* Header with tagline */}
-                                        <span className="text-primary font-manrope font-semibold tracking-widest text-[10px] uppercase mb-4">
-                                            {solution.tagline}
-                                        </span>
-
-                                        {/* Title */}
-                                        <h3 className="text-2xl font-manrope font-medium text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
-                                            {solution.title}
-                                        </h3>
-
-                                        {/* Description */}
-                                        <p className="text-muted-foreground text-sm leading-relaxed flex-grow mb-6">
-                                            {solution.description}
-                                        </p>
-
-                                        {/* Arrow indicator */}
-                                        <div className="flex items-center justify-between">
+                                        <CardFooter className="justify-between mt-auto">
                                             <span className="text-xs text-muted-foreground/60 font-manrope uppercase tracking-wide group-hover:text-primary/60 transition-colors">
                                                 Learn more
                                             </span>
                                             <div className="w-10 h-10 rounded-full bg-muted/80 flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
                                                 <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:rotate-45 transition-all duration-300" />
                                             </div>
-                                        </div>
-                                    </div>
+                                        </CardFooter>
+                                    </Card>
                                 </Link>
                             </motion.div>
                         ))}

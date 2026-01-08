@@ -3,6 +3,8 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 
+import Image from 'next/image';
+
 export default function ReadyToSecureSection() {
     return (
         <section
@@ -10,25 +12,38 @@ export default function ReadyToSecureSection() {
         >
             {/* Light Mode: Background */}
             <div
+                className="absolute inset-0 z-0 dark:hidden"
                 style={{
-                    backgroundImage: "url('/assets/ready-bg-light.png')",
                     maskImage: "linear-gradient(to bottom, transparent, white 20%, white 80%, transparent)",
                     WebkitMaskImage: "linear-gradient(to bottom, transparent, white 20%, white 80%, transparent)"
                 }}
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat dark:hidden scale-105"
-            />
+            >
+                <Image
+                    src="/assets/ready-bg-light.png"
+                    alt="Background"
+                    fill
+                    className="object-cover object-center scale-105"
+                />
+            </div>
+
             {/* Light Mode Overlay for brightness */}
             <div className="absolute inset-0 bg-white/10 z-0 dark:hidden" />
 
             {/* Dark Mode: Background & Overlay with Gradient Fade */}
             <div
+                className="absolute inset-0 z-0 hidden dark:block"
                 style={{
-                    backgroundImage: "url('/assets/ready-bg-dark.png')",
                     maskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
                     WebkitMaskImage: "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)"
                 }}
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat hidden dark:block opacity-100 scale-105"
-            />
+            >
+                <Image
+                    src="/assets/ready-bg-dark.png"
+                    alt="Background"
+                    fill
+                    className="object-cover object-center scale-105"
+                />
+            </div>
             {/* Removed overlay to prevent grainy box effect and rely on image blend */}
 
 
