@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
                 ? `Brochure Download: ${body.courseTitle} by ${name}`
                 : isInternship
                     ? `New Internship Enrollment: ${body.itemName} by ${name}`
+                    : isPurchase
                         ? `New Purchase: ${body.itemName} by ${name}`
                         : `New Contact: ${subject || 'General Inquiry'}`;
 
