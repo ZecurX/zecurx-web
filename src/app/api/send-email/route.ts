@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { appendToSheet } from '@/lib/google-sheets';
 
 export async function POST(request: NextRequest) {
     try {
@@ -7,7 +8,7 @@ export async function POST(request: NextRequest) {
         const { name, email, subject, message, formType } = body;
 
         // Validate required fields
-        if (!name || !email || (!message && formType !== 'brochure')) {
+        if (!name || !email || (!message && formType !== 'brochure' && formType !== 'purchase')) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
@@ -41,6 +42,28 @@ export async function POST(request: NextRequest) {
                     : isPurchase
                         ? `New Purchase: ${body.itemName} by ${name}`
                         : `New Contact: ${subject || 'General Inquiry'}`;
+
+        // Save to Google Sheets if it's a purchase/internship
+        if (isPurchase || isInternship) {
+            try {
+                // Determine course/item name
+                let courseName = body.itemName || 'Unknown Item';
+                if (isInternship && body.courseTitle) courseName = body.courseTitle;
+
+                await appendToSheet({
+                    name,
+                    email,
+                    mobile: body.mobile || '',
+                    course: courseName,
+                    price: body.price || 0,
+                    paymentId: body.paymentId || '',
+                    date: new Date().toISOString()
+                });
+            } catch (sheetError) {
+                console.error('Failed to save to Google Sheets:', sheetError);
+                // Don't block email sending if sheet fails
+            }
+        }
 
         const htmlContent = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
