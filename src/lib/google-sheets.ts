@@ -4,6 +4,7 @@ export interface StudentData {
     name: string;
     email: string;
     mobile: string;
+    college?: string;
     course: string;
     price: number | string;
     paymentId: string;
@@ -33,7 +34,7 @@ export async function appendToSheet(data: StudentData) {
 
         await sheets.spreadsheets.values.append({
             spreadsheetId: sheetId,
-            range: 'Sheet1!A:G', // Adjust range as needed, assumes columns A-G
+            range: 'Sheet1!A:H', // Adjust range as needed, assumes columns A-H
             valueInputOption: 'USER_ENTERED',
             requestBody: {
                 values: [[
@@ -41,6 +42,7 @@ export async function appendToSheet(data: StudentData) {
                     data.name,
                     data.email,
                     data.mobile,
+                    data.college || '',
                     data.course,
                     data.price,
                     data.paymentId
