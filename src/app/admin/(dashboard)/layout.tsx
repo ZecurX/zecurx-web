@@ -5,13 +5,17 @@ import Link from "next/link";
 import { LayoutDashboard, ShoppingCart, Users, Package, Settings, LogOut } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-    // Simple Auth Check
+    // Auth Guard
+    // Middleware already protects this, but we double-check for safety
     const cookieStore = await cookies();
-    const isAdmin = cookieStore.get("admin_session")?.value === "true";
+    const session = cookieStore.get("admin_session");
 
-    if (!isAdmin) {
+    if (!session?.value) {
         redirect("/admin/login");
     }
+
+    // Optional: You could verify JWT here too if you want strict server-side checking
+    // But middleware handles the heavy lifting.
 
     return (
         <div className="min-h-screen bg-background text-foreground flex relative overflow-hidden font-manrope selection:bg-primary/20">
