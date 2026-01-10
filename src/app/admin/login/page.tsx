@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Mail, Lock, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminLoginPage() {
@@ -41,49 +41,46 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4 relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 z-0">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[100px]" />
-            </div>
-
-            <div className="w-full max-w-sm space-y-8 relative z-10">
-                <div className="text-center space-y-2">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mb-4">
-                        <Lock className="w-6 h-6 text-primary" />
-                    </div>
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-4">
+            <div className="w-full max-w-[340px] space-y-6">
+                <div className="space-y-2 text-center">
                     <h1 className="text-2xl font-bold tracking-tight">Admin Access</h1>
-                    <p className="text-muted-foreground text-sm">Sign in to manage ZecurX</p>
+                    <p className="text-sm text-muted-foreground">Enter your credentials to continue.</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-4">
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <div className="space-y-2">
+                            <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Email
+                            </label>
                             <input
+                                id="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                placeholder="admin@zecurx.com"
-                                className="w-full h-11 pl-10 pr-3 rounded-xl bg-muted/40 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-sm"
+                                placeholder="name@company.com"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 required
                             />
                         </div>
-                        <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Password
+                            </label>
                             <input
+                                id="password"
                                 type="password"
                                 value={formData.password}
                                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                placeholder="••••••••••••"
-                                className="w-full h-11 pl-10 pr-3 rounded-xl bg-muted/40 border border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/50 text-sm"
+                                placeholder="••••••••"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 required
                             />
                         </div>
 
                         {error && (
-                            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium text-center">
+                            <div className="text-xs text-red-500 font-medium">
                                 {error}
                             </div>
                         )}
@@ -93,11 +90,11 @@ export default function AdminLoginPage() {
                         type="submit"
                         disabled={loading}
                         className={cn(
-                            "w-full h-11 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-primary/20",
+                            "inline-flex w-full items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10",
                             loading && "opacity-80"
                         )}
                     >
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
+                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}
                     </button>
                 </form>
             </div>
