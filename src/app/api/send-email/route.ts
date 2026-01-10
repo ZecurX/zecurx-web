@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
                     name,
                     email,
                     mobile: body.mobile || '',
+                    college: body.college || '',
                     course: courseName,
                     price: body.price || 0,
                     paymentId: body.paymentId || '',
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
                     <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
                     <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
                     ${body.mobile ? `<p style="margin: 0 0 10px 0;"><strong>Mobile:</strong> ${body.mobile}</p>` : ''}
+                    ${body.college ? `<p style="margin: 0 0 10px 0;"><strong>College:</strong> ${body.college}</p>` : ''}
                     
                     ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${body.courseTitle}</p>` : ''}
                     ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${body.itemName}</p>` : ''}
