@@ -2,13 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { SignJWT } from "jose";
 import { compare } from "bcryptjs";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
 // Initialize Supabase Admin Client (Service Role)
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// We now use the shared instance from lib which handles build-time environment variable absence safely.
 
 export async function POST(req: NextRequest) {
     try {
