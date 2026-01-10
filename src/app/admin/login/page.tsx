@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Admin credentials are managed via Supabase 'admins' table and environment variables.
 export default function AdminLoginPage() {
     const [formData, setFormData] = useState({
         email: "",
