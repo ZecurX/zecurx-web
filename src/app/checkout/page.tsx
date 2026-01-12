@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2 } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import RazorpayCheckout from '@/components/academy/RazorpayCheckout';
@@ -14,7 +14,8 @@ function CheckoutContent() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        mobile: ''
+        mobile: '',
+        college: ''
     });
     const [isFormValid, setIsFormValid] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
@@ -29,12 +30,16 @@ function CheckoutContent() {
 
     // Validate form
     useEffect(() => {
-        const isValid =
+        const isBasicValid =
             formData.name.length > 2 &&
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
             formData.mobile.length >= 10;
-        setIsFormValid(isValid);
-    }, [formData]);
+
+        // Require college if type is internship
+        const isCollegeValid = item.type === 'internship' ? formData.college.length > 2 : true;
+
+        setIsFormValid(isBasicValid && isCollegeValid);
+    }, [formData, item.type]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -53,6 +58,7 @@ function CheckoutContent() {
                     name: formData.name,
                     email: formData.email,
                     mobile: formData.mobile,
+                    college: formData.college,
                     formType: 'purchase',
                     itemName: item.name,
                     itemId: item.id,
@@ -103,10 +109,10 @@ function CheckoutContent() {
                         Thank you for purchasing <strong>{item.name}</strong>. A confirmation email has been sent to {formData.email}.
                     </p>
                     <button
-                        onClick={() => router.push(item.type === 'course' ? '/academy' : '/shop')}
+                        onClick={() => router.push('/academy')}
                         className="w-full py-3 bg-foreground text-background font-semibold rounded-xl hover:bg-foreground/90 transition-colors"
                     >
-                        Continue Shopping
+                        Explore Courses
                     </button>
                 </motion.div>
             </main>
@@ -181,6 +187,28 @@ function CheckoutContent() {
                                     />
                                 </div>
                             </div>
+
+                            {/* College Field - Only for Internships */}
+                            {item.type === 'internship' && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    className="space-y-2"
+                                >
+                                    <label className="text-sm font-medium ml-1">College / Institution</label>
+                                    <div className="relative">
+                                        <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                        <input
+                                            type="text"
+                                            name="college"
+                                            value={formData.college}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your college name"
+                                            className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                                        />
+                                    </div>
+                                </motion.div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 p-4 rounded-lg">
@@ -229,7 +257,9 @@ function CheckoutContent() {
                                     mobile: formData.mobile,
                                     email: formData.email,
                                     name: formData.name,
-                                    type: item.type
+                                    type: item.type,
+                                    college: formData.college,
+                                    itemName: item.name
                                 }}
                                 onSuccess={handlePaymentSuccess}
                                 disabled={!isFormValid}

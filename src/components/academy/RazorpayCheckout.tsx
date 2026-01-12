@@ -91,6 +91,44 @@ export default function RazorpayCheckout({
 
         setIsLoading(true);
 
+        // DEV MODE: Skip Razorpay and simulate success
+        const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+        if (devMode) {
+            // Simulate a short delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Generate a fake payment ID
+            const fakePaymentId = `dev_pay_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+
+            // Call verify API with dev mode flag
+            try {
+                const verifyRes = await fetch('/api/razorpay/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_payment_id: fakePaymentId,
+                        razorpay_order_id: `dev_order_${Date.now()}`,
+                        razorpay_signature: 'dev_mode_signature',
+                        dev_mode: true,
+                        metadata: metadata
+                    }),
+                });
+
+                const verifyData = await verifyRes.json();
+
+                if (verifyData.success) {
+                    onSuccess?.(fakePaymentId);
+                } else {
+                    onFailure?.(verifyData.error || 'Dev mode verification failed');
+                }
+            } catch (error) {
+                onFailure?.('Dev mode payment failed');
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
         try {
             // Create order on server
             const orderRes = await fetch('/api/razorpay/create-order', {
