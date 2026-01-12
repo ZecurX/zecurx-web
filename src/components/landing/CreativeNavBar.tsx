@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -73,6 +73,7 @@ export default function CreativeNavBar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -92,10 +93,46 @@ export default function CreativeNavBar() {
         };
     }, [mobileMenuOpen]);
 
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
+        };
+    }, []);
+
     const handleNavigation = (href: string) => {
         setActiveDropdown(null);
         setMobileMenuOpen(false);
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+        }
         router.push(href);
+    };
+
+    const handleMouseEnter = (key: string) => {
+        // Cancel any pending close
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
+        setActiveDropdown(key);
+    };
+
+    const handleMouseLeave = () => {
+        // Delay closing to allow mouse to move to dropdown
+        closeTimeoutRef.current = setTimeout(() => {
+            setActiveDropdown(null);
+        }, 150); // 150ms delay
+    };
+
+    const handleDropdownEnter = () => {
+        // Cancel close when entering dropdown
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
     };
 
     return (
@@ -108,7 +145,7 @@ export default function CreativeNavBar() {
                     "bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/20",
                     "shadow-lg shadow-black/5"
                 )}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseLeave={handleMouseLeave}
             >
                 <div className="px-4 pr-2 lg:px-6 h-14 lg:h-14 flex items-center justify-between gap-4 lg:gap-8">
                     {/* Desktop Navigation */}
@@ -139,7 +176,7 @@ export default function CreativeNavBar() {
                                             ? "text-foreground bg-muted/50"
                                             : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                                     )}
-                                    onMouseEnter={() => setActiveDropdown(key)}
+                                    onMouseEnter={() => handleMouseEnter(key)}
                                     onClick={() => handleNavigation(data.href)}
                                 >
                                     {data.label}
@@ -215,7 +252,9 @@ export default function CreativeNavBar() {
                             animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
                             exit={{ opacity: 0, y: 10, scale: 0.95, x: "-50%" }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="absolute top-[calc(100%+12px)] left-1/2 w-[90vw] max-w-4xl"
+                            className="absolute top-[calc(100%+8px)] left-1/2 w-[90vw] max-w-4xl"
+                            onMouseEnter={handleDropdownEnter}
+                            onMouseLeave={handleMouseLeave}
                         >
                             <div className="bg-background/60 backdrop-blur-2xl border border-border/30 rounded-3xl shadow-2xl shadow-black/10 overflow-hidden">
                                 <DropdownContent
