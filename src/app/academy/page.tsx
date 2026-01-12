@@ -9,6 +9,9 @@ import {
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
+import { FAQSection } from '@/components/seo';
+import { Breadcrumb } from '@/components/seo';
+import { academyFAQs, getAcademyBreadcrumb, getAllCoursesSchema, getEducationalOrganizationSchema } from '@/lib/schemas';
 
 // Sample courses data - replace with your actual courses
 const courses = [
@@ -168,13 +171,52 @@ const stats = [
     { icon: GraduationCap, value: '10+', label: 'Expert Instructors' },
 ];
 
+// Courses data for schema generation
+const coursesForSchema = courses.map(course => ({
+    id: course.id,
+    name: course.title,
+    description: course.description,
+    price: course.price,
+    originalPrice: course.originalPrice,
+    duration: course.duration,
+    level: course.level,
+    students: course.students,
+    features: course.features,
+}));
+
 export default function AcademyPage() {
+    // Generate structured data
+    const coursesSchema = getAllCoursesSchema(coursesForSchema);
+    const educationalOrgSchema = getEducationalOrganizationSchema();
+    const breadcrumbItems = getAcademyBreadcrumb();
+
     return (
-        <main className="min-h-screen bg-background">
-            <CreativeNavBar />
+        <>
+            {/* JSON-LD Structured Data for Courses */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(coursesSchema),
+                }}
+            />
+            {/* JSON-LD Structured Data for Educational Organization */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(educationalOrgSchema),
+                }}
+            />
+            
+            <main className="min-h-screen bg-background">
+                <CreativeNavBar />
 
             {/* HERO SECTION */}
             <section className="relative pt-40 pb-20 overflow-hidden">
+                {/* Breadcrumb Navigation */}
+                <div className="max-w-7xl mx-auto px-6 mb-8">
+                    <Breadcrumb items={breadcrumbItems} />
+                </div>
+                
                 {/* Modern Grid Texture */}
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808015_1px,transparent_1px),linear-gradient(to_bottom,#80808015_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -318,7 +360,15 @@ export default function AcademyPage() {
                 </div>
             </section>
 
+            {/* FAQ SECTION */}
+            <FAQSection 
+                faqs={academyFAQs}
+                title="Frequently Asked Questions"
+                subtitle="Everything you need to know about our cybersecurity courses and certifications."
+            />
+
             <Footer />
         </main>
+        </>
     );
 }

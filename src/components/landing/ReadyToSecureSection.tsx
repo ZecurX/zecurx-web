@@ -22,7 +22,9 @@ export default function ReadyToSecureSection() {
                     src="/assets/ready-bg-light.png"
                     alt="Background"
                     fill
+                    loading="lazy"
                     className="object-cover object-center scale-105"
+                    sizes="100vw"
                 />
             </div>
 
@@ -41,7 +43,9 @@ export default function ReadyToSecureSection() {
                     src="/assets/ready-bg-dark.png"
                     alt="Background"
                     fill
+                    loading="lazy"
                     className="object-cover object-center scale-105"
+                    sizes="100vw"
                 />
             </div>
             {/* Removed overlay to prevent grainy box effect and rely on image blend */}

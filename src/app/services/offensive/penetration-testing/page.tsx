@@ -6,14 +6,37 @@ import Footer from '@/components/landing/Footer';
 import { Target, ShieldAlert, Wifi, Globe, Lock, CheckCircle, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import { FAQSection, Breadcrumb } from '@/components/seo';
+import { penetrationTestingFAQs, getServicesBreadcrumb, getPenetrationTestingSchema } from '@/lib/schemas';
 
 export default function PenetrationTestingPage() {
+    // Structured data
+    const serviceSchema = getPenetrationTestingSchema();
+    const breadcrumbItems = getServicesBreadcrumb(
+        "Penetration Testing",
+        "https://zecurx.com/services/offensive/penetration-testing"
+    );
+
     return (
-        <main className="min-h-screen bg-background">
-            <CreativeNavBar />
+        <>
+            {/* JSON-LD Structured Data for Service */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(serviceSchema),
+                }}
+            />
+            
+            <main className="min-h-screen bg-background">
+                <CreativeNavBar />
 
             {/* HERO SECTION */}
             <section className="relative pt-32 pb-20 overflow-hidden">
+                {/* Breadcrumb Navigation */}
+                <div className="max-w-7xl mx-auto px-6 mb-6">
+                    <Breadcrumb items={breadcrumbItems} />
+                </div>
+                
                 <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -158,8 +181,16 @@ export default function PenetrationTestingPage() {
                 ctaHref="/contact"
             />
 
+            {/* FAQ SECTION */}
+            <FAQSection 
+                faqs={penetrationTestingFAQs}
+                title="Penetration Testing FAQs"
+                subtitle="Common questions about our penetration testing and vulnerability assessment services."
+            />
+
             <Footer />
         </main>
+        </>
     );
 }
 

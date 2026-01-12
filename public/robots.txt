@@ -1,0 +1,45 @@
+# ZecurX Robots.txt
+# https://zecurx.com
+
+User-agent: *
+Allow: /
+
+# Block checkout and API routes from indexing
+Disallow: /checkout
+Disallow: /api/
+Disallow: /_next/
+
+# Block internal search results if any
+Disallow: /*?*
+
+# Allow specific query parameters for tracking
+Allow: /*?utm_
+
+# Sitemaps
+Sitemap: https://zecurx.com/sitemap.xml
+
+# Crawl-delay for aggressive bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /

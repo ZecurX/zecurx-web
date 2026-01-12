@@ -1,19 +1,12 @@
 "use client";
 
 import React from 'react';
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useTheme } from "next-themes";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HeroSection() {
-
-    const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = React.useState(false);
-
-    // Parallax Effect
-    const { scrollY } = useScroll();
-    const backgroundY = useTransform(scrollY, [0, 500], ["0%", "20%"]);
 
     React.useEffect(() => {
         setMounted(true);
