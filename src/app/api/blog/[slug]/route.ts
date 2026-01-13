@@ -57,13 +57,13 @@ export async function GET(
       // Get posts that share at least one label
       const { data: relatedPostLabels } = await supabase
         .from('blog_post_labels')
-        .select('post_id')
+        .select('blog_post_id')
         .in('label_id', labelIds)
-        .neq('post_id', post.id);
+        .neq('blog_post_id', post.id);
 
       if (relatedPostLabels && relatedPostLabels.length > 0) {
         // Get unique post IDs
-        const relatedPostIds = [...new Set(relatedPostLabels.map(rpl => rpl.post_id))];
+        const relatedPostIds = [...new Set(relatedPostLabels.map(rpl => rpl.blog_post_id))];
 
         // Fetch related posts (limit 3, most recent)
         const { data: related } = await supabase
@@ -73,7 +73,6 @@ export async function GET(
             title,
             slug,
             excerpt,
-            featured_image,
             featured_image_url,
             published_at,
             view_count,
@@ -104,9 +103,7 @@ export async function GET(
       slug: post.slug,
       content: post.content,
       excerpt: post.excerpt,
-      featured_image: post.featured_image,
       featured_image_url: post.featured_image_url,
-      meta_title: post.meta_title,
       meta_description: post.meta_description,
       published_at: post.published_at,
       view_count: (post.view_count || 0) + 1, // Return incremented count
