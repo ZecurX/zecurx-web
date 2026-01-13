@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -73,6 +73,7 @@ export default function CreativeNavBar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -92,35 +93,72 @@ export default function CreativeNavBar() {
         };
     }, [mobileMenuOpen]);
 
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
+        };
+    }, []);
+
     const handleNavigation = (href: string) => {
         setActiveDropdown(null);
         setMobileMenuOpen(false);
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+        }
         router.push(href);
+    };
+
+    const handleMouseEnter = (key: string) => {
+        // Cancel any pending close
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
+        setActiveDropdown(key);
+    };
+
+    const handleMouseLeave = () => {
+        // Delay closing to allow mouse to move to dropdown
+        closeTimeoutRef.current = setTimeout(() => {
+            setActiveDropdown(null);
+        }, 150); // 150ms delay
+    };
+
+    const handleDropdownEnter = () => {
+        // Cancel close when entering dropdown
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+            closeTimeoutRef.current = null;
+        }
     };
 
     return (
         <>
             <nav
                 className={cn(
-                    "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-                    (isScrolled || activeDropdown)
-                        ? "bg-background border-b border-border/30"
-                        : "bg-transparent"
+                    "fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
+                    "w-[95%] lg:w-auto",
+                    "rounded-full border border-border/10",
+                    "bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/20",
+                    "shadow-lg shadow-black/5"
                 )}
-                onMouseLeave={() => setActiveDropdown(null)}
+                onMouseLeave={handleMouseLeave}
             >
-                <div className="max-w-7xl mx-auto px-6">
+                <div className="px-4 pr-2 lg:px-6 h-14 lg:h-14 flex items-center justify-between gap-4 lg:gap-8">
                     {/* Desktop Navigation */}
-                    <div className="hidden lg:flex items-center justify-between h-16">
+                    <div className="hidden lg:flex items-center gap-8">
                         {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2.5">
-                            <div className="relative w-8 h-8">
+                        <Link href="/" className="flex items-center gap-2.5 mr-4">
+                            <div className="relative w-7 h-7">
                                 <Image
                                     src="/images/zecurx-logo.png"
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"
-                                    sizes="32px"
+                                    sizes="28px"
                                     priority
                                 />
                             </div>
@@ -133,61 +171,63 @@ export default function CreativeNavBar() {
                                 <button
                                     key={key}
                                     className={cn(
-                                        "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors cursor-pointer",
+                                        "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-full transition-all duration-200 cursor-pointer",
                                         activeDropdown === key
                                             ? "text-foreground bg-muted/50"
                                             : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                                     )}
-                                    onMouseEnter={() => setActiveDropdown(key)}
+                                    onMouseEnter={() => handleMouseEnter(key)}
                                     onClick={() => handleNavigation(data.href)}
                                 >
                                     {data.label}
                                     <ChevronDown className={cn(
-                                        "w-3.5 h-3.5 transition-transform duration-200",
-                                        activeDropdown === key && "rotate-180"
+                                        "w-3.5 h-3.5 transition-transform duration-200 opacity-50",
+                                        activeDropdown === key && "rotate-180 opacity-100"
                                     )} />
                                 </button>
                             ))}
                             <Link
                                 href="/why-zecurx"
-                                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-full transition-all whitespace-nowrap"
                             >
                                 Why ZecurX
                             </Link>
                             <Link
                                 href="/industries"
-                                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-full transition-all"
                             >
                                 Industries
                             </Link>
                         </div>
 
                         {/* SECONDARY NAVIGATION */}
-                        <div className="flex items-center gap-6">
-                            <Link href="/shop" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+                        <div className="flex items-center gap-4 pl-4 border-l border-border/10">
+                            <Link href="/shop" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors px-2">
                                 Shop
                             </Link>
-                            <Link href="/academy" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+                            <Link href="/academy" className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors px-2">
                                 Academy
                             </Link>
-                            <Link
-                                href="/contact"
-                                className="px-4 py-2 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors"
-                            >
-                                Contact Sales
-                            </Link>
-                            <ThemeToggle />
+                            <div className="flex items-center gap-3">
+                                <ThemeToggle />
+                                <Link
+                                    href="/contact"
+                                    className="px-5 py-2 bg-foreground text-background text-sm font-medium rounded-full hover:bg-foreground/90 transition-all hover:scale-105 active:scale-95"
+                                >
+                                    Contact
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
                     {/* Mobile Navigation */}
-                    <div className="lg:hidden flex items-center justify-between h-14">
+                    <div className="lg:hidden flex items-center justify-between w-full">
                         <Link href="/" className="flex items-center gap-2">
                             <Image
                                 src="/images/zecurx-logo.png"
                                 alt="ZecurX"
-                                width={28}
-                                height={28}
+                                width={24}
+                                height={24}
                                 className="object-contain"
                             />
                             <span className="text-foreground font-manrope font-bold text-base">ZecurX</span>
@@ -196,7 +236,7 @@ export default function CreativeNavBar() {
                             <ThemeToggle />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="p-2 text-foreground cursor-pointer"
+                                className="p-2 text-foreground cursor-pointer hover:bg-muted/20 rounded-full transition-colors"
                             >
                                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                             </button>
@@ -204,17 +244,19 @@ export default function CreativeNavBar() {
                     </div>
                 </div>
 
-                {/* Redesigned Desktop Dropdown */}
+                {/* Redesigned Floating Dropdown */}
                 <AnimatePresence>
                     {activeDropdown && (
                         <motion.div
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute left-0 w-full bg-background border-b border-border/30"
+                            initial={{ opacity: 0, y: 10, scale: 0.95, x: "-50%" }}
+                            animate={{ opacity: 1, y: 0, scale: 1, x: "-50%" }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95, x: "-50%" }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className="absolute top-[calc(100%+8px)] left-1/2 w-[90vw] max-w-4xl"
+                            onMouseEnter={handleDropdownEnter}
+                            onMouseLeave={handleMouseLeave}
                         >
-                            <div className="max-w-6xl mx-auto px-6 py-8">
+                            <div className="bg-background/60 backdrop-blur-2xl border border-border/30 rounded-3xl shadow-2xl shadow-black/10 overflow-hidden">
                                 <DropdownContent
                                     data={navData[activeDropdown as keyof typeof navData]}
                                     onNavigate={handleNavigation}
@@ -223,7 +265,7 @@ export default function CreativeNavBar() {
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </nav >
+            </nav>
 
             {/* Mobile Menu */}
             <AnimatePresence>
@@ -233,7 +275,7 @@ export default function CreativeNavBar() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-40 bg-background pt-14 overflow-y-auto lg:hidden"
+                            className="fixed inset-0 z-40 bg-background pt-24 overflow-y-auto lg:hidden"
                         >
                             <div className="px-6 py-8 space-y-6">
                                 {Object.entries(navData).map(([key, data]) => (
@@ -311,8 +353,7 @@ export default function CreativeNavBar() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
-                            style={{ top: '64px' }}
+                            className="fixed inset-0 z-30 bg-black/10 backdrop-blur-[2px]"
                             onClick={() => setActiveDropdown(null)}
                         />
                     )
@@ -336,47 +377,43 @@ function DropdownContent({ data, onNavigate }: DropdownContentProps) {
     return (
         <div className="flex flex-col">
             {/* Header Section */}
-            <div className="px-6 py-5 border-b border-border/10 flex items-center justify-between bg-muted/5">
-                <div>
-                    <h3 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground/80">
-                        {data.label}
-                    </h3>
-                </div>
+            <div className="px-6 py-4 border-b border-border/10 bg-gradient-to-r from-muted/10 to-transparent">
+                <h3 className="text-xs font-bold tracking-widest uppercase text-primary/80">
+                    {data.label}
+                </h3>
             </div>
 
-            {/* Strict Grid System */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 bg-border/20 gap-px border-b border-border/20">
+            {/* Grid of Items */}
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-0.5 bg-border/10 p-1">
                 {data.items.map((item, index) => (
                     <motion.button
                         key={item.title}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.2, delay: index * 0.02 }}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.15, delay: index * 0.03 }}
                         onClick={() => onNavigate(item.href)}
-                        className="group relative flex flex-col justify-between p-5 bg-background hover:bg-muted/30 transition-all text-left h-[100px] cursor-pointer"
+                        className="group relative flex flex-col gap-2 p-5 bg-muted/40 hover:bg-muted/60 rounded-xl transition-all text-left cursor-pointer border border-transparent hover:border-border/30"
                     >
-                        <div className="flex justify-between items-start w-full">
-                            <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors pr-4">
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
                                 {item.title}
                             </span>
-                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 -rotate-45 group-hover:rotate-0 group-hover:text-primary transition-all duration-300" />
+                            <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 -rotate-45 group-hover:rotate-0 group-hover:text-primary transition-all duration-200 flex-shrink-0" />
                         </div>
-
-                        <span className="text-xs text-muted-foreground/60 line-clamp-1 group-hover:text-muted-foreground transition-colors">
+                        <span className="text-xs text-muted-foreground/60 line-clamp-2 group-hover:text-muted-foreground transition-colors">
                             {item.desc}
                         </span>
                     </motion.button>
                 ))}
-
             </div>
 
             {/* Footer Section */}
-            <div className="bg-muted/5 border-t border-border/10 p-4 flex justify-start">
+            <div className="bg-gradient-to-r from-muted/10 to-transparent border-t border-border/10 px-6 py-4">
                 <button
                     onClick={() => onNavigate(data.href)}
-                    className="group flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors pl-2 cursor-pointer"
+                    className="group inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors cursor-pointer"
                 >
-                    View All {data.label}
+                    <span>View All {data.label}</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
