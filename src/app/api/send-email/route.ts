@@ -114,17 +114,22 @@ export async function POST(request: NextRequest) {
         `;
 
         // Send email to Admin first
+        // For internship enrollments, send to zecurxintern@gmail.com
+        const adminEmail = isInternship 
+            ? 'zecurxintern@gmail.com' 
+            : process.env.SMTP_EMAIL;
+        
         let adminEmailSent = false;
         try {
             await transporter.sendMail({
                 from: `"ZecurX Website" <${process.env.SMTP_EMAIL}>`,
-                to: process.env.SMTP_EMAIL,
+                to: adminEmail,
                 replyTo: email,
                 subject: emailSubject,
                 html: htmlContent,
             });
             adminEmailSent = true;
-            console.log('Admin email sent successfully');
+            console.log(`Admin email sent successfully to: ${adminEmail}`);
         } catch (adminError) {
             console.error('Failed to send admin email:', adminError);
         }
