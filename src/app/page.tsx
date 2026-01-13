@@ -1,4 +1,3 @@
-import HeroSectionV2 from "@/components/landing/HeroSectionV2";
 import HeroSection from "@/components/landing/HeroSection";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 // import NavBar from "@/components/landing/NavBar";

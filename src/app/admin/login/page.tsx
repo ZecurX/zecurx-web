@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Admin credentials are managed via Supabase 'admins' table and environment variables.
@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
                 const data = await res.json();
                 setError(data.error || "Invalid credentials");
             }
-        } catch (err) {
+        } catch {
             setError("Something went wrong");
         } finally {
             setLoading(false);

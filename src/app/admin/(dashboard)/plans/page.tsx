@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
 import PlansList from "./PlansList";
-import { Plus } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
