@@ -19,7 +19,6 @@ function CheckoutContent() {
     });
     const [isFormValid, setIsFormValid] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
-    const [emailSending, setEmailSending] = useState(false);
 
     const item = {
         id: searchParams.get('itemId') || '',
@@ -48,7 +47,6 @@ function CheckoutContent() {
 
     const handlePaymentSuccess = async (paymentId: string) => {
         setPurchaseComplete(true);
-        setEmailSending(true);
 
         try {
             const response = await fetch('/api/send-email', {
@@ -72,8 +70,6 @@ function CheckoutContent() {
         } catch (error) {
             console.error('Email error:', error);
             // Even if email fails, payment was successful, so we show success state
-        } finally {
-            setEmailSending(false);
         }
     };
 

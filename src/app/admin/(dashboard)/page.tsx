@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
@@ -7,6 +6,18 @@ import { DollarSign, ShoppingCart, Users, TrendingUp } from "lucide-react";
 import { AdminJWTPayload } from "@/types/auth";
 
 export const dynamic = 'force-dynamic';
+
+interface CustomerInfo {
+    name: string;
+    email: string;
+}
+
+interface Sale {
+    id: string;
+    amount: number;
+    status: string;
+    customers: CustomerInfo | null;
+}
 
 export default async function AdminDashboard() {
     // Check user role for redirect
@@ -88,13 +99,13 @@ export default async function AdminDashboard() {
                         {recentSales?.length === 0 ? (
                             <p className="text-muted-foreground text-sm">No transactions found.</p>
                         ) : (
-                            recentSales?.map((sale) => (
+                            (recentSales as Sale[] | null)?.map((sale) => (
                                 <div key={sale.id} className="flex items-center justify-between border-b border-border/50 pb-2 last:border-0 last:pb-0">
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium text-foreground">
-                                            {(sale.customers as any)?.name || 'Unknown User'}
+                                            {sale.customers?.name || 'Unknown User'}
                                         </span>
-                                        <span className="text-xs text-muted-foreground">{(sale.customers as any)?.email}</span>
+                                        <span className="text-xs text-muted-foreground">{sale.customers?.email}</span>
                                     </div>
                                     <div className="text-right">
                                         <span className="block text-sm font-medium text-foreground">₹{sale.amount}</span>

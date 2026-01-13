@@ -6,6 +6,21 @@ import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
+interface CustomerInfo {
+    name: string;
+    email: string;
+    phone: string;
+}
+
+interface Transaction {
+    id: string;
+    order_id: string;
+    amount: number;
+    status: string;
+    created_at: string;
+    customers: CustomerInfo | null;
+}
+
 export default async function SalesPage() {
     // Verify the user has permission to view sales
     const cookieStore = await cookies();
@@ -38,7 +53,7 @@ export default async function SalesPage() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Sales & Transactions</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Sales &amp; Transactions</h1>
 
             <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
                 <div className="overflow-x-auto">
@@ -53,12 +68,12 @@ export default async function SalesPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/50">
-                            {transactions?.map((tx) => (
+                            {(transactions as Transaction[] | null)?.map((tx) => (
                                 <tr key={tx.id} className="hover:bg-muted/50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-foreground">{(tx.customers as any)?.name}</span>
-                                            <span className="text-xs text-muted-foreground">{(tx.customers as any)?.email}</span>
+                                            <span className="font-medium text-foreground">{tx.customers?.name}</span>
+                                            <span className="text-xs text-muted-foreground">{tx.customers?.email}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-muted-foreground font-mono">{tx.order_id}</td>
