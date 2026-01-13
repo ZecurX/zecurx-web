@@ -1,11 +1,28 @@
 import { supabase } from "@/lib/supabase";
-import { Mail, Phone, MessageCircle } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";
 import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
+
+interface Transaction {
+    created_at: string;
+    plans: {
+        name: string;
+    } | null;
+}
+
+interface CustomerWithTransactions {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    college?: string;
+    created_at: string;
+    transactions: Transaction[];
+}
 
 export default async function CustomersPage() {
     // Verify the user has permission to view customers
@@ -47,9 +64,9 @@ export default async function CustomersPage() {
         .order("created_at", { ascending: false });
 
     // Process customers to get the latest plan
-    const customersWithPlan = customers?.map(customer => {
+    const customersWithPlan = (customers as CustomerWithTransactions[] | null)?.map(customer => {
         // Sort transactions by date descending to get the latest
-        const latestTransaction = customer.transactions?.sort((a: any, b: any) =>
+        const latestTransaction = customer.transactions?.sort((a: Transaction, b: Transaction) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
 

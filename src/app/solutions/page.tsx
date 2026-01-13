@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import {
     Card,
@@ -12,9 +12,8 @@ import {
     CardTagline
 } from "@/components/ui/card";
 import Footer from "@/components/landing/Footer";
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 
 const containerVariants = {
@@ -91,12 +90,7 @@ const solutions = [
 ];
 
 export default function SolutionsPage() {
-    const [mounted, setMounted] = useState(false);
-    const { theme } = useTheme();
-
     useEffect(() => {
-        setMounted(true);
-
         const hash = window.location.hash;
         if (hash) {
             setTimeout(() => {
@@ -107,10 +101,6 @@ export default function SolutionsPage() {
             }, 100);
         }
     }, []);
-
-    const gridColor = mounted
-        ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)')
-        : 'transparent';
 
     return (
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">

@@ -1,6 +1,5 @@
 import { supabase } from "@/lib/supabase";
 import PlansList from "./PlansList";
-import { Plus } from "lucide-react";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";

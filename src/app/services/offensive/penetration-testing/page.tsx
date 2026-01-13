@@ -3,9 +3,10 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Target, ShieldAlert, Wifi, Globe, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import { Target, ShieldAlert, Wifi, Globe, Lock, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
 
 export default function PenetrationTestingPage() {
     return (
@@ -35,6 +36,8 @@ export default function PenetrationTestingPage() {
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Go beyond compliance scanning. We simulate sophisticated, real-world attacks to identify exploitable vulnerabilities and validate your defense mechanisms before an adversary does.
                         </p>
+                        
+                        <ServiceHeroEmailCapture serviceName="Penetration Testing" />
                     </motion.div>
                 </div>
             </section>
@@ -53,7 +56,7 @@ export default function PenetrationTestingPage() {
                                     Modern threats are dynamic and persistent. Static scanners and automated tools miss the nuanced, logic-based vulnerabilities that sophisticated attackers exploit.
                                 </p>
                                 <p>
-                                    ZecurX's Offensive Security team leverages the latest threat intelligence and TTPs (Tactics, Techniques, and Procedures) used by active APT groups. Our goal isn't just to find bugs, but to demonstrate business impact and provide a roadmap to resilience.
+                                    ZecurX&apos;s Offensive Security team leverages the latest threat intelligence and TTPs (Tactics, Techniques, and Procedures) used by active APT groups. Our goal isn&apos;t just to find bugs, but to demonstrate business impact and provide a roadmap to resilience.
                                 </p>
                             </div>
                         </div>
