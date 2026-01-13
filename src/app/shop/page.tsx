@@ -1,34 +1,73 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
-import { Shield, Zap, Package, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Shield, Zap, Package, ArrowRight } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import ProductCard from '@/components/shop/ProductCard';
+import { supabaseClient } from '@/lib/supabase-client';
 
-const products = [
-    {
-        id: "flipper-zero-auth",
-        name: "Authentic Flipper Zero",
-        price: 64999,
-        description: "The portable multi-tool for geeks and ethical hackers. Perfect for exploring wireless protocols, radio systems, and hardware hacking.",
-        image: "/images/flipper-zero.png",
-        stock: 2,
-        features: [
-            "Sub-1 GHz Transceiver",
-            "RFID & NFC Reader/Writer",
-            "Infrared Transceiver",
-            "GPIO Hardware Interface",
-            "iButton Support",
-            "Fully Open Source Firmware"
-        ],
-        tags: ["Radio", "NFC", "Hardware"]
-    }
-];
+// Product type matching the database schema
+interface Product {
+    id: string;
+    name: string;
+    price: number;
+    description: string;
+    image: string;
+    images: string[];
+    stock: number;
+    delivery_days: number;
+    features: string[];
+    tags: string[];
+}
+
+// Transform database product to frontend format
+function transformProduct(dbProduct: Product) {
+    return {
+        id: dbProduct.id,
+        name: dbProduct.name,
+        price: dbProduct.price,
+        description: dbProduct.description,
+        image: dbProduct.image,
+        images: dbProduct.images || [],
+        stock: dbProduct.stock,
+        deliveryDays: dbProduct.delivery_days, // Map snake_case to camelCase
+        features: dbProduct.features || [],
+        tags: dbProduct.tags || [],
+    };
+}
 
 export default function ShopPage() {
+    const [products, setProducts] = useState<ReturnType<typeof transformProduct>[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error fetching products:', error);
+                    return;
+                }
+
+                if (data) {
+                    setProducts(data.map(transformProduct));
+                }
+            } catch (err) {
+                console.error('Failed to fetch products:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchProducts();
+    }, []);
+
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
@@ -68,6 +107,54 @@ export default function ShopPage() {
                 </div>
             </section>
 
+            {/* PRODUCTS GRID */}
+            <section id="products" className="py-32">
+                <div className="max-w-7xl mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8"
+                    >
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
+                                Essential Hardware
+                            </h2>
+                            <p className="text-muted-foreground max-w-xl text-lg font-light">
+                                Tools of the trade for the modern security professional.
+                            </p>
+                        </div>
+                    </motion.div>
+
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="animate-pulse">
+                                    <div className="bg-muted/30 rounded-3xl h-80 mb-4" />
+                                    <div className="bg-muted/30 h-6 w-3/4 rounded mb-2" />
+                                    <div className="bg-muted/30 h-4 w-1/2 rounded" />
+                                </div>
+                            ))}
+                        </div>
+                    ) : products.length === 0 ? (
+                        <div className="text-center py-20">
+                            <p className="text-muted-foreground text-lg">No products available yet.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {products.map((product, index) => (
+                                <div
+                                    key={product.id}
+                                    className="relative group"
+                                >
+                                    <ProductCard {...product} delay={index * 0.1} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </section>
+
             {/* TRUST SECTION */}
             <section className="py-24 border-y border-border">
                 <div className="max-w-7xl mx-auto px-6">
@@ -102,38 +189,6 @@ export default function ShopPage() {
                                 <h3 className="text-lg font-bold text-foreground mb-4">{item.title}</h3>
                                 <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                             </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* PRODUCTS GRID */}
-            <section id="products" className="py-32">
-                <div className="max-w-7xl mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
-                    >
-                        <div>
-                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
-                                Essential Hardware
-                            </h2>
-                            <p className="text-muted-foreground max-w-xl text-lg font-light">
-                                Tools of the trade for the modern security professional.
-                            </p>
-                        </div>
-                    </motion.div>
-
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-8">
-                        {products.map((product, index) => (
-                            <div
-                                key={product.id}
-                                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]"
-                            >
-                                <ProductCard {...product} delay={index * 0.1} />
-                            </div>
                         ))}
                     </div>
                 </div>
