@@ -359,8 +359,6 @@ export default function UsersPage() {
                 <option value="admin">Admin</option>
                 <option value="sales">Sales</option>
                 <option value="marketing">Marketing</option>
-                <option value="customers">Customers</option>
-                <option value="plans">Plans</option>
               </select>
             </div>
             <div className="flex gap-3 pt-4">
@@ -423,8 +421,6 @@ export default function UsersPage() {
                     <option value="admin">Admin</option>
                     <option value="sales">Sales</option>
                     <option value="marketing">Marketing</option>
-                    <option value="customers">Customers</option>
-                    <option value="plans">Plans</option>
                   </>
                 )}
               </select>
