@@ -3,9 +3,10 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Users, Briefcase, FileText, PieChart, ShieldCheck, UserCheck, ArrowRight } from 'lucide-react';
+import { Users, Briefcase, FileText, PieChart, ShieldCheck, UserCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
 
 export default function ConsultingPage() {
     return (
@@ -35,6 +36,8 @@ export default function ConsultingPage() {
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Navigate the complex cybersecurity landscape with confidence. We align your security strategy with business objectives, ensuring resilience, compliance, and sustained trust.
                         </p>
+                        
+                        <ServiceHeroEmailCapture serviceName="Strategic Consulting" />
                     </motion.div>
                 </div>
             </section>

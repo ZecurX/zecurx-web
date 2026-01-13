@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
-import { useTheme } from "next-themes";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { Mail } from 'lucide-react';
 
 const cookieData = [
@@ -42,21 +41,12 @@ const cookieData = [
 ];
 
 export default function CookiePolicyPage() {
-    const { theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
     const ref = useRef(null);
 
-    const { scrollYProgress } = useScroll({
+    useScroll({
         target: ref,
         offset: ["start start", "end start"]
     });
-
-    const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-    const opacityBg = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     return (
         <main ref={ref} className="bg-background min-h-screen text-foreground selection:bg-foreground/20 relative overflow-hidden">

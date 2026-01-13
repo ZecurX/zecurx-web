@@ -3,9 +3,10 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Code, ShieldCheck, GitBranch, Cpu, Lock, FileCode, ArrowRight } from 'lucide-react';
+import { Code, ShieldCheck, GitBranch, Cpu, Lock, FileCode } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
 
 export default function SecureDevelopmentPage() {
     return (
@@ -35,6 +36,8 @@ export default function SecureDevelopmentPage() {
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Embed security into the DNA of your applications. We help you shift left, reducing remediation costs and building trust from the first line of code.
                         </p>
+                        
+                        <ServiceHeroEmailCapture serviceName="Secure Development" />
                     </motion.div>
                 </div>
             </section>
@@ -49,7 +52,7 @@ export default function SecureDevelopmentPage() {
                             </h2>
                             <div className="space-y-4 text-muted-foreground leading-relaxed">
                                 <p>
-                                    Trying to "bolt on" security at the end of the development lifecycle is costly and ineffective. Modern agility demands that security travels at the speed of DevOps.
+                                    Trying to &quot;bolt on&quot; security at the end of the development lifecycle is costly and ineffective. Modern agility demands that security travels at the speed of DevOps.
                                 </p>
                                 <p>
                                     ZecurX integrates robust security practices into every phase of your SDLC. From threat modeling during architecture design to automated SAST/DAST in your CI pipelines, we ensure your software is hardened against attacks before it ever reaches production.
