@@ -8,6 +8,7 @@ import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import ProductCard from '@/components/shop/ProductCard';
 
+
 const products = [
     {
         id: "flipper-zero-auth",
@@ -15,7 +16,13 @@ const products = [
         price: 64999,
         description: "The portable multi-tool for geeks and ethical hackers. Perfect for exploring wireless protocols, radio systems, and hardware hacking.",
         image: "/images/flipper-zero.png",
+        images: [
+            "/images/flipper-zero-use.png",
+            "/images/flipper-zero-side.png",
+            "/images/flipper-zero-back-clean.png"
+        ],
         stock: 2,
+        deliveryDays: 12, // Updated delivery time
         features: [
             "Sub-1 GHz Transceiver",
             "RFID & NFC Reader/Writer",
@@ -35,6 +42,7 @@ export default function ShopPage() {
 
             {/* HERO SECTION */}
             <section className="relative pt-40 pb-20 overflow-hidden">
+                {/* ... existing hero code ... */}
                 {/* Modern Grid Texture */}
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808015_1px,transparent_1px),linear-gradient(to_bottom,#80808015_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
@@ -65,6 +73,42 @@ export default function ShopPage() {
                             </a>
                         </div>
                     </motion.div>
+                </div>
+            </section>
+
+
+
+
+            {/* PRODUCTS GRID */}
+            <section id="products" className="py-32">
+                <div className="max-w-7xl mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8"
+                    >
+                        <div>
+                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
+                                Essential Hardware
+                            </h2>
+                            <p className="text-muted-foreground max-w-xl text-lg font-light">
+                                Tools of the trade for the modern security professional.
+                            </p>
+                        </div>
+                    </motion.div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {products.map((product, index) => (
+                            <div
+                                key={product.id}
+                                className="relative group"
+                            >
+                                <ProductCard {...product} delay={index * 0.1} />
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
             </section>
 
@@ -102,38 +146,6 @@ export default function ShopPage() {
                                 <h3 className="text-lg font-bold text-foreground mb-4">{item.title}</h3>
                                 <p className="text-muted-foreground leading-relaxed">{item.description}</p>
                             </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* PRODUCTS GRID */}
-            <section id="products" className="py-32">
-                <div className="max-w-7xl mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
-                    >
-                        <div>
-                            <h2 className="text-3xl md:text-5xl font-manrope font-light text-foreground mb-6">
-                                Essential Hardware
-                            </h2>
-                            <p className="text-muted-foreground max-w-xl text-lg font-light">
-                                Tools of the trade for the modern security professional.
-                            </p>
-                        </div>
-                    </motion.div>
-
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-8">
-                        {products.map((product, index) => (
-                            <div
-                                key={product.id}
-                                className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.34rem)]"
-                            >
-                                <ProductCard {...product} delay={index * 0.1} />
-                            </div>
                         ))}
                     </div>
                 </div>
