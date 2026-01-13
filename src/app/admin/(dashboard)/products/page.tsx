@@ -1,13 +1,8 @@
-import { supabase } from "@/lib/supabase";
-import ProductsList from "./ProductsList";
-
 export const dynamic = 'force-dynamic';
 
-export default async function ProductsPage() {
-    const { data: products } = await supabase
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
+export default function ProductsPage() {
+    // Import dynamically to avoid SSR hydration issues with Radix UI
+    const ProductsList = require("./ProductsList").default;
 
     return (
         <div className="space-y-6">
@@ -18,7 +13,7 @@ export default async function ProductsPage() {
                 </div>
             </div>
 
-            <ProductsList initialProducts={products || []} />
+            <ProductsList />
         </div>
     );
 }

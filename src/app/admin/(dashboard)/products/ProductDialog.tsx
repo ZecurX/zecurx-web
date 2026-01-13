@@ -26,9 +26,10 @@ interface Product {
 interface ProductDialogProps {
     product?: Product;
     trigger?: React.ReactNode;
+    onSuccess?: () => void;
 }
 
-export default function ProductDialog({ product, trigger }: ProductDialogProps) {
+export default function ProductDialog({ product, trigger, onSuccess }: ProductDialogProps) {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -90,6 +91,7 @@ export default function ProductDialog({ product, trigger }: ProductDialogProps) 
             }
 
             setOpen(false);
+            onSuccess?.();
             router.refresh();
         } catch (error) {
             console.error("Error saving product:", error);
