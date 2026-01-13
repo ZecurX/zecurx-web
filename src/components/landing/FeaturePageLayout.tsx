@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ServiceHeroEmailCapture from "@/components/services/ServiceHeroEmailCapture";
 import {
     Card,
     CardHeader,
@@ -135,35 +136,13 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         {data.description}
                     </motion.p>
 
-                    {/* CTA Buttons */}
+                    {/* CTA Buttons - replaced with email capture */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="flex flex-col sm:flex-row gap-4"
                     >
-                        <Link href="/book-demo">
-                            <Button
-                                size="lg"
-                                className="pl-8 pr-2 py-2 h-auto gap-6 rounded-full text-base hover:scale-105 transition-transform duration-300 group"
-                            >
-                                Request Demo
-                                <div className="w-10 h-10 bg-background text-foreground rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-300">
-                                    <span className="text-lg">↗</span>
-                                </div>
-                            </Button>
-                        </Link>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="rounded-full text-base font-medium"
-                            asChild
-                        >
-                            <Link href="/contact">
-                                Contact Us
-                                <ArrowUpRight className="w-4 h-4 ml-2" />
-                            </Link>
-                        </Button>
+                        <ServiceHeroEmailCapture serviceName={`${data.title} ${data.subtitle}`.trim()} />
                     </motion.div>
                 </div>
             </section>
@@ -199,14 +178,19 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                                 variants={itemVariants}
                                 className="h-full"
                             >
-                                <Card className="h-full flex flex-col hover:bg-muted/60 transition-colors border-border/40">
+                                <Card className="h-full flex flex-col bg-white/[0.02] border-white/10 hover:bg-white/[0.04] hover:border-primary/20 transition-all duration-300 backdrop-blur-sm group hover:shadow-lg hover:shadow-primary/5">
                                     <CardHeader className="pb-4">
-                                        <CardTitle className="text-xl font-manrope font-medium text-foreground">
+                                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
+                                            <div className="text-primary">
+                                                {capability.icon}
+                                            </div>
+                                        </div>
+                                        <CardTitle className="text-xl font-manrope font-bold text-foreground group-hover:text-primary transition-colors">
                                             {capability.title}
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <CardDescription className="text-base font-light leading-relaxed text-muted-foreground/80">
+                                        <CardDescription className="text-base font-light leading-relaxed text-muted-foreground/90">
                                             {capability.description}
                                         </CardDescription>
                                     </CardContent>
@@ -218,7 +202,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
             </section>
 
             {/* Features Section */}
-            <section className="relative z-10 px-6 py-16">
+            <section className="relative z-10 px-6 py-20">
                 <div className="max-w-7xl mx-auto">
                     {(() => {
                         const visualFeatureIndex = data.features.findIndex(f => f.component || f.image);
@@ -236,17 +220,19 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                                 className="flex flex-col gap-8 items-center text-center max-w-4xl mx-auto mb-24 last:mb-0"
                             >
                                 <div>
-                                    <h3 className="text-2xl md:text-4xl font-manrope font-medium text-foreground mb-6">
+                                    <h3 className="text-3xl md:text-4xl font-manrope font-semibold text-foreground mb-6">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-xl text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
+                                    <p className="text-xl text-muted-foreground font-light leading-relaxed mb-10 max-w-2xl mx-auto">
                                         {feature.description}
                                     </p>
-                                    <ul className="grid sm:grid-cols-2 gap-4 text-left max-w-2xl mx-auto">
+                                    <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 text-left max-w-2xl mx-auto">
                                         {feature.points.map((point, i) => (
                                             <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                                                <span className="text-foreground/80">{point}</span>
+                                                <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                                    <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                                                </div>
+                                                <span className="text-foreground/80 font-medium">{point}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -255,7 +241,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                         );
 
                         return (
-                            <div className="flex flex-col gap-12">
+                            <div className="flex flex-col gap-16">
                                 {/* Top Text Feature */}
                                 {topFeature && <FeatureBlock feature={topFeature} />}
 
@@ -266,14 +252,11 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.8 }}
                                         viewport={{ once: true }}
-                                        className="w-full max-w-2xl mx-auto px-4 mb-24 relative z-10"
+                                        className="w-full max-w-4xl mx-auto px-4 mb-24 relative z-10"
                                     >
-                                        <div className="relative aspect-[16/9] rounded-3xl bg-white dark:bg-muted/5 border border-border/10 dark:border-border/5 shadow-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/5">
-                                            {/* Light mode gradient overlay for depth */}
-                                            <div className="absolute inset-0 bg-gradient-to-tr from-blue-50/50 via-transparent to-transparent opacity-100 dark:opacity-0 pointer-events-none" />
-
+                                        <div className="relative aspect-[16/9] rounded-[2rem] bg-gradient-to-b from-white/[0.05] to-transparent border border-white/10 shadow-2xl overflow-hidden backdrop-blur-sm">
                                             {visualFeature.component ? (
-                                                <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent">
+                                                <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-transparent p-8">
                                                     {visualFeature.component}
                                                 </div>
                                             ) : (
@@ -297,29 +280,42 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
             </section>
 
             {/* CTA Section */}
-            <section className="relative z-10 px-6 py-24">
+            <section className="relative z-10 px-6 py-32">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true }}
-                    className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
+                    className="max-w-7xl mx-auto"
                 >
-                    <div>
-                        <h2 className="text-3xl md:text-4xl font-manrope font-medium text-foreground mb-2">
-                            Ready to get started?
-                        </h2>
-                        <p className="text-muted-foreground font-manrope">
-                            Schedule a consultation with our security experts.
-                        </p>
+                    <div className="relative overflow-hidden rounded-[2.5rem] bg-foreground text-background px-8 py-16 md:p-20 text-center">
+                        {/* Abstract Background Shapes */}
+                        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
+                            <div className="absolute top-[-50%] left-[-20%] w-[800px] h-[800px] bg-background/30 rounded-full blur-[100px]" />
+                            <div className="absolute bottom-[-50%] right-[-20%] w-[600px] h-[600px] bg-primary/40 rounded-full blur-[80px]" />
+                        </div>
+
+                        <div className="relative z-10 max-w-3xl mx-auto space-y-8">
+                            <h2 className="text-4xl md:text-5xl font-manrope font-bold mb-6 tracking-tight">
+                                Ready to secure your future?
+                            </h2>
+                            <p className="text-xl md:text-2xl text-background/80 font-light leading-relaxed max-w-2xl mx-auto">
+                                Schedule a consultation with our security architects and see how ZecurX can transform your defense posture.
+                            </p>
+                            <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+                                <Link href="/book-demo">
+                                    <Button size="lg" className="h-14 px-8 rounded-full bg-background text-foreground hover:bg-background/90 text-lg font-semibold shadow-xl">
+                                        Book a Demo
+                                    </Button>
+                                </Link>
+                                <Link href="/contact">
+                                    <Button variant="outline" size="lg" className="h-14 px-8 rounded-full border-background/20 text-background hover:bg-background/10 hover:text-background text-lg font-medium">
+                                        Contact Sales
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
-                    <Link
-                        href="/contact"
-                        className="group inline-flex items-center gap-2 text-lg font-manrope font-semibold text-foreground hover:text-primary transition-colors"
-                    >
-                        Contact Us
-                        <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-                    </Link>
                 </motion.div>
             </section>
 

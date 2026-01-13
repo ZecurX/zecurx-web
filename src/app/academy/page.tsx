@@ -3,8 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-    GraduationCap, Shield, Award, Users,
-    Target, BookOpen, Rocket, ArrowRight
+    GraduationCap, Award, Users,
+    BookOpen, ArrowRight
 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';

@@ -3,9 +3,10 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Globe, Shield, Zap, Lock, Smartphone, Activity, ArrowRight } from 'lucide-react';
+import { Globe, Shield, Zap, Lock, Smartphone, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
 
 export default function WebAppSecurityPage() {
     return (
@@ -35,6 +36,8 @@ export default function WebAppSecurityPage() {
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Comprehensive application hardening and real-time protection for web and mobile platforms. Defend against OWASP Top 10 exploits, bot attacks, and zero-day threats.
                         </p>
+                        
+                        <ServiceHeroEmailCapture serviceName="Web & App Security" />
                     </motion.div>
                 </div>
             </section>

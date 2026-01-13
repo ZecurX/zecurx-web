@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
         // Save to Database
         try {
             const { supabase } = await import("@/lib/supabase");
-            let notes: any;
+            let notes: Record<string, string> | undefined;
             let amountInRupees: number;
 
             if (isDevMode && metadata) {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
                     throw new Error('Order not found');
                 }
 
-                notes = order.notes as any;
+                notes = order.notes as Record<string, string> | undefined;
                 amountInRupees = Number(order.amount) / 100;
             }
 
