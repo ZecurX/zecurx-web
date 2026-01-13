@@ -54,11 +54,11 @@ export async function GET(request: NextRequest) {
         // Get post IDs that have this label
         const { data: postLabels } = await supabase
           .from('blog_post_labels')
-          .select('post_id')
+          .select('blog_post_id')
           .eq('label_id', label.id);
 
         if (postLabels && postLabels.length > 0) {
-          const postIds = postLabels.map(pl => pl.post_id);
+          const postIds = postLabels.map(pl => pl.blog_post_id);
           query = query.in('id', postIds);
         } else {
           // No posts with this label
@@ -102,7 +102,6 @@ export async function GET(request: NextRequest) {
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
-      featured_image: post.featured_image,
       featured_image_url: post.featured_image_url,
       published_at: post.published_at,
       view_count: post.view_count,

@@ -13,6 +13,7 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/plans': { resource: RESOURCES.PLANS, action: ACTIONS.READ },
     '/admin/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
     '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
+    '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
 };
 
 export async function proxy(request: NextRequest) {

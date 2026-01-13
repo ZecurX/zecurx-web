@@ -37,7 +37,7 @@ export async function GET(
     const { data: labelData } = await supabase
       .from('blog_post_labels')
       .select('blog_labels(*)')
-      .eq('post_id', post.id);
+      .eq('blog_post_id', post.id);
 
     const response = {
       ...post,
@@ -114,11 +114,11 @@ export async function PUT(
 
     // Update labels if provided
     if (body.label_ids !== undefined) {
-      await supabase.from('blog_post_labels').delete().eq('post_id', id);
+      await supabase.from('blog_post_labels').delete().eq('blog_post_id', id);
       
       if (body.label_ids.length > 0) {
         const labelInserts = body.label_ids.map(labelId => ({
-          post_id: id,
+          blog_post_id: id,
           label_id: labelId
         }));
         await supabase.from('blog_post_labels').insert(labelInserts);
@@ -173,7 +173,7 @@ export async function DELETE(
     }
 
     // Delete labels first
-    await supabase.from('blog_post_labels').delete().eq('post_id', id);
+    await supabase.from('blog_post_labels').delete().eq('blog_post_id', id);
 
     // Delete the post
     const { error: deleteError } = await supabase
