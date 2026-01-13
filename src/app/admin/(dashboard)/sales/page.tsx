@@ -1,4 +1,8 @@
 import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
+import { verifySession } from "@/lib/auth";
+import { hasPermission } from "@/lib/permissions";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +22,30 @@ interface Transaction {
 }
 
 export default async function SalesPage() {
+    // Verify the user has permission to view sales
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("admin_session");
+    
+    if (!sessionCookie) {
+        redirect('/admin/login');
+    }
+
+    const session = await verifySession(sessionCookie.value);
+    if (!session) {
+        redirect('/admin/login');
+    }
+
+    // Check if user has read permission for sales
+    if (!hasPermission(session.role, 'sales', 'read')) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="text-center space-y-4">
+                    <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
+                    <p className="text-muted-foreground">You don't have permission to view sales.</p>
+                </div>
+            </div>
+        );
+    }
     const { data: transactions } = await supabase
         .from("transactions")
         .select("*, customers(name, email, phone)")
