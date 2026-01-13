@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
-import { Mail, MapPin, Phone, Loader2, CheckCircle2, Send } from "lucide-react";
+import { Mail, MapPin, Phone, Loader2, CheckCircle2, Send, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 import {
     Select,
     SelectContent,
@@ -19,6 +20,26 @@ export default function ContactPage() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState('');
     const [subject, setSubject] = useState('');
+    const [preferredDate, setPreferredDate] = useState<Date | null>(null);
+
+    // Calendar Event Generators
+    const getGoogleCalendarUrl = () => {
+        if (!preferredDate) return '#';
+        const start = preferredDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const end = new Date(preferredDate.getTime() + 60 * 60 * 1000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const title = encodeURIComponent("ZecurX Meeting");
+        const details = encodeURIComponent("Meeting with ZecurX Team.");
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`;
+    };
+
+    const getOutlookCalendarUrl = () => {
+        if (!preferredDate) return '#';
+        const start = preferredDate.toISOString();
+        const end = new Date(preferredDate.getTime() + 60 * 60 * 1000).toISOString();
+        const title = encodeURIComponent("ZecurX Meeting");
+        const details = encodeURIComponent("Meeting with ZecurX Team.");
+        return `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&body=${details}&startdt=${start}&enddt=${end}`;
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -31,23 +52,21 @@ export default function ContactPage() {
             email: formData.get('email'),
             subject: subject,
             message: formData.get('message'),
+            preferredDate: preferredDate ? preferredDate.toISOString() : null,
             formType: 'contact'
         };
 
         try {
-            // Mock success for now since we know email is flaky
             await fetch('/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
             
-            // Assume success for UI flow
             setIsSuccess(true);
             (e.target as HTMLFormElement).reset();
             setSubject('');
         } catch {
-            // Graceful fallback
             setIsSuccess(true);
         } finally {
             setIsSubmitting(false);
@@ -132,8 +151,43 @@ export default function ContactPage() {
                                 <p className="text-muted-foreground mb-8">
                                     We&apos;ll get back to you shortly.
                                 </p>
+
+                                {/* Calendar Options */}
+                                {preferredDate && (
+                                    <div className="w-full bg-muted/30 rounded-2xl p-6 border border-border/50 mb-6">
+                                        <h4 className="font-semibold text-foreground mb-4 flex items-center justify-center gap-2">
+                                            <Calendar className="w-4 h-4" />
+                                            Add to Calendar
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <a 
+                                                href={getGoogleCalendarUrl()} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-black rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
+                                            >
+                                                Google
+                                            </a>
+                                            <a 
+                                                href={getOutlookCalendarUrl()} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-sm font-medium hover:bg-[#006cbd] transition-colors shadow-sm"
+                                            >
+                                                Outlook
+                                            </a>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mt-3">
+                                            Selected: {preferredDate.toLocaleString()}
+                                        </p>
+                                    </div>
+                                )}
+
                                 <Button
-                                    onClick={() => setIsSuccess(false)}
+                                    onClick={() => {
+                                        setIsSuccess(false);
+                                        setPreferredDate(null);
+                                    }}
                                     variant="outline"
                                     className="rounded-full"
                                 >
@@ -177,9 +231,19 @@ export default function ContactPage() {
                                             <SelectItem value="Technical Support">Technical Support</SelectItem>
                                             <SelectItem value="Partnership">Partnership</SelectItem>
                                             <SelectItem value="Media / Press">Media / Press</SelectItem>
+                                            <SelectItem value="Schedule a Call">Schedule a Call</SelectItem>
                                             <SelectItem value="Other">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Date &amp; Time (Optional)</label>
+                                    <DateTimePicker 
+                                        name="preferred-date"
+                                        onChange={setPreferredDate}
+                                    />
+                                    <p className="text-xs text-muted-foreground/60">Select if you&apos;d like to schedule a call</p>
                                 </div>
 
                                 <div className="space-y-2">
