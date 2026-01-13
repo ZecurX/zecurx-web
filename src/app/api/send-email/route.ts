@@ -117,8 +117,8 @@ export async function POST(request: NextRequest) {
         // Send confirmation email to user
         let userSubject = 'We received your message - ZecurX';
         if (isDemo) userSubject = 'Demo Request Received - ZecurX';
-        if (isBrochure) userSubject = `Your ${body.courseTitle} Brochure - ZecurX`;
-        if (isInternship) userSubject = `Internship Enrollment Confirmed: ${body.itemName} - ZecurX`;
+        else if (isBrochure) userSubject = `Your ${body.courseTitle} Brochure - ZecurX`;
+        else if (isInternship) userSubject = `Internship Enrollment Confirmed: ${body.itemName} - ZecurX`;
         else if (isPurchase) userSubject = `Order Confirmation: ${body.itemName} - ZecurX`;
 
         let userMessage = '';
