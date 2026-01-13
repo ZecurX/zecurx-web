@@ -74,6 +74,8 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
         if (selectedTime) {
             const [hours, minutes] = selectedTime.split(':').map(Number);
             newDate.setHours(hours, minutes);
+            // Auto-close if time is already selected
+            setIsOpen(false);
         }
         setSelectedDate(newDate);
         if (onChange) onChange(newDate);
@@ -87,6 +89,8 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
             newDate.setHours(hours, minutes);
             setSelectedDate(newDate);
             if (onChange) onChange(newDate);
+            // Auto-close after selecting time when date is already selected
+            setIsOpen(false);
         }
     };
 
