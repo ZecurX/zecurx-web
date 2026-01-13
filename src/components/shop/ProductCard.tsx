@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ShoppingBag, AlertCircle } from 'lucide-react';
+import { ShoppingBag, AlertCircle, Truck } from 'lucide-react';
+import { useState } from 'react';
 
 interface ProductCardProps {
     id: string;
@@ -10,10 +11,12 @@ interface ProductCardProps {
     price: number;
     description: string;
     image: string;
+    images?: string[]; // Array of images for hover effect
     stock?: number;
     features: string[];
     tags: string[];
     delay?: number;
+    deliveryDays?: number; // Estimated delivery in days
 }
 
 export default function ProductCard({
@@ -22,11 +25,16 @@ export default function ProductCard({
     price,
     description,
     image,
+    images,
     stock = 0,
     features,
     tags,
     delay = 0,
+    deliveryDays = 20,
 }: ProductCardProps) {
+    // Combine single image with images array
+    const allImages = images ? [image, ...images] : [image];
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const formatPrice = (amount: number) => {
         return new Intl.NumberFormat('en-IN', {
@@ -34,6 +42,22 @@ export default function ProductCard({
             currency: 'INR',
             maximumFractionDigits: 0,
         }).format(amount);
+    };
+
+    const handleMouseEnter = () => {
+        if (allImages.length > 1) {
+            setCurrentImageIndex(1);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setCurrentImageIndex(0);
+    };
+
+    const cycleImage = () => {
+        if (allImages.length > 1) {
+            setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+        }
     };
 
     return (
@@ -45,12 +69,33 @@ export default function ProductCard({
             className="group relative flex flex-col h-full bg-background/50 border border-border/40 hover:border-border/80 hover:bg-muted/30 transition-all duration-300 rounded-2xl overflow-hidden"
         >
             {/* Image Section */}
-            <div className="relative aspect-[4/3] overflow-hidden bg-muted/50 border-b border-border/40">
+            <div
+                className="relative aspect-[4/3] overflow-hidden bg-muted/50 border-b border-border/40 cursor-pointer"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onClick={cycleImage}
+            >
                 <img
-                    src={image}
+                    src={allImages[currentImageIndex]}
                     alt={name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                    key={currentImageIndex}
                 />
+
+                {/* Image Indicator Dots */}
+                {allImages.length > 1 && (
+                    <div className="absolute bottom-4 right-4 flex gap-1.5">
+                        {allImages.map((_, index) => (
+                            <div
+                                key={index}
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${index === currentImageIndex
+                                    ? 'bg-foreground w-4'
+                                    : 'bg-foreground/30'
+                                    }`}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -100,6 +145,15 @@ export default function ProductCard({
                         <div className="flex flex-col">
                             <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Price</span>
                             <span className="text-lg font-bold text-foreground">{formatPrice(price)}</span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                            <div className="flex items-center gap-1.5 text-muted-foreground/80">
+                                <Truck className="w-3.5 h-3.5" />
+                                <span className="text-[10px] uppercase tracking-wider font-semibold">Delivery</span>
+                            </div>
+                            <span className="text-xs font-medium text-foreground/90 mt-0.5">
+                                Within {deliveryDays} days
+                            </span>
                         </div>
                     </div>
 
