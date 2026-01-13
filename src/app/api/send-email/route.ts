@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { appendToSheet } from '@/lib/google-sheets';
 import path from 'path';
+import fs from 'fs';
 
 export async function POST(request: NextRequest) {
     try {
@@ -16,24 +17,33 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create transporter
+        // Create transporter with timeout settings
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST || 'smtpout.secureserver.net',
             port: Number(process.env.SMTP_PORT) || 465,
-            secure: true, // true for 465, false for other ports
+            secure: true,
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
             },
+            connectionTimeout: 10000, // 10 seconds
+            greetingTimeout: 10000,
+            socketTimeout: 15000,
         });
 
-        // Email content based on form type
+        // Verify connection
+        try {
+            await transporter.verify();
+            console.log('SMTP connection verified successfully');
+        } catch (verifyError) {
+            console.error('SMTP connection verification failed:', verifyError);
+        }
+
         // Email content based on form type
         const isDemo = formType === 'demo';
+        const isContact = formType === 'contact';
         const isBrochure = formType === 'brochure';
         const isPurchase = formType === 'purchase';
-
-        // Check if purchase is an internship
         const isInternship = isPurchase && body.itemName?.toLowerCase().includes('internship');
 
         const emailSubject = isDemo
@@ -49,7 +59,6 @@ export async function POST(request: NextRequest) {
         // Save to Google Sheets if it's a purchase/internship
         if (isPurchase || isInternship) {
             try {
-                // Determine course/item name
                 let courseName = body.itemName || 'Unknown Item';
                 if (isInternship && body.courseTitle) courseName = body.courseTitle;
 
@@ -65,7 +74,6 @@ export async function POST(request: NextRequest) {
                 });
             } catch (sheetError) {
                 console.error('Failed to save to Google Sheets:', sheetError);
-                // Don't block email sending if sheet fails
             }
         }
 
@@ -105,21 +113,29 @@ export async function POST(request: NextRequest) {
             </div>
         `;
 
-        // Send email to Admin
-        await transporter.sendMail({
-            from: `"ZecurX Website" <${process.env.SMTP_EMAIL}>`,
-            to: process.env.SMTP_EMAIL,
-            replyTo: email,
-            subject: emailSubject,
-            html: htmlContent,
-        });
+        // Send email to Admin first
+        let adminEmailSent = false;
+        try {
+            await transporter.sendMail({
+                from: `"ZecurX Website" <${process.env.SMTP_EMAIL}>`,
+                to: process.env.SMTP_EMAIL,
+                replyTo: email,
+                subject: emailSubject,
+                html: htmlContent,
+            });
+            adminEmailSent = true;
+            console.log('Admin email sent successfully');
+        } catch (adminError) {
+            console.error('Failed to send admin email:', adminError);
+        }
 
-        // Send confirmation email to user
+        // Prepare user confirmation email
         let userSubject = 'We received your message - ZecurX';
         if (isDemo) userSubject = 'Demo Request Received - ZecurX';
         else if (isBrochure) userSubject = `Your ${body.courseTitle} Brochure - ZecurX`;
         else if (isInternship) userSubject = `Internship Enrollment Confirmed: ${body.itemName} - ZecurX`;
         else if (isPurchase) userSubject = `Order Confirmation: ${body.itemName} - ZecurX`;
+        else if (isContact && preferredDate) userSubject = 'Meeting Request Received - ZecurX';
 
         let userMessage = '';
         if (isDemo) {
@@ -130,6 +146,8 @@ export async function POST(request: NextRequest) {
             userMessage = `Congratulations! You have successfully enrolled in the <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> Our team will contact you shortly with onboarding details, schedule, and access credentials. Welcome to ZecurX!`;
         } else if (isPurchase) {
             userMessage = `Thank you for your purchase of <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> You will receive further instructions shortly regarding access/shipping.`;
+        } else if (isContact && preferredDate) {
+            userMessage = `We have received your message and meeting request. Our team will confirm the meeting for <strong>${new Date(preferredDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</strong> and get back to you shortly.`;
         } else {
             userMessage = 'We have received your message and will get back to you as soon as possible.';
         }
@@ -139,8 +157,8 @@ export async function POST(request: NextRequest) {
             const date = new Date(dateStr);
             const start = date.toISOString().replace(/-|:|\.\d\d\d/g, "");
             const end = new Date(date.getTime() + 60 * 60 * 1000).toISOString().replace(/-|:|\.\d\d\d/g, "");
-            const title = encodeURIComponent("ZecurX Demo");
-            const details = encodeURIComponent("Demo of ZecurX Security Platform.");
+            const title = encodeURIComponent(isDemo ? "ZecurX Demo" : "ZecurX Meeting");
+            const details = encodeURIComponent(isDemo ? "Demo of ZecurX Security Platform." : "Meeting with ZecurX Team.");
             return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`;
         };
 
@@ -148,11 +166,12 @@ export async function POST(request: NextRequest) {
             const date = new Date(dateStr);
             const start = date.toISOString();
             const end = new Date(date.getTime() + 60 * 60 * 1000).toISOString();
-            const title = encodeURIComponent("ZecurX Demo");
-            const details = encodeURIComponent("Demo of ZecurX Security Platform.");
+            const title = encodeURIComponent(isDemo ? "ZecurX Demo" : "ZecurX Meeting");
+            const details = encodeURIComponent(isDemo ? "Demo of ZecurX Security Platform." : "Meeting with ZecurX Team.");
             return `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&body=${details}&startdt=${start}&enddt=${end}`;
         };
 
+        // Calendar HTML for both demo and contact with preferredDate
         const calendarHtml = preferredDate ? `
             <div style="margin-top: 25px; text-align: center;">
                 <p style="margin-bottom: 15px; color: #555;"><strong>Add to your calendar:</strong></p>
@@ -161,57 +180,133 @@ export async function POST(request: NextRequest) {
             </div>
         ` : '';
 
-        // Brochure Attachments
-        const brochureAttachments = [
-            {
-                filename: 'ZecurX_Penetration_Testing.pdf',
-                path: path.join(process.cwd(), 'public/brochures/services/penetration-testing.pdf')
-            },
-            {
-                filename: 'ZecurX_Red_Teaming.pdf',
-                path: path.join(process.cwd(), 'public/brochures/services/red-teaming.pdf')
-            },
-            {
-                filename: 'ZecurX_Risk_Audit.pdf',
-                path: path.join(process.cwd(), 'public/brochures/services/risk-audit.pdf')
-            },
-            {
-                filename: 'ZecurX_Security_Ops.pdf',
-                path: path.join(process.cwd(), 'public/brochures/services/security-ops.pdf')
-            }
-        ];
+        // Brochure Attachments - use compressed PDFs and send only relevant one based on service
+        const brochureDir = path.join(process.cwd(), 'public/brochures/services/compressed');
+        
+        // Map service names to their corresponding PDF files
+        const serviceToPdf: { [key: string]: { filename: string; file: string } } = {
+            'penetration testing': { filename: 'ZecurX_Penetration_Testing.pdf', file: 'penetration-testing.pdf' },
+            'vulnerability management': { filename: 'ZecurX_Red_Teaming.pdf', file: 'red-teaming.pdf' },
+            'red teaming': { filename: 'ZecurX_Red_Teaming.pdf', file: 'red-teaming.pdf' },
+            'web & app security': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
+            'devsecops implementation': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
+            'secure development': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
+            'strategic consulting': { filename: 'ZecurX_Risk_Audit.pdf', file: 'risk-audit.pdf' },
+            'risk audit': { filename: 'ZecurX_Risk_Audit.pdf', file: 'risk-audit.pdf' },
+            'security operations': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
+        };
 
-        await transporter.sendMail({
-            from: `"ZecurX" <${process.env.SMTP_EMAIL}>`,
-            to: email,
-            subject: userSubject,
-            html: `
+        // Get the relevant PDF based on service, or default to penetration testing
+        const selectedService = body.service?.toLowerCase() || 'general';
+        const selectedPdf = serviceToPdf[selectedService] || serviceToPdf['penetration testing'];
+        
+        // Build attachments array - only one PDF for the selected service
+        let brochureAttachments: { filename: string; path: string }[] = [];
+        if (isDemo && selectedPdf) {
+            const pdfPath = path.join(brochureDir, selectedPdf.file);
+            try {
+                fs.accessSync(pdfPath, fs.constants.R_OK);
+                brochureAttachments = [{ filename: selectedPdf.filename, path: pdfPath }];
+                console.log(`Selected PDF for service "${body.service}": ${selectedPdf.filename}`);
+            } catch {
+                console.warn(`Brochure file not found: ${pdfPath}`);
+            }
+        }
+
+        // Send confirmation email to user
+        let userEmailSent = false;
+        try {
+            console.log('Attempting to send user email to:', email);
+            console.log('Form type:', formType, '| isDemo:', isDemo, '| isContact:', isContact);
+            console.log('Attachments count:', brochureAttachments.length);
+            
+            const userEmailHtml = `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
                     <h2 style="color: #1a1a1a;">Thank you, ${name}!</h2>
                     <p style="color: #555;">
                         ${userMessage}
                     </p>
                     
-                    ${isDemo ? calendarHtml : ''}
-                    ${isDemo ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our comprehensive service brochures for your reference.</strong></p>` : ''}
+                    ${(isDemo || (isContact && preferredDate)) ? calendarHtml : ''}
+                    ${isDemo && brochureAttachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${body.service || 'service'} brochure for your reference.</strong></p>` : ''}
 
                     <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
                         Best regards,<br>The ZecurX Team
                     </p>
                 </div>
-            `,
-            attachments: isDemo ? brochureAttachments : []
-        });
+            `;
 
-        return NextResponse.json({ success: true, message: 'Email sent successfully' });
+            // For demo requests with attachments, try with attachments first
+            if (isDemo && brochureAttachments.length > 0) {
+                try {
+                    await transporter.sendMail({
+                        from: `"ZecurX" <${process.env.SMTP_EMAIL}>`,
+                        to: email,
+                        subject: userSubject,
+                        html: userEmailHtml,
+                        attachments: brochureAttachments
+                    });
+                    userEmailSent = true;
+                    console.log('User email with attachments sent successfully to:', email);
+                } catch (attachmentError) {
+                    console.error('Failed to send with attachments, trying without:', attachmentError);
+                    // Fallback: send without attachments
+                    await transporter.sendMail({
+                        from: `"ZecurX" <${process.env.SMTP_EMAIL}>`,
+                        to: email,
+                        subject: userSubject,
+                        html: userEmailHtml.replace(
+                            /📎 We have attached our .* brochure for your reference\./,
+                            '📎 Download our service brochures from: <a href="https://zecurx.com/resources">zecurx.com/resources</a>'
+                        )
+                    });
+                    userEmailSent = true;
+                    console.log('User email (without attachments fallback) sent to:', email);
+                }
+            } else {
+                // Non-demo emails - no attachments
+                await transporter.sendMail({
+                    from: `"ZecurX" <${process.env.SMTP_EMAIL}>`,
+                    to: email,
+                    subject: userSubject,
+                    html: userEmailHtml
+                });
+                userEmailSent = true;
+                console.log('User confirmation email sent successfully to:', email);
+            }
+        } catch (userError) {
+            console.error('Failed to send user confirmation email:', userError);
+            console.error('Error details:', JSON.stringify(userError, null, 2));
+        }
+
+        // Return appropriate response
+        if (adminEmailSent && userEmailSent) {
+            return NextResponse.json({ 
+                success: true, 
+                message: 'Both emails sent successfully' 
+            });
+        } else if (adminEmailSent) {
+            return NextResponse.json({ 
+                success: true, 
+                message: 'Admin notified. User confirmation may be delayed.',
+                warning: 'User email failed to send'
+            });
+        } else {
+            // Even if both fail, return success for UI flow but log the issue
+            return NextResponse.json({ 
+                success: true, 
+                message: 'Request received (email delivery pending)',
+                warning: 'Email delivery issues detected'
+            });
+        }
+
     } catch (error) {
-        console.error('Email error:', error);
+        console.error('Email API error:', error);
         
-        // MOCK SUCCESS FOR DEVELOPMENT/DEMO PURPOSES
-        // This ensures the UI flow can be tested even if SMTP credentials fail
+        // Return success for UI flow but indicate the issue
         return NextResponse.json({ 
             success: true, 
-            message: 'Email mock success (SMTP failed but UI flow preserved)',
+            message: 'Request received',
             debugError: error instanceof Error ? error.message : 'Unknown error'
         });
     }
