@@ -1,28 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
 import { supabase } from "@/lib/supabase";
-
-async function verifyAdmin() {
-    const cookieStore = await cookies();
-    const session = cookieStore.get("admin_session");
-
-    if (!session) return false;
-
-    try {
-        const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
-        await jwtVerify(session.value, secret);
-        return true;
-    } catch {
-        return false;
-    }
-}
+import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
+import { logCRUD } from "@/lib/audit";
 
 // UPDATE Product
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    if (!await verifyAdmin()) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requirePermission('products', 'update', req);
+    if (!authResult.authorized) {
+        return NextResponse.json({ error: authResult.error }, { status: authResult.status });
     }
+
+    const { session } = authResult;
 
     try {
         const { id } = await params;
@@ -37,6 +25,19 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         if (error) throw error;
 
+        // Log the action
+        const ipAddress = getClientIP(req);
+        const userAgent = getUserAgent(req);
+        await logCRUD(
+            { id: session.sub, email: session.email, role: session.role },
+            'update',
+            'products',
+            id,
+            body,
+            ipAddress,
+            userAgent
+        );
+
         return NextResponse.json(data);
     } catch (error: any) {
         console.error("Update Product Error:", error);
@@ -46,9 +47,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // DELETE Product
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    if (!await verifyAdmin()) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const authResult = await requirePermission('products', 'delete', req);
+    if (!authResult.authorized) {
+        return NextResponse.json({ error: authResult.error }, { status: authResult.status });
     }
+
+    const { session } = authResult;
 
     try {
         const { id } = await params;
@@ -59,6 +63,19 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
             .eq("id", id);
 
         if (error) throw error;
+
+        // Log the action
+        const ipAddress = getClientIP(req);
+        const userAgent = getUserAgent(req);
+        await logCRUD(
+            { id: session.sub, email: session.email, role: session.role },
+            'delete',
+            'products',
+            id,
+            undefined,
+            ipAddress,
+            userAgent
+        );
 
         return NextResponse.json({ success: true });
     } catch (error: any) {

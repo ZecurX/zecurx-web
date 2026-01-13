@@ -52,7 +52,7 @@ const navData = {
         href: "/resources",
         description: "Learn and explore",
         items: [
-            { title: "Blog", href: "/resources/blog", desc: "Latest security insights and updates" },
+            { title: "Blog", href: "/blog", desc: "Latest security insights and updates" },
             { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth research and analysis" },
             { title: "Research", href: "/resources/research", desc: "Security research publications" },
             { title: "Webinars", href: "/resources/webinars", desc: "On-demand learning sessions" },

@@ -6,6 +6,7 @@ import PlatformCapabilitiesSection from "@/components/landing/PlatformCapabiliti
 import WhyZecurXSection from "@/components/landing/WhyZecurXSection";
 import IndustriesSection from "@/components/landing/IndustriesSection";
 import ReadyToSecureSection from "@/components/landing/ReadyToSecureSection";
+import LatestBlogSection from "@/components/landing/LatestBlogSection";
 import Footer from "@/components/landing/Footer";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
       <WhyZecurXSection />
       <IndustriesSection />
       <ReadyToSecureSection />
+      <LatestBlogSection />
       <Footer />
     </main>
   );
