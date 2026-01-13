@@ -1,10 +1,32 @@
 import { Suspense } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { jwtVerify } from "jose";
 import { supabase } from "@/lib/supabase";
 import { DollarSign, ShoppingCart, Users, TrendingUp } from "lucide-react";
+import { AdminJWTPayload } from "@/types/auth";
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
+    // Check user role for redirect
+    const cookieStore = await cookies();
+    const session = cookieStore.get("admin_session");
+
+    if (session?.value) {
+        try {
+            const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
+            const { payload } = await jwtVerify(session.value, secret);
+            const user = payload as unknown as AdminJWTPayload;
+
+            if (user.role === 'marketing') {
+                redirect('/admin/blog');
+            }
+        } catch (e) {
+            // Ignore error, layout will handle auth
+        }
+    }
+
     // Fetch stats (parallel)
     const [
         { count: transactionCount, data: transactions },

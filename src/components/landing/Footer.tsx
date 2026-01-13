@@ -71,7 +71,7 @@ export default function Footer() {
                                     <ul className="space-y-3">
                                         <li><Link href="/why-zecurx" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link></li>
                                         <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link></li>
-                                        <li><Link href="/resources/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+                                        <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
                                         <li><Link href="/resources/research" className="text-sm text-muted-foreground hover:text-primary transition-colors">Research</Link></li>
                                     </ul>
                                 </div>

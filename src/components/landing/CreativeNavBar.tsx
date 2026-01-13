@@ -59,7 +59,7 @@ const navData = {
         href: "/resources",
         description: "Learn and explore",
         items: [
-            { icon: BookOpen, title: "Blog", href: "/resources/blog", desc: "Latest insights" },
+            { icon: BookOpen, title: "Blog", href: "/blog", desc: "Latest insights" },
             { icon: FileSearch, title: "Whitepapers", href: "/resources/whitepapers", desc: "Deep dives" },
             { icon: Lightbulb, title: "Research", href: "/resources/research", desc: "Security research" },
             { icon: Video, title: "Webinars", href: "/resources/webinars", desc: "On-demand learning" },
