@@ -3,9 +3,10 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Settings, RefreshCw, Box, Terminal, Shield, Workflow, ArrowRight } from 'lucide-react';
+import { Settings, RefreshCw, Box, Terminal, Shield, Workflow } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ServiceCTA from '@/components/services/ServiceCTA';
+import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
 
 export default function DevSecOpsPage() {
     return (
@@ -35,6 +36,8 @@ export default function DevSecOpsPage() {
                         <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                             Bridge the gap between speed and security. We integrate automated security controls directly into your CI/CD pipelines, enabling you to ship faster and safer.
                         </p>
+                        
+                        <ServiceHeroEmailCapture serviceName="DevSecOps Implementation" />
                     </motion.div>
                 </div>
             </section>
@@ -49,7 +52,7 @@ export default function DevSecOpsPage() {
                             </h2>
                             <div className="space-y-4 text-muted-foreground leading-relaxed">
                                 <p>
-                                    In a cloud-native world, manual security reviews create bottlenecks. DevSecOps isn't just about tools; it's a cultural shift where security is a shared responsibility and an automated standard.
+                                    In a cloud-native world, manual security reviews create bottlenecks. DevSecOps isn&apos;t just about tools; it&apos;s a cultural shift where security is a shared responsibility and an automated standard.
                                 </p>
                                 <p>
                                     ZecurX architects DevSecOps pipelines that treat security policies as code. We automate scanning, infrastructure provisioning, and compliance checks, ensuring that every commit is verified against your security standards without slowing down developers.

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import {
@@ -8,7 +8,6 @@ import {
     Radar, FolderSearch, Lock, ArrowRight
 } from 'lucide-react';
 import { motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
     Card,
@@ -96,13 +95,6 @@ const tools = [
 ];
 
 export default function ServicesPage() {
-    const [mounted, setMounted] = useState(false);
-    const { theme } = useTheme();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
     return (
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
 

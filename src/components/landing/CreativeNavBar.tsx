@@ -3,26 +3,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-    ChevronDown, ArrowRight, Menu, X, Sparkles
-} from 'lucide-react';
+import { ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
-// Navigation Data (No Icons in Main Nav)
+// Navigation Data
 const navData = {
     platform: {
         label: "Platform",
         href: "/platform",
         description: "Unified security architecture",
         items: [
-            { title: "Endpoint Security", href: "/platform/endpoint-security", desc: "Behavior-based protection" },
-            { title: "Cloud Security", href: "/platform/cloud-security", desc: "Multi-cloud visibility" },
-            { title: "Identity Security", href: "/platform/identity-security", desc: "Zero trust access" },
-            { title: "Application Security", href: "/platform/application-security", desc: "Secure SDLC" },
-            { title: "Threat Intelligence", href: "/platform/threat-intelligence", desc: "Proactive hunting" },
-            { title: "AI Detection", href: "/platform/ai-detection", desc: "ML-powered analytics" },
+            { title: "Endpoint Security", href: "/platform/endpoint-security", desc: "Behavior-based protection for all devices" },
+            { title: "Cloud Security", href: "/platform/cloud-security", desc: "Multi-cloud visibility and control" },
+            { title: "Identity Security", href: "/platform/identity-security", desc: "Zero trust access management" },
+            { title: "Application Security", href: "/platform/application-security", desc: "Secure your development lifecycle" },
+            { title: "Threat Intelligence", href: "/platform/threat-intelligence", desc: "Proactive threat hunting capabilities" },
+            { title: "AI Detection", href: "/platform/ai-detection", desc: "ML-powered threat analytics" },
         ]
     },
     solutions: {
@@ -30,11 +28,11 @@ const navData = {
         href: "/solutions",
         description: "Tailored security strategies",
         items: [
-            { title: "Digital Transformation", href: "/solutions/digital-transformation", desc: "Secure modernization" },
-            { title: "AI-Powered SOC", href: "/solutions/ai-powered-soc", desc: "Intelligent operations" },
-            { title: "Zero Trust", href: "/solutions/zero-trust", desc: "Never trust, verify" },
-            { title: "Ransomware Defense", href: "/solutions/ransomware-defense", desc: "Complete protection" },
-            { title: "Compliance", href: "/solutions/compliance", desc: "Regulatory adherence" },
+            { title: "Digital Transformation", href: "/solutions/digital-transformation", desc: "Secure your modernization journey" },
+            { title: "AI-Powered SOC", href: "/solutions/ai-powered-soc", desc: "Intelligent security operations" },
+            { title: "Zero Trust", href: "/solutions/zero-trust", desc: "Never trust, always verify" },
+            { title: "Ransomware Defense", href: "/solutions/ransomware-defense", desc: "Complete protection strategy" },
+            { title: "Compliance", href: "/solutions/compliance", desc: "Meet regulatory requirements" },
         ]
     },
     services: {
@@ -42,10 +40,10 @@ const navData = {
         href: "/services",
         description: "Expert security services",
         items: [
-            { title: "Penetration Testing", href: "/services/offensive/penetration-testing", desc: "Adversary simulation" },
-            { title: "Vulnerability Management", href: "/services/offensive/vulnerability-management", desc: "Risk prioritization" },
-            { title: "Secure Development", href: "/services/engineering/secure-development", desc: "Build secure apps" },
-            { title: "DevSecOps", href: "/services/engineering/devsecops", desc: "Security automation" },
+            { title: "Penetration Testing", href: "/services/offensive/penetration-testing", desc: "Adversary simulation and red teaming" },
+            { title: "Vulnerability Management", href: "/services/offensive/vulnerability-management", desc: "Risk prioritization and remediation" },
+            { title: "Secure Development", href: "/services/engineering/secure-development", desc: "Build secure applications" },
+            { title: "DevSecOps", href: "/services/engineering/devsecops", desc: "Security automation pipelines" },
             { title: "VulnHunter Suite", href: "/tools", desc: "Free security tools" },
         ]
     },
@@ -54,31 +52,27 @@ const navData = {
         href: "/resources",
         description: "Learn and explore",
         items: [
-            { title: "Blog", href: "/resources/blog", desc: "Latest insights" },
-            { title: "Whitepapers", href: "/resources/whitepapers", desc: "Deep dives" },
-            { title: "Research", href: "/resources/research", desc: "Security research" },
-            { title: "Webinars", href: "/resources/webinars", desc: "On-demand learning" },
+            { title: "Blog", href: "/resources/blog", desc: "Latest security insights and updates" },
+            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth research and analysis" },
+            { title: "Research", href: "/resources/research", desc: "Security research publications" },
+            { title: "Webinars", href: "/resources/webinars", desc: "On-demand learning sessions" },
         ]
     },
 };
 
 export default function CreativeNavBar() {
     const router = useRouter();
-    const { scrollY } = useScroll();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Dynamic sizing based on scroll
-    const navTop = useTransform(scrollY, [0, 50], ["20px", "12px"]);
-    const navWidth = useTransform(scrollY, [0, 50], ["1000px", "900px"]);
-
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    
+    // Smooth scroll detection
+    const { scrollY } = useScroll();
+    
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        setScrolled(latest > 20);
+    });
 
     useEffect(() => {
         document.body.style.overflow = mobileMenuOpen ? 'hidden' : 'unset';
@@ -102,210 +96,272 @@ export default function CreativeNavBar() {
 
     return (
         <>
+            {/* Navbar Container - transforms from integrated to floating dock on scroll */}
             <motion.div
-                style={{ 
-                    y: navTop,
-                }}
-                className="fixed left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4"
             >
-                <motion.div
-                    style={{
-                        width: typeof window !== 'undefined' && window.innerWidth >= 1024 ? navWidth : "100%",
-                    }}
+                <motion.header
+                    layout
+                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                     className={cn(
-                        "pointer-events-auto transition-all duration-500 ease-out",
-                        "flex items-center justify-between p-1.5",
-                        "bg-background/80 backdrop-blur-xl border border-border/40",
-                        "rounded-full shadow-lg shadow-black/5 dark:shadow-black/20",
-                        "max-w-full lg:max-w-none"
+                        "relative w-full max-w-[1400px]",
+                        "rounded-2xl",
+                        "bg-background/70 backdrop-blur-2xl",
+                        "border border-white/[0.08] dark:border-white/[0.06]",
+                        "shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)]",
+                        "dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.2)]",
                     )}
                     onMouseLeave={handleMouseLeave}
                 >
-                    {/* Logo Section */}
-                    <Link href="/" className="flex items-center gap-2.5 px-3 py-1.5 rounded-full hover:bg-muted/50 transition-colors group shrink-0">
-                        <div className="relative w-6 h-6">
-                            <Image
-                                src="/images/zecurx-logo.png"
-                                alt="ZecurX"
-                                fill
-                                className="object-contain"
-                                priority
-                            />
-                        </div>
-                        <span className="font-semibold text-sm tracking-tight text-foreground">
-                            ZecurX
-                        </span>
-                    </Link>
-
-                    {/* Desktop Nav Links */}
-                    <nav className="hidden lg:flex items-center gap-0.5">
-                        {Object.entries(navData).map(([key, data]) => (
-                            <button
-                                key={key}
-                                className={cn(
-                                    "relative px-4 py-2 text-[13px] font-medium transition-colors rounded-full",
-                                    activeDropdown === key
-                                        ? "text-foreground bg-muted/60"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                                )}
-                                onMouseEnter={() => handleMouseEnter(key)}
-                                onClick={() => handleNavigation(data.href)}
+                    <div className="flex items-center justify-between h-16 px-6">
+                        
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+                            <motion.div 
+                                className="relative w-8 h-8"
+                                whileHover={{ rotate: 5, scale: 1.05 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
-                                {data.label}
-                            </button>
-                        ))}
-                        <div className="w-px h-4 bg-border/40 mx-1" />
-                        <Link
-                            href="/why-zecurx"
-                            className="px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-full transition-all"
-                        >
-                            Why Us
+                                <Image
+                                    src="/images/zecurx-logo.png"
+                                    alt="ZecurX"
+                                    fill
+                                    className="object-contain"
+                                    priority
+                                />
+                            </motion.div>
+                            <span className="font-semibold text-base tracking-tight text-foreground">
+                                ZecurX
+                            </span>
                         </Link>
-                    </nav>
 
-                    {/* Right Actions */}
-                    <div className="hidden lg:flex items-center gap-1.5 pl-1">
-                        <div className="scale-75 origin-right">
-                             <ThemeToggle />
-                        </div>
-                        <Link
-                            href="/contact"
-                            className="px-4 py-2 text-[13px] font-medium text-foreground hover:text-foreground/70 transition-colors rounded-full hover:bg-muted/30"
-                        >
-                            Contact
-                        </Link>
-                        <Link
-                            href="/book-demo"
-                            className="px-4 py-2 text-[13px] font-medium bg-foreground text-background rounded-full hover:bg-foreground/90 transition-all shadow-sm"
-                        >
-                            Book Demo
-                        </Link>
-                    </div>
+                        {/* Desktop Nav */}
+                        <nav className="hidden lg:flex items-center gap-2 relative">
+                            {Object.entries(navData).map(([key, data]) => (
+                                <button
+                                    key={key}
+                                    className={cn(
+                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                                        activeDropdown === key
+                                            ? "text-foreground"
+                                            : "text-muted-foreground hover:text-foreground"
+                                    )}
+                                    onMouseEnter={() => handleMouseEnter(key)}
+                                    onClick={() => handleNavigation(data.href)}
+                                >
+                                    {data.label}
+                                    <ChevronDown className={cn(
+                                        "w-3.5 h-3.5 transition-transform duration-200",
+                                        activeDropdown === key && "rotate-180"
+                                    )} />
+                                </button>
+                            ))}
+                            
+                            <Link
+                                href="/why-zecurx"
+                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                            >
+                                Why ZecurX
+                            </Link>
+                            <Link
+                                href="/industries"
+                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Industries
+                            </Link>
+                        </nav>
 
-                    {/* Mobile Toggle */}
-                    <div className="lg:hidden flex items-center gap-2 ml-auto pr-2">
-                        <ThemeToggle />
-                        <button
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="p-2 text-foreground hover:bg-muted/50 rounded-full transition-colors"
-                        >
-                            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                        </button>
-                    </div>
-                </motion.div>
-
-                {/* Dropdown Panel */}
-                <AnimatePresence>
-                    {activeDropdown && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -10, scale: 0.96 }}
-                            animate={{ opacity: 1, y: 8, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.96 }}
-                            transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                            className="absolute top-full pointer-events-auto"
-                            onMouseEnter={() => {
-                                if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-                            }}
-                            onMouseLeave={handleMouseLeave}
-                        >
-                            {/* Inner Panel Content */}
-                            <div className="w-[800px] p-2 bg-background/90 backdrop-blur-2xl border border-border/40 rounded-[24px] shadow-2xl shadow-black/10 overflow-hidden">
-                                <div className="grid grid-cols-[220px_1fr] gap-2">
-                                    {/* Sidebar */}
-                                    <div className="p-5 flex flex-col justify-between bg-muted/40 rounded-[18px]">
-                                        <div>
-                                            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3 opacity-70">
-                                                Collection
-                                            </div>
-                                            <h3 className="text-lg font-semibold text-foreground mb-1.5">
-                                                {navData[activeDropdown as keyof typeof navData].label}
-                                            </h3>
-                                            <p className="text-[13px] text-muted-foreground leading-relaxed">
-                                                {navData[activeDropdown as keyof typeof navData].description}
-                                            </p>
-                                        </div>
-                                        <Link
-                                            href={navData[activeDropdown as keyof typeof navData].href}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="group flex items-center gap-1.5 text-[13px] font-medium text-foreground hover:text-blue-500 transition-colors mt-6"
-                                        >
-                                            Overview 
-                                            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-                                        </Link>
-                                    </div>
-
-                                    {/* Link Grid */}
-                                    <div className="grid grid-cols-2 gap-1 p-1">
-                                        {navData[activeDropdown as keyof typeof navData].items.map((item) => (
-                                            <Link
-                                                key={item.title}
-                                                href={item.href}
-                                                onClick={() => setMobileMenuOpen(false)}
-                                                className="group flex flex-col p-3 rounded-[14px] hover:bg-muted/60 transition-colors"
-                                            >
-                                                <div className="text-[13px] font-semibold text-foreground group-hover:text-blue-500 transition-colors">
-                                                    {item.title}
-                                                </div>
-                                                <div className="text-[12px] text-muted-foreground/70 mt-0.5 group-hover:text-muted-foreground transition-colors line-clamp-1">
-                                                    {item.desc}
-                                                </div>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
+                        {/* Right Actions */}
+                        <div className="hidden lg:flex items-center gap-2">
+                            <Link
+                                href="/shop"
+                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Shop
+                            </Link>
+                            <Link
+                                href="/academy"
+                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Academy
+                            </Link>
+                            
+                            <div className="mx-3">
+                                <ThemeToggle />
                             </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            
+                            <Link
+                                href="/contact"
+                                className={cn(
+                                    "relative ml-2 px-6 py-2.5 text-sm font-medium rounded-full overflow-hidden",
+                                    "bg-foreground text-background",
+                                    "hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300",
+                                    "group"
+                                )}
+                            >
+                                <span className="relative z-10">Contact</span>
+                                {/* Shimmer effect */}
+                                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                            </Link>
+                        </div>
+
+                        {/* Mobile Toggle */}
+                        <div className="lg:hidden flex items-center gap-3">
+                            <ThemeToggle />
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="p-2 text-foreground hover:bg-white/10 rounded-lg transition-colors"
+                            >
+                                <motion.div
+                                    animate={mobileMenuOpen ? "open" : "closed"}
+                                >
+                                    {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                                </motion.div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Dropdown */}
+                    <AnimatePresence>
+                        {activeDropdown && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                                className="overflow-hidden border-t border-white/[0.06]"
+                                onMouseEnter={() => {
+                                    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+                                }}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                <div className="p-4">
+                                    <motion.div 
+                                        className="grid grid-cols-[200px_1fr] gap-6 min-h-[200px]"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.2, delay: 0.05 }}
+                                    >
+                                        {/* Sidebar */}
+                                        <div className="p-4 bg-white/[0.03] dark:bg-white/[0.02] rounded-xl flex flex-col justify-between">
+                                            <div>
+                                                <h3 className="text-base font-semibold text-foreground mb-1">
+                                                    {navData[activeDropdown as keyof typeof navData].label}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground leading-relaxed">
+                                                    {navData[activeDropdown as keyof typeof navData].description}
+                                                </p>
+                                            </div>
+                                            <Link
+                                                href={navData[activeDropdown as keyof typeof navData].href}
+                                                onClick={() => setActiveDropdown(null)}
+                                                className="group flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors mt-4"
+                                            >
+                                                Explore all
+                                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                                            </Link>
+                                        </div>
+
+                                        {/* Links Grid */}
+                                        <div className="grid grid-cols-2 gap-1">
+                                            {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
+                                                <motion.div
+                                                    key={item.title}
+                                                    initial={{ opacity: 0, y: 5 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.15, delay: i * 0.02 }}
+                                                >
+                                                    <Link
+                                                        href={item.href}
+                                                        onClick={() => setActiveDropdown(null)}
+                                                        className="group block p-3 rounded-xl hover:bg-white/[0.04] transition-colors"
+                                                    >
+                                                        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors mb-0.5">
+                                                            {item.title}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground/70 group-hover:text-muted-foreground transition-colors line-clamp-1">
+                                                            {item.desc}
+                                                        </div>
+                                                    </Link>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.header>
             </motion.div>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile Menu */}
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 bg-background lg:hidden pt-28 px-6 overflow-y-auto"
+                        className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl lg:hidden"
                     >
-                        <div className="flex flex-col gap-8 pb-12">
-                            {Object.entries(navData).map(([key, data]) => (
-                                <div key={key} className="space-y-4">
-                                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                        {data.label}
-                                    </h3>
-                                    <div className="grid grid-cols-1 gap-2">
-                                        {data.items.slice(0, 5).map((item) => (
-                                            <Link
-                                                key={item.title}
-                                                href={item.href}
-                                                onClick={() => setMobileMenuOpen(false)}
-                                                className="block py-2 text-[15px] font-medium text-foreground hover:text-blue-500"
-                                            >
-                                                {item.title}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                            
-                            <div className="pt-8 border-t border-border/50 grid gap-3">
-                                <Link
-                                    href="/book-demo"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="w-full py-3.5 bg-foreground text-background font-semibold rounded-xl text-center"
+                        <motion.div 
+                            className="pt-24 px-6 h-full overflow-y-auto"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                        >
+                            <div className="space-y-8 pb-12">
+                                {Object.entries(navData).map(([key, data], idx) => (
+                                    <motion.div 
+                                        key={key} 
+                                        className="space-y-4"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                    >
+                                        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                            {data.label}
+                                        </h3>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            {data.items.map((item) => (
+                                                <Link
+                                                    key={item.title}
+                                                    href={item.href}
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    className="block py-2.5 text-base font-medium text-foreground hover:text-primary transition-colors"
+                                                >
+                                                    {item.title}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                                
+                                <motion.div 
+                                    className="pt-8 border-t border-border/50 space-y-3"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.3 }}
                                 >
-                                    Book a Demo
-                                </Link>
-                                <Link
-                                    href="/contact"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="w-full py-3.5 bg-muted text-foreground font-semibold rounded-xl text-center"
-                                >
-                                    Contact Sales
-                                </Link>
+                                    <Link
+                                        href="/book-demo"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block w-full py-4 bg-foreground text-background font-semibold rounded-xl text-center"
+                                    >
+                                        Book a Demo
+                                    </Link>
+                                    <Link
+                                        href="/contact"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="block w-full py-4 bg-white/5 text-foreground font-semibold rounded-xl text-center border border-border/50"
+                                    >
+                                        Contact Us
+                                    </Link>
+                                </motion.div>
                             </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
