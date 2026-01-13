@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { supabase } from "@/lib/supabase";
-import { DollarSign, ShoppingCart, Users, TrendingUp, Package } from "lucide-react";
+import { DollarSign, ShoppingCart, Users, TrendingUp } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,13 +10,11 @@ export default async function AdminDashboard() {
         { count: transactionCount, data: transactions },
         { count: customerCount },
         { count: activePlanCount },
-        { count: productOrderCount, data: productOrders },
         { data: recentSales }
     ] = await Promise.all([
         supabase.from("transactions").select("amount", { count: "exact" }),
         supabase.from("customers").select("*", { count: "exact", head: true }),
         supabase.from("plans").select("*", { count: "exact", head: true }).eq('active', true),
-        supabase.from("orders").select("amount", { count: "exact" }).eq('status', 'completed'),
         supabase
             .from("transactions")
             .select("*, customers(name, email)")
@@ -24,16 +22,7 @@ export default async function AdminDashboard() {
             .limit(5)
     ]);
 
-    // Fetch recent product orders
-    const { data: recentProductOrders } = await supabase
-        .from("orders")
-        .select("*, products(name)")
-        .order("created_at", { ascending: false })
-        .limit(5);
-
-    const planRevenue = transactions?.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0) || 0;
-    const productRevenue = productOrders?.reduce((sum, order) => sum + (Number(order.amount) || 0), 0) || 0;
-    const totalRevenue = planRevenue + productRevenue;
+    const totalRevenue = transactions?.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0) || 0;
 
     return (
         <div className="space-y-8">
@@ -45,23 +34,16 @@ export default async function AdminDashboard() {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatsCard
                     title="Total Revenue"
                     value={`₹${totalRevenue.toLocaleString()}`}
                     icon={<DollarSign className="w-4 h-4 text-emerald-500" />}
-                    trend={`Plans: ₹${planRevenue.toLocaleString()} | Products: ₹${productRevenue.toLocaleString()}`}
                 />
                 <StatsCard
-                    title="Plan Sales"
+                    title="Sales"
                     value={transactionCount?.toString() || "0"}
                     icon={<ShoppingCart className="w-4 h-4 text-blue-500" />}
-                />
-                <StatsCard
-                    title="Products Sold"
-                    value={productOrderCount?.toString() || "0"}
-                    icon={<Package className="w-4 h-4 text-cyan-500" />}
-                    trend="Hardware Orders"
                 />
                 <StatsCard
                     title="Active Customers"
@@ -76,11 +58,10 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            {/* Recent Activity */}
-            <div className="grid gap-4 md:grid-cols-2">
-                {/* Recent Plan Sales */}
-                <div className="bg-card/40 border border-border/50 rounded-xl p-6">
-                    <h3 className="font-semibold text-foreground mb-4">Recent Plan Sales</h3>
+            {/* Recent Sales */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-4 bg-card/40 border border-border/50 rounded-xl p-6">
+                    <h3 className="font-semibold text-foreground mb-4">Recent Transactions</h3>
                     <div className="space-y-4">
                         {recentSales?.length === 0 ? (
                             <p className="text-muted-foreground text-sm">No transactions found.</p>
@@ -103,31 +84,10 @@ export default async function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Recent Product Orders */}
-                <div className="bg-card/40 border border-border/50 rounded-xl p-6">
-                    <h3 className="font-semibold text-foreground mb-4">Recent Product Orders</h3>
-                    <div className="space-y-4">
-                        {recentProductOrders?.length === 0 ? (
-                            <p className="text-muted-foreground text-sm">No product orders yet.</p>
-                        ) : (
-                            recentProductOrders?.map((order) => (
-                                <div key={order.id} className="flex items-center justify-between border-b border-border/50 pb-2 last:border-0 last:pb-0">
-                                    <div className="flex flex-col">
-                                        <span className="text-sm font-medium text-foreground">
-                                            {order.customer_name}
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">{(order.products as any)?.name || 'Product'}</span>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="block text-sm font-medium text-foreground">₹{order.amount}</span>
-                                        <span className={`block text-xs capitalize ${order.status === 'completed' ? 'text-emerald-500' : order.status === 'pending' ? 'text-yellow-500' : 'text-red-500'}`}>
-                                            {order.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))
-                        )}
-                    </div>
+                {/* Placeholder for Chart */}
+                <div className="col-span-3 bg-card/40 border border-border/50 rounded-xl p-6 flex flex-col items-center justify-center text-muted-foreground">
+                    <p>Sales Chart Component</p>
+                    <p className="text-xs mt-2">(Coming Soon)</p>
                 </div>
             </div>
         </div>

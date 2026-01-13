@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, ShoppingCart, Users, Package, Settings, LogOut, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Users, Package, Settings, LogOut } from "lucide-react";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
     // Auth Guard
@@ -36,7 +36,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                     <NavLink href="/admin/sales" icon={<ShoppingCart className="w-4 h-4" />}>Sales</NavLink>
                     <NavLink href="/admin/customers" icon={<Users className="w-4 h-4" />}>Customers</NavLink>
                     <NavLink href="/admin/plans" icon={<Package className="w-4 h-4" />}>Plans</NavLink>
-                    <NavLink href="/admin/products" icon={<ShoppingBag className="w-4 h-4" />}>Products</NavLink>
                 </nav>
 
                 <div className="p-4 border-t border-border/40">

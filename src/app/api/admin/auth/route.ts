@@ -23,16 +23,13 @@ export async function POST(req: NextRequest) {
             .single();
 
         if (error || !admin) {
-            console.log("Auth Debug: User not found or DB error", error);
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
         // 2. Verify Password
         const isValid = await compare(password, admin.password_hash);
-        console.log(`Auth Debug: Verifying ${email}. Hash match: ${isValid}`);
 
         if (!isValid) {
-            console.log("Auth Debug: Password mismatch");
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
