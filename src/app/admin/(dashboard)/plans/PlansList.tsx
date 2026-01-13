@@ -12,6 +12,7 @@ type Plan = {
     price: number;
     description: string;
     active: boolean;
+    in_stock: boolean;
 };
 
 export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
@@ -92,6 +93,11 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
                                         </span>
                                         {plan.active && (
                                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        )}
+                                        {!plan.in_stock && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-red-500/10 text-red-400 border-red-500/20">
+                                                Out of Stock
+                                            </span>
                                         )}
                                     </div>
                                     <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors w-full line-clamp-1">{plan.name}</h3>

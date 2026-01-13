@@ -43,6 +43,7 @@ export default function RichTextEditor({
   const [linkUrl, setLinkUrl] = useState('');
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({
         heading: {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { X, Loader2 } from "lucide-react";
 
 type Plan = {
@@ -11,6 +10,7 @@ type Plan = {
     price: number;
     description: string;
     active: boolean;
+    in_stock: boolean;
 };
 
 export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan, onClose: () => void, onUpdate: () => void }) {
@@ -19,28 +19,35 @@ export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan
         name: plan.name,
         price: plan.price,
         description: plan.description || '',
-        active: plan.active
+        active: plan.active,
+        in_stock: plan.in_stock ?? true
     });
 
     const handleSave = async () => {
         setIsLoading(true);
         try {
-            const { error } = await supabase
-                .from('plans')
-                .update({
+            const res = await fetch(`/api/admin/plans/${plan.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     name: formData.name,
                     price: Number(formData.price),
                     description: formData.description,
-                    active: formData.active
+                    active: formData.active,
+                    in_stock: formData.in_stock
                 })
-                .eq('id', plan.id);
+            });
 
-            if (error) throw error;
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to update plan');
+            }
+
             onUpdate();
             onClose();
         } catch (err) {
             console.error(err);
-            alert("Failed to update plan");
+            alert(err instanceof Error ? err.message : "Failed to update plan");
         } finally {
             setIsLoading(false);
         }
@@ -94,6 +101,16 @@ export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan
                             <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${formData.active ? 'left-7' : 'left-1'}`} />
                         </button>
                         <span className="text-sm text-zinc-300">{formData.active ? "Active" : "Inactive"}</span>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-2">
+                        <button
+                            onClick={() => setFormData({ ...formData, in_stock: !formData.in_stock })}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${formData.in_stock ? 'bg-blue-500' : 'bg-zinc-700'}`}
+                        >
+                            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${formData.in_stock ? 'left-7' : 'left-1'}`} />
+                        </button>
+                        <span className="text-sm text-zinc-300">{formData.in_stock ? "In Stock" : "Out of Stock"}</span>
                     </div>
                 </div>
 

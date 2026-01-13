@@ -8,7 +8,6 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 import { AdminSidebar } from "./AdminSidebar";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-    // Auth Guard - Get session and verify
     const cookieStore = await cookies();
     const session = cookieStore.get("admin_session");
 
@@ -16,7 +15,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         redirect("/admin/login");
     }
 
-    // Verify JWT and extract user info
     let userInfo: { id: string; email: string; name: string; role: Role } | null = null;
     
     try {
@@ -34,7 +32,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         redirect("/admin/login");
     }
 
-    // Build navigation items based on user's role
     const navItems = [
         { 
             href: "/admin", 
@@ -88,18 +85,21 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
     return (
         <AuthProvider>
-            <div className="min-h-screen bg-background text-foreground flex relative overflow-hidden font-manrope selection:bg-primary/20">
-                {/* Background Effects */}
-                <div className="fixed inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,rgba(128,128,128,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.05)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-                <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-                <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="min-h-screen bg-background text-foreground flex relative overflow-x-hidden font-inter selection:bg-primary/20">
+                <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
+                    <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(128,128,128,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+                    <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/5 blur-[150px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[150px] rounded-full translate-x-1/2 translate-y-1/2" />
+                </div>
 
-                {/* Sidebar */}
                 <AdminSidebar navItems={navItems} user={userInfo} />
 
-                {/* Main Content */}
-                <main className="flex-1 ml-64 min-h-screen relative z-10">
-                    <div className="p-8 max-w-7xl mx-auto space-y-8">
+                <main 
+                    className="flex-1 lg:ml-64 min-h-screen relative z-10 pt-16 lg:pt-0"
+                    role="main"
+                    aria-label="Main content"
+                >
+                    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
                         {children}
                     </div>
                 </main>
