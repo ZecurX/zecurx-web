@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MoreVertical, Pencil, Trash2, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ProductDialog from "./ProductDialog";
-import { supabase } from "@/lib/supabase";
+import { supabaseClient } from "@/lib/supabase-client";
 import { useRouter } from "next/navigation";
 
 interface Product {
@@ -28,14 +28,41 @@ interface Product {
     delivery_days: number;
 }
 
-export default function ProductsList({ initialProducts }: { initialProducts: Product[] }) {
+export default function ProductsList() {
     const [search, setSearch] = useState("");
-    const [products, setProducts] = useState(initialProducts);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
+
+    useEffect(() => {
+        async function fetchProducts() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from("products")
+                    .select("*")
+                    .order("created_at", { ascending: false });
+
+                if (error) {
+                    console.error("Error fetching products:", error);
+                    return;
+                }
+
+                if (data) {
+                    setProducts(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch products:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchProducts();
+    }, []);
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
+        p.tags?.some(tag => tag.toLowerCase().includes(search.toLowerCase()))
     );
 
     const handleDelete = async (id: string) => {
@@ -59,6 +86,23 @@ export default function ProductsList({ initialProducts }: { initialProducts: Pro
         }
     };
 
+    const refreshProducts = async () => {
+        const { data } = await supabaseClient
+            .from("products")
+            .select("*")
+            .order("created_at", { ascending: false });
+        if (data) setProducts(data);
+    };
+
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                <div className="animate-pulse bg-muted/30 p-4 rounded-xl h-14" />
+                <div className="animate-pulse bg-card rounded-xl h-64" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/40 backdrop-blur-md">
@@ -71,7 +115,7 @@ export default function ProductsList({ initialProducts }: { initialProducts: Pro
                         className="pl-10 bg-background/50 border-border/50"
                     />
                 </div>
-                <ProductDialog />
+                <ProductDialog onSuccess={refreshProducts} />
             </div>
 
             <div className="rounded-xl border border-border/40 bg-card overflow-hidden">
@@ -116,7 +160,7 @@ export default function ProductsList({ initialProducts }: { initialProducts: Pro
                                     </div>
                                 </div>
                                 <div className="col-span-3 flex gap-1 flex-wrap">
-                                    {product.tags.slice(0, 3).map(tag => (
+                                    {product.tags?.slice(0, 3).map(tag => (
                                         <span key={tag} className="px-1.5 py-0.5 rounded-md bg-muted text-[10px] text-muted-foreground border border-border/50">
                                             {tag}
                                         </span>
@@ -132,6 +176,7 @@ export default function ProductsList({ initialProducts }: { initialProducts: Pro
                                         <DropdownMenuContent align="end">
                                             <ProductDialog
                                                 product={product}
+                                                onSuccess={refreshProducts}
                                                 trigger={
                                                     <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-muted">
                                                         <Pencil className="mr-2 h-4 w-4" />
