@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
@@ -9,7 +9,8 @@ import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, UpdateBlogPostRequest, BlogPost } from '@/types/auth';
 
-export default function EditBlogPostPage({ params }: { params: { id: string } }) {
+export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,7 +32,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await fetch(`/api/admin/blog/${params.id}`);
+        const res = await fetch(`/api/admin/blog/${id}`);
         if (!res.ok) throw new Error('Failed to fetch post');
         
         const post: BlogPost = await res.json();
@@ -54,7 +55,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
     };
 
     fetchPost();
-  }, [params.id]);
+  }, [id]);
 
   const handleImageUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
@@ -106,7 +107,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
         label_ids: selectedLabels
       };
 
-      const res = await fetch(`/api/admin/blog/${params.id}`, {
+      const res = await fetch(`/api/admin/blog/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -138,7 +139,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
 
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/blog/${params.id}`, {
+      const res = await fetch(`/api/admin/blog/${id}`, {
         method: 'DELETE',
       });
 

@@ -37,6 +37,8 @@
     "framer-motion": "^12.23.26",
     "googleapis": "^170.0.0",
     "jose": "^6.1.3",
+    "jspdf": "^4.0.0",
+    "jspdf-autotable": "^5.0.7",
     "lenis": "^1.3.17",
     "lucide-react": "^0.562.0",
     "motion": "^12.23.26",
@@ -50,7 +52,8 @@
     "react-dom": "19.2.3",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

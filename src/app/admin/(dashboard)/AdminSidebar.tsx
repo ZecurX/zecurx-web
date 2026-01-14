@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { 
     LayoutDashboard, 
     Users, 
@@ -12,7 +14,10 @@ import {
     FileText, 
     LogOut,
     Home,
-    Newspaper
+    Newspaper,
+    ChevronRight,
+    Menu,
+    X
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -48,6 +53,22 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+    useEffect(() => {
+        setIsMobileOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        if (isMobileOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMobileOpen]);
 
     const handleLogout = async () => {
         try {
@@ -61,67 +82,197 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
         router.push("/admin/login");
     };
 
-    return (
-        <aside className="w-64 border-r border-border/40 bg-background/50 backdrop-blur-xl flex flex-col fixed h-full z-20">
-            {/* Header */}
-            <div className="h-16 flex items-center px-6 border-b border-border/40 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                <span className="font-bold text-lg tracking-tight relative z-10 bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
-                    ZecurX Admin
-                </span>
+    const sidebarContent = (
+        <>
+            <div className="h-16 flex items-center justify-between px-5 border-b border-white/[0.08] dark:border-white/[0.06]">
+                <Link 
+                    href="/admin" 
+                    className="flex items-center gap-2.5 group"
+                    aria-label="Go to admin dashboard"
+                >
+                    <div className="relative w-8 h-8 transition-transform group-hover:scale-105 duration-300">
+                        <Image
+                            src="/images/zecurx-logo.png"
+                            alt=""
+                            fill
+                            className="object-contain"
+                            priority
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="font-manrope font-bold text-base tracking-tight text-foreground">
+                            ZecurX
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/60 font-medium -mt-0.5">
+                            Admin Panel
+                        </span>
+                    </div>
+                </Link>
+                <button
+                    onClick={() => setIsMobileOpen(false)}
+                    className="lg:hidden p-2 -mr-2 rounded-lg hover:bg-white/[0.04] transition-colors"
+                    aria-label="Close navigation menu"
+                >
+                    <X className="w-5 h-5" aria-hidden="true" />
+                </button>
             </div>
 
-            {/* User Info */}
-            <div className="px-4 py-3 border-b border-border/40">
-                <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium truncate">{user.name}</span>
-                    <span className="text-xs text-muted-foreground truncate">{user.email}</span>
-                    <RoleBadge role={user.role} size="sm" className="mt-1 w-fit" />
+            <div className="mx-3 mt-4 p-3 rounded-xl bg-white/[0.03] dark:bg-white/[0.02] border border-white/[0.06]">
+                <div className="flex items-start gap-3">
+                    <div 
+                        className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0"
+                        aria-hidden="true"
+                    >
+                        {user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
+                        <p className="text-xs text-muted-foreground/70 truncate">{user.email}</p>
+                        <RoleBadge role={user.role} size="sm" className="mt-1.5" />
+                    </div>
                 </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                {navItems.map((item) => {
-                    const Icon = ICON_MAP[item.icon] || LayoutDashboard;
-                    const isActive = pathname === item.href || 
-                        (item.href !== "/admin" && pathname.startsWith(item.href));
-                    
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 border",
-                                isActive 
-                                    ? "text-foreground bg-primary/10 border-primary/20" 
-                                    : "text-muted-foreground hover:text-foreground hover:bg-primary/5 border-transparent hover:border-primary/10"
-                            )}
-                        >
-                            <Icon className="w-4 h-4" />
-                            {item.label}
-                        </Link>
-                    );
-                })}
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Admin navigation">
+                <p className="px-3 mb-2 text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider" id="nav-heading">
+                    Menu
+                </p>
+                <ul role="list" aria-labelledby="nav-heading" className="space-y-1">
+                    {navItems.map((item) => {
+                        const Icon = ICON_MAP[item.icon] || LayoutDashboard;
+                        const isActive = pathname === item.href || 
+                            (item.href !== "/admin" && pathname.startsWith(item.href));
+                        
+                        return (
+                            <li key={item.href}>
+                                <Link
+                                    href={item.href}
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={cn(
+                                        "group flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
+                                        "min-h-[44px]",
+                                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                        isActive 
+                                            ? "bg-foreground text-background shadow-lg shadow-foreground/10" 
+                                            : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                                    )}
+                                >
+                                    <Icon 
+                                        className={cn(
+                                            "w-5 h-5 transition-transform duration-200",
+                                            !isActive && "group-hover:scale-110"
+                                        )} 
+                                    />
+                                    <span className="flex-1">{item.label}</span>
+                                    {isActive && (
+                                        <ChevronRight className="w-4 h-4 opacity-50" aria-hidden="true" />
+                                    )}
+                                </Link>
+                            </li>
+                        );
+                    })}
+                </ul>
             </nav>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-border/40 space-y-1">
+            <div className="p-3 border-t border-white/[0.08] dark:border-white/[0.06] space-y-1">
                 <Link 
                     href="/" 
-                    className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+                    className={cn(
+                        "flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
+                        "min-h-[44px]",
+                        "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        "group"
+                    )}
                 >
-                    <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <Home className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
                     <span>Back to Site</span>
                 </Link>
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-red-500 transition-colors group"
+                    className={cn(
+                        "w-full flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
+                        "min-h-[44px]",
+                        "text-muted-foreground hover:text-red-500 hover:bg-red-500/5",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        "group"
+                    )}
                 >
-                    <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    <LogOut className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform duration-200" aria-hidden="true" />
                     <span>Logout</span>
                 </button>
             </div>
-        </aside>
+        </>
+    );
+
+    return (
+        <>
+            <header className="lg:hidden fixed top-0 left-0 right-0 z-30 h-16 flex items-center justify-between px-4 bg-background/80 backdrop-blur-xl border-b border-white/[0.08]">
+                <Link 
+                    href="/admin" 
+                    className="flex items-center gap-2"
+                    aria-label="Go to admin dashboard"
+                >
+                    <div className="relative w-8 h-8">
+                        <Image
+                            src="/images/zecurx-logo.png"
+                            alt=""
+                            fill
+                            className="object-contain"
+                            priority
+                        />
+                    </div>
+                    <span className="font-manrope font-bold text-base tracking-tight text-foreground">
+                        ZecurX
+                    </span>
+                </Link>
+                <button
+                    onClick={() => setIsMobileOpen(true)}
+                    className="p-3 -mr-2 rounded-xl hover:bg-white/[0.04] transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                    aria-label="Open navigation menu"
+                    aria-expanded={isMobileOpen}
+                    aria-controls="mobile-sidebar"
+                >
+                    <Menu className="w-6 h-6" aria-hidden="true" />
+                </button>
+            </header>
+
+            {isMobileOpen && (
+                <div 
+                    className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+                    onClick={() => setIsMobileOpen(false)}
+                    aria-hidden="true"
+                />
+            )}
+
+            <aside
+                id="mobile-sidebar"
+                className={cn(
+                    "lg:hidden fixed top-0 right-0 bottom-0 z-50 w-[280px] max-w-[85vw] flex flex-col",
+                    "bg-background/95 backdrop-blur-2xl",
+                    "border-l border-white/[0.08] dark:border-white/[0.06]",
+                    "shadow-[-8px_0_30px_rgba(0,0,0,0.2)]",
+                    "transform transition-transform duration-300 ease-out",
+                    isMobileOpen ? "translate-x-0" : "translate-x-full"
+                )}
+                aria-label="Admin navigation"
+                aria-hidden={!isMobileOpen}
+            >
+                {sidebarContent}
+            </aside>
+
+            <aside
+                className={cn(
+                    "hidden lg:flex w-64 flex-col fixed h-full z-20",
+                    "bg-background/70 backdrop-blur-2xl",
+                    "border-r border-white/[0.08] dark:border-white/[0.06]",
+                    "shadow-[1px_0_0_0_rgba(0,0,0,0.03)]",
+                    "dark:shadow-[1px_0_0_0_rgba(255,255,255,0.03)]"
+                )}
+                aria-label="Admin navigation"
+            >
+                {sidebarContent}
+            </aside>
+        </>
     );
 }
