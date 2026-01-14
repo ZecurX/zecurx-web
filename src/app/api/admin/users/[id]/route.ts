@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
 import { ROLES, Role, UpdateUserRequest, AdminPublic } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
-// GET - Get single user (super_admin only)
 export async function GET(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -19,24 +18,23 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const { data: user, error } = await supabase
-            .from('admins')
-            .select('id, email, role, name, is_active, created_by, created_at, updated_at')
-            .eq('id', id)
-            .single();
+        const result = await db.query<AdminPublic>(
+            `SELECT id, email, role, name, is_active, created_by, created_at, updated_at
+            FROM admins WHERE id = $1`,
+            [id]
+        );
 
-        if (error || !user) {
+        if (result.rows.length === 0) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        return NextResponse.json({ user: user as AdminPublic });
+        return NextResponse.json({ user: result.rows[0] });
     } catch (error) {
         console.error("Get user error:", error);
         return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
 }
 
-// PUT - Update user (super_admin only)
 export async function PUT(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -52,18 +50,17 @@ export async function PUT(
         const body: UpdateUserRequest = await req.json();
         const { email, name, role, is_active } = body;
 
-        // Check if user exists
-        const { data: existingUser, error: fetchError } = await supabase
-            .from('admins')
-            .select('id, email, role, name, is_active')
-            .eq('id', id)
-            .single();
+        const existingResult = await db.query<{ id: string; email: string; role: string; name: string; is_active: boolean }>(
+            'SELECT id, email, role, name, is_active FROM admins WHERE id = $1',
+            [id]
+        );
 
-        if (fetchError || !existingUser) {
+        if (existingResult.rows.length === 0) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Prevent modifying super_admin role
+        const existingUser = existingResult.rows[0];
+
         if (existingUser.role === ROLES.SUPER_ADMIN) {
             return NextResponse.json(
                 { error: "Cannot modify super admin accounts" },
@@ -71,32 +68,34 @@ export async function PUT(
             );
         }
 
-        // Build update object
-        const updates: Record<string, unknown> = {
-            updated_at: new Date().toISOString(),
-        };
+        const updates: string[] = ['updated_at = NOW()'];
+        const values: unknown[] = [];
+        let paramIndex = 1;
+        const updateDetails: Record<string, unknown> = {};
 
         if (email !== undefined) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
             }
-            // Check if email is taken by another user
-            const { data: emailUser } = await supabase
-                .from('admins')
-                .select('id')
-                .eq('email', email)
-                .neq('id', id)
-                .single();
+            
+            const emailCheck = await db.query<{ id: string }>(
+                'SELECT id FROM admins WHERE email = $1 AND id != $2',
+                [email, id]
+            );
 
-            if (emailUser) {
+            if (emailCheck.rows.length > 0) {
                 return NextResponse.json({ error: "Email already in use" }, { status: 409 });
             }
-            updates.email = email;
+            updates.push(`email = $${paramIndex++}`);
+            values.push(email);
+            updateDetails.email = email;
         }
 
         if (name !== undefined) {
-            updates.name = name;
+            updates.push(`name = $${paramIndex++}`);
+            values.push(name);
+            updateDetails.name = name;
         }
 
         if (role !== undefined) {
@@ -110,27 +109,27 @@ export async function PUT(
                     { status: 403 }
                 );
             }
-            updates.role = role;
+            updates.push(`role = $${paramIndex++}`);
+            values.push(role);
+            updateDetails.role = role;
         }
 
         if (is_active !== undefined) {
-            updates.is_active = is_active;
+            updates.push(`is_active = $${paramIndex++}`);
+            values.push(is_active);
+            updateDetails.is_active = is_active;
         }
 
-        // Update user
-        const { data: updatedUser, error: updateError } = await supabase
-            .from('admins')
-            .update(updates)
-            .eq('id', id)
-            .select('id, email, role, name, is_active, created_by, created_at, updated_at')
-            .single();
+        values.push(id);
 
-        if (updateError) {
-            console.error("Failed to update user:", updateError);
-            return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
-        }
+        const updateResult = await db.query<AdminPublic>(
+            `UPDATE admins SET ${updates.join(', ')} WHERE id = $${paramIndex}
+            RETURNING id, email, role, name, is_active, created_by, created_at, updated_at`,
+            values
+        );
 
-        // Log the action
+        const updatedUser = updateResult.rows[0];
+
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logCRUD(
@@ -140,20 +139,19 @@ export async function PUT(
             id,
             { 
                 previous: { email: existingUser.email, role: existingUser.role, name: existingUser.name, is_active: existingUser.is_active },
-                updated: updates 
+                updated: updateDetails 
             },
             ipAddress,
             userAgent
         );
 
-        return NextResponse.json({ user: updatedUser as AdminPublic });
+        return NextResponse.json({ user: updatedUser });
     } catch (error) {
         console.error("Update user error:", error);
         return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
 }
 
-// DELETE - Deactivate user (super_admin only)
 export async function DELETE(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -167,18 +165,17 @@ export async function DELETE(
     try {
         const { id } = await params;
 
-        // Check if user exists
-        const { data: existingUser, error: fetchError } = await supabase
-            .from('admins')
-            .select('id, email, role')
-            .eq('id', id)
-            .single();
+        const existingResult = await db.query<{ id: string; email: string; role: string }>(
+            'SELECT id, email, role FROM admins WHERE id = $1',
+            [id]
+        );
 
-        if (fetchError || !existingUser) {
+        if (existingResult.rows.length === 0) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Prevent deleting super_admin
+        const existingUser = existingResult.rows[0];
+
         if (existingUser.role === ROLES.SUPER_ADMIN) {
             return NextResponse.json(
                 { error: "Cannot delete super admin accounts" },
@@ -186,7 +183,6 @@ export async function DELETE(
             );
         }
 
-        // Prevent self-deletion
         if (existingUser.id === auth.session.sub) {
             return NextResponse.json(
                 { error: "Cannot delete your own account" },
@@ -194,18 +190,11 @@ export async function DELETE(
             );
         }
 
-        // Soft delete - set is_active to false
-        const { error: updateError } = await supabase
-            .from('admins')
-            .update({ is_active: false, updated_at: new Date().toISOString() })
-            .eq('id', id);
+        await db.query(
+            'UPDATE admins SET is_active = false, updated_at = NOW() WHERE id = $1',
+            [id]
+        );
 
-        if (updateError) {
-            console.error("Failed to deactivate user:", updateError);
-            return NextResponse.json({ error: "Failed to deactivate user" }, { status: 500 });
-        }
-
-        // Log the action
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logCRUD(

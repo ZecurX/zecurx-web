@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { generateSlug } from '@/lib/blog';
+import { generateSlug } from '@/lib/blog-utils';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';

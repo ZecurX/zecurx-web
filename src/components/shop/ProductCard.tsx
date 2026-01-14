@@ -32,8 +32,7 @@ export default function ProductCard({
     delay = 0,
     deliveryDays = 20,
 }: ProductCardProps) {
-    // Combine single image with images array
-    const allImages = images ? [image, ...images] : [image];
+    const allImages = Array.from(new Set(images ? [image, ...images] : [image])).filter(Boolean);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const formatPrice = (amount: number) => {
@@ -66,7 +65,7 @@ export default function ProductCard({
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay }}
             viewport={{ once: true }}
-            className="group relative flex flex-col h-full bg-background/50 border border-border/40 hover:border-border/80 hover:bg-muted/30 transition-all duration-300 rounded-2xl overflow-hidden"
+            className="group relative flex flex-col h-full bg-card/50 border border-border/40 hover:border-primary/50 hover:bg-muted/30 transition-all duration-300 rounded-3xl overflow-hidden backdrop-blur-sm"
         >
             {/* Image Section */}
             <div
@@ -78,13 +77,14 @@ export default function ProductCard({
                 <img
                     src={allImages[currentImageIndex]}
                     alt={name}
-                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain p-4 transition-all duration-700 group-hover:scale-105"
                     key={currentImageIndex}
                 />
 
-                {/* Image Indicator Dots */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
                 {allImages.length > 1 && (
-                    <div className="absolute bottom-4 right-4 flex gap-1.5">
+                    <div className="absolute bottom-4 right-4 flex gap-1.5 z-10">
                         {allImages.map((_, index) => (
                             <div
                                 key={index}
@@ -97,13 +97,10 @@ export default function ProductCard({
                     </div>
                 )}
 
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
                 {/* Tags */}
                 <div className="absolute top-4 left-4 flex gap-2">
                     {tags.map(tag => (
-                        <span key={tag} className="px-2 py-1 text-[10px] uppercase tracking-wider font-bold bg-background/80 backdrop-blur-md border border-border rounded-md text-foreground">
+                        <span key={tag} className="px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold bg-background/80 backdrop-blur-md border border-border/50 rounded-full text-foreground shadow-sm">
                             {tag}
                         </span>
                     ))}
@@ -111,7 +108,7 @@ export default function ProductCard({
 
                 {/* Stock Warning */}
                 {stock <= 5 && stock > 0 && (
-                    <div className="absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full text-red-500 text-[10px] font-bold uppercase tracking-wider">
+                    <div className="absolute bottom-4 left-4 flex items-center gap-1.5 px-3 py-1 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full text-red-500 text-[10px] font-bold uppercase tracking-wider z-10">
                         <AlertCircle className="w-3 h-3" />
                         <span>{stock} left</span>
                     </div>
@@ -124,16 +121,16 @@ export default function ProductCard({
                     <h3 className="text-xl font-manrope font-semibold text-foreground mb-2 leading-tight group-hover:text-primary transition-colors">
                         {name}
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 font-light">
                         {description}
                     </p>
                 </div>
 
                 {/* Features (Compact) */}
-                <ul className="space-y-1.5 mb-6 flex-1">
+                <ul className="space-y-2 mb-6 flex-1">
                     {features.slice(0, 3).map((feature, idx) => (
-                        <li key={idx} className="text-xs text-muted-foreground/80 flex items-center gap-2">
-                            <span className="w-1 h-1 rounded-full bg-primary shrink-0" />
+                        <li key={idx} className="text-xs text-muted-foreground flex items-center gap-2 font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0" />
                             <span>{feature}</span>
                         </li>
                     ))}
@@ -147,25 +144,27 @@ export default function ProductCard({
                             <span className="text-lg font-bold text-foreground">{formatPrice(price)}</span>
                         </div>
                         <div className="flex flex-col items-end">
-                            <div className="flex items-center gap-1.5 text-muted-foreground/80">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
                                 <Truck className="w-3.5 h-3.5" />
                                 <span className="text-[10px] uppercase tracking-wider font-semibold">Delivery</span>
                             </div>
-                            <span className="text-xs font-medium text-foreground/90 mt-0.5">
-                                Within {deliveryDays} days
+                            <span className="text-xs font-medium text-foreground/80 mt-0.5">
+                                ~{deliveryDays} days
                             </span>
                         </div>
                     </div>
 
                     <Link
                         href={`/checkout?itemId=${id}&itemName=${encodeURIComponent(name)}&price=${price}&type=hardware`}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-lg"
+                        className="w-full flex items-center justify-center gap-2 py-3 px-4 text-sm font-semibold bg-foreground text-background hover:opacity-90 transition-opacity rounded-full shadow-lg hover:shadow-xl"
                     >
                         <ShoppingBag className="w-4 h-4" />
-                        Buy Now
+                        Add to Cart
                     </Link>
                 </div>
             </div>
         </motion.div>
+
+
     );
 }

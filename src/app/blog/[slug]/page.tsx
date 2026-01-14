@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 import { Calendar, Clock, ArrowLeft, Tag, Twitter, Linkedin, Facebook, Copy } from 'lucide-react';
 import { calculateReadingTime, formatBlogDate } from '@/lib/blog';
 import ViewIncrement from '@/components/blog/ViewIncrement';
@@ -13,11 +13,11 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const { data: post } = await supabase
-    .from('blog_posts')
-    .select('title, excerpt, featured_image_url, meta_title, meta_description')
-    .eq('slug', slug)
-    .single();
+  const result = await query(
+    'SELECT title, excerpt, featured_image_url, meta_title, meta_description FROM blog_posts WHERE slug = $1 LIMIT 1',
+    [slug]
+  );
+  const post = result.rows[0];
 
   if (!post) {
     return {
@@ -46,49 +46,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   
-  // Fetch post details
-  const { data: post } = await supabase
-    .from('blog_posts')
-    .select(`
-      *,
-      author:admins!blog_posts_author_id_fkey(name, email),
-      labels:blog_post_labels(
-        blog_labels(id, name, slug, color)
-      )
-    `)
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .single();
+  const postResult = await query(`
+    SELECT bp.*, a.name as author_name, a.email as author_email
+    FROM blog_posts bp
+    LEFT JOIN admins a ON bp.author_id = a.id
+    WHERE bp.slug = $1 AND bp.status = 'published'
+    LIMIT 1
+  `, [slug]);
+
+  const post = postResult.rows[0];
 
   if (!post) {
     notFound();
   }
 
-  // Fetch related posts (same labels)
+  const labelsResult = await query(`
+    SELECT bl.* FROM blog_labels bl
+    JOIN blog_post_labels bpl ON bl.id = bpl.label_id
+    WHERE bpl.blog_post_id = $1
+  `, [post.id]);
+  
+  post.labels = labelsResult.rows.map((l: any) => ({ blog_labels: l }));
+  post.author = { name: post.author_name, email: post.author_email };
+
   let relatedPosts: any[] = [];
   if (post.labels && post.labels.length > 0) {
     const labelIds = post.labels.map((l: any) => l.blog_labels.id);
-    const { data: related } = await supabase
-      .from('blog_post_labels')
-      .select('post_id')
-      .in('label_id', labelIds)
-      .neq('post_id', post.id)
-      .limit(3);
-
-    if (related && related.length > 0) {
-      const relatedIds = [...new Set(related.map(r => r.post_id))];
-      const { data: posts } = await supabase
-        .from('blog_posts')
-        .select(`
-          id, title, slug, excerpt, featured_image_url, published_at,
-          labels:blog_post_labels(blog_labels(id, name, color))
-        `)
-        .in('id', relatedIds)
-        .eq('status', 'published')
-        .order('published_at', { ascending: false })
-        .limit(3);
-        
-      if (posts) relatedPosts = posts;
+    
+    const relatedResult = await query(`
+      SELECT DISTINCT bp.id, bp.title, bp.slug, bp.excerpt, bp.featured_image_url, bp.published_at
+      FROM blog_posts bp
+      JOIN blog_post_labels bpl ON bp.id = bpl.blog_post_id
+      WHERE bpl.label_id = ANY($1) AND bp.id != $2 AND bp.status = 'published'
+      ORDER BY bp.published_at DESC
+      LIMIT 3
+    `, [labelIds, post.id]);
+    
+    relatedPosts = relatedResult.rows;
+    
+    for (const rp of relatedPosts) {
+      const rpLabels = await query(`
+        SELECT bl.* FROM blog_labels bl
+        JOIN blog_post_labels bpl ON bl.id = bpl.label_id
+        WHERE bpl.blog_post_id = $1
+      `, [rp.id]);
+      rp.labels = rpLabels.rows.map((l: any) => ({ blog_labels: l }));
     }
   }
 

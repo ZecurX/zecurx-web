@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
 
@@ -15,21 +15,54 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         const { id } = await params;
         const body = await req.json();
 
-        const updateData: Record<string, unknown> = {};
-        if (body.name !== undefined) updateData.name = body.name;
-        if (body.price !== undefined) updateData.price = Number(body.price);
-        if (body.description !== undefined) updateData.description = body.description;
-        if (body.active !== undefined) updateData.active = body.active;
-        if (body.in_stock !== undefined) updateData.in_stock = body.in_stock;
+        const updates: string[] = [];
+        const values: unknown[] = [];
+        let paramIndex = 1;
 
-        const { data, error } = await supabase
-            .from("plans")
-            .update(updateData)
-            .eq("id", id)
-            .select()
-            .single();
+        if (body.name !== undefined) {
+            updates.push(`name = $${paramIndex++}`);
+            values.push(body.name);
+        }
+        if (body.price !== undefined) {
+            updates.push(`price = $${paramIndex++}`);
+            values.push(Number(body.price));
+        }
+        if (body.description !== undefined) {
+            updates.push(`description = $${paramIndex++}`);
+            values.push(body.description);
+        }
+        if (body.active !== undefined) {
+            updates.push(`active = $${paramIndex++}`);
+            values.push(body.active);
+        }
+        if (body.in_stock !== undefined) {
+            updates.push(`in_stock = $${paramIndex++}`);
+            values.push(body.in_stock);
+        }
 
-        if (error) throw error;
+        if (updates.length === 0) {
+            return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+        }
+
+        values.push(id);
+
+        const result = await db.query<{
+            id: string;
+            name: string;
+            type: string;
+            price: number;
+            description: string | null;
+            active: boolean;
+            in_stock: boolean;
+            created_at: string;
+        }>(
+            `UPDATE plans SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+            values
+        );
+
+        if (result.rows.length === 0) {
+            return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
+        }
 
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
@@ -38,12 +71,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             'update',
             'plans',
             id,
-            updateData,
+            body,
             ipAddress,
             userAgent
         );
 
-        return NextResponse.json(data);
+        return NextResponse.json(result.rows[0]);
     } catch (error: unknown) {
         console.error("Update Plan Error:", error);
         const message = error instanceof Error ? error.message : "Unknown error";

@@ -1,23 +1,31 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 import { ArrowRight, Calendar, Clock } from 'lucide-react';
 import { formatBlogDate, calculateReadingTime } from '@/lib/blog';
 
 export default async function LatestBlogSection() {
-  // Fetch latest 3 published posts
-  const { data: posts } = await supabase
-    .from('blog_posts')
-    .select(`
-      id, title, slug, excerpt, content, featured_image_url, published_at,
-      labels:blog_post_labels(blog_labels(id, name, color))
-    `)
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-    .limit(3);
+  const postsResult = await query(`
+    SELECT id, title, slug, excerpt, content, featured_image_url, published_at
+    FROM blog_posts
+    WHERE status = 'published'
+    ORDER BY published_at DESC
+    LIMIT 3
+  `);
+  
+  const posts = postsResult.rows;
 
   if (!posts || posts.length === 0) {
     return null;
+  }
+
+  for (const post of posts) {
+    const labelsRes = await query(`
+      SELECT bl.* FROM blog_labels bl
+      JOIN blog_post_labels bpl ON bl.id = bpl.label_id
+      WHERE bpl.blog_post_id = $1
+    `, [post.id]);
+    post.labels = labelsRes.rows.map((l: any) => ({ blog_labels: l }));
   }
 
   return (

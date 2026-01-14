@@ -7,6 +7,12 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
 
+import { TextAnimate } from "@/components/ui/text-animate";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { ShinyButton } from "@/components/ui/shiny-button";
+import FluidBackground from "@/components/ui/fluid-background";
+import { cn } from "@/lib/utils";
+
 export default function HeroSection() {
 
     const { resolvedTheme } = useTheme();
@@ -15,103 +21,73 @@ export default function HeroSection() {
     // Parallax Effect
     const { scrollY } = useScroll();
     const backgroundY = useTransform(scrollY, [0, 500], ["0%", "20%"]);
+    const imageRotate = useTransform(scrollY, [0, 500], [12, 0]);
+    const imageY = useTransform(scrollY, [0, 500], [0, -50]);
 
     React.useEffect(() => {
         setMounted(true);
     }, []);
 
     return (
-        <section className="relative w-full min-h-screen bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 pt-32 pb-20 transition-colors duration-500">
+        <section className="relative w-full min-h-[110vh] bg-background overflow-hidden flex items-center justify-center px-4 pt-20 transition-colors duration-500">
 
-            {/* Background Image / Glow */}
-            <div className="absolute inset-0 z-0 h-full w-full pointer-events-none select-none">
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <FluidBackground />
+                <div className="absolute inset-0 bg-background/30 backdrop-blur-[2px]" />
+            </div>
 
-                {/* Dashboard Image Backdrop */}
-                <div className="absolute max-w-[1400px] left-1/2 -translate-x-1/2 top-0 h-[900px] w-full opacity-100">
-                    <div className="relative w-full h-full">
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/95 via-40% to-background z-20" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background z-20" />
-
-                        {/* Dark Mode Image */}
-                        <div className="absolute inset-0 hidden dark:block">
-                            <Image
-                                src="/images/dashboard-hero.png"
-                                alt="Dashboard Preview"
-                                fill
-                                priority
-                                quality={90}
-                                className="object-cover object-top opacity-100"
-                            />
-                        </div>
-
-                        {/* Light Mode Image */}
-                        <div className="absolute inset-0 dark:hidden">
-                            <Image
-                                src="/images/dashboard-hero-light.png"
-                                alt="Dashboard Preview"
-                                fill
-                                priority
-                                quality={90}
-                                className="object-cover object-top opacity-100"
-                            />
-                        </div>
+            <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+                
+                {/* Left: Content */}
+                <div className="flex flex-col items-start space-y-8 text-left">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md">
+                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-sm font-medium text-primary uppercase tracking-wider">Next-Gen Security</span>
                     </div>
+
+                    <div className="overflow-hidden">
+                        <TextAnimate 
+                            animation="blurInUp" 
+                            by="word" 
+                            className="text-6xl sm:text-7xl md:text-8xl font-bold font-manrope tracking-tight leading-[1] text-foreground"
+                        >
+                            Security that evolves with you.
+                        </TextAnimate>
+                    </div>
+
+                    <ScrollAnimation direction="up" delay={0.2}>
+                        <p className="max-w-xl text-xl text-muted-foreground font-light leading-relaxed">
+                            Unified visibility, automated detection, and seamless response. Protect your infrastructure with the world's most advanced AI security platform.
+                        </p>
+                    </ScrollAnimation>
+
+                    <ScrollAnimation direction="up" delay={0.3}>
+                        <div className="flex items-center gap-4 mt-4">
+                            <Link href="/book-demo">
+                                <ShimmerButton className="shadow-xl">
+                                    <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+                                        Start for free
+                                    </span>
+                                </ShimmerButton>
+                            </Link>
+
+                            <Link href="/contact">
+                                <ShinyButton className="bg-background/50 text-foreground border-border h-[44px] rounded-full backdrop-blur-md">
+                                    Book a demo
+                                </ShinyButton>
+                            </Link>
+                        </div>
+                    </ScrollAnimation>
                 </div>
 
-                {/* Subtle Top Glow */}
-                <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none z-10" />
+                {/* Right: 3D Floating Dashboard - REMOVED */}
+                <div className="relative h-[600px] w-full perspective-1000 hidden lg:block">
+                    {/* Image and floating cards removed as requested */}
+                </div>
             </div>
 
-            {/* Content Container */}
-            <div className="flex flex-col items-center justify-center space-y-8 z-20 text-center mt-10 max-w-5xl mx-auto">
-
-
-
-                {/* Headline */}
-                <ScrollAnimation direction="up" delay={0.1}>
-                    <h1
-                        className="text-5xl sm:text-7xl md:text-8xl font-bold font-manrope tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground/90 to-foreground/50 mb-6"
-                    >
-                        Security that actually <br className="hidden md:block" />
-                        works for you.
-                    </h1>
-                </ScrollAnimation>
-
-                {/* Subtext */}
-                <ScrollAnimation direction="up" delay={0.2}>
-                    <p
-                        className="max-w-3xl text-lg md:text-xl text-muted-foreground font-light leading-relaxed"
-                    >
-                        Unified visibility, automated detection, and seamless response. <br className="hidden md:block" />
-                        Protect your infrastructure with the world's most advanced AI security platform.
-                    </p>
-                </ScrollAnimation>
-
-                {/* Buttons */}
-                <ScrollAnimation direction="up" delay={0.3}>
-                    <div
-                        className="flex items-center gap-4 mt-8 relative z-30"
-                    >
-                        {/* Primary Button - Request Demo */}
-                        <Link href="/book-demo">
-                            <button className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity cursor-pointer shadow-lg">
-                                Start for free
-                            </button>
-                        </Link>
-
-                        {/* Secondary Button - Contact */}
-                        <Link href="/contact">
-                            <button className="px-8 py-4 bg-transparent border border-foreground/20 text-foreground font-semibold rounded-full hover:bg-foreground/5 transition-colors backdrop-blur-sm cursor-pointer">
-                                Book a demo
-                            </button>
-                        </Link>
-                    </div>
-                </ScrollAnimation>
-
-            </div>
-
-            {/* Bottom Gradient Fade */}
             <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent z-20" />
         </section >
     );
 }
+

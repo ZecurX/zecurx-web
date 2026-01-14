@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { calculateReadingTime, formatBlogDate } from '@/lib/blog';
 
@@ -21,54 +21,70 @@ export default async function BlogPage({
   const search = resolvedParams.search || '';
   const labelSlug = resolvedParams.label || '';
 
-  // Build query
-  let query = supabase
-    .from('blog_posts')
-    .select(`
-      *,
-      author:admins!blog_posts_author_id_fkey(name, email),
-      labels:blog_post_labels(
-        blog_labels(id, name, slug, color)
-      )
-    `, { count: 'exact' })
-    .eq('status', 'published')
-    .order('published_at', { ascending: false });
+  let countQuery = `SELECT COUNT(*) as total FROM blog_posts WHERE status = 'published'`;
+  let postsQuery = `
+    SELECT bp.*, 
+           a.name as author_name, a.email as author_email
+    FROM blog_posts bp
+    LEFT JOIN admins a ON bp.author_id = a.id
+    WHERE bp.status = 'published'
+  `;
+  const params: any[] = [];
+  let paramIndex = 1;
 
   if (search) {
-    query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+    const searchCondition = ` AND (bp.title ILIKE $${paramIndex} OR bp.content ILIKE $${paramIndex})`;
+    postsQuery += searchCondition;
+    countQuery += ` AND (title ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`;
+    params.push(`%${search}%`);
+    paramIndex++;
   }
 
   if (labelSlug) {
-    const { data: label } = await supabase
-      .from('blog_labels')
-      .select('id')
-      .eq('slug', labelSlug)
-      .single();
-
-    if (label) {
-      const { data: postLabels } = await supabase
-        .from('blog_post_labels')
-        .select('post_id')
-        .eq('label_id', label.id);
-
-      if (postLabels && postLabels.length > 0) {
-        query = query.in('id', postLabels.map(pl => pl.post_id));
-      } else {
-        query = query.eq('id', '00000000-0000-0000-0000-000000000000'); // Force empty
-      }
+    const labelResult = await query('SELECT id FROM blog_labels WHERE slug = $1 LIMIT 1', [labelSlug]);
+    if (labelResult.rows.length > 0) {
+      const labelId = labelResult.rows[0].id;
+      const labelCondition = ` AND bp.id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
+      postsQuery += labelCondition;
+      countQuery += ` AND id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
+      params.push(labelId);
+      paramIndex++;
     } else {
-      query = query.eq('id', '00000000-0000-0000-0000-000000000000'); // Force empty
+      return (
+        <div className="space-y-12">
+          <div className="text-center py-24">
+            <h3 className="text-2xl font-bold mb-2">No posts found</h3>
+            <p className="text-muted-foreground">Label not found.</p>
+          </div>
+        </div>
+      );
     }
   }
 
-  const { data: posts, count } = await query.range(offset, offset + limit - 1);
-  const totalPages = Math.ceil((count || 0) / limit);
+  postsQuery += ` ORDER BY bp.published_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+  const countParams = params.slice();
+  params.push(limit, offset);
 
-  // Fetch labels for filter
-  const { data: allLabels } = await supabase
-    .from('blog_labels')
-    .select('*')
-    .order('name');
+  const [countResult, postsResult, labelsResult] = await Promise.all([
+    query(countQuery, countParams),
+    query(postsQuery, params),
+    query('SELECT * FROM blog_labels ORDER BY name')
+  ]);
+
+  const count = parseInt(countResult.rows[0]?.total || '0');
+  const posts = postsResult.rows;
+  const allLabels = labelsResult.rows;
+  const totalPages = Math.ceil(count / limit);
+
+  for (const post of posts) {
+    const labelsRes = await query(`
+      SELECT bl.* FROM blog_labels bl
+      JOIN blog_post_labels bpl ON bl.id = bpl.label_id
+      WHERE bpl.blog_post_id = $1
+    `, [post.id]);
+    post.labels = labelsRes.rows.map((l: any) => ({ blog_labels: l }));
+    post.author = { name: post.author_name, email: post.author_email };
+  }
 
   return (
     <div className="space-y-12">
