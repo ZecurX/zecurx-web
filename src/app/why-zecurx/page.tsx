@@ -1,3 +1,21 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Why ZecurX - Leading Cybersecurity Innovation & Expertise | ZecurX",
+  description: "Discover why organizations trust ZecurX for advanced cybersecurity. Learn about our AI-powered approach, expert team, and proven track record.",
+  keywords: ["cybersecurity company", "security expertise", "AI security", "threat protection"],
+  openGraph: {
+    title: "Why ZecurX - Leading Cybersecurity Innovation & Expertise | ZecurX",
+    description: "Discover why organizations trust ZecurX for advanced cybersecurity. Learn about our AI-powered approach, expert team, and proven track record.",
+    type: "website",
+    url: "https://zecurx.com/why-zecurx",
+  },
+  alternates: {
+    canonical: "https://zecurx.com/why-zecurx",
+  },
+};
+
+
 import React from "react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";

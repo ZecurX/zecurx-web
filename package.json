@@ -52,6 +52,7 @@
     "react-dom": "19.2.3",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
+    "schema-dts": "^1.1.5",
     "tailwind-merge": "^3.4.0",
     "xlsx": "^0.18.5"
   },
