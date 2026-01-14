@@ -4,9 +4,8 @@ import { appendToSheet } from '@/lib/google-sheets';
 import path from 'path';
 import fs from 'fs';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     try {
         const body = await request.json();
         const { name, email, subject, message, formType, preferredDate } = body;

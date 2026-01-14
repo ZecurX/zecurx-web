@@ -6,7 +6,6 @@ import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { Resend } from 'resend';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function verifyWebhookSignature(body: string, signature: string): boolean {
     if (!WEBHOOK_SECRET) {
@@ -36,6 +35,7 @@ async function sendInvoiceEmail(data: {
     college?: string;
     isInternship: boolean;
 }): Promise<void> {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const invoiceNumber = generateInvoiceNumber();
     
     const invoicePdf = await generateInvoicePDF({
