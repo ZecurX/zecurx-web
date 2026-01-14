@@ -27,13 +27,73 @@ const pixelify = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ZecurX",
-  description: "Cybersecurity solutions",
+  metadataBase: new URL('https://zecurx.com'),
+  title: {
+    default: "ZecurX - Advanced Cybersecurity Solutions & Threat Intelligence",
+    template: "%s | ZecurX"
+  },
+  description: "ZecurX delivers cutting-edge cybersecurity solutions including threat intelligence, endpoint security, cloud protection, zero-trust architecture, and professional security training with ISO-verified certifications.",
+  keywords: ["cybersecurity", "threat intelligence", "endpoint security", "cloud security", "zero trust", "penetration testing", "security automation", "AI security", "ransomware defense", "compliance", "VAPT", "cybersecurity training", "ethical hacking certification", "cybersecurity courses", "penetration testing certification", "security certifications", "cybersecurity academy"],
+  authors: [{ name: "ZecurX Security Team" }],
+  creator: "ZecurX",
+  publisher: "ZecurX",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://zecurx.com",
+    siteName: "ZecurX",
+    title: "ZecurX - Advanced Cybersecurity Solutions & Threat Intelligence",
+    description: "Cutting-edge cybersecurity solutions including threat intelligence, endpoint security, cloud protection, zero-trust architecture, and professional security training with ISO-verified certifications.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ZecurX - Advanced Cybersecurity Solutions",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZecurX - Advanced Cybersecurity Solutions & Threat Intelligence",
+    description: "Cutting-edge cybersecurity solutions including threat intelligence, endpoint security, cloud protection, zero-trust architecture, and professional security training with ISO-verified certifications.",
+    images: ["/og-image.png"],
+    creator: "@zecurx",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
+  alternates: {
+    canonical: "https://zecurx.com",
+  },
 };
 
 import NextTopLoader from 'nextjs-toploader';
-
-// ... existing imports
+import { StructuredData, getOrganizationSchema, getWebSiteSchema } from '@/components/seo/StructuredData';
 
 export default function RootLayout({
   children,
@@ -42,6 +102,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <StructuredData data={getOrganizationSchema()} />
+        <StructuredData data={getWebSiteSchema()} />
+      </head>
       <body
         className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} antialiased`}
       >
