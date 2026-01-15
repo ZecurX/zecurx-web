@@ -1,109 +1,41 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Zap, Package, ArrowRight, Search, SlidersHorizontal, Cpu, Wifi, Radio } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { motion } from 'framer-motion';
+import { Shield, Zap, Package, ArrowRight, Search } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import ProductCard from '@/components/shop/ProductCard';
+import ProductGrid from '@/components/shop/ProductGrid';
+import { query } from '@/lib/db';
 
-interface Product {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    image: string;
-    images: string[];
-    stock: number;
-    delivery_days: number;
-    features: string[];
-    tags: string[];
+export const dynamic = 'force-dynamic';
+
+async function getProducts() {
+    try {
+        const result = await query(`
+            SELECT * FROM products 
+            ORDER BY created_at DESC
+        `);
+        return result.rows;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
 }
 
-function transformProduct(dbProduct: Product) {
-    return {
-        id: dbProduct.id,
-        name: dbProduct.name,
-        price: dbProduct.price,
-        description: dbProduct.description,
-        image: dbProduct.image,
-        images: dbProduct.images || [],
-        stock: dbProduct.stock,
-        deliveryDays: dbProduct.delivery_days,
-        features: dbProduct.features || [],
-        tags: dbProduct.tags || [],
-    };
-}
-
-const CATEGORIES = ["All", "Hardware", "Tools", "Merch"];
-
-export default function ShopPage() {
-    const [products, setProducts] = useState<ReturnType<typeof transformProduct>[]>([]);
-    const [filteredProducts, setFilteredProducts] = useState<ReturnType<typeof transformProduct>[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [activeCategory, setActiveCategory] = useState("All");
-    const [searchQuery, setSearchQuery] = useState("");
-
-    useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const response = await fetch('/api/products');
-                if (!response.ok) {
-                    console.error('Error fetching products:', response.statusText);
-                    return;
-                }
-
-                const data = await response.json();
-                if (data.products) {
-                    const transformed = data.products.map(transformProduct);
-                    setProducts(transformed);
-                    setFilteredProducts(transformed);
-                }
-            } catch (err) {
-                console.error('Failed to fetch products:', err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchProducts();
-    }, []);
-
-    // Filter logic
-    useEffect(() => {
-        let result = products;
-
-        if (activeCategory !== "All") {
-            result = result.filter(p => p.tags.some(tag => tag.toLowerCase().includes(activeCategory.toLowerCase())));
-        }
-
-        if (searchQuery) {
-            result = result.filter(p => 
-                p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                p.description.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-
-        setFilteredProducts(result);
-    }, [activeCategory, searchQuery, products]);
+export default async function ShopPage() {
+    const products = await getProducts();
 
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-primary/30">
             <CreativeNavBar />
 
-            <section className="relative pt-40 pb-20 overflow-hidden min-h-[60vh] flex items-center">
+            <section className="relative pt-40 pb-20 overflow-hidden min-h-[50vh] flex items-center">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-primary/10 blur-[120px] rounded-full z-10" />
                      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="max-w-4xl"
-                    >
+                <div className="max-w-7xl mx-auto px-6 relative z-10 w-full flex flex-col items-center justify-center">
+                    <div className="max-w-4xl flex flex-col items-center text-center">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 border border-border/50 mb-6 backdrop-blur-md">
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                             <span className="text-xs font-mono text-muted-foreground tracking-widest uppercase">Official Store</span>
@@ -118,78 +50,21 @@ export default function ShopPage() {
                         <p className="text-xl text-muted-foreground font-light max-w-2xl mb-10 leading-relaxed font-manrope">
                             Equip yourself with industry-standard tools for penetration testing, RFID analysis, and network auditing.
                         </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                            <div className="relative group w-full max-w-md">
-                                <div className="relative flex items-center bg-background border border-input rounded-full p-1 shadow-sm focus-within:ring-2 focus-within:ring-ring">
-                                    <Search className="w-5 h-5 text-muted-foreground ml-3" />
-                                    <input 
-                                        type="text" 
-                                        placeholder="Search products..." 
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full bg-transparent border-none text-foreground placeholder:text-muted-foreground/70 focus:ring-0 py-3 px-3 text-sm focus:outline-none"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 
-            <section className="py-20 relative z-10">
-                <div className="max-w-7xl mx-auto px-6">
-                    
-                    <div className="flex flex-wrap items-center gap-3 mb-12 border-b border-border/40 pb-6">
-                        <SlidersHorizontal className="w-5 h-5 text-muted-foreground mr-2" />
-                        {CATEGORIES.map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                                    activeCategory === cat 
-                                    ? 'bg-foreground text-background shadow-md' 
-                                    : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                                }`}
-                            >
-                                {cat}
-                            </button>
+            <Suspense fallback={
+                <div className="max-w-7xl mx-auto px-6 py-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="bg-muted/20 rounded-3xl h-[400px] animate-pulse border border-border/20" />
                         ))}
                     </div>
-
-                    <AnimatePresence mode="wait">
-                        {loading ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="bg-muted/20 rounded-3xl h-[400px] animate-pulse border border-border/20" />
-                                ))}
-                            </div>
-                        ) : filteredProducts.length === 0 ? (
-                            <motion.div 
-                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                className="flex flex-col items-center justify-center py-32 border border-dashed border-border/30 rounded-3xl bg-muted/5"
-                            >
-                                <Cpu className="w-16 h-16 text-muted-foreground/30 mb-4" />
-                                <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
-                                <button 
-                                    onClick={() => {setActiveCategory("All"); setSearchQuery("");}}
-                                    className="mt-4 text-primary hover:text-primary/80 text-sm font-semibold uppercase tracking-wider"
-                                >
-                                    Reset Filters
-                                </button>
-                            </motion.div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {filteredProducts.map((product, index) => (
-                                    <div key={product.id} className="relative group">
-                                        <ProductCard {...product} delay={index * 0.05} />
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </AnimatePresence>
                 </div>
-            </section>
+            }>
+                <ProductGrid initialProducts={products} />
+            </Suspense>
 
             <section className="py-24 border-t border-border/40 bg-muted/10">
                 <div className="max-w-7xl mx-auto px-6">
@@ -257,5 +132,3 @@ export default function ShopPage() {
         </main>
     );
 }
-
-
