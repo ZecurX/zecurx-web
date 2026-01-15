@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseStorage } from '@/lib/supabase-storage';
 import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
+import { uploadToS3, deleteFromS3, generateS3Key, S3_BASE_URL } from '@/lib/s3';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
 export async function POST(request: NextRequest) {
@@ -33,34 +32,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 10);
-    const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const filename = `${timestamp}-${randomString}.${extension}`;
-
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const key = generateS3Key(file.name, 'blog');
 
-    const { data: uploadData, error: uploadError } = await supabaseStorage.storage
-      .from('blog-images')
-      .upload(filename, buffer, {
-        contentType: file.type,
-        cacheControl: '3600',
-        upsert: false
-      });
-
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      throw uploadError;
-    }
-
-    const { data: { publicUrl } } = supabaseStorage.storage
-      .from('blog-images')
-      .getPublicUrl(filename);
+    const result = await uploadToS3(buffer, key, file.type);
 
     return NextResponse.json({ 
-      url: publicUrl,
-      filename: filename,
+      url: result.url,
+      filename: result.key,
       size: file.size,
       type: file.type
     }, { status: 201 });
@@ -96,21 +76,13 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const urlParts = url.split('/');
-    const filename = urlParts[urlParts.length - 1];
+    const key = url.replace(S3_BASE_URL + '/', '');
 
-    if (!filename) {
+    if (!key) {
       return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
     }
 
-    const { error: deleteError } = await supabaseStorage.storage
-      .from('blog-images')
-      .remove([filename]);
-
-    if (deleteError) {
-      console.error('Delete error:', deleteError);
-      throw deleteError;
-    }
+    await deleteFromS3(key);
 
     return NextResponse.json({ 
       success: true, 
