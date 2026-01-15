@@ -2,6 +2,7 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 import Image from 'next/image';
 
@@ -66,15 +67,18 @@ export default function ReadyToSecureSection() {
                     viewport={{ once: true }}
                     className="flex flex-col sm:flex-row items-center gap-4"
                 >
-                    <Button className="h-12 px-8 rounded-full text-sm bg-blue-600 text-white hover:bg-blue-700 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
-                        Talk to a Security Expert
+                    <Button asChild className="h-12 px-8 rounded-full text-sm bg-blue-600 text-white hover:bg-blue-700 dark:bg-white dark:text-black dark:hover:bg-zinc-200">
+                        <Link href="/contact">Talk to a Security Expert</Link>
                     </Button>
                     <Button
+                        asChild
                         variant="outline"
                         className="h-12 px-8 rounded-full flex items-center gap-2 group border-zinc-200 hover:bg-zinc-100 dark:bg-white/10 dark:backdrop-blur-sm dark:border-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:border-white/20 dark:shadow-lg dark:shadow-black/20"
                     >
-                        Request Assessment
-                        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        <Link href="/book-demo">
+                            Request Assessment
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
                     </Button>
                 </motion.div>
             </div>
