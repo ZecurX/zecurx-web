@@ -31,6 +31,8 @@ const testimonials = [
     }
 ];
 
+import { Button } from "@/components/ui/button";
+
 export default function WhyContent() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -305,14 +307,14 @@ export default function WhyContent() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={prevTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm"
+                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm cursor-pointer"
                                         aria-label="Previous testimonial"
                                     >
                                         <ChevronLeft className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={nextTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm"
+                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm cursor-pointer"
                                         aria-label="Next testimonial"
                                     >
                                         <ChevronRight className="w-5 h-5" />
@@ -352,7 +354,7 @@ export default function WhyContent() {
                                         <button
                                             key={i}
                                             onClick={() => setCurrentIndex(i)}
-                                            className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex
+                                            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${i === currentIndex
                                                 ? "bg-foreground w-8"
                                                 : "bg-border w-2 hover:bg-foreground/50"
                                                 }`}
@@ -360,10 +362,10 @@ export default function WhyContent() {
                                         />
                                     ))}
                                 </div>
-                                <button className="w-full sm:w-auto bg-foreground text-background hover:bg-foreground/90 px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-xl text-sm flex items-center justify-center gap-2">
+                                <Button className="w-full sm:w-auto px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl h-auto gap-2 text-sm bg-foreground text-background hover:bg-foreground/90">
                                     Start Your Journey
                                     <ArrowRight className="w-4 h-4" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
