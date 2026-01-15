@@ -308,7 +308,7 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                                         Book a Demo
                                     </Link>
                                 </Button>
-                                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-full border-background/20 text-background hover:bg-background/10 hover:text-background text-lg font-medium">
+                                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white text-lg font-medium">
                                     <Link href="/contact">
                                         Contact Sales
                                     </Link>
