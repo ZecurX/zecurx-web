@@ -70,7 +70,10 @@ export async function POST(req: NextRequest) {
         });
     } catch (error) {
         console.error("Auth Error:", error);
-        return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+        return NextResponse.json({
+            error: error instanceof Error ? error.message : "Internal Error",
+            stack: error instanceof Error ? error.stack : undefined
+        }, { status: 500 });
     }
 }
 

@@ -60,10 +60,10 @@ export async function POST(request: NextRequest) {
             }
 
             if (notes && notes.email) {
-                const email = validator.isEmail(String(notes.email)) 
+                const email = validator.isEmail(String(notes.email))
                     ? validator.normalizeEmail(String(notes.email)) || String(notes.email)
                     : '';
-                
+
                 if (!email) {
                     console.error('Invalid email in payment notes:', notes.email);
                     return NextResponse.json(
@@ -76,17 +76,17 @@ export async function POST(request: NextRequest) {
                 const mobile = String(notes.mobile || notes.phone || '')
                     .replace(/[^0-9+\-\s()]/g, '')
                     .substring(0, 20);
-                
+
                 const isShopOrder = notes.type === 'shop_order';
-                
+
                 if (isShopOrder && notes.items) {
                     try {
                         const items = typeof notes.items === 'string' ? JSON.parse(notes.items) : notes.items;
-                        
+
                         const address = validator.escape(String(notes.address || '').trim()).substring(0, 500);
                         const city = validator.escape(String(notes.city || '').trim()).substring(0, 100);
                         const pincode = String(notes.pincode || '').replace(/[^0-9]/g, '').substring(0, 10);
-                        
+
                         const orderResult = await query(`
                             INSERT INTO shop_orders (
                                 order_id, payment_id, customer_email, customer_name, customer_phone,
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
                         ]);
 
                         const shopOrderId = orderResult.rows[0]?.id;
-                        
+
                         if (shopOrderId && Array.isArray(items)) {
                             for (const item of items) {
                                 await query(`
@@ -124,14 +124,14 @@ export async function POST(request: NextRequest) {
                                     item.quantity || 1,
                                     item.price * (item.quantity || 1)
                                 ]);
-                                
+
                                 const stockUpdate = await query(`
                                     UPDATE products 
                                     SET stock = stock - $1 
                                     WHERE id::text = $2 AND stock >= $1
                                     RETURNING stock
                                 `, [item.quantity || 1, item.id]);
-                                
+
                                 if (stockUpdate.rowCount === 0) {
                                     console.error(`CRITICAL: Stock deduction failed for product ${item.id} - insufficient stock or product not found`);
                                 }
@@ -190,6 +190,49 @@ export async function POST(request: NextRequest) {
                         `, [razorpay_payment_id, razorpay_order_id, amountInRupees, 'captured', customer.id, planId]);
                     } catch (txError) {
                         console.error('Transaction DB Error:', txError);
+                    }
+                }
+
+                // Track referral code usage if applicable
+                if (notes?.referralCode) {
+                    try {
+                        const referralCodeStr = String(notes.referralCode).toUpperCase().trim();
+                        const discountAmount = Number(notes.discountAmount) || 0;
+                        const originalAmount = Number(notes.originalAmount) || amountInRupees;
+
+                        // Get the referral code ID
+                        const codeResult = await query(
+                            `SELECT id FROM referral_codes WHERE code = $1`,
+                            [referralCodeStr]
+                        );
+
+                        if (codeResult.rows.length > 0) {
+                            const referralCodeId = codeResult.rows[0].id;
+
+                            // Insert usage record
+                            await query(`
+                                INSERT INTO referral_code_usages (
+                                    referral_code_id, order_id, customer_email,
+                                    original_amount, discount_applied, final_amount
+                                ) VALUES ($1, $2, $3, $4, $5, $6)
+                            `, [
+                                referralCodeId,
+                                razorpay_order_id,
+                                email,
+                                originalAmount,
+                                discountAmount,
+                                amountInRupees
+                            ]);
+
+                            // Increment usage counter
+                            await query(
+                                `UPDATE referral_codes SET current_uses = current_uses + 1 WHERE id = $1`,
+                                [referralCodeId]
+                            );
+                        }
+                    } catch (referralError) {
+                        console.error('Referral code tracking error:', referralError);
+                        // Don't fail payment verification due to referral tracking error
                     }
                 }
             }

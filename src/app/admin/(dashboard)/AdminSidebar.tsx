@@ -4,20 +4,21 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { 
-    LayoutDashboard, 
-    Users, 
-    UserCog, 
-    ShoppingCart, 
-    Package, 
-    ShoppingBag, 
-    FileText, 
+import {
+    LayoutDashboard,
+    Users,
+    UserCog,
+    ShoppingCart,
+    Package,
+    ShoppingBag,
+    FileText,
     LogOut,
     Home,
     Newspaper,
     ChevronRight,
     Menu,
-    X
+    X,
+    Ticket
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -47,7 +48,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
     Package,
     ShoppingBag,
     FileText,
-    Newspaper
+    Newspaper,
+    Ticket
 };
 
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
@@ -85,8 +87,8 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
     const sidebarContent = (
         <>
             <div className="h-16 flex items-center justify-between px-5 border-b border-white/[0.08] dark:border-white/[0.06]">
-                <Link 
-                    href="/admin" 
+                <Link
+                    href="/admin"
                     className="flex items-center gap-2.5 group"
                     aria-label="Go to admin dashboard"
                 >
@@ -119,7 +121,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
 
             <div className="mx-3 mt-4 p-3 rounded-xl bg-white/[0.03] dark:bg-white/[0.02] border border-white/[0.06]">
                 <div className="flex items-start gap-3">
-                    <div 
+                    <div
                         className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0"
                         aria-hidden="true"
                     >
@@ -140,9 +142,9 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                 <ul role="list" aria-labelledby="nav-heading" className="space-y-1">
                     {navItems.map((item) => {
                         const Icon = ICON_MAP[item.icon] || LayoutDashboard;
-                        const isActive = pathname === item.href || 
+                        const isActive = pathname === item.href ||
                             (item.href !== "/admin" && pathname.startsWith(item.href));
-                        
+
                         return (
                             <li key={item.href}>
                                 <Link
@@ -152,16 +154,16 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                                         "group flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
                                         "min-h-[44px]",
                                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                                        isActive 
-                                            ? "bg-foreground text-background shadow-lg shadow-foreground/10" 
+                                        isActive
+                                            ? "bg-foreground text-background shadow-lg shadow-foreground/10"
                                             : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
                                     )}
                                 >
-                                    <Icon 
+                                    <Icon
                                         className={cn(
                                             "w-5 h-5 transition-transform duration-200",
                                             !isActive && "group-hover:scale-110"
-                                        )} 
+                                        )}
                                     />
                                     <span className="flex-1">{item.label}</span>
                                     {isActive && (
@@ -175,8 +177,8 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
             </nav>
 
             <div className="p-3 border-t border-white/[0.08] dark:border-white/[0.06] space-y-1">
-                <Link 
-                    href="/" 
+                <Link
+                    href="/"
                     className={cn(
                         "flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
                         "min-h-[44px]",
@@ -208,8 +210,8 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
     return (
         <>
             <header className="lg:hidden fixed top-0 left-0 right-0 z-30 h-16 flex items-center justify-between px-4 bg-background/80 backdrop-blur-xl border-b border-white/[0.08]">
-                <Link 
-                    href="/admin" 
+                <Link
+                    href="/admin"
                     className="flex items-center gap-2"
                     aria-label="Go to admin dashboard"
                 >
@@ -238,7 +240,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
             </header>
 
             {isMobileOpen && (
-                <div 
+                <div
                     className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
                     onClick={() => setIsMobileOpen(false)}
                     aria-hidden="true"

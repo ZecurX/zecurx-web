@@ -98,7 +98,11 @@ export async function POST(request: NextRequest) {
                     
                     ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${body.courseTitle}</p>` : ''}
                     ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${body.itemName}</p>` : ''}
-                    ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>Price:</strong> ₹${body.price}</p>` : ''}
+                    
+                    ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0;"><strong>Original Price:</strong> ₹${body.originalPrice}</p>` : ''}
+                    ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0; color: green;"><strong>Discount:</strong> -₹${body.discountAmount}</p>` : ''}
+                    
+                    ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>${body.discountAmount > 0 ? 'Total Paid' : 'Price'}:</strong> ₹${body.price}</p>` : ''}
                     ${isPurchase && body.paymentId ? `<p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${body.paymentId}</p>` : ''}
                     
                     ${body.company ? `<p style="margin: 0 0 10px 0;"><strong>Company:</strong> ${body.company}</p>` : ''}
@@ -122,7 +126,7 @@ export async function POST(request: NextRequest) {
 
         // Brochure Attachments - use compressed PDFs
         const brochureDir = path.join(process.cwd(), 'public/brochures/services/compressed');
-        
+
         const serviceToPdf: { [key: string]: { filename: string; file: string } } = {
             'penetration testing': { filename: 'ZecurX_Penetration_Testing.pdf', file: 'penetration-testing.pdf' },
             'vulnerability management': { filename: 'ZecurX_Red_Teaming.pdf', file: 'red-teaming.pdf' },
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
 
         const selectedService = body.service?.toLowerCase() || 'general';
         const selectedPdf = serviceToPdf[selectedService] || serviceToPdf['penetration testing'];
-        
+
         // Build attachments array for Resend
         let attachments: { filename: string; content: Buffer }[] = [];
         if (isDemo && selectedPdf) {
@@ -168,10 +172,10 @@ export async function POST(request: NextRequest) {
         }
 
         // Admin email recipient
-        const adminEmail = isInternship 
-            ? 'zecurxintern@gmail.com' 
+        const adminEmail = isInternship
+            ? 'zecurxintern@gmail.com'
             : 'official@zecurx.com';
-        
+
         // Send admin notification email
         let adminEmailSent = false;
         try {
@@ -232,7 +236,7 @@ export async function POST(request: NextRequest) {
         let userEmailSent = false;
         try {
             console.log('Attempting to send user email to:', email);
-            
+
             if ((isDemo || isBrochure) && attachments.length > 0) {
                 await resend.emails.send({
                     from: 'ZecurX <official@zecurx.com>',
@@ -257,19 +261,19 @@ export async function POST(request: NextRequest) {
 
         // Return response
         if (adminEmailSent && userEmailSent) {
-            return NextResponse.json({ 
-                success: true, 
-                message: 'Both emails sent successfully' 
+            return NextResponse.json({
+                success: true,
+                message: 'Both emails sent successfully'
             });
         } else if (adminEmailSent) {
-            return NextResponse.json({ 
-                success: true, 
+            return NextResponse.json({
+                success: true,
                 message: 'Admin notified. User confirmation may be delayed.',
                 warning: 'User email failed to send'
             });
         } else {
-            return NextResponse.json({ 
-                success: true, 
+            return NextResponse.json({
+                success: true,
                 message: 'Request received (email delivery pending)',
                 warning: 'Email delivery issues detected'
             });
@@ -277,9 +281,9 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('Email API error:', error);
-        
-        return NextResponse.json({ 
-            success: true, 
+
+        return NextResponse.json({
+            success: true,
             message: 'Request received',
             debugError: error instanceof Error ? error.message : 'Unknown error'
         });

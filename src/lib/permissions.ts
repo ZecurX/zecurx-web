@@ -27,27 +27,32 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
 // Permissions for each role
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
-  
+
   [ROLES.ADMIN]: [
     'dashboard:*',
     'customers:*',
     'sales:*',
     'plans:*',
     'products:*',
+    'leads:*', // Full lead management
+    'referral_codes:*', // Full referral code management
     'blog:read', // Can view blogs but NOT edit
   ],
-  
+
   [ROLES.SALES]: [
     'dashboard:*',
     'customers:*',
     'sales:*',
     'plans:*',
     'products:*',
+    'leads:*', // Full lead management
+    'referral_codes:*', // Full referral code management
     // NO blog access
   ],
-  
+
   [ROLES.MARKETING]: [
     'blog:*', // Full blog management ONLY
+    'leads:read', // Can view leads only
   ],
 };
 
@@ -56,29 +61,29 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
  */
 export function hasPermission(role: Role, resource: Resource, action: Action): boolean {
   const permissions = ROLE_PERMISSIONS[role];
-  
+
   // Super admin has all permissions
   if (permissions.includes('*')) {
     return true;
   }
-  
+
   // Check for exact permission match
   const exactPermission = `${resource}:${action}` as Permission;
   if (permissions.includes(exactPermission)) {
     return true;
   }
-  
+
   // Check for wildcard action on resource (e.g., 'customers:*')
   const wildcardPermission = `${resource}:*` as Permission;
   if (permissions.includes(wildcardPermission)) {
     return true;
   }
-  
+
   // Check if '*' action is requested and role has any permission on resource
   if (action === ACTIONS.ALL) {
     return permissions.some(p => p.startsWith(`${resource}:`));
   }
-  
+
   return false;
 }
 
@@ -91,7 +96,7 @@ export function canManageRole(managerRole: Role, targetRole: Role): boolean {
   if (managerRole === ROLES.SUPER_ADMIN) {
     return true;
   }
-  
+
   // Others cannot manage any roles
   return false;
 }
@@ -101,7 +106,7 @@ export function canManageRole(managerRole: Role, targetRole: Role): boolean {
  */
 export function getExpandedPermissions(role: Role): string[] {
   const permissions = ROLE_PERMISSIONS[role];
-  
+
   if (permissions.includes('*')) {
     // Return all possible permissions
     const allPermissions: string[] = [];
@@ -114,7 +119,7 @@ export function getExpandedPermissions(role: Role): string[] {
     });
     return allPermissions;
   }
-  
+
   const expanded: string[] = [];
   permissions.forEach(permission => {
     if (permission.endsWith(':*')) {
@@ -128,7 +133,7 @@ export function getExpandedPermissions(role: Role): string[] {
       expanded.push(permission);
     }
   });
-  
+
   return expanded;
 }
 
@@ -139,7 +144,7 @@ export function getAssignableRoles(role: Role): Role[] {
   if (role !== ROLES.SUPER_ADMIN) {
     return []; // Only super_admin can assign roles
   }
-  
+
   // Super admin can assign all roles except super_admin
   return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING];
 }
@@ -170,6 +175,6 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
     { name: 'Audit Logs', href: '/admin/audit', icon: 'FileText', resource: RESOURCES.AUDIT },
   ];
-  
+
   return allItems.filter(item => hasPermission(role, item.resource, ACTIONS.READ));
 }
