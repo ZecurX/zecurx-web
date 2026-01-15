@@ -83,19 +83,20 @@ export default function SSLAnalyzerPage() {
                     <label htmlFor="domain" className="block text-sm font-medium text-foreground mb-3">
                         Target Domain
                     </label>
-                    <div className="flex gap-4 relative z-50 isolate">
+                    <div className="flex flex-col sm:flex-row gap-4 relative z-50 isolate">
                         <input
                             type="text"
                             id="domain"
+                            aria-label="Target Domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
+                            className="w-full sm:flex-1 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
                         />
                         <Button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 rounded-lg"
+                            className="w-full sm:w-auto px-8 rounded-lg"
                         >
                             {isLoading ? (
                                 <>
@@ -116,7 +117,7 @@ export default function SSLAnalyzerPage() {
                 )}
 
                 {results && (
-                    <div className="border-t border-border pt-8 space-y-8">
+                    <div className="border-t border-border pt-8 space-y-8" role="region" aria-label="Analysis Results" aria-live="polite">
                         {/* Grade & Score */}
                         <div className="flex items-center gap-6">
                             <div className={`w-24 h-24 rounded-xl border flex items-center justify-center ${getGradeColor(results.grade)}`}>
