@@ -74,7 +74,7 @@ export default function WhatWeDoSection() {
                                         key={i}
                                         onClick={() => setActiveIndex(i)}
                                         className={cn(
-                                            "w-12 h-12 rounded-full flex items-center justify-center text-lg font-manrope transition-all duration-300",
+                                            "w-12 h-12 rounded-full flex items-center justify-center text-lg font-manrope transition-all duration-300 cursor-pointer",
                                             activeIndex === i
                                                 ? "bg-foreground text-background font-bold scale-110 shadow-lg"
                                                 : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
