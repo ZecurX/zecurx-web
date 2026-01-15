@@ -303,16 +303,16 @@ export default function FeaturePageLayout({ data }: FeaturePageLayoutProps) {
                                 Schedule a consultation with our security architects and see how ZecurX can transform your defense posture.
                             </p>
                             <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
-                                <Link href="/book-demo">
-                                    <Button size="lg" className="h-14 px-8 rounded-full bg-background text-foreground hover:bg-background/90 text-lg font-semibold shadow-xl">
+                                <Button asChild size="lg" className="h-14 px-8 rounded-full bg-background text-foreground hover:bg-background/90 text-lg font-semibold shadow-xl">
+                                    <Link href="/book-demo">
                                         Book a Demo
-                                    </Button>
-                                </Link>
-                                <Link href="/contact">
-                                    <Button variant="outline" size="lg" className="h-14 px-8 rounded-full border-background/20 text-background hover:bg-background/10 hover:text-background text-lg font-medium">
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-full border-background/20 text-background hover:bg-background/10 hover:text-background text-lg font-medium">
+                                    <Link href="/contact">
                                         Contact Sales
-                                    </Button>
-                                </Link>
+                                    </Link>
+                                </Button>
                             </div>
                         </div>
                     </div>
