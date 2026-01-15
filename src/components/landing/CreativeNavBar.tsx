@@ -77,8 +77,12 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
     });
 
     useEffect(() => {
-        document.body.style.overflow = mobileMenuOpen ? 'hidden' : 'unset';
-        return () => { document.body.style.overflow = 'unset'; };
+        if (mobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
     }, [mobileMenuOpen]);
 
     const handleNavigation = (href: string) => {
