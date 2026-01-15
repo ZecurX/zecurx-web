@@ -66,19 +66,20 @@ export default function SubdomainFinderPage() {
                     <label htmlFor="domain" className="block text-sm font-medium text-foreground mb-3">
                         Target Domain
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 relative z-50 isolate">
                         <input
                             type="text"
                             id="domain"
+                            aria-label="Target Domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text relative z-50"
+                            className="w-full sm:flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
                         />
                         <Button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 rounded-lg"
+                            className="w-full sm:w-auto px-8 rounded-lg"
                         >
                             {isLoading ? (
                                 <>
@@ -102,7 +103,7 @@ export default function SubdomainFinderPage() {
                 )}
 
                 {results && results.length > 0 && (
-                    <div className="border-t border-border pt-8">
+                    <div className="border-t border-border pt-8" role="region" aria-label="Found Subdomains" aria-live="polite">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold text-foreground">
                                 Found {results.length} subdomains

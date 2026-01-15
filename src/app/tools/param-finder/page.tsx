@@ -58,19 +58,20 @@ export default function ParamFinderPage() {
                     <label htmlFor="url" className="block text-sm font-medium text-foreground mb-3">
                         Target URL
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 relative z-50 isolate">
                         <input
                             type="text"
                             id="url"
+                            aria-label="Target URL"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder="https://example.com/search"
-                            className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text relative z-50"
+                            className="w-full sm:flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
                         />
                         <Button
                             type="submit"
                             disabled={isLoading || !url.trim()}
-                            className="px-8 rounded-lg"
+                            className="w-full sm:w-auto px-8 rounded-lg"
                         >
                             {isLoading ? (
                                 <>
@@ -91,7 +92,7 @@ export default function ParamFinderPage() {
                 )}
 
                 {results && results.length > 0 && (
-                    <div className="border-t border-border pt-8">
+                    <div className="border-t border-border pt-8" role="region" aria-label="Found Parameters" aria-live="polite">
                         <h3 className="text-lg font-semibold text-foreground mb-4">
                             Found {results.length} parameters
                         </h3>

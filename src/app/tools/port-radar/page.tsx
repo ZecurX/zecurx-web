@@ -74,19 +74,20 @@ export default function PortRadarPage() {
                     <label htmlFor="target" className="block text-sm font-medium text-foreground mb-3">
                         Target Host
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 relative z-50 isolate">
                         <input
                             type="text"
                             id="target"
+                            aria-label="Target Host"
                             value={target}
                             onChange={(e) => setTarget(e.target.value)}
                             placeholder="192.168.1.1 or example.com"
-                            className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text relative z-50"
+                            className="w-full sm:flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
                         />
                         <Button
                             type="submit"
                             disabled={isLoading || !target.trim()}
-                            className="px-8 rounded-lg"
+                            className="w-full sm:w-auto px-8 rounded-lg"
                         >
                             {isLoading ? (
                                 <>
@@ -107,7 +108,7 @@ export default function PortRadarPage() {
                 )}
 
                 {results && results.length > 0 && (
-                    <div className="border-t border-border pt-8">
+                    <div className="border-t border-border pt-8" role="region" aria-label="Scan Results" aria-live="polite">
                         <h3 className="text-lg font-semibold text-foreground mb-4">
                             Discovered {results.length} ports
                         </h3>
