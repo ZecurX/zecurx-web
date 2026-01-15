@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Shield, Zap, Lock, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const EASE_OUT_EXPO: Easing = [0.16, 1, 0.3, 1];
 
@@ -188,27 +189,24 @@ export default function HeroSectionV3() {
             className="mt-8 md:mt-10 flex flex-col sm:flex-row items-center gap-4"
           >
             <Link href="/book-demo">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                className="group relative h-12 px-8 rounded-full bg-foreground text-background font-semibold flex items-center gap-2 overflow-hidden shadow-[0_0_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
+              <Button
+                size="lg"
+                className="group relative h-12 px-8 rounded-full shadow-[0_0_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
               >
                 <span className="relative z-10">Start Protecting</span>
-                <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 relative z-10 ml-2 group-hover:translate-x-1 transition-transform" />
                 <div className="absolute inset-0 bg-gradient-to-r from-foreground to-foreground/90 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </motion.button>
+              </Button>
             </Link>
 
             <Link href="/contact">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                className="h-12 px-8 rounded-full bg-transparent border border-border/50 text-foreground font-medium flex items-center gap-2 hover:bg-muted/50 hover:border-border transition-all"
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-12 px-8 rounded-full border-border/50 hover:bg-muted/50 hover:border-border transition-all"
               >
                 Talk to Sales
-              </motion.button>
+              </Button>
             </Link>
           </motion.div>
 

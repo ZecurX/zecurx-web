@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { ChevronRight, ArrowUpRight } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 const capabilities = [
@@ -122,20 +123,21 @@ export default function PlatformCapabilitiesSection() {
 
                                     {/* Interactive Bottom Area */}
                                     <CardFooter className="mt-12 pt-8 border-t border-border flex flex-wrap gap-4 items-center animate-fadeIn delay-200">
-                                        <button
+                                        <Button
                                             onClick={() => router.push('/book-demo')}
-                                            className="bg-foreground text-background px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2"
+                                            className="bg-foreground text-background px-6 py-3 rounded-full font-manrope font-semibold text-sm hover:scale-105 transition-transform flex items-center gap-2 h-auto"
                                         >
                                             Book a Demo
                                             <ArrowUpRight className="w-4 h-4" />
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
                                             onClick={() => router.push(platformRoutes[activeIndex])}
-                                            className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors group/btn"
+                                            variant="ghost"
+                                            className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors group/btn h-auto p-0 hover:bg-transparent"
                                         >
                                             Explore Feature
                                             <span className="group-hover/btn:translate-x-1 transition-transform">→</span>
-                                        </button>
+                                        </Button>
                                     </CardFooter>
 
                                 </Card>
