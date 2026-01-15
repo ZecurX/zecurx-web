@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { CartProvider } from "@/context/CartContext";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -124,9 +125,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SmoothScrollProvider>
-            {children}
-          </SmoothScrollProvider>
+          <CartProvider>
+            <SmoothScrollProvider>
+              {children}
+            </SmoothScrollProvider>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>
