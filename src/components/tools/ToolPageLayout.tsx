@@ -29,7 +29,7 @@ export default function ToolPageLayout({
             <CreativeNavBar />
 
             {/* Hero Section */}
-            <section className="relative w-full bg-background overflow-hidden px-6 pt-32 pb-16">
+            <section className="relative w-full bg-background overflow-hidden px-4 md:px-6 pt-24 md:pt-32 pb-12 md:pb-16">
 
                 {/* Grid Texture */}
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
@@ -41,7 +41,7 @@ export default function ToolPageLayout({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4 }}
-                        className="mb-12"
+                        className="mb-8 md:mb-12"
                     >
                         <Link
                             href="/tools"
@@ -57,16 +57,16 @@ export default function ToolPageLayout({
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                        className="flex flex-col md:flex-row md:items-start gap-8 mb-16"
+                        className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8 mb-12 md:mb-16"
                     >
-                        <div className="p-4 bg-muted/50 rounded-xl border border-border">
-                            <Icon className="w-10 h-10 text-foreground" strokeWidth={1.5} />
+                        <div className="p-3 md:p-4 bg-muted/50 rounded-xl border border-border w-max">
+                            <Icon className="w-8 h-8 md:w-10 md:h-10 text-foreground" strokeWidth={1.5} />
                         </div>
                         <div className="flex-1">
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 font-manrope text-foreground">
+                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 md:mb-4 font-manrope text-foreground">
                                 {title}
                             </h1>
-                            <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
                                 {description}
                             </p>
                         </div>
@@ -75,13 +75,13 @@ export default function ToolPageLayout({
             </section>
 
             {/* Tool Interface Section */}
-            <section className="px-6 pb-32">
+            <section className="px-4 md:px-6 pb-20 md:pb-32">
                 <div className="max-w-5xl mx-auto">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.3 }}
-                        className="bg-muted/20 border border-border rounded-2xl p-8 md:p-12"
+                        className="bg-muted/20 border border-border rounded-xl md:rounded-2xl p-4 md:p-12 overflow-x-hidden"
                     >
                         {children}
                     </motion.div>

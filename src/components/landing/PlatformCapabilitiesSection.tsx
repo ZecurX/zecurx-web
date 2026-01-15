@@ -84,15 +84,20 @@ export default function PlatformCapabilitiesSection() {
                 <ScrollAnimation direction="up" delay={0.2}>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                         {/* Left: Capability List */}
-                        <div className="space-y-2">
+                        <div className="space-y-2" role="tablist" aria-label="Platform Capabilities">
                             {capabilities.map((cap, i) => {
                                 const isActive = i === activeIndex;
                                 return (
-                                    <div
+                                    <button
                                         key={i}
-                                        className="group cursor-pointer flex items-center justify-between py-2"
+                                        role="tab"
+                                        aria-selected={isActive}
+                                        aria-controls={`capability-panel-${i}`}
+                                        id={`capability-tab-${i}`}
+                                        className="group cursor-pointer flex items-center justify-between py-2 w-full text-left bg-transparent border-none"
                                         onClick={() => setActiveIndex(i)}
                                         onMouseEnter={() => setActiveIndex(i)}
+                                        onFocus={() => setActiveIndex(i)}
                                     >
                                         <h3 className={`text-2xl md:text-4xl font-manrope font-medium transition-all duration-300 ${isActive ? 'text-foreground' : 'text-muted-foreground/40 hover:text-muted-foreground/70'}`}>
                                             {cap.title}
@@ -100,7 +105,7 @@ export default function PlatformCapabilitiesSection() {
                                         {isActive && (
                                             <ChevronRight className="w-6 h-6 text-foreground opacity-0 animate-fadeIn" />
                                         )}
-                                    </div>
+                                    </button>
                                 );
                             })}
                         </div>
@@ -108,7 +113,12 @@ export default function PlatformCapabilitiesSection() {
                         {/* Right: Feature Showcase Card */}
                         <div className="relative lg:pl-10">
                             <div className="sticky top-32">
-                                <Card className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 rounded-3xl p-8 md:p-12 h-[520px] flex flex-col justify-between backdrop-blur-sm">
+                                <Card 
+                                    className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 rounded-3xl p-8 md:p-12 min-h-[520px] flex flex-col justify-between backdrop-blur-sm"
+                                    role="tabpanel"
+                                    id={`capability-panel-${activeIndex}`}
+                                    aria-labelledby={`capability-tab-${activeIndex}`}
+                                >
                                     <CardHeader className="p-0">
                                         {/* Content */}
                                         <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6 animate-fadeIn key={activeIndex}">

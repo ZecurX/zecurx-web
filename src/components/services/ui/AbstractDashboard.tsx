@@ -12,7 +12,7 @@ interface AbstractDashboardProps {
 
 export function AbstractDashboard({ children, title = "System Overview", className }: AbstractDashboardProps) {
     return (
-        <div className={cn("relative w-full aspect-[16/9] rounded-xl border border-border/40 bg-background/50 overflow-hidden shadow-2xl backdrop-blur-sm", className)}>
+        <div className={cn("relative w-full min-h-[300px] md:aspect-[16/9] rounded-xl border border-border/40 bg-background/50 overflow-hidden shadow-2xl backdrop-blur-sm", className)}>
             {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem]" />
 
@@ -52,7 +52,7 @@ export function AbstractDashboard({ children, title = "System Overview", classNa
                     </div>
 
                     {/* Main Content */}
-                    <div className="flex-1 relative flex items-center justify-center p-8 bg-gradient-to-br from-background/0 via-background/0 to-muted/5">
+                    <div className="flex-1 relative flex items-center justify-center p-4 md:p-8 bg-gradient-to-br from-background/0 via-background/0 to-muted/5">
                         {/* Center Crosshair */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[80%] max-h-[80%] border border-dashed border-border/20 rounded-lg pointer-events-none" />
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 text-border/40 opacity-50">

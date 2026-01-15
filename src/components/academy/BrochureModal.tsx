@@ -26,7 +26,9 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
         const data = {
             name: formData.get('name'),
             email: formData.get('email'),
+            mobile: formData.get('mobile'),
             courseTitle: courseTitle,
+            brochureLink: brochureLink,
             formType: 'brochure'
         };
 
@@ -126,6 +128,17 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                                                 type="email"
                                                 required
                                                 placeholder="john@example.com"
+                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="mobile" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mobile Number</label>
+                                            <input
+                                                id="mobile"
+                                                name="mobile"
+                                                type="tel"
+                                                required
+                                                placeholder="+91 98765 43210"
                                                 className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                                             />
                                         </div>
