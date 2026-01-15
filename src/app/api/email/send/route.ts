@@ -1,45 +1,6 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
-// import nodemailer from 'nodemailer';
+import { query } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
-
-/*
- * EMAIL SENDING API ROUTE
- * 
- * TODO: SMTP Configuration (To be implemented by friend)
- * 
- * Required environment variables:
- * - SMTP_HOST: SMTP server host (e.g., smtp.gmail.com)
- * - SMTP_PORT: SMTP port (e.g., 587)
- * - SMTP_SECURE: true/false for TLS
- * - SMTP_USER: SMTP username/email
- * - SMTP_PASSWORD: SMTP password or app password
- * - EMAIL_FROM: From email address
- * - EMAIL_FROM_NAME: From name (e.g., "Zecurx Team")
- * 
- * Example .env configuration:
- * SMTP_HOST=smtp.gmail.com
- * SMTP_PORT=587
- * SMTP_SECURE=false
- * SMTP_USER=your-email@gmail.com
- * SMTP_PASSWORD=your-app-specific-password
- * EMAIL_FROM=noreply@zecurx.com
- * EMAIL_FROM_NAME=Zecurx Team
- */
-
-// Uncomment when SMTP is configured:
-// const transporter = nodemailer.createTransport({
-//   host: process.env.SMTP_HOST,
-//   port: parseInt(process.env.SMTP_PORT || '587'),
-//   secure: process.env.SMTP_SECURE === 'true',
-//   auth: {
-//     user: process.env.SMTP_USER,
-//     pass: process.env.SMTP_PASSWORD,
-//   },
-// });
-
-// POST - Send email
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -50,12 +11,11 @@ export async function POST(request: Request) {
             htmlBody,
             textBody,
             leadId,
-            leadType, // 'STUDENT' or 'ENTERPRISE'
+            leadType,
             emailType,
             sentBy
         } = body;
 
-        // Validation
         if (!to || !subject || (!htmlBody && !textBody)) {
             return NextResponse.json(
                 { error: 'Missing required fields: to, subject, and body (htmlBody or textBody)' },
@@ -63,50 +23,42 @@ export async function POST(request: Request) {
             );
         }
 
-        /*
-         * TODO: Uncomment when SMTP is configured
-         * 
-         * // Send email
-         * await transporter.sendMail({
-         *   from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
-         *   to,
-         *   subject,
-         *   text: textBody,
-         *   html: htmlBody,
-         * });
-         */
-
-        // For now, just log to database (SMTP not configured yet)
         console.log('[EMAIL] Would send email:', { to, subject, leadType });
 
-        // Log email in database if lead info provided
         if (leadId && leadType) {
             const emailTable = leadType === 'STUDENT'
                 ? 'student_lead_emails'
                 : 'enterprise_lead_emails';
 
-            await supabase.from(emailTable).insert({
-                lead_id: leadId,
-                subject,
-                body: htmlBody || textBody,
-                email_type: emailType || 'MANUAL',
-                sent_by: sentBy || null,
-                from_email: process.env.EMAIL_FROM || 'noreply@zecurx.com',
-                to_email: to,
-                status: 'PENDING', // Changed to PENDING since SMTP not configured
-            });
+            await query(
+                `INSERT INTO ${emailTable} (lead_id, subject, body, email_type, sent_by, from_email, to_email, status)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                [
+                    leadId,
+                    subject,
+                    htmlBody || textBody,
+                    emailType || 'MANUAL',
+                    sentBy || null,
+                    process.env.EMAIL_FROM || 'noreply@zecurx.com',
+                    to,
+                    'PENDING',
+                ]
+            );
 
-            // Log activity
             const activityTable = leadType === 'STUDENT'
                 ? 'student_lead_activities'
                 : 'enterprise_lead_activities';
 
-            await supabase.from(activityTable).insert({
-                lead_id: leadId,
-                activity_type: 'EMAIL_QUEUED',
-                description: `Email queued: ${subject} (SMTP pending configuration)`,
-                performed_by: sentBy || null,
-            });
+            await query(
+                `INSERT INTO ${activityTable} (lead_id, activity_type, description, performed_by)
+                 VALUES ($1, $2, $3, $4)`,
+                [
+                    leadId,
+                    'EMAIL_QUEUED',
+                    `Email queued: ${subject} (SMTP pending configuration)`,
+                    sentBy || null,
+                ]
+            );
         }
 
         return NextResponse.json({
@@ -122,20 +74,17 @@ export async function POST(request: Request) {
     }
 }
 
-// Helper function to get and populate email template
 export async function getEmailTemplate(templateName: string, variables: Record<string, string>) {
-    const { data: template, error } = await supabase
-        .from('email_templates')
-        .select('*')
-        .eq('name', templateName)
-        .eq('is_active', true)
-        .single();
+    const result = await query<{ subject: string; body: string }>(
+        `SELECT * FROM email_templates WHERE name = $1 AND is_active = true`,
+        [templateName]
+    );
 
-    if (error || !template) {
+    const template = result.rows[0];
+    if (!template) {
         return null;
     }
 
-    // Replace variables in subject and body
     let subject = template.subject;
     let body = template.body;
 

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   try {
     const result = await query(
-      'SELECT title, excerpt, featured_image_url, meta_title, meta_description FROM blog_posts WHERE slug = $1 LIMIT 1',
+      'SELECT title, excerpt, featured_image_url, meta_description FROM blog_posts WHERE slug = $1 LIMIT 1',
       [slug]
     );
     const post = result.rows[0];
@@ -28,17 +28,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     return {
-      title: post.meta_title || post.title,
+      title: post.title,
       description: post.meta_description || post.excerpt,
       openGraph: {
-        title: post.meta_title || post.title,
+        title: post.title,
         description: post.meta_description || post.excerpt || undefined,
         images: post.featured_image_url ? [{ url: post.featured_image_url }] : [],
         type: 'article',
       },
       twitter: {
         card: 'summary_large_image',
-        title: post.meta_title || post.title,
+        title: post.title,
         description: post.meta_description || post.excerpt || undefined,
         images: post.featured_image_url ? [post.featured_image_url] : [],
       },

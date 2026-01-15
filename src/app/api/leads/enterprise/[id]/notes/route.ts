@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
+import { LeadNote } from '@/types/lead-types';
 
-export const dynamic = 'force-dynamic';
-
-// POST - Add note to enterprise lead
 export async function POST(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -19,39 +17,29 @@ export async function POST(
             );
         }
 
-        // Check if lead exists
-        const { data: lead, error: leadError } = await supabase
-            .from('enterprise_leads')
-            .select('id')
-            .eq('id', id)
-            .single();
+        const leadResult = await query(
+            `SELECT id FROM enterprise_leads WHERE id = $1`,
+            [id]
+        );
 
-        if (leadError || !lead) {
+        if (leadResult.rows.length === 0) {
             return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
         }
 
-        // Insert note
-        const { data, error } = await supabase
-            .from('enterprise_lead_notes')
-            .insert({
-                lead_id: id,
-                content: body.content.trim(),
-                created_by: body.created_by || null,
-            })
-            .select()
-            .single();
+        const noteResult = await query<LeadNote>(
+            `INSERT INTO enterprise_lead_notes (lead_id, content, created_by)
+             VALUES ($1, $2, $3)
+             RETURNING *`,
+            [id, body.content.trim(), body.created_by || null]
+        );
 
-        if (error) throw error;
+        await query(
+            `INSERT INTO enterprise_lead_activities (lead_id, activity_type, description, performed_by)
+             VALUES ($1, $2, $3, $4)`,
+            [id, 'NOTE_ADDED', 'Note added to lead', body.created_by || null]
+        );
 
-        // Log activity
-        await supabase.from('enterprise_lead_activities').insert({
-            lead_id: id,
-            activity_type: 'NOTE_ADDED',
-            description: 'Note added to lead',
-            performed_by: body.created_by || null,
-        });
-
-        return NextResponse.json({ success: true, data });
+        return NextResponse.json({ success: true, data: noteResult.rows[0] });
     } catch (error) {
         console.error('Error adding note:', error);
         return NextResponse.json(
@@ -61,7 +49,6 @@ export async function POST(
     }
 }
 
-// GET - Get notes for an enterprise lead
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -69,15 +56,12 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const { data, error } = await supabase
-            .from('enterprise_lead_notes')
-            .select('*')
-            .eq('lead_id', id)
-            .order('created_at', { ascending: false });
+        const result = await query<LeadNote>(
+            `SELECT * FROM enterprise_lead_notes WHERE lead_id = $1 ORDER BY created_at DESC`,
+            [id]
+        );
 
-        if (error) throw error;
-
-        return NextResponse.json({ data: data || [] });
+        return NextResponse.json({ data: result.rows });
     } catch (error) {
         console.error('Error fetching notes:', error);
         return NextResponse.json(

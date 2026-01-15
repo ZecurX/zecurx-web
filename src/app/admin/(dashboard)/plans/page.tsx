@@ -23,21 +23,14 @@ export default async function PlansPage() {
     }
 
     if (!hasPermission(session.role, 'plans', 'read')) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className={cn(
-                    "text-center space-y-4 p-8 rounded-2xl",
-                    "bg-background/70 backdrop-blur-xl",
-                    "border border-white/[0.08]"
-                )}>
-                    <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto">
-                        <ShieldAlert className="w-6 h-6 text-red-500" />
-                    </div>
-                    <h2 className="text-xl font-manrope font-bold text-foreground">Access Denied</h2>
-                    <p className="text-muted-foreground text-sm">You don&apos;t have permission to view plans.</p>
-                </div>
-            </div>
-        );
+        const roleRedirects: Record<string, string> = {
+            media: '/admin/blog',
+            marketing: '/admin/plans',
+            sales: '/admin',
+            admin: '/admin',
+            super_admin: '/admin',
+        };
+        redirect(roleRedirects[session.role] || '/admin/login');
     }
 
     const result = await db.query<{

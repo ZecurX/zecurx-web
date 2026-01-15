@@ -15,6 +15,7 @@ const ROLE_COLORS: Record<Role, string> = {
     admin: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
     sales: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
     marketing: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400",
+    media: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400",
 };
 
 const SIZE_CLASSES = {

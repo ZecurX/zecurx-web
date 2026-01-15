@@ -1,10 +1,8 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { jwtVerify } from "jose";
 import { db } from "@/lib/db";
 import { DollarSign, ShoppingCart, Users, TrendingUp, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { AdminJWTPayload } from "@/types/auth";
 import { cn } from "@/lib/utils";
+import { requirePagePermission } from "@/lib/page-auth";
+import { RESOURCES, ACTIONS } from "@/types/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -18,22 +16,8 @@ interface Sale {
 }
 
 export default async function AdminDashboard() {
-    const cookieStore = await cookies();
-    const session = cookieStore.get("admin_session");
-
-    if (session?.value) {
-        try {
-            const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
-            const { payload } = await jwtVerify(session.value, secret);
-            const user = payload as unknown as AdminJWTPayload;
-
-            if (user.role === 'marketing') {
-                redirect('/admin/blog');
-            }
-        } catch (e) {
-            // Ignore error, layout will handle auth
-        }
-    }
+    // Enforce permission check BEFORE any database queries
+    await requirePagePermission(RESOURCES.DASHBOARD, ACTIONS.READ);
 
     const [
         transactionsResult,

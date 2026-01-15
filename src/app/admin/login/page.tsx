@@ -28,8 +28,19 @@ export default function AdminLoginPage() {
             });
 
             if (res.ok) {
+                const data = await res.json();
                 router.refresh();
-                router.push("/admin");
+                
+                const role = data.user?.role;
+                const redirectMap: Record<string, string> = {
+                    media: '/admin/blog',
+                    marketing: '/admin/plans',
+                    sales: '/admin',
+                    admin: '/admin',
+                    super_admin: '/admin',
+                };
+                
+                router.push(redirectMap[role] || '/admin');
             } else {
                 const data = await res.json();
                 setError(data.error || "Invalid credentials");

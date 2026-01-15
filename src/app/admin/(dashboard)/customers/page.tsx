@@ -1,9 +1,7 @@
 import { db } from "@/lib/db";
-import { cookies } from "next/headers";
-import { verifySession } from "@/lib/auth";
-import { hasPermission } from "@/lib/permissions";
-import { redirect } from "next/navigation";
 import CustomersClient from "./CustomersClient";
+import { requirePagePermission } from "@/lib/page-auth";
+import { RESOURCES, ACTIONS } from "@/types/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,28 +25,7 @@ interface CustomerWithTransactions {
 }
 
 export default async function CustomersPage() {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("admin_session");
-    
-    if (!sessionCookie) {
-        redirect('/admin/login');
-    }
-
-    const session = await verifySession(sessionCookie.value);
-    if (!session) {
-        redirect('/admin/login');
-    }
-
-    if (!hasPermission(session.role, 'customers', 'read')) {
-        return (
-            <div className="flex items-center justify-center h-64">
-                <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
-                    <p className="text-muted-foreground">You don&apos;t have permission to view customers.</p>
-                </div>
-            </div>
-        );
-    }
+    await requirePagePermission(RESOURCES.CUSTOMERS, ACTIONS.READ);
 
     const customersResult = await db.query<{
         id: string;

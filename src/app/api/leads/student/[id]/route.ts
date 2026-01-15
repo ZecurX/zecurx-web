@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
+import { StudentLead } from '@/types/lead-types';
 
-export const dynamic = 'force-dynamic';
-
-// GET - Fetch single student lead with notes, activities, emails
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -11,47 +9,38 @@ export async function GET(
     try {
         const { id } = await params;
 
-        // Fetch lead with related data
-        const { data: lead, error: leadError } = await supabase
-            .from('student_leads')
-            .select('*')
-            .eq('id', id)
-            .single();
+        const leadResult = await query<StudentLead>(
+            `SELECT * FROM student_leads WHERE id = $1`,
+            [id]
+        );
 
-        if (leadError) {
-            if (leadError.code === 'PGRST116') {
-                return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
-            }
-            throw leadError;
+        if (leadResult.rows.length === 0) {
+            return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
         }
 
-        // Fetch notes
-        const { data: notes } = await supabase
-            .from('student_lead_notes')
-            .select('*')
-            .eq('lead_id', id)
-            .order('created_at', { ascending: false });
+        const lead = leadResult.rows[0];
 
-        // Fetch activities
-        const { data: activities } = await supabase
-            .from('student_lead_activities')
-            .select('*')
-            .eq('lead_id', id)
-            .order('created_at', { ascending: false });
+        const notesResult = await query(
+            `SELECT * FROM student_lead_notes WHERE lead_id = $1 ORDER BY created_at DESC`,
+            [id]
+        );
 
-        // Fetch emails
-        const { data: emails } = await supabase
-            .from('student_lead_emails')
-            .select('*')
-            .eq('lead_id', id)
-            .order('sent_at', { ascending: false });
+        const activitiesResult = await query(
+            `SELECT * FROM student_lead_activities WHERE lead_id = $1 ORDER BY created_at DESC`,
+            [id]
+        );
+
+        const emailsResult = await query(
+            `SELECT * FROM student_lead_emails WHERE lead_id = $1 ORDER BY sent_at DESC`,
+            [id]
+        );
 
         return NextResponse.json({
             data: {
                 ...lead,
-                notes: notes || [],
-                activities: activities || [],
-                emails: emails || [],
+                notes: notesResult.rows,
+                activities: activitiesResult.rows,
+                emails: emailsResult.rows,
             },
         });
     } catch (error) {
@@ -63,7 +52,6 @@ export async function GET(
     }
 }
 
-// PATCH - Update student lead
 export async function PATCH(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -71,18 +59,15 @@ export async function PATCH(
     try {
         const { id } = await params;
         const body = await request.json();
-        const adminId = body._adminId; // Optional: passed from frontend for activity logging
+        const adminId = body._adminId;
         delete body._adminId;
 
-        // Get old values for activity logging
-        const { data: oldLead } = await supabase
-            .from('student_leads')
-            .select('status, priority, assigned_to')
-            .eq('id', id)
-            .single();
+        const oldLeadResult = await query<{ status: string; priority: string; assigned_to: string | null }>(
+            `SELECT status, priority, assigned_to FROM student_leads WHERE id = $1`,
+            [id]
+        );
+        const oldLead = oldLeadResult.rows[0];
 
-        // Build update object (only include provided fields)
-        const updateData: Record<string, unknown> = {};
         const allowedFields = [
             'full_name', 'email', 'phone', 'alternate_phone', 'date_of_birth',
             'current_education', 'field_of_interest', 'preferred_course',
@@ -91,35 +76,39 @@ export async function PATCH(
             'last_contacted_at', 'next_followup_at', 'conversion_date'
         ];
 
+        const updateFields: string[] = [];
+        const updateValues: unknown[] = [];
+        let paramIndex = 1;
+
         for (const field of allowedFields) {
             if (body[field] !== undefined) {
-                updateData[field] = body[field];
+                updateFields.push(`${field} = $${paramIndex++}`);
+                updateValues.push(body[field]);
             }
         }
 
-        if (Object.keys(updateData).length === 0) {
+        if (updateFields.length === 0) {
             return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
         }
 
-        // Update lead
-        const { data, error } = await supabase
-            .from('student_leads')
-            .update(updateData)
-            .eq('id', id)
-            .select()
-            .single();
+        updateFields.push(`updated_at = NOW()`);
+        updateValues.push(id);
 
-        if (error) throw error;
+        const result = await query<StudentLead>(
+            `UPDATE student_leads SET ${updateFields.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+            updateValues
+        );
 
-        // Log activities for significant changes
-        const activities = [];
+        const data = result.rows[0];
+
+        const activities: { lead_id: string; activity_type: string; description: string; old_value: string | null; new_value: string | null; performed_by: string | null }[] = [];
 
         if (oldLead?.status !== data.status) {
             activities.push({
                 lead_id: id,
                 activity_type: 'STATUS_CHANGED',
                 description: `Status changed from ${oldLead?.status} to ${data.status}`,
-                old_value: oldLead?.status,
+                old_value: oldLead?.status || null,
                 new_value: data.status,
                 performed_by: adminId || null,
             });
@@ -130,7 +119,7 @@ export async function PATCH(
                 lead_id: id,
                 activity_type: 'PRIORITY_CHANGED',
                 description: `Priority changed from ${oldLead?.priority} to ${data.priority}`,
-                old_value: oldLead?.priority,
+                old_value: oldLead?.priority || null,
                 new_value: data.priority,
                 performed_by: adminId || null,
             });
@@ -141,14 +130,18 @@ export async function PATCH(
                 lead_id: id,
                 activity_type: 'ASSIGNED',
                 description: data.assigned_to ? 'Lead assigned to team member' : 'Lead unassigned',
-                old_value: oldLead?.assigned_to,
-                new_value: data.assigned_to,
+                old_value: oldLead?.assigned_to || null,
+                new_value: data.assigned_to || null,
                 performed_by: adminId || null,
             });
         }
 
-        if (activities.length > 0) {
-            await supabase.from('student_lead_activities').insert(activities);
+        for (const activity of activities) {
+            await query(
+                `INSERT INTO student_lead_activities (lead_id, activity_type, description, old_value, new_value, performed_by)
+                 VALUES ($1, $2, $3, $4, $5, $6)`,
+                [activity.lead_id, activity.activity_type, activity.description, activity.old_value, activity.new_value, activity.performed_by]
+            );
         }
 
         return NextResponse.json({ success: true, data });
@@ -161,7 +154,6 @@ export async function PATCH(
     }
 }
 
-// DELETE - Delete student lead
 export async function DELETE(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -169,12 +161,7 @@ export async function DELETE(
     try {
         const { id } = await params;
 
-        const { error } = await supabase
-            .from('student_leads')
-            .delete()
-            .eq('id', id);
-
-        if (error) throw error;
+        await query(`DELETE FROM student_leads WHERE id = $1`, [id]);
 
         return NextResponse.json({ success: true });
     } catch (error) {
