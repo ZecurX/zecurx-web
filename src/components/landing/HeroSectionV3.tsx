@@ -53,7 +53,7 @@ function AnimatedGridPattern({ className }: { className?: string }) {
   return (
     <div className={cn("absolute inset-0 overflow-hidden", className)}>
       <div 
-        className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)]"
+        className="absolute inset-0 h-full w-full bg-[linear-gradient(to_right,rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem]"
         style={{
           maskImage: "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
           WebkitMaskImage: "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
@@ -130,14 +130,14 @@ export default function HeroSectionV3() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background pt-24 pb-16 lg:pt-32 lg:pb-24"
+      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background bg-noise pt-24 pb-16 lg:pt-32 lg:pb-24"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Gradient Orbs */}
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] opacity-30 dark:opacity-20" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] opacity-20 dark:opacity-15" />
-        <div className="absolute top-1/3 right-1/3 w-[400px] h-[400px] bg-violet-500/15 rounded-full blur-[80px] opacity-20 dark:opacity-10" />
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] opacity-40 dark:opacity-30 mix-blend-multiply dark:mix-blend-screen" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] opacity-30 dark:opacity-20 mix-blend-multiply dark:mix-blend-screen" />
+        <div className="absolute top-1/3 right-1/3 w-[400px] h-[400px] bg-violet-500/15 rounded-full blur-[80px] opacity-30 dark:opacity-20 mix-blend-multiply dark:mix-blend-screen" />
         
         {/* Grid Pattern */}
         <AnimatedGridPattern className="opacity-100 dark:opacity-100" />
@@ -188,26 +188,28 @@ export default function HeroSectionV3() {
             variants={itemVariants}
             className="mt-8 md:mt-10 flex flex-col sm:flex-row items-center gap-4"
           >
-            <Link href="/book-demo">
-              <Button
-                size="lg"
-                className="group relative h-12 px-8 rounded-full shadow-[0_0_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
-              >
+            <Button
+              asChild
+              size="lg"
+              className="group relative h-12 px-8 rounded-full overflow-hidden shadow-[0_0_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
+            >
+              <Link href="/book-demo">
                 <span className="relative z-10">Start Protecting</span>
                 <ArrowRight className="w-4 h-4 relative z-10 ml-2 group-hover:translate-x-1 transition-transform" />
                 <div className="absolute inset-0 bg-gradient-to-r from-foreground to-foreground/90 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
-            <Link href="/contact">
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 px-8 rounded-full border-border/50 hover:bg-muted/50 hover:border-border transition-all"
-              >
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="h-12 px-8 rounded-full border-border/50 hover:bg-muted/50 hover:border-border transition-all"
+            >
+              <Link href="/contact">
                 Talk to Sales
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </motion.div>
 
           {/* Stats Row - REMOVED */}

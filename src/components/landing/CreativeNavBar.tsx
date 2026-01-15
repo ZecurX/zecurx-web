@@ -142,23 +142,27 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                         {/* Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-2 relative">
                             {Object.entries(navData).map(([key, data]) => (
-                                <button
+                                <Link
                                     key={key}
+                                    href={data.href}
                                     className={cn(
-                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg cursor-pointer",
+                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
                                         activeDropdown === key
                                             ? (forceDark ? "text-white" : "text-foreground")
                                             : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
                                     )}
                                     onMouseEnter={() => handleMouseEnter(key)}
-                                    onClick={() => handleNavigation(data.href)}
+                                    onClick={() => {
+                                        setActiveDropdown(null);
+                                        setMobileMenuOpen(false);
+                                    }}
                                 >
                                     {data.label}
                                     <ChevronDown className={cn(
                                         "w-3.5 h-3.5 transition-transform duration-200",
                                         activeDropdown === key && "rotate-180"
                                     )} />
-                                </button>
+                                </Link>
                             ))}
                             
                             <Link
