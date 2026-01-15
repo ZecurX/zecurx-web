@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db';
 import { requirePermission, getClientIP, getUserAgent } from '@/lib/auth';
 import { logBlogPublish } from '@/lib/audit';
 
-// POST - Toggle publish/unpublish
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -17,39 +16,45 @@ export async function POST(
   const { id } = await params;
 
   try {
-    // Fetch current post
-    const { data: post, error: fetchError } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const postResult = await db.query<{
+      id: string;
+      title: string;
+      status: string;
+    }>(
+      'SELECT id, title, status FROM blog_posts WHERE id = $1',
+      [id]
+    );
 
-    if (fetchError) {
-      if (fetchError.code === 'PGRST116') {
-        return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
-      }
-      throw fetchError;
+    if (postResult.rows.length === 0) {
+      return NextResponse.json({ error: 'Blog post not found' }, { status: 404 });
     }
 
-    // Toggle status
+    const post = postResult.rows[0];
     const newStatus = post.status === 'published' ? 'draft' : 'published';
-    const publishedAt = newStatus === 'published' ? new Date().toISOString() : null;
 
-    // Update
-    const { data: updatedPost, error: updateError } = await supabase
-      .from('blog_posts')
-      .update({
-        status: newStatus,
-        published_at: publishedAt,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    const updateResult = await db.query<{
+      id: string;
+      title: string;
+      slug: string;
+      status: string;
+      published_at: string | null;
+      updated_at: string;
+    }>(
+      `UPDATE blog_posts 
+      SET status = $1, 
+          published_at = $2,
+          updated_at = NOW()
+      WHERE id = $3 
+      RETURNING *`,
+      [
+        newStatus,
+        newStatus === 'published' ? new Date().toISOString() : null,
+        id
+      ]
+    );
 
-    if (updateError) throw updateError;
+    const updatedPost = updateResult.rows[0];
 
-    // Audit log
     const ipAddress = getClientIP(req);
     const userAgent = getUserAgent(req);
     await logBlogPublish(
@@ -66,7 +71,7 @@ export async function POST(
       message: newStatus === 'published' ? 'Blog post published' : 'Blog post unpublished',
       post: updatedPost
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Toggle publish error:', error);
     return NextResponse.json({ error: 'Failed to toggle publish status' }, { status: 500 });
   }

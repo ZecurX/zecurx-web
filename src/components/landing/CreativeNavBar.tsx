@@ -60,7 +60,7 @@ const navData = {
     },
 };
 
-export default function CreativeNavBar() {
+export default function CreativeNavBar({ forceDark = false }: { forceDark?: boolean }) {
     const router = useRouter();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -109,10 +109,10 @@ export default function CreativeNavBar() {
                     className={cn(
                         "relative w-full max-w-[1400px]",
                         "rounded-2xl",
-                        "bg-background/70 backdrop-blur-2xl",
-                        "border border-white/[0.08] dark:border-white/[0.06]",
-                        "shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)]",
-                        "dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.2)]",
+                        forceDark ? "bg-black/70 border-white/10 shadow-2xl shadow-black/50" : "bg-background/70 backdrop-blur-2xl border border-white/[0.08] dark:border-white/[0.06]",
+                        forceDark && "backdrop-blur-xl",
+                        !forceDark && "shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)]",
+                        !forceDark && "dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.2)]",
                     )}
                     onMouseLeave={handleMouseLeave}
                 >
@@ -133,7 +133,7 @@ export default function CreativeNavBar() {
                                     priority
                                 />
                             </motion.div>
-                            <span className="font-semibold text-base tracking-tight text-foreground">
+                            <span className={cn("font-semibold text-base tracking-tight", forceDark ? "text-white" : "text-foreground")}>
                                 ZecurX
                             </span>
                         </Link>
@@ -146,8 +146,8 @@ export default function CreativeNavBar() {
                                     className={cn(
                                         "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
                                         activeDropdown === key
-                                            ? "text-foreground"
-                                            : "text-muted-foreground hover:text-foreground"
+                                            ? (forceDark ? "text-white" : "text-foreground")
+                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
                                     )}
                                     onMouseEnter={() => handleMouseEnter(key)}
                                     onClick={() => handleNavigation(data.href)}
@@ -162,13 +162,19 @@ export default function CreativeNavBar() {
                             
                             <Link
                                 href="/why-zecurx"
-                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
                                 Why ZecurX
                             </Link>
                             <Link
                                 href="/industries"
-                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
                                 Industries
                             </Link>
@@ -178,13 +184,19 @@ export default function CreativeNavBar() {
                         <div className="hidden lg:flex items-center gap-2">
                             <Link
                                 href="/shop"
-                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
                                 Shop
                             </Link>
                             <Link
                                 href="/academy"
-                                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
                             >
                                 Academy
                             </Link>

@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import PlansList from "./PlansList";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
@@ -40,10 +40,18 @@ export default async function PlansPage() {
         );
     }
 
-    const { data: plans } = await supabase
-        .from("plans")
-        .select("*")
-        .order("created_at", { ascending: false });
+    const result = await db.query<{
+        id: string;
+        name: string;
+        type: string;
+        price: number;
+        description: string | null;
+        active: boolean;
+        in_stock: boolean;
+        created_at: string;
+    }>(
+        'SELECT * FROM plans ORDER BY created_at DESC'
+    );
 
     return (
         <div className="space-y-6">
@@ -56,7 +64,7 @@ export default async function PlansPage() {
                 </p>
             </div>
 
-            <PlansList initialPlans={plans || []} />
+            <PlansList initialPlans={result.rows} />
         </div>
     );
 }

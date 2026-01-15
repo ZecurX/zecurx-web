@@ -107,7 +107,7 @@ export default function PlatformCapabilitiesSection() {
                         {/* Right: Feature Showcase Card */}
                         <div className="relative lg:pl-10">
                             <div className="sticky top-32">
-                                <Card className="bg-muted/50 border border-border backdrop-blur-xl p-8 md:p-12 h-[520px] flex flex-col justify-between">
+                                <Card className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 rounded-3xl p-8 md:p-12 h-[520px] flex flex-col justify-between backdrop-blur-sm">
                                     <CardHeader className="p-0">
                                         {/* Content */}
                                         <h3 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6 animate-fadeIn key={activeIndex}">

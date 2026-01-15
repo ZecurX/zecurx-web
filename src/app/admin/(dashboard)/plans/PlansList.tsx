@@ -10,7 +10,7 @@ type Plan = {
     name: string;
     type: string;
     price: number;
-    description: string;
+    description: string | null;
     active: boolean;
     in_stock: boolean;
 };

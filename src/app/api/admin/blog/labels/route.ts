@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { generateSlug } from '@/lib/blog';
 import { CreateBlogLabelRequest } from '@/types/auth';
 
-// GET - List all labels
 export async function GET(req: NextRequest) {
   const authResult = await requirePermission('blog', 'read', req);
   if (!authResult.authorized) {
@@ -12,21 +11,24 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const { data: labels, error } = await supabase
-      .from('blog_labels')
-      .select('*')
-      .order('name', { ascending: true });
+    const result = await db.query<{
+      id: string;
+      name: string;
+      slug: string;
+      color: string;
+      created_at: string;
+      updated_at: string;
+    }>(
+      'SELECT * FROM blog_labels ORDER BY name ASC'
+    );
 
-    if (error) throw error;
-
-    return NextResponse.json(labels);
-  } catch (error: any) {
+    return NextResponse.json(result.rows);
+  } catch (error) {
     console.error('Get labels error:', error);
     return NextResponse.json({ error: 'Failed to fetch labels' }, { status: 500 });
   }
 }
 
-// POST - Create new label (marketing only)
 export async function POST(req: NextRequest) {
   const authResult = await requirePermission('blog', 'create', req);
   if (!authResult.authorized) {
@@ -43,31 +45,29 @@ export async function POST(req: NextRequest) {
     const slug = generateSlug(body.name);
     const color = body.color?.trim() || '#3B82F6';
 
-    // Check if slug exists
-    const { data: existing } = await supabase
-      .from('blog_labels')
-      .select('id')
-      .eq('slug', slug)
-      .maybeSingle();
+    const existingResult = await db.query<{ id: string }>(
+      'SELECT id FROM blog_labels WHERE slug = $1',
+      [slug]
+    );
 
-    if (existing) {
+    if (existingResult.rows.length > 0) {
       return NextResponse.json({ error: 'Label with this name already exists' }, { status: 409 });
     }
 
-    const { data: newLabel, error } = await supabase
-      .from('blog_labels')
-      .insert({
-        name: body.name.trim(),
-        slug,
-        color
-      })
-      .select()
-      .single();
+    const insertResult = await db.query<{
+      id: string;
+      name: string;
+      slug: string;
+      color: string;
+      created_at: string;
+      updated_at: string;
+    }>(
+      'INSERT INTO blog_labels (name, slug, color) VALUES ($1, $2, $3) RETURNING *',
+      [body.name.trim(), slug, color]
+    );
 
-    if (error) throw error;
-
-    return NextResponse.json(newLabel, { status: 201 });
-  } catch (error: any) {
+    return NextResponse.json(insertResult.rows[0], { status: 201 });
+  } catch (error) {
     console.error('Create label error:', error);
     return NextResponse.json({ error: 'Failed to create label' }, { status: 500 });
   }
