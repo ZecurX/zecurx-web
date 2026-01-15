@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 interface ExportRow {
     name: string;
@@ -85,40 +85,34 @@ export async function GET(request: NextRequest) {
             rows = rows.filter(r => r.domain === domain);
         }
 
+        const workbook = new ExcelJS.Workbook();
+        const sheetName = type === 'internship' ? 'Internship Enrollments' : 'All Customers';
+        const worksheet = workbook.addWorksheet(sheetName);
+
+        worksheet.columns = [
+            { header: 'Name', key: 'name', width: 25 },
+            { header: 'Email', key: 'email', width: 30 },
+            { header: 'Phone', key: 'phone', width: 15 },
+            { header: 'College', key: 'college', width: 30 },
+            { header: 'Plan', key: 'plan_name', width: 40 },
+            { header: 'Domain', key: 'domain', width: 20 },
+            { header: 'Amount (₹)', key: 'amount', width: 12 },
+            { header: 'Status', key: 'status', width: 10 },
+            { header: 'Date', key: 'date', width: 15 },
+        ];
+
+        const headerRow = worksheet.getRow(1);
+        headerRow.font = { bold: true };
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE0E0E0' }
+        };
+
+        worksheet.addRows(rows);
+
         if (format === 'xlsx') {
-            const worksheetData = rows.map(r => ({
-                'Name': r.name,
-                'Email': r.email,
-                'Phone': r.phone,
-                'College': r.college,
-                'Plan': r.plan_name,
-                'Domain': r.domain,
-                'Amount (₹)': r.amount,
-                'Status': r.status,
-                'Date': r.date
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-            const workbook = XLSX.utils.book_new();
-            
-            const colWidths = [
-                { wch: 25 },
-                { wch: 30 },
-                { wch: 15 },
-                { wch: 30 },
-                { wch: 40 },
-                { wch: 20 },
-                { wch: 12 },
-                { wch: 10 },
-                { wch: 15 }
-            ];
-            worksheet['!cols'] = colWidths;
-
-            const sheetName = type === 'internship' ? 'Internship Enrollments' : 'All Customers';
-            XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-
-            const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-
+            const buffer = await workbook.xlsx.writeBuffer();
             const filename = `zecurx-${type === 'internship' ? 'internships' : 'customers'}-${new Date().toISOString().split('T')[0]}.xlsx`;
 
             return new NextResponse(buffer, {
@@ -130,22 +124,10 @@ export async function GET(request: NextRequest) {
         }
 
         if (format === 'csv') {
-            const worksheet = XLSX.utils.json_to_sheet(rows.map(r => ({
-                'Name': r.name,
-                'Email': r.email,
-                'Phone': r.phone,
-                'College': r.college,
-                'Plan': r.plan_name,
-                'Domain': r.domain,
-                'Amount': r.amount,
-                'Status': r.status,
-                'Date': r.date
-            })));
-            
-            const csv = XLSX.utils.sheet_to_csv(worksheet);
+            const buffer = await workbook.csv.writeBuffer();
             const filename = `zecurx-${type === 'internship' ? 'internships' : 'customers'}-${new Date().toISOString().split('T')[0]}.csv`;
 
-            return new NextResponse(csv, {
+            return new NextResponse(buffer, {
                 headers: {
                     'Content-Type': 'text/csv',
                     'Content-Disposition': `attachment; filename="${filename}"`

@@ -228,6 +228,7 @@ export default function ContactPage() {
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="Sales Inquiry">Sales Inquiry</SelectItem>
+                                            <SelectItem value="Seminar Booking">Seminar Booking</SelectItem>
                                             <SelectItem value="Technical Support">Technical Support</SelectItem>
                                             <SelectItem value="Partnership">Partnership</SelectItem>
                                             <SelectItem value="Media / Press">Media / Press</SelectItem>
