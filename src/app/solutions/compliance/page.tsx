@@ -2,15 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { FileText, Shield, CheckCircle, Eye, Settings, Lock } from "lucide-react";
-import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
-import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
-import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
 
 const complianceData = {
     badge: "Security Solution",
     title: "Compliance &",
     subtitle: "Regulatory Alignment",
     description: "Achieve and maintain compliance with industry regulations and security frameworks. Our automated compliance platform reduces audit burden, demonstrates due diligence, and ensures continuous adherence to required standards.",
+    heroImage: "/images/pages/compliance.jpeg",
     capabilities: [
         {
             icon: <FileText className="w-6 h-6" />,
@@ -57,7 +55,6 @@ const complianceData = {
         {
             title: "Map Controls Once, Comply Many Times",
             description: "Most compliance frameworks share common control requirements. Our platform leverages this overlap, allowing you to map controls once and demonstrate compliance across multiple standards.",
-            component: <StaticComplianceGrid />,
             points: [
                 "Cross-framework control mapping and inheritance",
                 "Reusable evidence across multiple audits",
@@ -67,8 +64,7 @@ const complianceData = {
         },
         {
             title: "Demonstrate Continuous Compliance",
-            description: "Point-in-time audits don’t reflect your true security posture. Our continuous monitoring capabilities demonstrate ongoing compliance and help you catch issues before auditors do.",
-            component: <StaticAutomationFlow />,
+            description: "Point-in-time audits don't reflect your true security posture. Our continuous monitoring capabilities demonstrate ongoing compliance and help you catch issues before auditors do.",
             points: [
                 "Real-time compliance score and trending",
                 "Automated alerts for compliance drift",

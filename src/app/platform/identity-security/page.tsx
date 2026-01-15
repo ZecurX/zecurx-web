@@ -2,14 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { UserCheck, Shield, Key, Eye, Lock, Fingerprint } from 'lucide-react';
-import { StaticIdentityVerification } from "@/components/diagrams/static/StaticIdentityVerification";
-import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
 
 const identitySecurityData = {
     badge: "Platform Feature",
     title: "Identity",
     subtitle: "Security",
     description: "Secure identities across your enterprise. Detect compromised credentials and lateral movement with identity-centric security.",
+    heroImage: "/images/pages/identity-security.jpeg",
     capabilities: [
         {
             icon: <UserCheck className="w-6 h-6" />,
@@ -46,7 +45,6 @@ const identitySecurityData = {
         {
             title: "Prevent Account Takeover",
             description: "Stop attackers from using stolen credentials. Our AI analyzes user behavior to detect anomalies and block unauthorized access.",
-            component: <StaticIdentityVerification />,
             points: [
                 "Behavioral baseline profiling",
                 "Impossible travel detection",

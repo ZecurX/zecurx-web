@@ -3,10 +3,11 @@
 import React from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import { Code, ShieldCheck, GitBranch, Cpu, Lock, FileCode } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ServiceCTA from '@/components/services/ServiceCTA';
 import ServiceHeroEmailCapture from '@/components/services/ServiceHeroEmailCapture';
+import { TypographicCard } from '@/components/services/ui/TypographicCard';
+import { StatMetric } from '@/components/services/ui/StatMetric';
+import CTASection from '@/components/landing/CTASection';
 
 export default function SecureDevelopmentPage() {
     return (
@@ -14,10 +15,9 @@ export default function SecureDevelopmentPage() {
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 overflow-hidden">
-                <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/5 rounded-full blur-3xl pointer-events-none" />
-
+            <section className="relative pt-32 pb-24 overflow-hidden border-b border-border/40">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,black_70%,transparent_100%)] pointer-events-none" />
+                
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -25,32 +25,36 @@ export default function SecureDevelopmentPage() {
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-foreground/10 border border-foreground/20 text-xs font-medium text-foreground mb-6">
-                            <Code className="w-3 h-3" />
-                            <span>Engineering Services</span>
+                        <div className="inline-block mb-6">
+                            <span className="text-xs font-mono font-medium text-primary tracking-widest uppercase border-b border-primary/20 pb-1">
+                                Engineering / 01
+                            </span>
                         </div>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
+                        
+                        <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-8 tracking-tighter leading-[0.9]">
                             Secure by Design. <br />
-                            <span className="text-foreground">Resilient by Default.</span>
+                            <span className="text-foreground/80">Resilient by Default.</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
+                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-2xl font-light">
                             Embed security into the DNA of your applications. We help you shift left, reducing remediation costs and building trust from the first line of code.
                         </p>
                         
-                        <ServiceHeroEmailCapture serviceName="Secure Development" />
+                        <div className="mt-10">
+                            <ServiceHeroEmailCapture serviceName="Secure Development" />
+                        </div>
                     </motion.div>
                 </div>
             </section>
 
             {/* OVERVIEW SECTION */}
-            <section className="py-20 border-t border-border/50">
+            <section className="py-24">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
                         <div>
-                            <h2 className="text-3xl font-bold text-foreground mb-6">
+                            <h2 className="text-3xl md:text-4xl font-manrope font-bold text-foreground mb-8">
                                 Flawless Code, Faster Delivery
                             </h2>
-                            <div className="space-y-4 text-muted-foreground leading-relaxed">
+                            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed font-light">
                                 <p>
                                     Trying to &quot;bolt on&quot; security at the end of the development lifecycle is costly and ineffective. Modern agility demands that security travels at the speed of DevOps.
                                 </p>
@@ -59,27 +63,33 @@ export default function SecureDevelopmentPage() {
                                 </p>
                             </div>
                         </div>
-                        <div className="relative p-6 rounded-2xl border border-border bg-muted/20">
-                            {/* Simple Visual for SDLC */}
-                            <div className="flex justify-between items-center text-xs font-mono text-muted-foreground mb-4">
-                                <span>PLAN</span>
-                                <span>CODE</span>
-                                <span>BUILD</span>
-                                <span>TEST</span>
-                                <span>DEPLOY</span>
+                        
+                        {/* SDLC Visual replaced with Metrics for consistency with other pages, or custom text-based visual? 
+                            The user wants "Pixel-Perfect" and "No Icons".
+                            I'll use StatMetric or a clean text list.
+                            The previous file had a custom SDLC visual. I'll replace it with StatMetrics for consistency or a clean text visual.
+                            I'll use a clean text visual.
+                        */}
+                        <div className="relative p-8 rounded-3xl border border-border bg-muted/5">
+                            <div className="flex justify-between items-center text-xs font-mono text-muted-foreground mb-6 tracking-widest">
+                                <span>PHASE_01 // PLAN</span>
+                                <span>PHASE_05 // DEPLOY</span>
                             </div>
-                            <div className="h-2 bg-muted rounded-full overflow-hidden relative">
-                                <div className="absolute inset-0 bg-foreground/20" />
-                                <div className="absolute top-0 bottom-0 left-[20%] right-[60%] bg-foreground" />
+                            <div className="h-1 bg-border rounded-full overflow-hidden relative mb-8">
+                                <div className="absolute inset-0 bg-gradient-to-r from-foreground/10 to-foreground/50 w-3/4" />
                             </div>
-                            <div className="mt-8 grid grid-cols-1 gap-4">
-                                <div className="flex items-center gap-3 p-3 rounded bg-background border border-border">
-                                    <ShieldCheck className="w-5 h-5 text-foreground" />
-                                    <span className="font-semibold text-foreground">Threat Modeling</span>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="flex items-baseline gap-4 p-4 rounded-xl bg-background border border-border/50">
+                                    <span className="font-mono text-xs text-primary">01</span>
+                                    <span className="font-semibold text-foreground">Threat Modeling & Design Review</span>
                                 </div>
-                                <div className="flex items-center gap-3 p-3 rounded bg-background border border-border">
-                                    <FileCode className="w-5 h-5 text-foreground" />
-                                    <span className="font-semibold text-foreground">Secure Code Review</span>
+                                <div className="flex items-baseline gap-4 p-4 rounded-xl bg-background border border-border/50">
+                                    <span className="font-mono text-xs text-primary">02</span>
+                                    <span className="font-semibold text-foreground">Secure Code Review & SAST</span>
+                                </div>
+                                <div className="flex items-baseline gap-4 p-4 rounded-xl bg-background border border-border/50">
+                                    <span className="font-mono text-xs text-primary">03</span>
+                                    <span className="font-semibold text-foreground">Automated DAST & Compliance</span>
                                 </div>
                             </div>
                         </div>
@@ -87,71 +97,63 @@ export default function SecureDevelopmentPage() {
                 </div>
             </section>
 
-            {/* SERVICES GRID */}
-            <section className="py-24 bg-muted/20">
+            {/* CAPABILITIES SECTION */}
+            <section className="py-32 bg-foreground/[0.02] border-y border-border/40">
                 <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-3xl font-bold text-foreground mb-4">SDLC Integration Service</h2>
-                        <p className="text-muted-foreground">
-                            We partner with your engineering teams to build a secure software factory.
-                        </p>
+                    <div className="mb-20">
+                        <span className="block text-xs font-mono text-muted-foreground uppercase tracking-widest mb-4">Services</span>
+                        <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground">SDLC Integration</h2>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <CapabilityCard
-                            icon={Cpu}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border/50 border border-border/50">
+                        <TypographicCard
+                            index={1}
                             title="Threat Modeling"
                             description="Identify architectural flaws and design vulnerabilities before a single line of code is written."
+                            className="bg-background"
                         />
-                        <CapabilityCard
-                            icon={GitBranch}
+                        <TypographicCard
+                            index={2}
                             title="Secure Code Review"
                             description="Manual and automated analysis of source code to identify logic errors and security anti-patterns."
+                            className="bg-background"
                         />
-                        <CapabilityCard
-                            icon={Lock}
+                        <TypographicCard
+                            index={3}
                             title="Secrets Management"
                             description="Implement robust strategies for handling API keys, credentials, and certificates in code and CI systems."
+                            className="bg-background"
                         />
-                        <CapabilityCard
-                            icon={Code}
+                        <TypographicCard
+                            index={4}
                             title="Security Engineering"
                             description="Hands-on implementation of security controls, authentication libraries, and encryption standards."
+                            className="bg-background"
                         />
-                        <CapabilityCard
-                            icon={ShieldCheck}
+                        <TypographicCard
+                            index={5}
                             title="Compliance as Code"
                             description="Automate regulatory compliance checks within your deployment pipelines."
+                            className="bg-background"
                         />
-                        <CapabilityCard
-                            icon={FileCode}
+                        <TypographicCard
+                            index={6}
                             title="Developer Training"
                             description="Upskill your team with practical secure coding workshops tailored to your tech stack."
+                            className="bg-background"
                         />
                     </div>
                 </div>
             </section>
 
-            <ServiceCTA
+            <CTASection
                 title="Ready to shift security left?"
                 description="Empower your engineering teams to build secure, resilient software without slowing down innovation."
-                ctaLabel="Schedule a Consultation"
-                ctaHref="/contact"
+                primaryLabel="Schedule a Consultation"
+                primaryHref="/contact"
             />
 
             <Footer />
         </main>
-    );
-}
-
-function CapabilityCard({ icon: Icon, title, description }: { icon: any, title: string, description: string }) {
-    return (
-        <div className="group p-8 rounded-2xl bg-background border border-border hover:border-foreground/30 hover:shadow-lg transition-all duration-300">
-            <div className="w-12 h-12 rounded-lg bg-foreground/10 flex items-center justify-center mb-6 text-foreground group-hover:scale-110 transition-transform">
-                <Icon className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
-            <p className="text-muted-foreground leading-relaxed">{description}</p>
-        </div>
     );
 }

@@ -160,10 +160,10 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-xl shadow-2xl overflow-hidden z-50 flex flex-col sm:flex-row h-[320px] sm:h-[340px]"
+                        className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-xl shadow-2xl overflow-hidden z-50 flex flex-col sm:flex-row h-auto sm:h-[340px] max-h-[60vh] sm:max-h-none overflow-y-auto sm:overflow-visible"
                     >
                         {/* Calendar Section */}
-                        <div className="p-4 sm:flex-1 border-b sm:border-b-0 sm:border-r border-border min-w-[280px] h-full flex flex-col">
+                        <div className="p-4 sm:flex-1 border-b sm:border-b-0 sm:border-r border-border min-w-[280px] sm:h-full flex flex-col">
                             {/* Header */}
                             <div className="flex items-center justify-between mb-4 shrink-0">
                                 <button type="button" onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors">

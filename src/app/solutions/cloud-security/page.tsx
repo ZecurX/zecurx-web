@@ -3,15 +3,12 @@
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Cloud, Shield, Eye, Settings, Lock, Code } from "lucide-react";
 
-import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
-import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
-import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
-
 const cloudSecurityData = {
     badge: "Security Solution",
     title: "Cloud",
     subtitle: "Security",
     description: "Secure your multi-cloud environments—AWS, Azure, GCP—with comprehensive visibility and protection. Our cloud-native platform protects everything you build and run in the cloud, from infrastructure to applications to data.",
+    heroImage: "/images/pages/cloud-security-solution.jpeg",
     capabilities: [
         {
             icon: <Eye className="w-6 h-6" />,
@@ -47,8 +44,7 @@ const cloudSecurityData = {
     features: [
         {
             title: "Unified Visibility Across Multi-Cloud",
-            description: "You can’t protect what you can’t see. Our agentless platform provides comprehensive visibility across your entire cloud footprint, discovering assets, mapping relationships, and identifying risks.",
-            component: <StaticInfrastructureMap />,
+            description: "You can't protect what you can't see. Our agentless platform provides comprehensive visibility across your entire cloud footprint, discovering assets, mapping relationships, and identifying risks.",
             points: [
                 "Single console for AWS, Azure, and GCP environments",
                 "Automatic asset discovery and inventory management",

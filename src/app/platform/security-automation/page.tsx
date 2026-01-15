@@ -2,14 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Settings, Zap, Shield, Code, Eye, Target } from 'lucide-react';
-import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
-import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
 
 const securityAutomationData = {
     badge: "Platform Feature",
     title: "Security",
     subtitle: "Automation",
     description: "Automate repetitive tasks and orchestrate your response to incidents. Reduce MTTD and MTTR while freeing up analysts for high-value work.",
+    heroImage: "/images/pages/security-automation.jpeg",
     capabilities: [
         {
             icon: <Settings className="w-6 h-6" />,
@@ -46,7 +45,6 @@ const securityAutomationData = {
         {
             title: "Lower Operational Costs",
             description: "Reduce the manual effort required for alert triage and incident response by up to 80%.",
-            component: <StaticAutomationFlow />,
             points: [
                 "Automated alert enrichment",
                 "Playbook-driven response",

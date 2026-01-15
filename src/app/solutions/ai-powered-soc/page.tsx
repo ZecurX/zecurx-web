@@ -2,16 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Brain, Eye, Zap, Target, Shield, Settings } from "lucide-react";
-import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
-
-import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
-import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
 
 const aiPoweredSocData = {
     badge: "Security Solution",
     title: "AI-Powered",
     subtitle: "SOC",
     description: "Modernize your security operations with intelligence-driven detection and AI-powered response. Transform your SOC from reactive to proactive, reducing mean time to detect and respond while empowering analysts to focus on strategic threats.",
+    heroImage: "/images/pages/ai-powered-soc.jpeg",
     capabilities: [
         {
             icon: <Brain className="w-6 h-6" />,
@@ -48,7 +45,6 @@ const aiPoweredSocData = {
         {
             title: "Turn Every Analyst Into a Force Multiplier",
             description: "Security talent is scarce and expensive. Our AI augments your team's capabilities, enabling junior analysts to perform at senior levels and freeing senior analysts to focus on advanced threats.",
-            component: <StaticAnalystDashboard />,
             points: [
                 "AI-assisted investigations that provide instant context and recommendations",
                 "Automated documentation and reporting that saves hours of manual work",

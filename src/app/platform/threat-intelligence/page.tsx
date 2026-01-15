@@ -2,14 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Target, Eye, Shield, Globe, Zap, Brain } from 'lucide-react';
-import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
-import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
 
 const threatIntelligenceData = {
     badge: "Threat Intelligence",
     title: "Proactive",
     subtitle: "Threat Hunting",
     description: "Global threat intelligence combined with proactive threat hunting tailored to your organization. AI correlates threat data to surface hidden threats early.",
+    heroImage: "/images/pages/threat-intelligence.jpeg",
     capabilities: [
         {
             icon: <Target className="w-6 h-6" />,
@@ -36,7 +35,6 @@ const threatIntelligenceData = {
         {
             title: "Real-Time Threat Feeds",
             description: "Stay ahead of attackers with continuously updated threat indicators sourced from millions of global sensors.",
-            component: <StaticThreatMesh />,
             points: [
                 "Automated ingestion of IOCs (Indicators of Compromise)",
                 "Correlation with your internal telemetry",
