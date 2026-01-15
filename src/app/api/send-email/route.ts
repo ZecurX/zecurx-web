@@ -152,6 +152,21 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        // Attach course brochure for academy brochure requests
+        if (isBrochure && body.brochureLink) {
+            try {
+                // brochureLink is like "/brochures/zxCPPT_Brochure_v3.pdf"
+                const brochurePath = path.join(process.cwd(), 'public', body.brochureLink);
+                fs.accessSync(brochurePath, fs.constants.R_OK);
+                const fileContent = fs.readFileSync(brochurePath);
+                const filename = `ZecurX_${body.courseTitle?.replace(/\s+/g, '_') || 'Course'}_Brochure.pdf`;
+                attachments = [{ filename, content: fileContent }];
+                console.log(`Attaching course brochure: ${filename}`);
+            } catch (brochureError) {
+                console.warn(`Course brochure not found at: ${body.brochureLink}`, brochureError);
+            }
+        }
+
         // Admin email recipient
         const adminEmail = isInternship 
             ? 'zecurxintern@gmail.com' 
@@ -185,7 +200,7 @@ export async function POST(request: NextRequest) {
         if (isDemo) {
             userMessage = 'We have received your demo request and our team will get back to you within 24 hours to schedule a personalized demo.';
         } else if (isBrochure) {
-            userMessage = `Thank you for your interest in <strong>${body.courseTitle}</strong>. You should have received the brochure download in your browser.`;
+            userMessage = `Thank you for your interest in <strong>${body.courseTitle}</strong>. We've attached the course brochure to this email for your convenience. You can also view it directly in your browser.`;
         } else if (isInternship) {
             userMessage = `Congratulations! You have successfully enrolled in the <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> Our team will contact you shortly with onboarding details, schedule, and access credentials. Welcome to ZecurX!`;
         } else if (isPurchase) {
@@ -205,6 +220,7 @@ export async function POST(request: NextRequest) {
                 
                 ${(isDemo || (isContact && preferredDate)) ? calendarHtml : ''}
                 ${isDemo && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${body.service || 'service'} brochure for your reference.</strong></p>` : ''}
+                ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${body.courseTitle} brochure is attached to this email.</strong></p>` : ''}
 
                 <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
                     Best regards,<br>The ZecurX Team
@@ -217,8 +233,7 @@ export async function POST(request: NextRequest) {
         try {
             console.log('Attempting to send user email to:', email);
             
-            if (isDemo && attachments.length > 0) {
-                // With attachments
+            if ((isDemo || isBrochure) && attachments.length > 0) {
                 await resend.emails.send({
                     from: 'ZecurX <official@zecurx.com>',
                     to: email,
@@ -227,7 +242,6 @@ export async function POST(request: NextRequest) {
                     attachments: attachments,
                 });
             } else {
-                // Without attachments
                 await resend.emails.send({
                     from: 'ZecurX <official@zecurx.com>',
                     to: email,

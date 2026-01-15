@@ -54,7 +54,7 @@ export default function ToolsPage() {
             <CreativeNavBar />
 
             {/* HERO SECTION */}
-            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
+            <section className="relative w-full min-h-[40vh] md:min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-20 md:py-24 pb-12">
 
                 {/* Modern Grid Texture */}
                 <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
@@ -69,11 +69,11 @@ export default function ToolsPage() {
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="max-w-4xl mx-auto"
                     >
-                        <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-8 font-manrope text-foreground">
+                        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-6 md:mb-8 font-manrope text-foreground">
                             VulnHunter<br />
                             <span className="text-muted-foreground">Suite</span>
                         </h1>
-                        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal font-manrope">
+                        <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal font-manrope">
                             Advanced reconnaissance and asset monitoring tools used by our own red teams.
                             Now available for your security operations.
                         </p>
@@ -82,7 +82,7 @@ export default function ToolsPage() {
             </section>
 
             {/* TOOLS GRID */}
-            <section className="pb-32 px-6">
+            <section className="pb-20 md:pb-32 px-4 md:px-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-border/20 border border-border/20 rounded-2xl overflow-hidden">
                         {tools.map((tool, idx) => (
@@ -92,11 +92,11 @@ export default function ToolsPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.4, delay: idx * 0.1 }}
-                                className="group relative p-10 bg-background hover:bg-muted/30 transition-colors duration-300 flex flex-col h-full"
+                                className="group relative p-6 md:p-10 bg-background hover:bg-muted/30 transition-colors duration-300 flex flex-col h-full"
                             >
-                                <div className="flex justify-between items-start mb-12">
-                                    <tool.icon className="w-8 h-8 text-foreground/80 group-hover:text-foreground transition-colors" strokeWidth={1.5} />
-                                    <ArrowRight className="w-5 h-5 text-muted-foreground -rotate-45 group-hover:rotate-0 group-hover:text-foreground transition-all duration-300" />
+                                <div className="flex justify-between items-start mb-8 md:mb-12">
+                                    <tool.icon className="w-6 h-6 md:w-8 md:h-8 text-foreground/80 group-hover:text-foreground transition-colors" strokeWidth={1.5} />
+                                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground -rotate-45 group-hover:rotate-0 group-hover:text-foreground transition-all duration-300" />
                                 </div>
 
                                 <h3 className="text-xl font-medium text-foreground mb-3 group-hover:translate-x-1 transition-transform duration-300">
