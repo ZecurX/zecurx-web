@@ -267,6 +267,10 @@ export async function POST(request: NextRequest) {
                     } catch (txError: unknown) {
                         const errorMessage = txError instanceof Error ? txError.message : 'Unknown error';
                         console.error('Webhook: Transaction DB Error:', errorMessage);
+                        return NextResponse.json(
+                            { error: 'Database transaction failed' },
+                            { status: 500 }
+                        );
                     }
                 }
 
@@ -287,6 +291,10 @@ export async function POST(request: NextRequest) {
                         console.log('Webhook: Appended to Google Sheets');
                     } catch (sheetError) {
                         console.error('Webhook: Google Sheets Error:', sheetError);
+                        return NextResponse.json(
+                            { error: 'Google Sheets sync failed' },
+                            { status: 500 }
+                        );
                     }
                 }
 
@@ -305,6 +313,10 @@ export async function POST(request: NextRequest) {
                     console.log('Webhook: Invoice email sent successfully');
                 } catch (invoiceError) {
                     console.error('Webhook: Invoice email failed:', invoiceError);
+                    return NextResponse.json(
+                        { error: 'Invoice email delivery failed' },
+                        { status: 500 }
+                    );
                 }
             }
         }
