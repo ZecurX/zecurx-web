@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { Button } from "@/components/ui/button";
+
 interface ServiceHeroEmailCaptureProps {
     serviceName: string;
     className?: string;
@@ -45,7 +47,7 @@ export default function ServiceHeroEmailCapture({ serviceName, className }: Serv
                     )}
                 />
             </div>
-            <button
+            <Button
                 type="submit"
                 className={cn(
                     "group h-14 px-8",
@@ -58,7 +60,7 @@ export default function ServiceHeroEmailCapture({ serviceName, className }: Serv
             >
                 Book a Demo
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Button>
         </form>
     );
 }
