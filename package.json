@@ -57,6 +57,7 @@
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
     "resend": "^6.7.0",
+    "schema-dts": "^1.1.5",
     "tailwind-merge": "^3.4.0",
     "xlsx": "^0.18.5"
   },
