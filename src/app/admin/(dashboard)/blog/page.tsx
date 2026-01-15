@@ -128,7 +128,7 @@ export default function BlogListPage() {
   // admin: read only
   // super_admin: full access (implied)
   // Let's rely on the API for enforcement, but UI should hide buttons.
-  const isMarketing = user?.role === 'marketing';
+  const canManageBlog = user?.role === 'media' || user?.role === 'super_admin';
 
   return (
     <div className="space-y-6">
@@ -138,7 +138,7 @@ export default function BlogListPage() {
           <p className="text-sm text-muted-foreground mt-1">Manage your blog posts, labels, and content</p>
         </div>
         
-        {isMarketing && (
+        {canManageBlog && (
           <Link
             href="/admin/blog/new"
             className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
@@ -263,7 +263,7 @@ export default function BlogListPage() {
                         <Globe className="w-4 h-4" />
                       </Link>
                     )}
-                    {isMarketing && (
+                    {canManageBlog && (
                       <>
                         <Link
                           href={`/admin/blog/${post.id}/edit`}
@@ -281,7 +281,16 @@ export default function BlogListPage() {
                         </button>
                       </>
                     )}
-                    {!isMarketing && (
+                    {!canManageBlog && (
+                       <Link
+                       href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
+                       className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                       title="View Details"
+                     >
+                       <Eye className="w-4 h-4" />
+                     </Link>
+                    )}
+                    {!canManageBlog && (
                        <Link
                        href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"

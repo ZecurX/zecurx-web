@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Shield, UserPlus, Edit, Trash2, KeyRound, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { Role, AdminPublic } from '@/types/auth';
+import { Role, AdminPublic, RESOURCES, ACTIONS } from '@/types/auth';
+import { PermissionGuard } from '@/components/admin/PermissionGuard';
 
 type CreateUserData = {
   email: string;
@@ -20,7 +21,7 @@ type UpdateUserData = {
   is_active?: boolean;
 };
 
-export default function UsersPage() {
+function UsersPageContent() {
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<AdminPublic[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,27 +120,23 @@ export default function UsersPage() {
     }
   };
 
-  const handleDeleteUser = async (permanent: boolean = false) => {
+  const handleDeleteUser = async () => {
     if (!selectedUser) return;
 
     setError(null);
     setSuccess(null);
 
     try {
-      const url = permanent 
-        ? `/api/admin/users/${selectedUser.id}?permanent=true`
-        : `/api/admin/users/${selectedUser.id}`;
-      
-      const response = await fetch(url, {
+      const response = await fetch(`/api/admin/users/${selectedUser.id}`, {
         method: 'DELETE'
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete user');
+        throw new Error(errorData.error || 'Failed to deactivate user');
       }
 
-      setSuccess(permanent ? 'User permanently deleted' : 'User deactivated successfully');
+      setSuccess('User deactivated successfully');
       setShowDeleteDialog(false);
       setSelectedUser(null);
       fetchUsers();
@@ -203,8 +200,16 @@ export default function UsersPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-muted-foreground">Loading users...</div>
       </div>
-    );
-  }
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <PermissionGuard resource={RESOURCES.USERS} action={ACTIONS.READ}>
+      <UsersPageContent />
+    </PermissionGuard>
+  );
+}
 
   return (
     <div className="space-y-6">
@@ -280,13 +285,8 @@ export default function UsersPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openEditDialog(user)}
-                        className={`p-1.5 rounded transition-colors ${
-                          user.role === 'super_admin' 
-                            ? 'text-muted-foreground/50 cursor-not-allowed' 
-                            : 'text-blue-500 hover:bg-blue-500/10'
-                        }`}
-                        title={user.role === 'super_admin' ? 'Cannot edit super admin' : 'Edit user'}
-                        disabled={user.role === 'super_admin'}
+                        className="p-1.5 text-blue-500 hover:bg-blue-500/10 rounded transition-colors"
+                        title="Edit user"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -299,19 +299,9 @@ export default function UsersPage() {
                       </button>
                       <button
                         onClick={() => openDeleteDialog(user)}
-                        className={`p-1.5 rounded transition-colors ${
-                          user.id === currentUser?.id || user.role === 'super_admin'
-                            ? 'text-muted-foreground/50 cursor-not-allowed'
-                            : 'text-destructive hover:bg-destructive/10'
-                        }`}
-                        title={
-                          user.role === 'super_admin' 
-                            ? 'Cannot delete super admin' 
-                            : user.id === currentUser?.id 
-                              ? 'Cannot delete yourself' 
-                              : 'Delete user'
-                        }
-                        disabled={user.id === currentUser?.id || user.role === 'super_admin'}
+                        className="p-1.5 text-destructive hover:bg-destructive/10 rounded transition-colors"
+                        title="Deactivate user"
+                        disabled={user.id === currentUser?.id}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -378,7 +368,6 @@ export default function UsersPage() {
                 <option value="admin">Admin</option>
                 <option value="sales">Sales</option>
                 <option value="marketing">Marketing</option>
-                <option value="media">Media</option>
               </select>
             </div>
             <div className="flex gap-3 pt-4">
@@ -441,7 +430,6 @@ export default function UsersPage() {
                     <option value="admin">Admin</option>
                     <option value="sales">Sales</option>
                     <option value="marketing">Marketing</option>
-                    <option value="media">Media</option>
                   </>
                 )}
               </select>
@@ -482,33 +470,26 @@ export default function UsersPage() {
 
       {/* Delete User Dialog */}
       {showDeleteDialog && selectedUser && (
-        <Dialog onClose={() => setShowDeleteDialog(false)} title="Delete User">
+        <Dialog onClose={() => setShowDeleteDialog(false)} title="Deactivate User">
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              What would you like to do with <strong className="text-foreground">{selectedUser.name}</strong>?
+              Are you sure you want to deactivate <strong className="text-foreground">{selectedUser.name}</strong>?
+              This will prevent them from logging in, but their account data will be preserved.
             </p>
-            <div className="space-y-3 pt-2">
+            <div className="flex gap-3 pt-4">
               <button
-                onClick={() => handleDeleteUser(false)}
-                className="w-full px-4 py-3 bg-orange-500/10 border border-orange-500/20 text-orange-600 rounded-lg hover:bg-orange-500/20 transition-colors text-left"
+                onClick={handleDeleteUser}
+                className="flex-1 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors"
               >
-                <div className="font-medium">Deactivate</div>
-                <div className="text-sm opacity-80">Prevent login, but preserve account data</div>
+                Deactivate
               </button>
               <button
-                onClick={() => handleDeleteUser(true)}
-                className="w-full px-4 py-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg hover:bg-destructive/20 transition-colors text-left"
+                onClick={() => setShowDeleteDialog(false)}
+                className="flex-1 px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors"
               >
-                <div className="font-medium">Permanently Delete</div>
-                <div className="text-sm opacity-80">Remove user completely (irreversible)</div>
+                Cancel
               </button>
             </div>
-            <button
-              onClick={() => setShowDeleteDialog(false)}
-              className="w-full px-4 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors mt-2"
-            >
-              Cancel
-            </button>
           </div>
         </Dialog>
       )}
@@ -574,5 +555,13 @@ function Dialog({ children, onClose, title }: { children: React.ReactNode; onClo
         {children}
       </div>
     </div>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <PermissionGuard resource={RESOURCES.USERS} action={ACTIONS.READ}>
+      <UsersPageContent />
+    </PermissionGuard>
   );
 }

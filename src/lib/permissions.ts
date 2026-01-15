@@ -6,6 +6,7 @@ export const ROLE_HIERARCHY: Record<Role, number> = {
   [ROLES.ADMIN]: 50,
   [ROLES.SALES]: 30,
   [ROLES.MARKETING]: 20,
+  [ROLES.MEDIA]: 15,
 };
 
 // Role display names
@@ -14,19 +15,21 @@ export const ROLE_DISPLAY_NAMES: Record<Role, string> = {
   [ROLES.ADMIN]: 'Admin',
   [ROLES.SALES]: 'Sales',
   [ROLES.MARKETING]: 'Marketing',
+  [ROLES.MEDIA]: 'Media',
 };
 
 // Role descriptions
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
-  [ROLES.SUPER_ADMIN]: 'Full system access, can manage all users and settings',
-  [ROLES.ADMIN]: 'Access to customers, sales, products, plans, and blog viewing',
-  [ROLES.SALES]: 'Access to sales, customers, products, and plans management',
-  [ROLES.MARKETING]: 'Access to blog management only',
+  [ROLES.SUPER_ADMIN]: 'Full system access including all features and analytics',
+  [ROLES.ADMIN]: 'Full business operations access with dashboard and analytics',
+  [ROLES.SALES]: 'Customers, sales, and products management with analytics access',
+  [ROLES.MARKETING]: 'Plans management only (no dashboard or analytics)',
+  [ROLES.MEDIA]: 'Exclusive blog management (no dashboard or analytics)',
 };
 
 // Permissions for each role
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
+  [ROLES.SUPER_ADMIN]: ['*'],
   
   [ROLES.ADMIN]: [
     'dashboard:*',
@@ -34,20 +37,21 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'sales:*',
     'plans:*',
     'products:*',
-    'blog:read', // Can view blogs but NOT edit
   ],
   
   [ROLES.SALES]: [
     'dashboard:*',
     'customers:*',
     'sales:*',
-    'plans:*',
     'products:*',
-    // NO blog access
   ],
   
   [ROLES.MARKETING]: [
-    'blog:*', // Full blog management ONLY
+    'plans:*',
+  ],
+  
+  [ROLES.MEDIA]: [
+    'blog:*',
   ],
 };
 
@@ -137,11 +141,10 @@ export function getExpandedPermissions(role: Role): string[] {
  */
 export function getAssignableRoles(role: Role): Role[] {
   if (role !== ROLES.SUPER_ADMIN) {
-    return []; // Only super_admin can assign roles
+    return [];
   }
   
-  // Super admin can assign all roles except super_admin
-  return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING];
+  return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING, ROLES.MEDIA];
 }
 
 /**

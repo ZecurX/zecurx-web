@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, Plus, Tag, Check } from 'lucide-react';
+import { X, Plus, Tag, Check, Loader2, RefreshCw } from 'lucide-react';
 import { BlogLabel } from '@/types/auth';
+import { cn } from '@/lib/utils';
 
 interface LabelSelectorProps {
-  selectedLabels: string[]; // Array of label IDs
+  selectedLabels: string[];
   onChange: (labelIds: string[]) => void;
   onCreateLabel?: (name: string, color: string) => Promise<BlogLabel>;
 }
@@ -24,12 +25,10 @@ export default function LabelSelector({
   const [creating, setCreating] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fetch labels on mount
   useEffect(() => {
     fetchLabels();
   }, []);
 
-  // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -43,6 +42,7 @@ export default function LabelSelector({
   }, []);
 
   const fetchLabels = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/admin/blog/labels');
       if (response.ok) {
@@ -93,35 +93,30 @@ export default function LabelSelector({
   };
 
   const predefinedColors = [
-    '#3B82F6', // blue
-    '#10B981', // green
-    '#F59E0B', // yellow
-    '#EF4444', // red
-    '#8B5CF6', // purple
-    '#EC4899', // pink
-    '#14B8A6', // teal
-    '#F97316', // orange
+    '#3B82F6',
+    '#10B981',
+    '#F59E0B',
+    '#EF4444',
+    '#8B5CF6',
+    '#EC4899',
+    '#14B8A6',
+    '#F97316',
   ];
 
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        Labels
-      </label>
-
-      {/* Selected Labels */}
-      <div className="flex flex-wrap gap-2 min-h-[40px] p-2 border border-gray-300 rounded-lg bg-white">
+    <div className="space-y-3">
+      <div className="flex flex-wrap gap-2 min-h-[48px] p-3 border border-border/50 rounded-xl bg-background/50">
         {getSelectedLabelObjects().map(label => (
           <span
             key={label.id}
-            className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-white"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-sm"
             style={{ backgroundColor: label.color }}
           >
             {label.name}
             <button
               type="button"
               onClick={(e) => handleRemoveLabel(label.id, e)}
-              className="hover:bg-black hover:bg-opacity-20 rounded-full p-0.5"
+              className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
             >
               <X className="w-3 h-3" />
             </button>
@@ -129,125 +124,142 @@ export default function LabelSelector({
         ))}
         
         {selectedLabels.length === 0 && (
-          <span className="text-sm text-gray-400">No labels selected</span>
+          <span className="text-sm text-muted-foreground">No labels selected</span>
         )}
       </div>
 
-      {/* Add Label Button */}
-      <button
-        type="button"
-        onClick={() => setShowDropdown(!showDropdown)}
-        className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-      >
-        <Tag className="w-4 h-4" />
-        Add Label
-      </button>
-
-      {/* Dropdown */}
-      {showDropdown && (
-        <div
-          ref={dropdownRef}
-          className="relative z-10 mt-2 w-full max-w-xs bg-white border border-gray-300 rounded-lg shadow-lg"
+      <div className="relative" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setShowDropdown(!showDropdown)}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground bg-muted/50 border border-border/50 rounded-lg hover:bg-muted transition-colors"
         >
-          <div className="p-2 max-h-60 overflow-y-auto">
-            {loading ? (
-              <p className="text-sm text-gray-500 p-2">Loading labels...</p>
-            ) : labels.length === 0 ? (
-              <p className="text-sm text-gray-500 p-2">No labels available</p>
-            ) : (
-              labels.map(label => (
-                <button
-                  key={label.id}
-                  type="button"
-                  onClick={() => handleToggleLabel(label.id)}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-gray-100 rounded"
-                >
-                  <span className="flex items-center gap-2">
-                    <span
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: label.color }}
-                    />
-                    {label.name}
-                  </span>
-                  {selectedLabels.includes(label.id) && (
-                    <Check className="w-4 h-4 text-green-600" />
-                  )}
-                </button>
-              ))
-            )}
-          </div>
+          <Tag className="w-4 h-4" />
+          Add Label
+        </button>
 
-          {/* Create New Label Form */}
-          {showCreateForm ? (
-            <div className="border-t border-gray-200 p-3 space-y-2">
-              <input
-                type="text"
-                placeholder="Label name"
-                value={newLabelName}
-                onChange={(e) => setNewLabelName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleCreateLabel();
-                  }
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
-                disabled={creating}
-              />
-              
-              <div className="space-y-2">
-                <p className="text-xs text-gray-600">Color</p>
+        {showDropdown && (
+          <div className="absolute z-50 mt-2 w-full max-w-xs bg-card border border-border/50 rounded-xl shadow-xl backdrop-blur-xl">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-border/50">
+              <span className="text-xs font-medium text-muted-foreground">Select Labels</span>
+              <button 
+                onClick={fetchLabels} 
+                className="p-1 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground"
+                title="Refresh labels"
+              >
+                <RefreshCw className={cn("w-3 h-3", loading && "animate-spin")} />
+              </button>
+            </div>
+            <div className="p-2 max-h-60 overflow-y-auto">
+              {loading ? (
+                <div className="flex items-center justify-center gap-2 p-4">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">Loading labels...</span>
+                </div>
+              ) : labels.length === 0 ? (
+                <p className="text-sm text-muted-foreground p-4 text-center">No labels available</p>
+              ) : (
+                labels.map(label => (
+                  <button
+                    key={label.id}
+                    type="button"
+                    onClick={() => handleToggleLabel(label.id)}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-sm hover:bg-muted/50 rounded-lg transition-colors"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <span
+                        className="w-4 h-4 rounded-full shadow-sm"
+                        style={{ backgroundColor: label.color }}
+                      />
+                      <span className="text-foreground font-medium">{label.name}</span>
+                    </span>
+                    {selectedLabels.includes(label.id) && (
+                      <Check className="w-4 h-4 text-primary" />
+                    )}
+                  </button>
+                ))
+              )}
+            </div>
+
+            {showCreateForm ? (
+              <div className="border-t border-border/50 p-4 space-y-3 bg-muted/20">
+                <input
+                  type="text"
+                  placeholder="Label name"
+                  value={newLabelName}
+                  onChange={(e) => setNewLabelName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleCreateLabel();
+                    }
+                  }}
+                  className="w-full px-4 py-2 bg-background border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+                  disabled={creating}
+                />
+                
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">Choose Color</p>
+                  <div className="flex gap-2">
+                    {predefinedColors.map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setNewLabelColor(color)}
+                        className={cn(
+                          "w-8 h-8 rounded-full border-2 transition-all shadow-sm",
+                          newLabelColor === color 
+                            ? 'border-foreground scale-110' 
+                            : 'border-transparent hover:scale-105'
+                        )}
+                        style={{ backgroundColor: color }}
+                        disabled={creating}
+                      />
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex gap-2">
-                  {predefinedColors.map(color => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setNewLabelColor(color)}
-                      className={`w-6 h-6 rounded-full border-2 ${
-                        newLabelColor === color ? 'border-gray-800' : 'border-transparent'
-                      }`}
-                      style={{ backgroundColor: color }}
-                      disabled={creating}
-                    />
-                  ))}
+                  <button
+                    type="button"
+                    onClick={handleCreateLabel}
+                    disabled={!newLabelName.trim() || creating}
+                    className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {creating ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Creating...
+                      </span>
+                    ) : 'Create'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCreateForm(false);
+                      setNewLabelName('');
+                      setNewLabelColor('#3B82F6');
+                    }}
+                    disabled={creating}
+                    className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
-
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleCreateLabel}
-                  disabled={!newLabelName.trim() || creating}
-                  className="flex-1 px-3 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {creating ? 'Creating...' : 'Create'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateForm(false);
-                    setNewLabelName('');
-                    setNewLabelColor('#3B82F6');
-                  }}
-                  disabled={creating}
-                  className="px-3 py-2 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : onCreateLabel ? (
-            <button
-              type="button"
-              onClick={() => setShowCreateForm(true)}
-              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-200"
-            >
-              <Plus className="w-4 h-4" />
-              Create New Label
-            </button>
-          ) : null}
-        </div>
-      )}
+            ) : onCreateLabel ? (
+              <button
+                type="button"
+                onClick={() => setShowCreateForm(true)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-primary hover:bg-primary/5 border-t border-border/50 rounded-b-xl transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Create New Label
+              </button>
+            ) : null}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

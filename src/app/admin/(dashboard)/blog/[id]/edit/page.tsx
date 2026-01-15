@@ -14,10 +14,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const router = useRouter();
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
-  // Form State
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
@@ -297,7 +297,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
           </div>
 
           {/* Labels */}
-          <div className="bg-card/40 border border-border/50 rounded-xl p-4 space-y-4">
+          <div className="bg-card/40 border border-border/50 rounded-xl p-4 space-y-4 relative z-20">
             <h3 className="font-semibold text-foreground">Labels</h3>
             <LabelSelector
               selectedLabels={selectedLabels}
