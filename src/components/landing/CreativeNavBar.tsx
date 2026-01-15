@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import CartIcon from '../shop/CartIcon';
 
 // Navigation Data
 const navData = {
@@ -206,6 +207,8 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                 Academy
                             </Link>
                             
+                            <CartIcon />
+                            
                             <div className="mx-3">
                                 <ThemeToggle />
                             </div>
@@ -229,6 +232,7 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
 
                         {/* Mobile Toggle */}
                         <div className="lg:hidden flex items-center gap-3">
+                            <CartIcon />
                             <ThemeToggle />
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
