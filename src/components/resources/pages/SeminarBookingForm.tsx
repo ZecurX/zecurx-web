@@ -1,0 +1,301 @@
+"use client";
+
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Loader2, Send, CheckCircle2, AlertCircle, Shield, Award, Users, BookOpen } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+const bookingSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").max(50),
+    email: z.string().email("Please enter a valid email address"),
+    organization: z.string().min(2, "Organization name is required"),
+    type: z.enum(["college", "corporate", "keynote"]),
+    attendees: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+        message: "Please enter a valid number of attendees",
+    }),
+    date: z.string().refine((val) => new Date(val) > new Date(), {
+        message: "Please select a future date",
+    }),
+    message: z.string().max(500, "Message cannot exceed 500 characters").optional(),
+});
+
+type BookingFormValues = z.infer<typeof bookingSchema>;
+
+export default function SeminarBookingForm() {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        reset,
+        formState: { errors },
+    } = useForm<BookingFormValues>({
+        resolver: zodResolver(bookingSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            organization: "",
+            attendees: "",
+            message: "",
+        },
+    });
+
+    const onSubmit = async (data: BookingFormValues) => {
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            console.log("Booking Data:", data);
+            setIsSuccess(true);
+            reset();
+        } catch (err) {
+            setError("Something went wrong. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (isSuccess) {
+        return (
+            <div className="w-full max-w-4xl mx-auto p-12 rounded-[2rem] bg-card border border-border text-center shadow-2xl flex flex-col items-center justify-center min-h-[500px]">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-8 animate-in zoom-in duration-500">
+                    <CheckCircle2 className="w-10 h-10 text-primary" />
+                </div>
+                <h3 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Request Confirmed</h3>
+                <p className="text-muted-foreground mb-10 max-w-lg text-lg">
+                    Thank you for choosing ZecurX. Our training coordinators will review your requirements and send a customized proposal within 24 hours.
+                </p>
+                <Button
+                    variant="outline"
+                    onClick={() => setIsSuccess(false)}
+                    className="rounded-full h-12 px-8 border-foreground/20 hover:bg-foreground/5"
+                >
+                    Submit Another Request
+                </Button>
+            </div>
+        );
+    }
+
+    return (
+        <section className="pt-32 pb-12 md:pt-40 md:pb-24 bg-background relative overflow-hidden">
+            {/* Background Decorations */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+                    
+                    {/* Left Column: Context & Benefits */}
+                    <div className="lg:col-span-2 lg:sticky lg:top-32 space-y-12 relative">
+                        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.08] pointer-events-none -z-10" />
+
+                        <div>
+                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
+                                Secure Your <br />
+                                <span className="text-muted-foreground">Session.</span>
+                            </h2>
+                            <p className="text-lg text-muted-foreground leading-relaxed">
+                                Empower your institution with industry-leading cybersecurity training. From hands-on red teaming to executive briefings.
+                            </p>
+                        </div>
+
+                        <div className="space-y-8">
+                            {[
+                                {
+                                    icon: Shield,
+                                    title: "Industry-Standard Labs",
+                                    desc: "Access to ZecurX Cyber Range for real-world attack simulation."
+                                },
+                                {
+                                    icon: Award,
+                                    title: "Certified Instructors",
+                                    desc: "Led by active penetration testers and security architects."
+                                },
+                                {
+                                    icon: BookOpen,
+                                    title: "Custom Curriculum",
+                                    desc: "Tailored modules covering Web, Cloud, AI, and Network security."
+                                }
+                            ].map((item, i) => (
+                                <div key={i} className="flex gap-5 group">
+                                    <div className="w-12 h-12 rounded-2xl bg-card border border-border flex items-center justify-center shrink-0 group-hover:border-primary/50 transition-colors shadow-sm">
+                                        <item.icon className="w-6 h-6 text-foreground/80 group-hover:text-primary transition-colors" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-foreground text-lg mb-1">{item.title}</h3>
+                                        <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="pt-8 border-t border-border/50">
+                            <div className="flex items-center gap-4">
+                                <div className="flex -space-x-3">
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-bold">
+                                            <div className="w-full h-full rounded-full bg-gradient-to-br from-muted-foreground/20 to-muted-foreground/10" />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="text-sm">
+                                    <span className="font-bold text-foreground block">500+ Sessions</span>
+                                    <span className="text-muted-foreground">Delivered globally</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column: The Form */}
+                    <div className="lg:col-span-3 bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-black/5 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.08] pointer-events-none" />
+                        
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 relative z-10">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <Label htmlFor="name" className="text-base font-medium">Full Name</Label>
+                                    <Input
+                                        id="name"
+                                        placeholder="Dr. John Doe"
+                                        {...register("name")}
+                                        className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    />
+                                    {errors.name && <p className="text-xs text-red-500 font-medium ml-1">{errors.name.message}</p>}
+                                </div>
+
+                                <div className="space-y-3">
+                                    <Label htmlFor="email" className="text-base font-medium">Work Email</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="john@university.edu"
+                                        {...register("email")}
+                                        className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    />
+                                    {errors.email && <p className="text-xs text-red-500 font-medium ml-1">{errors.email.message}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <Label htmlFor="organization" className="text-base font-medium">Organization / University</Label>
+                                <Input
+                                    id="organization"
+                                    placeholder="e.g. MSRIT or TechCorp Solutions"
+                                    {...register("organization")}
+                                    className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.organization ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                />
+                                {errors.organization && <p className="text-xs text-red-500 font-medium ml-1">{errors.organization.message}</p>}
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <Label htmlFor="type" className="text-base font-medium">Seminar Type</Label>
+                                    <Controller
+                                        name="type"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <SelectTrigger className={`h-14 rounded-xl bg-background border-border/60 focus:ring-primary/20 ${errors.type ? "border-red-500" : ""}`}>
+                                                    <SelectValue placeholder="Select type..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="college">College Workshop (Hands-on)</SelectItem>
+                                                    <SelectItem value="corporate">Corporate Training (Awareness)</SelectItem>
+                                                    <SelectItem value="keynote">Keynote / Guest Speaker</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+                                    {errors.type && <p className="text-xs text-red-500 font-medium ml-1">{errors.type.message}</p>}
+                                </div>
+
+                                <div className="space-y-3">
+                                    <Label htmlFor="attendees" className="text-base font-medium">Expected Attendees</Label>
+                                    <Input
+                                        id="attendees"
+                                        type="number"
+                                        placeholder="e.g. 150"
+                                        {...register("attendees")}
+                                        className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.attendees ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    />
+                                    {errors.attendees && <p className="text-xs text-red-500 font-medium ml-1">{errors.attendees.message}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-3">
+                                <Label htmlFor="date" className="text-base font-medium">Preferred Date</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="date"
+                                        type="date"
+                                        {...register("date")}
+                                        className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.date ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    />
+                                </div>
+                                {errors.date && <p className="text-xs text-red-500 font-medium ml-1">{errors.date.message}</p>}
+                            </div>
+
+                            <div className="space-y-3">
+                                <Label htmlFor="message" className="text-base font-medium">Specific Requirements / Topics</Label>
+                                <Textarea
+                                    id="message"
+                                    placeholder="Tell us about the audience technical level, specific topics of interest (e.g. AI Security, Ransomware), or lab requirements..."
+                                    className={`min-h-[160px] rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all resize-none p-4 ${errors.message ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    {...register("message")}
+                                />
+                                {errors.message && <p className="text-xs text-red-500 font-medium ml-1">{errors.message.message}</p>}
+                            </div>
+
+                            {error && (
+                                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-500">
+                                    <AlertCircle className="w-5 h-5 shrink-0" />
+                                    <p className="text-sm font-medium">{error}</p>
+                                </div>
+                            )}
+
+                            <div className="pt-4">
+                                <Button
+                                    type="submit"
+                                    className="w-full h-14 rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                            Processing Request...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Submit Booking Request
+                                            <Send className="w-5 h-5 ml-2" />
+                                        </>
+                                    )}
+                                </Button>
+                                <p className="text-center text-xs text-muted-foreground mt-4">
+                                    By submitting, you agree to our privacy policy. We typically respond within 24 hours.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}

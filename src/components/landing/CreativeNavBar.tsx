@@ -57,7 +57,7 @@ const navData = {
             { title: "Blog", href: "/blog", desc: "Latest security insights and updates" },
             { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth research and analysis" },
             { title: "Research", href: "/resources/research", desc: "Security research publications" },
-            { title: "Webinars", href: "/resources/webinars", desc: "On-demand learning sessions" },
+            { title: "Seminars", href: "/resources/seminars", desc: "On-demand learning sessions" },
         ]
     },
 };

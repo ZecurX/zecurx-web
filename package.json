@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
@@ -36,6 +37,7 @@
     "dotenv": "^17.2.3",
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "exceljs": "^4.4.0",
     "framer-motion": "^12.23.26",
     "googleapis": "^170.0.0",
     "jose": "^6.1.3",
@@ -54,13 +56,14 @@
     "razorpay": "^2.9.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-hook-form": "^7.71.1",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
     "resend": "^6.7.0",
     "schema-dts": "^1.1.5",
     "tailwind-merge": "^3.4.0",
     "validator": "^13.15.26",
-    "xlsx": "^0.18.5"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
