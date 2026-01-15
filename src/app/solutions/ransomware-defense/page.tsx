@@ -2,15 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Shield, Lock, RefreshCw, Eye, Database, AlertTriangle, HardDrive, Activity, Server, FileText } from "lucide-react";
-import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
-import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
-import { StaticDataFlow } from "@/components/diagrams/static/StaticDataFlow";
 
 const ransomwareDefenseData = {
     badge: "Security Solution",
     title: "Ransomware",
     subtitle: "Defense",
     description: "Stop ransomware before it encrypts your data. Our multi-layered defense combines AI-driven prevention, deception technology, and automated recovery to ensure business continuity.",
+    heroImage: "/images/pages/ransomware-defense.jpeg",
     capabilities: [
         {
             icon: <Shield className="w-6 h-6" />,
@@ -47,7 +45,6 @@ const ransomwareDefenseData = {
         {
             title: "Stop Ransomware at the Door",
             description: "Prevent initial access with advanced exploit protection and AI-driven malware analysis.",
-            component: <StaticNetworkDefense />,
             points: [
                 "Block exploit kits and drive-by downloads",
                 "Prevent credential theft and abuse",

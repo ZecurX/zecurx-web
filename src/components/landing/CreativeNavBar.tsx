@@ -65,6 +65,7 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
     const router = useRouter();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
     const [scrolled, setScrolled] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     
@@ -110,10 +111,10 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                     className={cn(
                         "relative w-full max-w-[1400px]",
                         "rounded-2xl",
-                        forceDark ? "bg-black/70 border-white/10 shadow-2xl shadow-black/50" : "bg-background/70 backdrop-blur-2xl border border-white/[0.08] dark:border-white/[0.06]",
-                        forceDark && "backdrop-blur-xl",
-                        !forceDark && "shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)]",
-                        !forceDark && "dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2),0_12px_24px_rgba(0,0,0,0.2)]",
+                        forceDark 
+                            ? "bg-black border border-white/10 shadow-2xl shadow-black/50" 
+                            : "bg-white dark:bg-black border border-gray-100 dark:border-white/10",
+                        !forceDark && "shadow-lg",
                     )}
                     onMouseLeave={handleMouseLeave}
                 >
@@ -265,7 +266,7 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                         transition={{ duration: 0.2, delay: 0.05 }}
                                     >
                                         {/* Sidebar */}
-                                        <div className="p-4 bg-white/[0.03] dark:bg-white/[0.02] rounded-xl flex flex-col justify-between">
+                                        <div className="p-4 bg-gray-50 dark:bg-white/[0.03] rounded-xl flex flex-col justify-between">
                                             <div>
                                                 <h3 className="text-base font-semibold text-foreground mb-1">
                                                     {navData[activeDropdown as keyof typeof navData].label}
@@ -319,78 +320,136 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
             {/* Mobile Menu */}
             <AnimatePresence>
                 {mobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl lg:hidden"
-                    >
-                        <motion.div 
-                            className="pt-24 px-6 h-full overflow-y-auto"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+                        />
+                        
+                        <motion.div
+                            initial={{ x: "100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "100%" }}
+                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background lg:hidden border-l border-border/50 shadow-2xl flex flex-col h-full"
                         >
-                            <div className="space-y-8 pb-12">
-                                {Object.entries(navData).map(([key, data], idx) => (
-                                    <motion.div 
-                                        key={key} 
-                                        className="space-y-4"
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                    >
-                                        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                            {data.label}
-                                        </h3>
-                                        <div className="grid grid-cols-1 gap-1">
-                                            {data.items.map((item) => (
-                                                <Link
-                                                    key={item.title}
-                                                    href={item.href}
-                                                    onClick={() => setMobileMenuOpen(false)}
-                                                    className="block py-2.5 text-base font-medium text-foreground hover:text-primary transition-colors"
-                                                >
-                                                    {item.title}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                ))}
-                                
-                                <motion.div 
-                                    className="pt-8 border-t border-border/50 space-y-3"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ delay: 0.3 }}
+                            <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">
+                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                                    <div className="relative w-8 h-8">
+                                        <Image
+                                            src="/images/zecurx-logo.png"
+                                            alt="ZecurX"
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                    <span className="font-semibold text-lg">ZecurX</span>
+                                </Link>
+                                <button
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
                                 >
-                                    <Button
-                                        asChild
-                                        className="w-full py-6 h-auto bg-foreground text-background font-semibold rounded-xl"
+                                    <X className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto min-h-0">
+                                <div className="p-6 space-y-2">
+                                    {Object.entries(navData).map(([key, data]) => (
+                                        <div key={key} className="border-b border-border/40 last:border-0">
+                                            <button
+                                                onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
+                                                className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground group"
+                                            >
+                                                {data.label}
+                                                <ChevronDown 
+                                                    className={cn(
+                                                        "w-5 h-5 text-muted-foreground transition-transform duration-200",
+                                                        mobileExpanded === key ? "rotate-180" : "group-hover:text-foreground"
+                                                    )} 
+                                                />
+                                            </button>
+                                            <AnimatePresence>
+                                                {mobileExpanded === key && (
+                                                    <motion.div
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: "auto", opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="pb-4 space-y-1">
+                                                            {data.items.map((item) => (
+                                                                <Link
+                                                                    key={item.title}
+                                                                    href={item.href}
+                                                                    onClick={() => setMobileMenuOpen(false)}
+                                                                    className="block py-2.5 px-4 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors"
+                                                                >
+                                                                    {item.title}
+                                                                </Link>
+                                                            ))}
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    ))}
+
+                                    <Link
+                                        href="/why-zecurx"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
                                     >
-                                        <Link
-                                            href="/book-demo"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Book a Demo
-                                        </Link>
-                                    </Button>
-                                    <Button
-                                        asChild
-                                        variant="outline"
-                                        className="w-full py-6 h-auto bg-white/5 text-foreground font-semibold rounded-xl border-border/50"
+                                        Why ZecurX
+                                    </Link>
+
+                                    <Link
+                                        href="/academy"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
                                     >
-                                        <Link
-                                            href="/contact"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            Contact Us
-                                        </Link>
-                                    </Button>
-                                </motion.div>
+                                        Academy
+                                    </Link>
+
+                                    <Link
+                                        href="/shop"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
+                                    >
+                                        Shop
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <div className="p-6 border-t border-border/50 bg-muted/30 shrink-0">
+                                <Button
+                                    asChild
+                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4"
+                                >
+                                    <Link
+                                        href="/contact"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        Get a demo
+                                    </Link>
+                                </Button>
+                                <div className="text-center">
+                                    <p className="text-sm text-muted-foreground mb-2">Experiencing an incident?</p>
+                                    <Link 
+                                        href="/contact" 
+                                        className="text-sm font-medium text-primary hover:underline"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        Contact Support
+                                    </Link>
+                                </div>
                             </div>
                         </motion.div>
-                    </motion.div>
+                    </>
                 )}
             </AnimatePresence>
         </>

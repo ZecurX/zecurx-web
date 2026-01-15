@@ -3,14 +3,12 @@
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Cloud, Shield, Eye, Settings, Lock, Zap } from 'lucide-react';
 
-import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
-import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
-
 const cloudSecurityData = {
     badge: "Cloud Security",
     title: "Multi-Cloud",
     subtitle: "Visibility & Protection",
     description: "Unified visibility across multi-cloud and hybrid environments with policy-driven security controls. AI continuously analyzes cloud posture and auto-remediates risks.",
+    heroImage: "/images/pages/cloud-security.jpeg",
     capabilities: [
         {
             icon: <Cloud className="w-6 h-6" />,
@@ -47,7 +45,6 @@ const cloudSecurityData = {
         {
             title: "Secure Cloud Adoption",
             description: "Enable rapid cloud adoption without compromising security. Our platform provides guardrails that allow innovation while maintaining compliance.",
-            component: <StaticInfrastructureMap />,
             points: [
                 "Pre-deployment security scanning",
                 "Real-time drift detection",
@@ -58,7 +55,6 @@ const cloudSecurityData = {
         {
             title: "Reduced Misconfigurations",
             description: "Cloud misconfigurations are the leading cause of breaches. Our AI-powered detection finds and fixes issues continuously.",
-            component: <StaticAnalystDashboard />,
             points: [
                 "500+ pre-built security checks",
                 "Custom policy creation",

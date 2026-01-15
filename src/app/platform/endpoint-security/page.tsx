@@ -2,14 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Shield, Cpu, Eye, Zap, Lock, Target } from 'lucide-react';
-import { StaticIdentityVerification } from "@/components/diagrams/static/StaticIdentityVerification";
-import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
 
 const endpointSecurityData = {
     badge: "Endpoint Security",
     title: "Behavior-Based",
     subtitle: "Endpoint Protection",
     description: "Continuous endpoint visibility and behavior-based protection rather than relying only on signatures. AI models detect abnormal behavior, lateral movement, and zero-day activity.",
+    heroImage: "/images/pages/endpoint-security.jpeg",
     capabilities: [
         {
             icon: <Shield className="w-6 h-6" />,
@@ -46,7 +45,6 @@ const endpointSecurityData = {
         {
             title: "Faster Incident Containment",
             description: "Isolate compromised devices instantly to stop the spread of attacks.",
-            component: <StaticNetworkDefense />,
             points: [
                 "One-click network isolation",
                 "Automated quarantine of malicious files",
