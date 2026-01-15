@@ -2,16 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Zap, Shield, Cloud, Lock, Settings, Globe, Code, Smartphone, LayoutGrid } from "lucide-react";
-import { StaticThreatMesh } from "@/components/diagrams/static/StaticThreatMesh";
-
-import { StaticAutomationFlow } from "@/components/diagrams/static/StaticAutomationFlow";
-import { StaticInfrastructureMap } from "@/components/diagrams/static/StaticInfrastructureMap";
 
 const digitalTransformationData = {
     badge: "Security Solution",
     title: "Digital",
     subtitle: "Transformation",
     description: "Enable secure modernization while adopting cloud, automation, and emerging technologies. Our comprehensive approach ensures your digital initiatives accelerate business growth without introducing new risks.",
+    heroImage: "/images/pages/digital-transformation.jpeg",
+    heroImageClassName: "contrast-[1.15] brightness-[1.05]", // Boost contrast to whiten the background
     capabilities: [
         {
             icon: <Cloud className="w-6 h-6" />,
@@ -58,7 +56,6 @@ const digitalTransformationData = {
         {
             title: "Future-Ready Security Architecture",
             description: "Legacy security tools can't support modern digital initiatives. Our platform provides a flexible, scalable architecture that grows with your transformation.",
-            component: <StaticInfrastructureMap />,
             points: [
                 "Zero Trust architecture implementation",
                 "Scalable cloud-native security controls",

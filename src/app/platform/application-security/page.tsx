@@ -2,14 +2,13 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Code, Shield, Eye, Settings, Lock, Zap } from 'lucide-react';
-import { StaticCicdPipeline } from "@/components/diagrams/static/StaticCicdPipeline";
-import { StaticAnalystDashboard } from "@/components/diagrams/static/StaticAnalystDashboard";
 
 const applicationSecurityData = {
     badge: "Platform Feature",
     title: "Application",
     subtitle: "Security",
     description: "Secure your applications from code to cloud. Findings are prioritized by risk, allowing developers to fix what matters most.",
+    heroImage: "/images/pages/application-security.jpeg",
     capabilities: [
         {
             icon: <Code className="w-6 h-6" />,
@@ -46,7 +45,6 @@ const applicationSecurityData = {
         {
             title: "Reduced Vulnerabilities",
             description: "Find and fix vulnerabilities early in the SDLC with automated scanning and remediation guidance.",
-            component: <StaticCicdPipeline />,
             points: [
                 "SAST/DAST integration",
                 "Software Composition Analysis (SCA)",

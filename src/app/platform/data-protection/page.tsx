@@ -2,16 +2,13 @@
 
 import { ShieldCheck, Lock, Eye, Shield, Database, Zap } from 'lucide-react';
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
-import { StaticComplianceGrid } from "@/components/diagrams/static/StaticComplianceGrid";
-import { StaticDataFlow } from "@/components/diagrams/static/StaticDataFlow";
-
-import { StaticNetworkDefense } from "@/components/diagrams/static/StaticNetworkDefense";
 
 const dataProtectionData = {
     badge: "Data Protection",
     title: "DLP &",
     subtitle: "Encryption",
     description: "Data-centric security with visibility into data usage, movement, and exposure. AI identifies abnormal data access and enforces protection policies.",
+    heroImage: "/images/pages/data-protection.jpeg",
     capabilities: [
         {
             icon: <ShieldCheck className="w-6 h-6" />,
@@ -48,7 +45,6 @@ const dataProtectionData = {
         {
             title: "Reduced Data Leakage",
             description: "Stop data breaches before they happen with comprehensive visibility and control over sensitive data.",
-            component: <StaticDataFlow />,
             points: [
                 "Content-aware DLP policies",
                 "Real-time data monitoring",
