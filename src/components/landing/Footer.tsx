@@ -15,7 +15,7 @@ export default function Footer() {
 
                     {/* Brand Column */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-3 group">
+                        <Link href="/" className="flex items-center gap-3 group" aria-label="ZecurX Home">
                             <div className="relative w-10 h-10 transition-transform group-hover:scale-110 duration-300">
                                 <Image 
                                     src="/images/zecurx-logo.png" 
@@ -36,44 +36,44 @@ export default function Footer() {
                         {/* Column 1 */}
                         <div className="space-y-4">
                             <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Platform</h4>
-                            <ul className="space-y-2.5">
-                                <li><Link href="/platform/endpoint-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Endpoint Security</Link></li>
-                                <li><Link href="/platform/cloud-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Cloud Security</Link></li>
-                                <li><Link href="/platform/identity-security" className="text-sm text-muted-foreground hover:text-primary transition-colors">Identity Security</Link></li>
-                                <li><Link href="/platform/ai-detection" className="text-sm text-muted-foreground hover:text-primary transition-colors">AI Detection</Link></li>
+                            <ul className="space-y-2.5" role="list">
+                                <li><Link href="/platform/endpoint-security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Endpoint Security</Link></li>
+                                <li><Link href="/platform/cloud-security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Cloud Security</Link></li>
+                                <li><Link href="/platform/identity-security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Identity Security</Link></li>
+                                <li><Link href="/platform/ai-detection" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Detection</Link></li>
                             </ul>
                         </div>
 
                         {/* Column 2 */}
                         <div className="space-y-4">
                             <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Solutions</h4>
-                            <ul className="space-y-2.5">
-                                <li><Link href="/solutions/digital-transformation" className="text-sm text-muted-foreground hover:text-primary transition-colors">Digital Transformation</Link></li>
-                                <li><Link href="/solutions/zero-trust" className="text-sm text-muted-foreground hover:text-primary transition-colors">Zero Trust</Link></li>
-                                <li><Link href="/solutions/ransomware-defense" className="text-sm text-muted-foreground hover:text-primary transition-colors">Ransomware Defense</Link></li>
-                                <li><Link href="/solutions/ai-powered-soc" className="text-sm text-muted-foreground hover:text-primary transition-colors">AI SOC</Link></li>
+                            <ul className="space-y-2.5" role="list">
+                                <li><Link href="/solutions/digital-transformation" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Digital Transformation</Link></li>
+                                <li><Link href="/solutions/zero-trust" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Zero Trust</Link></li>
+                                <li><Link href="/solutions/ransomware-defense" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Ransomware Defense</Link></li>
+                                <li><Link href="/solutions/ai-powered-soc" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI SOC</Link></li>
                             </ul>
                         </div>
 
                         {/* Column 3 */}
                         <div className="space-y-4">
                             <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Services</h4>
-                            <ul className="space-y-2.5">
-                                <li><Link href="/services/offensive/penetration-testing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Penetration Testing</Link></li>
-                                <li><Link href="/services/offensive/vulnerability-management" className="text-sm text-muted-foreground hover:text-primary transition-colors">Red Teaming</Link></li>
-                                <li><Link href="/services/engineering/devsecops" className="text-sm text-muted-foreground hover:text-primary transition-colors">DevSecOps</Link></li>
-                                <li><Link href="/services/engineering/consulting" className="text-sm text-muted-foreground hover:text-primary transition-colors">CISO Advisory</Link></li>
+                            <ul className="space-y-2.5" role="list">
+                                <li><Link href="/services/offensive/penetration-testing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Penetration Testing</Link></li>
+                                <li><Link href="/services/offensive/vulnerability-management" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Red Teaming</Link></li>
+                                <li><Link href="/services/engineering/devsecops" className="text-sm text-muted-foreground hover:text-foreground transition-colors">DevSecOps</Link></li>
+                                <li><Link href="/services/engineering/consulting" className="text-sm text-muted-foreground hover:text-foreground transition-colors">CISO Advisory</Link></li>
                             </ul>
                         </div>
 
                         {/* Column 4 */}
                         <div className="space-y-4">
                             <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Company</h4>
-                            <ul className="space-y-2.5">
-                                <li><Link href="/why-zecurx" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link></li>
-                                <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link></li>
-                                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
-                                <li><Link href="/shop" className="text-sm text-muted-foreground hover:text-primary transition-colors">Shop</Link></li>
+                            <ul className="space-y-2.5" role="list">
+                                <li><Link href="/why-zecurx" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About Us</Link></li>
+                                <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
+                                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link></li>
+                                <li><Link href="/shop" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Shop</Link></li>
                             </ul>
                         </div>
                     </div>

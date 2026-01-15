@@ -79,6 +79,8 @@ export default function WhatWeDoSection() {
                                                 ? "bg-foreground text-background font-bold scale-110 shadow-lg"
                                                 : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                                         )}
+                                        aria-label={`Select ${service.title}`}
+                                        aria-pressed={activeIndex === i}
                                     >
                                         {i + 1}
                                     </button>
@@ -86,7 +88,7 @@ export default function WhatWeDoSection() {
                             </div>
 
                             {/* Fixed Height Content Container */}
-                            <div className="min-h-[350px] md:h-[450px] flex flex-col justify-start relative w-full">
+                            <div className="min-h-[350px] flex flex-col justify-start relative w-full">
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={activeIndex}
@@ -176,9 +178,9 @@ export default function WhatWeDoSection() {
                                             </Button>
                                             <Button
                                                 onClick={() => {
-                                                    if (activeIndex === 0) window.location.href = '/services';
-                                                    else if (activeIndex === 1) window.location.href = '/services';
-                                                    else if (activeIndex === 2) window.location.href = '/platform';
+                                                    if (activeIndex === 0) router.push('/services');
+                                                    else if (activeIndex === 1) router.push('/services');
+                                                    else if (activeIndex === 2) router.push('/platform');
                                                 }}
                                                 variant="ghost"
                                                 className="h-12 px-6 rounded-full flex items-center gap-2 hover:bg-muted font-medium border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground"

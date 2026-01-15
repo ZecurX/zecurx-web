@@ -143,21 +143,23 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                         {/* Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-2 relative">
                             {Object.entries(navData).map(([key, data]) => (
-                                <Link
-                                    key={key}
-                                    href={data.href}
-                                    className={cn(
-                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
-                                        activeDropdown === key
-                                            ? (forceDark ? "text-white" : "text-foreground")
-                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
-                                    )}
-                                    onMouseEnter={() => handleMouseEnter(key)}
-                                    onClick={() => {
-                                        setActiveDropdown(null);
-                                        setMobileMenuOpen(false);
-                                    }}
-                                >
+                                    <Link
+                                        key={key}
+                                        href={data.href}
+                                        className={cn(
+                                            "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                                            activeDropdown === key
+                                                ? (forceDark ? "text-white" : "text-foreground")
+                                                : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
+                                        )}
+                                        onMouseEnter={() => handleMouseEnter(key)}
+                                        onClick={() => {
+                                            setActiveDropdown(null);
+                                            setMobileMenuOpen(false);
+                                        }}
+                                        aria-expanded={activeDropdown === key}
+                                        aria-haspopup="true"
+                                    >
                                     {data.label}
                                     <ChevronDown className={cn(
                                         "w-3.5 h-3.5 transition-transform duration-200",
@@ -234,6 +236,8 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 className="p-2 text-foreground hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+                                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                                aria-expanded={mobileMenuOpen}
                             >
                                 <motion.div
                                     animate={mobileMenuOpen ? "open" : "closed"}
@@ -348,10 +352,11 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                     </div>
                                     <span className="font-semibold text-lg">ZecurX</span>
                                 </Link>
-                                <button
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
-                                >
+                                    <button
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
+                                        aria-label="Close menu"
+                                    >
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
