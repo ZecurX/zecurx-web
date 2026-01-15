@@ -74,12 +74,12 @@ const featuredResources = [
         href: "/resources/guides",
     },
     {
-        type: "Webinars",
+        type: "Seminars",
         icon: Video,
-        title: "Webinars",
+        title: "Seminars",
         shortDesc: "Expert sessions",
         description: "On-demand and live sessions featuring industry veterans discussing real-world case studies and regulatory updates.",
-        href: "/resources/webinars",
+        href: "/resources/seminars",
     },
 ];
 

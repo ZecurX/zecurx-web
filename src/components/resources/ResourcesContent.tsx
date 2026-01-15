@@ -51,7 +51,7 @@ const caseStudyHighlights = [
 ];
 
 const eventFormats = [
-    { icon: Video, label: "Technical Webinars", desc: "Deep-dive sessions" },
+    { icon: Video, label: "Technical Seminars", desc: "Deep-dive sessions" },
     { icon: AlertTriangle, label: "Security Briefings", desc: "Threat updates" },
     { icon: Users, label: "Expert Panels", desc: "Industry discussions" },
     { icon: GraduationCap, label: "Training Sessions", desc: "Hands-on learning" },
@@ -99,12 +99,12 @@ const featuredResources = [
         href: "/resources/guides",
     },
     {
-        type: "Webinars",
+        type: "Seminars",
         icon: Video,
-        title: "Webinars",
+        title: "Seminars",
         shortDesc: "Expert sessions",
         detailedDesc: "On-demand and live sessions featuring industry veterans discussing real-world case studies, regulatory updates, and demonstrations of next-gen security technologies.",
-        href: "/resources/webinars",
+        href: "/resources/seminars",
     },
 ];
 
@@ -310,8 +310,8 @@ export default function ResourcesContent() {
                 </div>
 
 
-                {/* SECTION 5: Events & Webinars */}
-                <div id="webinars" className="scroll-mt-24">
+                {/* SECTION 5: Events & Seminars */}
+                <div id="seminars" className="scroll-mt-24">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -321,7 +321,7 @@ export default function ResourcesContent() {
                     >
                         <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-6">
                             <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-muted-foreground">
-                                Events & Webinars
+                                Events & Seminars
                             </span>
                         </h2>
                         <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-inter">
@@ -349,13 +349,13 @@ export default function ResourcesContent() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                        <Link href="/resources/webinars">
+                        <Link href="/resources/seminars">
                             <Button className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105">
                                 <Calendar className="w-4 h-4" />
                                 Register for Events
                             </Button>
                         </Link>
-                        <Link href="/resources/webinars">
+                        <Link href="/resources/seminars">
                             <Button variant="outline" className="h-12 px-6 rounded-full flex items-center gap-2 text-sm hover:scale-105 border-foreground/10 text-foreground hover:bg-foreground/5">
                                 <Play className="w-4 h-4" />
                                 Watch On-Demand
