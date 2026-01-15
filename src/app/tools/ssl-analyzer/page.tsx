@@ -83,14 +83,14 @@ export default function SSLAnalyzerPage() {
                     <label htmlFor="domain" className="block text-sm font-medium text-foreground mb-3">
                         Target Domain
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex gap-4 relative z-50 isolate">
                         <input
                             type="text"
                             id="domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text relative z-50"
+                            className="flex-1 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
                         />
                         <Button
                             type="submit"
