@@ -3,85 +3,328 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
-import RazorpayCheckout from '@/components/academy/RazorpayCheckout';
+import { useCart } from '@/context/CartContext';
+
+declare global {
+    interface Window {
+        Razorpay: new (options: RazorpayOptions) => RazorpayInstance;
+    }
+}
+
+interface RazorpayOptions {
+    key: string;
+    amount: number;
+    currency: string;
+    name: string;
+    description: string;
+    order_id: string;
+    handler: (response: RazorpayResponse) => void;
+    prefill?: { name?: string; email?: string; contact?: string; };
+    theme?: { color?: string; };
+    modal?: { ondismiss?: () => void; };
+}
+
+interface RazorpayResponse {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+    open: () => void;
+    close: () => void;
+}
 
 function CheckoutContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
+    const { items, totalPrice, totalItems, clearCart } = useCart();
+    
+    const isCartCheckout = searchParams.get('cartCheckout') === 'true';
+    
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         mobile: '',
+        address: '',
+        city: '',
+        pincode: '',
         college: ''
     });
     const [isFormValid, setIsFormValid] = useState(false);
     const [purchaseComplete, setPurchaseComplete] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [scriptLoaded, setScriptLoaded] = useState(false);
 
-    const item = {
+    const singleItem = !isCartCheckout ? {
         id: searchParams.get('itemId') || '',
         name: searchParams.get('itemName') || '',
         price: Number(searchParams.get('price')) || 0,
         type: searchParams.get('type') || 'course'
-    };
+    } : null;
 
-    // Validate form
+    const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
+    const checkoutItemName = isCartCheckout 
+        ? `${totalItems} item${totalItems > 1 ? 's' : ''} from ZecurX Shop`
+        : (singleItem?.name || '');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && !window.Razorpay) {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            script.onload = () => setScriptLoaded(true);
+            document.body.appendChild(script);
+        } else if (typeof window !== 'undefined' && window.Razorpay) {
+            setScriptLoaded(true);
+        }
+    }, []);
+
     useEffect(() => {
         const isBasicValid =
             formData.name.length > 2 &&
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
             formData.mobile.length >= 10;
 
-        // Require college if type is internship
-        const isCollegeValid = item.type === 'internship' ? formData.college.length > 2 : true;
+        const isAddressValid = isCartCheckout 
+            ? formData.address.length > 5 && formData.city.length > 2 && formData.pincode.length >= 6
+            : true;
 
-        setIsFormValid(isBasicValid && isCollegeValid);
-    }, [formData, item.type]);
+        const isCollegeValid = singleItem?.type === 'internship' ? formData.college.length > 2 : true;
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setIsFormValid(isBasicValid && isAddressValid && isCollegeValid);
+    }, [formData, isCartCheckout, singleItem?.type]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handlePayment = async () => {
+        if (!scriptLoaded || isLoading || !isFormValid) return;
+        setIsLoading(true);
+
+        if (isCartCheckout && items.length > 0) {
+            try {
+                const priceValidationRes = await fetch('/api/products');
+                const productsData = await priceValidationRes.json();
+                
+                const priceChanges: string[] = [];
+                
+                for (const cartItem of items) {
+                    const dbProduct = productsData.products?.find((p: any) => p.id.toString() === cartItem.id);
+                    if (dbProduct && Math.abs(dbProduct.price - cartItem.price) > 0.01) {
+                        priceChanges.push(
+                            `${cartItem.name}: ₹${cartItem.price} → ₹${dbProduct.price}`
+                        );
+                    }
+                }
+                
+                if (priceChanges.length > 0) {
+                    const confirmProceed = confirm(
+                        `Price changes detected:\n\n${priceChanges.join('\n')}\n\nPlease refresh your cart to see updated prices. Continue anyway?`
+                    );
+                    
+                    if (!confirmProceed) {
+                        setIsLoading(false);
+                        return;
+                    }
+                }
+
+                const stockCheckRes = await fetch('/api/check-stock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity }))
+                    }),
+                });
+
+                const stockData = await stockCheckRes.json();
+                
+                if (!stockData.available) {
+                    const unavailableNames = stockData.unavailableItems?.map((item: any) => 
+                        `${item.name} (${item.reason})`
+                    ).join(', ') || 'Some items';
+                    
+                    alert(`Unable to proceed: ${unavailableNames}. Please update your cart.`);
+                    setIsLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.error('Pre-checkout validation failed:', error);
+                alert('Unable to verify cart. Please try again.');
+                setIsLoading(false);
+                return;
+            }
+        }
+
+        const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+        
+        if (devMode) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const fakePaymentId = `dev_pay_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+            
+            try {
+                const verifyRes = await fetch('/api/razorpay/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        razorpay_payment_id: fakePaymentId,
+                        razorpay_order_id: `dev_order_${Date.now()}`,
+                        razorpay_signature: 'dev_mode_signature',
+                        dev_mode: true,
+                        metadata: {
+                            ...formData,
+                            items: isCartCheckout ? items : [singleItem],
+                            totalAmount: checkoutAmount,
+                            type: isCartCheckout ? 'shop_order' : singleItem?.type
+                        }
+                    }),
+                });
+
+                const verifyData = await verifyRes.json();
+                if (verifyData.success) {
+                    await handlePaymentSuccess(fakePaymentId);
+                }
+            } catch (error) {
+                console.error('Dev mode payment failed:', error);
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        try {
+            const orderRes = await fetch('/api/razorpay/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    amount: checkoutAmount,
+                    itemId: isCartCheckout ? 'cart_checkout' : singleItem?.id,
+                    itemName: checkoutItemName,
+                    metadata: {
+                        ...formData,
+                        items: isCartCheckout ? items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })) : null,
+                        type: isCartCheckout ? 'shop_order' : singleItem?.type
+                    }
+                }),
+            });
+
+            if (!orderRes.ok) {
+                const errorData = await orderRes.json();
+                throw new Error(errorData.error || 'Failed to create order');
+            }
+
+            const orderData = await orderRes.json();
+
+            const options: RazorpayOptions = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: 'ZecurX',
+                description: checkoutItemName,
+                order_id: orderData.orderId,
+                handler: async (response: RazorpayResponse) => {
+                    try {
+                        const verifyRes = await fetch('/api/razorpay/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                ...response,
+                                metadata: {
+                                    ...formData,
+                                    items: isCartCheckout ? items : [singleItem],
+                                    totalAmount: checkoutAmount,
+                                    type: isCartCheckout ? 'shop_order' : singleItem?.type
+                                }
+                            }),
+                        });
+
+                        const verifyData = await verifyRes.json();
+                        if (verifyData.success) {
+                            await handlePaymentSuccess(response.razorpay_payment_id);
+                        }
+                    } catch (error) {
+                        console.error('Payment verification failed:', error);
+                    }
+                },
+                prefill: {
+                    name: formData.name,
+                    email: formData.email,
+                    contact: formData.mobile,
+                },
+                theme: { color: '#2b96e2' },
+                modal: { ondismiss: () => setIsLoading(false) },
+            };
+
+            const razorpay = new window.Razorpay(options);
+            razorpay.open();
+        } catch (error) {
+            console.error('Payment error:', error);
+            setIsLoading(false);
+        }
     };
 
     const handlePaymentSuccess = async (paymentId: string) => {
         setPurchaseComplete(true);
 
         try {
-            const response = await fetch('/api/send-email', {
+            await fetch('/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name: formData.name,
                     email: formData.email,
                     mobile: formData.mobile,
-                    college: formData.college,
-                    formType: 'purchase',
-                    itemName: item.name,
-                    itemId: item.id,
-                    price: item.price,
+                    address: isCartCheckout ? `${formData.address}, ${formData.city} - ${formData.pincode}` : undefined,
+                    formType: isCartCheckout ? 'shop_order' : 'purchase',
+                    items: isCartCheckout ? items : undefined,
+                    itemName: checkoutItemName,
+                    price: checkoutAmount,
                     paymentId,
                 }),
             });
 
-            if (!response.ok) throw new Error('Failed to send confirmation email');
-
+            if (isCartCheckout) {
+                clearCart();
+            }
         } catch (error) {
             console.error('Email error:', error);
-            // Even if email fails, payment was successful, so we show success state
         }
+
+        setIsLoading(false);
     };
 
-    if (!item.id || !item.name) {
+    const formatPrice = (amount: number) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0,
+        }).format(amount);
+    };
+
+    if (isCartCheckout && items.length === 0 && !purchaseComplete) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
+                    <button onClick={() => router.push('/shop')} className="text-primary hover:underline">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isCartCheckout && (!singleItem?.id || !singleItem?.name)) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold mb-4">Invalid Checkout Session</h1>
-                    <button
-                        onClick={() => router.back()}
-                        className="text-primary hover:underline"
-                    >
+                    <button onClick={() => router.back()} className="text-primary hover:underline">
                         Go Back
                     </button>
                 </div>
@@ -100,15 +343,16 @@ function CheckoutContent() {
                     <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle2 className="w-10 h-10 text-green-500" />
                     </div>
-                    <h1 className="text-3xl font-bold mb-4">Payment Successful!</h1>
+                    <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
                     <p className="text-muted-foreground mb-8">
-                        Thank you for purchasing <strong>{item.name}</strong>. A confirmation email has been sent to {formData.email}.
+                        Thank you for your order! A confirmation email has been sent to {formData.email}.
+                        {isCartCheckout && " We'll ship your items within the estimated delivery time."}
                     </p>
                     <button
-                        onClick={() => router.push('/academy')}
+                        onClick={() => router.push(isCartCheckout ? '/shop' : '/academy')}
                         className="w-full py-3 bg-foreground text-background font-semibold rounded-xl hover:bg-foreground/90 transition-colors"
                     >
-                        Explore Courses
+                        {isCartCheckout ? 'Continue Shopping' : 'Explore Courses'}
                     </button>
                 </motion.div>
             </main>
@@ -120,7 +364,6 @@ function CheckoutContent() {
             <CreativeNavBar />
 
             <div className="pt-32 pb-20 max-w-6xl mx-auto px-6">
-
                 <button
                     onClick={() => router.back()}
                     className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8 group"
@@ -130,12 +373,14 @@ function CheckoutContent() {
                 </button>
 
                 <div className="grid lg:grid-cols-2 gap-12 items-start">
-
-                    {/* Left: Form */}
                     <div className="space-y-8">
                         <div>
                             <h1 className="text-3xl font-bold mb-2">Checkout</h1>
-                            <p className="text-muted-foreground">Please enter your details to complete the purchase.</p>
+                            <p className="text-muted-foreground">
+                                {isCartCheckout 
+                                    ? 'Enter your shipping details to complete the order.'
+                                    : 'Please enter your details to complete the purchase.'}
+                            </p>
                         </div>
 
                         <div className="space-y-6">
@@ -184,8 +429,51 @@ function CheckoutContent() {
                                 </div>
                             </div>
 
-                            {/* College Field - Only for Internships */}
-                            {item.type === 'internship' && (
+                            {isCartCheckout && (
+                                <>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium ml-1">Shipping Address</label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-4 top-4 w-4 h-4 text-muted-foreground" />
+                                            <textarea
+                                                name="address"
+                                                value={formData.address}
+                                                onChange={handleInputChange}
+                                                placeholder="House/Flat No., Street, Landmark"
+                                                rows={2}
+                                                className="w-full bg-muted/30 border border-border rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium ml-1">City</label>
+                                            <input
+                                                type="text"
+                                                name="city"
+                                                value={formData.city}
+                                                onChange={handleInputChange}
+                                                placeholder="Mumbai"
+                                                className="w-full bg-muted/30 border border-border rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium ml-1">PIN Code</label>
+                                            <input
+                                                type="text"
+                                                name="pincode"
+                                                value={formData.pincode}
+                                                onChange={handleInputChange}
+                                                placeholder="400001"
+                                                className="w-full bg-muted/30 border border-border rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+
+                            {singleItem?.type === 'internship' && (
                                 <motion.div
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
@@ -213,60 +501,79 @@ function CheckoutContent() {
                         </div>
                     </div>
 
-                    {/* Right: Order Summary */}
                     <div className="lg:sticky lg:top-32">
                         <div className="bg-muted/10 border border-border/50 rounded-3xl p-8 backdrop-blur-md">
                             <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
 
-                            <div className="pb-6 border-b border-border/50 mb-6">
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="font-medium">{item.name}</span>
-                                    <span className="font-bold">₹{item.price.toLocaleString('en-IN')}</span>
+                            {isCartCheckout ? (
+                                <div className="space-y-4 pb-6 border-b border-border/50 mb-6 max-h-64 overflow-y-auto">
+                                    {items.map((item) => (
+                                        <div key={item.id} className="flex gap-4">
+                                            <div className="w-16 h-16 rounded-lg bg-muted/50 overflow-hidden shrink-0">
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-sm truncate">{item.name}</p>
+                                                <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
+                                            </div>
+                                            <p className="font-semibold text-sm">{formatPrice(item.price * item.quantity)}</p>
+                                        </div>
+                                    ))}
                                 </div>
-                                <span className="text-xs text-muted-foreground uppercase tracking-wider bg-muted p-1 px-2 rounded">
-                                    {item.type}
-                                </span>
-                            </div>
+                            ) : (
+                                <div className="pb-6 border-b border-border/50 mb-6">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <span className="font-medium">{singleItem?.name}</span>
+                                        <span className="font-bold">{formatPrice(singleItem?.price || 0)}</span>
+                                    </div>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider bg-muted p-1 px-2 rounded">
+                                        {singleItem?.type}
+                                    </span>
+                                </div>
+                            )}
 
                             <div className="space-y-3 mb-8">
                                 <div className="flex justify-between text-sm text-muted-foreground">
                                     <span>Subtotal</span>
-                                    <span>₹{item.price.toLocaleString('en-IN')}</span>
+                                    <span>{formatPrice(checkoutAmount)}</span>
                                 </div>
+                                {isCartCheckout && (
+                                    <div className="flex justify-between text-sm text-muted-foreground">
+                                        <span>Shipping</span>
+                                        <span className="text-green-500">Free</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-sm text-muted-foreground">
                                     <span>Tax (Included)</span>
                                     <span>₹0</span>
                                 </div>
                                 <div className="flex justify-between text-lg font-bold pt-4 border-t border-border/50">
                                     <span>Total</span>
-                                    <span>₹{item.price.toLocaleString('en-IN')}</span>
+                                    <span>{formatPrice(checkoutAmount)}</span>
                                 </div>
                             </div>
 
-                            {/* Payment Button */}
-                            <RazorpayCheckout
-                                itemId={item.id}
-                                itemName={item.name}
-                                itemDescription={`Purchase of ${item.name} by ${formData.email}`}
-                                amount={item.price}
-                                metadata={{
-                                    mobile: formData.mobile,
-                                    email: formData.email,
-                                    name: formData.name,
-                                    type: item.type,
-                                    college: formData.college,
-                                    itemName: item.name
-                                }}
-                                onSuccess={handlePaymentSuccess}
-                                disabled={!isFormValid}
-                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg ${isFormValid
-                                    ? 'bg-foreground text-background hover:scale-[1.02] active:scale-[0.98] shadow-foreground/20 cursor-pointer'
-                                    : 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
-                                    }`}
+                            <button
+                                onClick={handlePayment}
+                                disabled={!isFormValid || isLoading || !scriptLoaded}
+                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg ${
+                                    isFormValid && !isLoading
+                                        ? 'bg-foreground text-background hover:scale-[1.02] active:scale-[0.98] shadow-foreground/20 cursor-pointer'
+                                        : 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                                }`}
                             >
-                                <CreditCard className="w-5 h-5" />
-                                {isFormValid ? `Pay ₹${item.price.toLocaleString('en-IN')}` : 'Enter Details to Pay'}
-                            </RazorpayCheckout>
+                                {isLoading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <CreditCard className="w-5 h-5" />
+                                        {isFormValid ? `Pay ${formatPrice(checkoutAmount)}` : 'Enter Details to Pay'}
+                                    </>
+                                )}
+                            </button>
 
                             <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground opacity-70">
                                 <Shield className="w-3 h-3" />
@@ -274,7 +581,6 @@ function CheckoutContent() {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
             <Footer />
