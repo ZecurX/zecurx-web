@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
@@ -42,9 +42,9 @@ function CheckoutContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { items, totalPrice, totalItems, clearCart } = useCart();
-    
+
     const isCartCheckout = searchParams.get('cartCheckout') === 'true';
-    
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -59,6 +59,16 @@ function CheckoutContent() {
     const [isLoading, setIsLoading] = useState(false);
     const [scriptLoaded, setScriptLoaded] = useState(false);
 
+    // Referral code state
+    const [referralCode, setReferralCode] = useState('');
+    const [appliedCode, setAppliedCode] = useState<{
+        code: string;
+        discount_type: 'percentage' | 'fixed';
+        discount_amount: number;
+    } | null>(null);
+    const [referralError, setReferralError] = useState('');
+    const [validatingCode, setValidatingCode] = useState(false);
+
     const singleItem = !isCartCheckout ? {
         id: searchParams.get('itemId') || '',
         name: searchParams.get('itemName') || '',
@@ -67,9 +77,67 @@ function CheckoutContent() {
     } : null;
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
-    const checkoutItemName = isCartCheckout 
+    const finalAmount = appliedCode ? checkoutAmount - appliedCode.discount_amount : checkoutAmount;
+    const checkoutItemName = isCartCheckout
         ? `${totalItems} item${totalItems > 1 ? 's' : ''} from ZecurX Shop`
         : (singleItem?.name || '');
+
+    // Validate referral code
+    const validateCode = async (codeToValidate: string) => {
+        if (!codeToValidate.trim()) return;
+
+        setValidatingCode(true);
+        setReferralError('');
+
+        try {
+            const res = await fetch('/api/referral-codes/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: codeToValidate.trim(),
+                    order_amount: checkoutAmount
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.valid) {
+                setAppliedCode({
+                    code: data.code,
+                    discount_type: data.discount_type,
+                    discount_amount: data.discount_amount
+                });
+                setReferralCode(''); // Clear input after successful application if desired, or keep it. Code below keeps it empty on success in original. 
+                // Actually original setReferralCode('') on success. I'll stick to that or maybe keep the code visible in input? 
+                // The UI shows the applied code in a separate block when appliedCode is set, so clearing input is fine.
+                setReferralCode('');
+            } else {
+                setReferralError(data.error || 'Invalid code');
+                // If auto-applying failed, we might want to populate the input so user sees what failed
+                if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
+            }
+        } catch (error) {
+            setReferralError('Failed to validate code');
+        } finally {
+            setValidatingCode(false);
+        }
+    };
+
+    const handleApplyReferralCode = () => {
+        validateCode(referralCode);
+    };
+
+    useEffect(() => {
+        const codeFromUrl = searchParams.get('referralCode');
+        if (codeFromUrl && !appliedCode) {
+            validateCode(codeFromUrl);
+        }
+    }, [searchParams]);
+
+    const handleRemoveReferralCode = () => {
+        setAppliedCode(null);
+        setReferralError('');
+    };
 
     useEffect(() => {
         if (typeof window !== 'undefined' && !window.Razorpay) {
@@ -89,7 +157,7 @@ function CheckoutContent() {
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
             formData.mobile.length >= 10;
 
-        const isAddressValid = isCartCheckout 
+        const isAddressValid = isCartCheckout
             ? formData.address.length > 5 && formData.city.length > 2 && formData.pincode.length >= 6
             : true;
 
@@ -111,9 +179,9 @@ function CheckoutContent() {
             try {
                 const priceValidationRes = await fetch('/api/products');
                 const productsData = await priceValidationRes.json();
-                
+
                 const priceChanges: string[] = [];
-                
+
                 for (const cartItem of items) {
                     const dbProduct = productsData.products?.find((p: any) => p.id.toString() === cartItem.id);
                     if (dbProduct && Math.abs(dbProduct.price - cartItem.price) > 0.01) {
@@ -122,12 +190,12 @@ function CheckoutContent() {
                         );
                     }
                 }
-                
+
                 if (priceChanges.length > 0) {
                     const confirmProceed = confirm(
                         `Price changes detected:\n\n${priceChanges.join('\n')}\n\nPlease refresh your cart to see updated prices. Continue anyway?`
                     );
-                    
+
                     if (!confirmProceed) {
                         setIsLoading(false);
                         return;
@@ -137,18 +205,18 @@ function CheckoutContent() {
                 const stockCheckRes = await fetch('/api/check-stock', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         items: items.map(i => ({ id: i.id, name: i.name, quantity: i.quantity }))
                     }),
                 });
 
                 const stockData = await stockCheckRes.json();
-                
+
                 if (!stockData.available) {
-                    const unavailableNames = stockData.unavailableItems?.map((item: any) => 
+                    const unavailableNames = stockData.unavailableItems?.map((item: any) =>
                         `${item.name} (${item.reason})`
                     ).join(', ') || 'Some items';
-                    
+
                     alert(`Unable to proceed: ${unavailableNames}. Please update your cart.`);
                     setIsLoading(false);
                     return;
@@ -162,11 +230,11 @@ function CheckoutContent() {
         }
 
         const devMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
-        
+
         if (devMode) {
             await new Promise(resolve => setTimeout(resolve, 500));
             const fakePaymentId = `dev_pay_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-            
+
             try {
                 const verifyRes = await fetch('/api/razorpay/verify-payment', {
                     method: 'POST',
@@ -179,7 +247,10 @@ function CheckoutContent() {
                         metadata: {
                             ...formData,
                             items: isCartCheckout ? items : [singleItem],
-                            totalAmount: checkoutAmount,
+                            totalAmount: finalAmount,
+                            originalAmount: checkoutAmount,
+                            referralCode: appliedCode?.code || null,
+                            discountAmount: appliedCode?.discount_amount || 0,
                             type: isCartCheckout ? 'shop_order' : singleItem?.type
                         }
                     }),
@@ -202,13 +273,19 @@ function CheckoutContent() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    amount: checkoutAmount,
+                    amount: finalAmount,
+                    originalAmount: checkoutAmount,
+                    referralCode: appliedCode?.code || null,
+                    discountAmount: appliedCode?.discount_amount || 0,
                     itemId: isCartCheckout ? 'cart_checkout' : singleItem?.id,
                     itemName: checkoutItemName,
                     metadata: {
                         ...formData,
                         items: isCartCheckout ? items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })) : null,
-                        type: isCartCheckout ? 'shop_order' : singleItem?.type
+                        type: isCartCheckout ? 'shop_order' : singleItem?.type,
+                        referralCode: appliedCode?.code || null,
+                        discountAmount: appliedCode?.discount_amount || 0,
+                        originalAmount: checkoutAmount
                     }
                 }),
             });
@@ -283,7 +360,9 @@ function CheckoutContent() {
                     formType: isCartCheckout ? 'shop_order' : 'purchase',
                     items: isCartCheckout ? items : undefined,
                     itemName: checkoutItemName,
-                    price: checkoutAmount,
+                    price: finalAmount,
+                    originalPrice: checkoutAmount,
+                    discountAmount: appliedCode?.discount_amount || 0,
                     paymentId,
                 }),
             });
@@ -377,7 +456,7 @@ function CheckoutContent() {
                         <div>
                             <h1 className="text-3xl font-bold mb-2">Checkout</h1>
                             <p className="text-muted-foreground">
-                                {isCartCheckout 
+                                {isCartCheckout
                                     ? 'Enter your shipping details to complete the order.'
                                     : 'Please enter your details to complete the purchase.'}
                             </p>
@@ -547,20 +626,79 @@ function CheckoutContent() {
                                     <span>Tax (Included)</span>
                                     <span>₹0</span>
                                 </div>
+
+                                {/* Referral Code Section */}
+                                <div className="pt-3 border-t border-border/30">
+                                    {appliedCode ? (
+                                        <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+                                            <div className="flex items-center gap-2">
+                                                <Ticket className="w-4 h-4 text-green-500" />
+                                                <span className="text-sm font-medium text-green-500">{appliedCode.code}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-semibold text-green-500">-{formatPrice(appliedCode.discount_amount)}</span>
+                                                <button
+                                                    onClick={handleRemoveReferralCode}
+                                                    className="p-1 hover:bg-green-500/20 rounded transition-colors"
+                                                >
+                                                    <X className="w-3.5 h-3.5 text-green-500" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            <div className="flex gap-2">
+                                                <div className="relative flex-1">
+                                                    <Ticket className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                                    <input
+                                                        type="text"
+                                                        value={referralCode}
+                                                        onChange={(e) => {
+                                                            setReferralCode(e.target.value.toUpperCase());
+                                                            setReferralError('');
+                                                        }}
+                                                        placeholder="Referral code"
+                                                        className="w-full bg-muted/30 border border-border rounded-lg py-2.5 pl-10 pr-4 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                                                    />
+                                                </div>
+                                                <button
+                                                    onClick={handleApplyReferralCode}
+                                                    disabled={!referralCode.trim() || validatingCode}
+                                                    className="px-4 py-2.5 bg-muted hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium rounded-lg transition-colors"
+                                                >
+                                                    {validatingCode ? (
+                                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                                    ) : (
+                                                        'Apply'
+                                                    )}
+                                                </button>
+                                            </div>
+                                            {referralError && (
+                                                <p className="text-xs text-red-500 ml-1">{referralError}</p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {appliedCode && (
+                                    <div className="flex justify-between text-sm text-green-500">
+                                        <span>Discount</span>
+                                        <span>-{formatPrice(appliedCode.discount_amount)}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-lg font-bold pt-4 border-t border-border/50">
                                     <span>Total</span>
-                                    <span>{formatPrice(checkoutAmount)}</span>
+                                    <span>{formatPrice(finalAmount)}</span>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handlePayment}
                                 disabled={!isFormValid || isLoading || !scriptLoaded}
-                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg ${
-                                    isFormValid && !isLoading
-                                        ? 'bg-foreground text-background hover:scale-[1.02] active:scale-[0.98] shadow-foreground/20 cursor-pointer'
-                                        : 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
-                                }`}
+                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg ${isFormValid && !isLoading
+                                    ? 'bg-foreground text-background hover:scale-[1.02] active:scale-[0.98] shadow-foreground/20 cursor-pointer'
+                                    : 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                                    }`}
                             >
                                 {isLoading ? (
                                     <>
@@ -570,7 +708,7 @@ function CheckoutContent() {
                                 ) : (
                                     <>
                                         <CreditCard className="w-5 h-5" />
-                                        {isFormValid ? `Pay ${formatPrice(checkoutAmount)}` : 'Enter Details to Pay'}
+                                        {isFormValid ? `Pay ${formatPrice(finalAmount)}` : 'Enter Details to Pay'}
                                     </>
                                 )}
                             </button>

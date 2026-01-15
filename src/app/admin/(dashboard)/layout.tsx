@@ -16,12 +16,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     }
 
     let userInfo: { id: string; email: string; name: string; role: Role } | null = null;
-    
+
     try {
         const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
         const { payload } = await jwtVerify(session.value, secret);
         const jwtPayload = payload as unknown as AdminJWTPayload;
-        
+
         userInfo = {
             id: jwtPayload.sub,
             email: jwtPayload.email,
@@ -33,51 +33,69 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     }
 
     const navItems = [
-        { 
-            href: "/admin", 
-            label: "Overview", 
+        {
+            href: "/admin",
+            label: "Overview",
             icon: "LayoutDashboard",
             visible: hasPermission(userInfo.role, RESOURCES.DASHBOARD, ACTIONS.READ)
         },
-        { 
-            href: "/admin/users", 
-            label: "Users", 
+        {
+            href: "/admin/users",
+            label: "Users",
             icon: "UserCog",
             visible: hasPermission(userInfo.role, RESOURCES.USERS, ACTIONS.READ)
         },
-        { 
-            href: "/admin/customers", 
-            label: "Customers", 
+        {
+            href: "/admin/customers",
+            label: "Customers",
             icon: "Users",
             visible: hasPermission(userInfo.role, RESOURCES.CUSTOMERS, ACTIONS.READ)
         },
-        { 
-            href: "/admin/sales", 
-            label: "Sales", 
+        {
+            href: "/admin/leads/student",
+            label: "Student Leads",
+            icon: "GraduationCap",
+            visible: hasPermission(userInfo.role, RESOURCES.LEADS, ACTIONS.READ)
+        },
+        {
+            href: "/admin/leads/enterprise",
+            label: "Enterprise Leads",
+            icon: "Building2",
+            visible: hasPermission(userInfo.role, RESOURCES.LEADS, ACTIONS.READ)
+        },
+        {
+            href: "/admin/sales",
+            label: "Sales",
             icon: "ShoppingCart",
             visible: hasPermission(userInfo.role, RESOURCES.SALES, ACTIONS.READ)
         },
-        { 
-            href: "/admin/plans", 
-            label: "Plans", 
+        {
+            href: "/admin/plans",
+            label: "Plans",
             icon: "Package",
             visible: hasPermission(userInfo.role, RESOURCES.PLANS, ACTIONS.READ)
         },
-        { 
-            href: "/admin/products", 
-            label: "Products", 
+        {
+            href: "/admin/products",
+            label: "Products",
             icon: "ShoppingBag",
             visible: hasPermission(userInfo.role, RESOURCES.PRODUCTS, ACTIONS.READ)
         },
-        { 
-            href: "/admin/blog", 
-            label: "Blog", 
+        {
+            href: "/admin/referral-codes",
+            label: "Referral Codes",
+            icon: "Ticket",
+            visible: hasPermission(userInfo.role, RESOURCES.REFERRAL_CODES, ACTIONS.READ)
+        },
+        {
+            href: "/admin/blog",
+            label: "Blog",
             icon: "Newspaper",
             visible: hasPermission(userInfo.role, RESOURCES.BLOG, ACTIONS.READ)
         },
-        { 
-            href: "/admin/audit", 
-            label: "Audit Logs", 
+        {
+            href: "/admin/audit",
+            label: "Audit Logs",
             icon: "FileText",
             visible: hasPermission(userInfo.role, RESOURCES.AUDIT, ACTIONS.READ)
         },
@@ -94,7 +112,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
                 <AdminSidebar navItems={navItems} user={userInfo} />
 
-                <main 
+                <main
                     className="flex-1 lg:ml-64 min-h-screen relative z-10 pt-16 lg:pt-0"
                     role="main"
                     aria-label="Main content"

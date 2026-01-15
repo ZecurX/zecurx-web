@@ -18,6 +18,8 @@ export const RESOURCES = {
   PRODUCTS: 'products',
   AUDIT: 'audit',
   BLOG: 'blog',
+  LEADS: 'leads',
+  REFERRAL_CODES: 'referral_codes',
 } as const;
 
 export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES];
