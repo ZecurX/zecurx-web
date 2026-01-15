@@ -22,9 +22,11 @@ import {
   AlignCenter,
   AlignRight,
   Link as LinkIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Code2
 } from 'lucide-react';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
   content: string;
@@ -52,13 +54,13 @@ export default function RichTextEditor({
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg'
+          class: 'max-w-full h-auto rounded-lg my-4'
         }
       }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 underline hover:text-blue-800'
+          class: 'text-primary underline hover:text-primary/80 transition-colors'
         }
       }),
       Placeholder.configure({
@@ -74,7 +76,7 @@ export default function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none min-h-[400px] p-4'
+        class: 'prose prose-lg dark:prose-invert max-w-none focus:outline-none min-h-[500px] px-6 py-4 text-foreground'
       }
     }
   });
@@ -137,31 +139,32 @@ export default function RichTextEditor({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed ${
-        active ? 'bg-gray-200' : ''
-      }`}
+      className={cn(
+        "p-2.5 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed",
+        active 
+          ? 'bg-primary/10 text-primary' 
+          : 'hover:bg-muted/50 text-muted-foreground hover:text-foreground'
+      )}
     >
       {children}
     </button>
   );
 
   return (
-    <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-      {/* Toolbar */}
-      <div className="border-b border-gray-300 bg-gray-50 p-2 flex flex-wrap gap-1">
-        {/* Text Formatting */}
-        <div className="flex gap-1 border-r border-gray-300 pr-2">
+    <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
+      <div className="border-b border-border bg-muted/50 px-4 py-2 flex flex-wrap gap-1">
+        <div className="flex gap-1 pr-2 border-r border-border/50 mr-2">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBold().run()}
             active={editor.isActive('bold')}
-            title="Bold"
+            title="Bold (Ctrl+B)"
           >
             <Bold className="w-4 h-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleItalic().run()}
             active={editor.isActive('italic')}
-            title="Italic"
+            title="Italic (Ctrl+I)"
           >
             <Italic className="w-4 h-4" />
           </ToolbarButton>
@@ -174,8 +177,7 @@ export default function RichTextEditor({
           </ToolbarButton>
         </div>
 
-        {/* Headings */}
-        <div className="flex gap-1 border-r border-gray-300 pr-2">
+        <div className="flex gap-1 pr-3 border-r border-border/50">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             active={editor.isActive('heading', { level: 1 })}
@@ -199,8 +201,7 @@ export default function RichTextEditor({
           </ToolbarButton>
         </div>
 
-        {/* Lists */}
-        <div className="flex gap-1 border-r border-gray-300 pr-2">
+        <div className="flex gap-1 pr-3 border-r border-border/50">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             active={editor.isActive('bulletList')}
@@ -222,10 +223,16 @@ export default function RichTextEditor({
           >
             <Quote className="w-4 h-4" />
           </ToolbarButton>
+          <ToolbarButton
+            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+            active={editor.isActive('codeBlock')}
+            title="Code Block"
+          >
+            <Code2 className="w-4 h-4" />
+          </ToolbarButton>
         </div>
 
-        {/* Alignment */}
-        <div className="flex gap-1 border-r border-gray-300 pr-2">
+        <div className="flex gap-1 pr-3 border-r border-border/50">
           <ToolbarButton
             onClick={() => editor.chain().focus().setTextAlign('left').run()}
             active={editor.isActive({ textAlign: 'left' })}
@@ -249,8 +256,7 @@ export default function RichTextEditor({
           </ToolbarButton>
         </div>
 
-        {/* Link & Image */}
-        <div className="flex gap-1 border-r border-gray-300 pr-2">
+        <div className="flex gap-1 pr-3 border-r border-border/50">
           <ToolbarButton
             onClick={() => {
               if (editor.isActive('link')) {
@@ -274,28 +280,26 @@ export default function RichTextEditor({
           )}
         </div>
 
-        {/* Undo/Redo */}
         <div className="flex gap-1">
           <ToolbarButton
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            title="Undo"
+            title="Undo (Ctrl+Z)"
           >
             <Undo className="w-4 h-4" />
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            title="Redo"
+            title="Redo (Ctrl+Shift+Z)"
           >
             <Redo className="w-4 h-4" />
           </ToolbarButton>
         </div>
       </div>
 
-      {/* Link Input */}
       {showLinkInput && (
-        <div className="border-b border-gray-300 bg-gray-50 p-3 flex gap-2">
+        <div className="border-b border-border/50 bg-muted/30 px-4 py-3 flex gap-3">
           <input
             type="url"
             placeholder="Enter URL (https://...)"
@@ -307,26 +311,25 @@ export default function RichTextEditor({
                 handleAddLink();
               }
             }}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
+            className="flex-1 px-4 py-2 bg-background border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
           />
           <button
             type="button"
             onClick={handleAddLink}
-            className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors font-medium"
           >
             Add Link
           </button>
           <button
             type="button"
             onClick={() => setShowLinkInput(false)}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm hover:bg-gray-300"
+            className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm hover:bg-muted/80 transition-colors font-medium"
           >
             Cancel
           </button>
         </div>
       )}
 
-      {/* Editor Content */}
       <EditorContent editor={editor} />
     </div>
   );

@@ -1,12 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
-import { supabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import { hasPermission } from "@/lib/permissions";
 import { AdminJWTPayload, RESOURCES, ACTIONS } from "@/types/auth";
 import StudentLeadsClient from "./StudentLeadsClient";
-
-export const dynamic = 'force-dynamic';
+import { StudentLead } from "@/types/lead-types";
 
 export default async function StudentLeadsPage() {
     const cookieStore = await cookies();
@@ -21,7 +20,6 @@ export default async function StudentLeadsPage() {
         const { payload } = await jwtVerify(session.value, secret);
         const user = payload as unknown as AdminJWTPayload;
 
-        // Check permission
         if (!hasPermission(user.role, RESOURCES.LEADS, ACTIONS.READ)) {
             redirect("/admin");
         }
@@ -29,17 +27,19 @@ export default async function StudentLeadsPage() {
         redirect("/admin/login");
     }
 
-    // Fetch initial leads
-    const { data: leads, count } = await supabase
-        .from("student_leads")
-        .select("*", { count: "exact" })
-        .order("created_at", { ascending: false })
-        .limit(20);
+    const countResult = await query<{ count: string }>(
+        `SELECT COUNT(*) as count FROM student_leads`
+    );
+    const totalCount = parseInt(countResult.rows[0]?.count || '0');
+
+    const leadsResult = await query<StudentLead>(
+        `SELECT * FROM student_leads ORDER BY created_at DESC LIMIT 20`
+    );
 
     return (
         <StudentLeadsClient
-            initialLeads={leads || []}
-            totalCount={count || 0}
+            initialLeads={leadsResult.rows}
+            totalCount={totalCount}
         />
     );
 }

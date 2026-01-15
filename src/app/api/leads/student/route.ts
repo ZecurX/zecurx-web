@@ -1,15 +1,11 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 import { StudentLead, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
 
-export const dynamic = 'force-dynamic';
-
-// GET - List student leads with filters, pagination, search
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
 
-        // Query parameters
         const status = searchParams.get('status');
         const priority = searchParams.get('priority');
         const assignedTo = searchParams.get('assignedTo');
@@ -17,35 +13,49 @@ export async function GET(request: Request) {
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '20');
 
-        let query = supabase
-            .from('student_leads')
-            .select('*', { count: 'exact' })
-            .order('created_at', { ascending: false });
+        const conditions: string[] = [];
+        const values: unknown[] = [];
+        let paramIndex = 1;
 
-        // Apply filters
-        if (status) query = query.eq('status', status);
-        if (priority) query = query.eq('priority', priority);
-        if (assignedTo) query = query.eq('assigned_to', assignedTo);
+        if (status) {
+            conditions.push(`status = $${paramIndex++}`);
+            values.push(status);
+        }
+        if (priority) {
+            conditions.push(`priority = $${paramIndex++}`);
+            values.push(priority);
+        }
+        if (assignedTo) {
+            conditions.push(`assigned_to = $${paramIndex++}`);
+            values.push(assignedTo);
+        }
         if (search) {
-            query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+            conditions.push(`(full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex} OR phone ILIKE $${paramIndex})`);
+            values.push(`%${search}%`);
+            paramIndex++;
         }
 
-        // Pagination
-        const from = (page - 1) * limit;
-        const to = from + limit - 1;
-        query = query.range(from, to);
+        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+        const offset = (page - 1) * limit;
 
-        const { data, error, count } = await query;
+        const countResult = await query(
+            `SELECT COUNT(*) as count FROM student_leads ${whereClause}`,
+            values
+        );
+        const total = parseInt(countResult.rows[0]?.count || '0');
 
-        if (error) throw error;
+        const dataResult = await query<StudentLead>(
+            `SELECT * FROM student_leads ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
+            [...values, limit, offset]
+        );
 
         return NextResponse.json({
-            data: data as StudentLead[],
+            data: dataResult.rows,
             pagination: {
                 page,
                 limit,
-                total: count || 0,
-                totalPages: Math.ceil((count || 0) / limit),
+                total,
+                totalPages: Math.ceil(total / limit),
             },
         });
     } catch (error) {
@@ -57,12 +67,10 @@ export async function GET(request: Request) {
     }
 }
 
-// POST - Create student lead (public form submission)
 export async function POST(request: Request) {
     try {
         const body = await request.json();
 
-        // Basic validation
         const requiredFields = ['full_name', 'email', 'phone', 'current_education', 'field_of_interest'];
         for (const field of requiredFields) {
             if (!body[field]) {
@@ -73,7 +81,6 @@ export async function POST(request: Request) {
             }
         }
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(body.email)) {
             return NextResponse.json(
@@ -82,51 +89,50 @@ export async function POST(request: Request) {
             );
         }
 
-        // Get client info from headers
         const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null;
         const user_agent = request.headers.get('user-agent') || null;
 
-        // Insert lead
-        const { data, error } = await supabase
-            .from('student_leads')
-            .insert({
-                full_name: body.full_name,
-                email: body.email,
-                phone: body.phone,
-                alternate_phone: body.alternate_phone || null,
-                date_of_birth: body.date_of_birth || null,
-                current_education: body.current_education,
-                field_of_interest: body.field_of_interest,
-                preferred_course: body.preferred_course || null,
-                intake_year: body.intake_year || null,
-                intake_season: body.intake_season || null,
-                lead_source: body.lead_source || 'Website Form',
-                source_page: body.source_page || request.headers.get('referer') || 'Unknown',
-                enquiry_type: body.enquiry_type || 'Student Enquiry',
-                message: body.message || null,
-                status: LEAD_STATUS.NEW,
-                priority: LEAD_PRIORITY.MEDIUM,
+        const result = await query<StudentLead>(
+            `INSERT INTO student_leads (
+                full_name, email, phone, alternate_phone, date_of_birth,
+                current_education, field_of_interest, preferred_course,
+                intake_year, intake_season, lead_source, source_page,
+                enquiry_type, message, status, priority, ip_address, user_agent
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+            RETURNING *`,
+            [
+                body.full_name,
+                body.email,
+                body.phone,
+                body.alternate_phone || null,
+                body.date_of_birth || null,
+                body.current_education,
+                body.field_of_interest,
+                body.preferred_course || null,
+                body.intake_year || null,
+                body.intake_season || null,
+                body.lead_source || 'Website Form',
+                body.source_page || request.headers.get('referer') || 'Unknown',
+                body.enquiry_type || 'Student Enquiry',
+                body.message || null,
+                LEAD_STATUS.NEW,
+                LEAD_PRIORITY.MEDIUM,
                 ip_address,
                 user_agent,
-            })
-            .select()
-            .single();
+            ]
+        );
 
-        if (error) throw error;
+        const lead = result.rows[0];
 
-        // Log activity
-        await supabase.from('student_lead_activities').insert({
-            lead_id: data.id,
-            activity_type: 'LEAD_CREATED',
-            description: `Lead created from ${body.lead_source || 'Website Form'}`,
-        });
-
-        // TODO: Send welcome email (SMTP to be implemented by friend)
-        // await sendWelcomeEmail(data);
+        await query(
+            `INSERT INTO student_lead_activities (lead_id, activity_type, description)
+             VALUES ($1, $2, $3)`,
+            [lead.id, 'LEAD_CREATED', `Lead created from ${body.lead_source || 'Website Form'}`]
+        );
 
         return NextResponse.json({
             success: true,
-            data,
+            data: lead,
             message: 'Thank you for your enquiry! We will contact you within 24 hours.'
         });
     } catch (error) {

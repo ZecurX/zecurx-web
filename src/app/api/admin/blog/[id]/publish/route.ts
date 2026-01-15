@@ -7,7 +7,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const authResult = await requirePermission('blog', 'update', req);
+  const authResult = await requirePermission('blog', 'publish', req);
   if (!authResult.authorized) {
     return NextResponse.json({ error: authResult.error }, { status: authResult.status });
   }

@@ -5,6 +5,7 @@ export const ROLES = {
   ADMIN: 'admin',
   SALES: 'sales',
   MARKETING: 'marketing',
+  MEDIA: 'media',
 } as const;
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
@@ -30,6 +31,7 @@ export const ACTIONS = {
   CREATE: 'create',
   UPDATE: 'update',
   DELETE: 'delete',
+  PUBLISH: 'publish',
   ALL: '*',
 } as const;
 

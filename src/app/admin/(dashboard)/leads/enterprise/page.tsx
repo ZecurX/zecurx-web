@@ -1,12 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
-import { supabase } from "@/lib/supabase";
+import { query } from "@/lib/db";
 import { hasPermission } from "@/lib/permissions";
 import { AdminJWTPayload, RESOURCES, ACTIONS } from "@/types/auth";
 import EnterpriseLeadsClient from "./EnterpriseLeadsClient";
-
-export const dynamic = 'force-dynamic';
+import { EnterpriseLead } from "@/types/lead-types";
 
 export default async function EnterpriseLeadsPage() {
     const cookieStore = await cookies();
@@ -28,16 +27,19 @@ export default async function EnterpriseLeadsPage() {
         redirect("/admin/login");
     }
 
-    const { data: leads, count } = await supabase
-        .from("enterprise_leads")
-        .select("*", { count: "exact" })
-        .order("created_at", { ascending: false })
-        .limit(20);
+    const countResult = await query<{ count: string }>(
+        `SELECT COUNT(*) as count FROM enterprise_leads`
+    );
+    const totalCount = parseInt(countResult.rows[0]?.count || '0');
+
+    const leadsResult = await query<EnterpriseLead>(
+        `SELECT * FROM enterprise_leads ORDER BY created_at DESC LIMIT 20`
+    );
 
     return (
         <EnterpriseLeadsClient
-            initialLeads={leads || []}
-            totalCount={count || 0}
+            initialLeads={leadsResult.rows}
+            totalCount={totalCount}
         />
     );
 }

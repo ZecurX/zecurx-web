@@ -185,6 +185,7 @@ export default function AuditLogsPage() {
                 <option value="sales">Sales</option>
                 <option value="plans">Plans</option>
                 <option value="products">Products</option>
+                <option value="blog">Blog</option>
                 <option value="auth">Auth</option>
               </select>
             </div>
