@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
 import { logPasswordReset } from "@/lib/audit";
 import { ROLES, Role, PasswordResetRequest } from "@/types/auth";
 
-// POST - Reset user password (super_admin only)
 export async function POST(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -21,7 +20,6 @@ export async function POST(
         const body: PasswordResetRequest = await req.json();
         const { new_password } = body;
 
-        // Validate password
         if (!new_password || new_password.length < 8) {
             return NextResponse.json(
                 { error: "Password must be at least 8 characters" },
@@ -29,35 +27,24 @@ export async function POST(
             );
         }
 
-        // Check if user exists
-        const { data: existingUser, error: fetchError } = await supabase
-            .from('admins')
-            .select('id, email, role')
-            .eq('id', id)
-            .single();
+        const existingResult = await db.query<{ id: string; email: string; role: string }>(
+            'SELECT id, email, role FROM admins WHERE id = $1',
+            [id]
+        );
 
-        if (fetchError || !existingUser) {
+        if (existingResult.rows.length === 0) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // Hash new password
+        const existingUser = existingResult.rows[0];
+
         const passwordHash = await hash(new_password, 10);
 
-        // Update password
-        const { error: updateError } = await supabase
-            .from('admins')
-            .update({ 
-                password_hash: passwordHash, 
-                updated_at: new Date().toISOString() 
-            })
-            .eq('id', id);
+        await db.query(
+            'UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2',
+            [passwordHash, id]
+        );
 
-        if (updateError) {
-            console.error("Failed to reset password:", updateError);
-            return NextResponse.json({ error: "Failed to reset password" }, { status: 500 });
-        }
-
-        // Log the action
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logPasswordReset(

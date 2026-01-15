@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { query } from '@/lib/db';
 import * as XLSX from 'xlsx';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 interface ExportRow {
     name: string;
@@ -16,6 +13,18 @@ interface ExportRow {
     amount: number;
     status: string;
     date: string;
+}
+
+interface TransactionJoin {
+    amount: number;
+    status: string;
+    created_at: string;
+    customer_name: string;
+    customer_email: string;
+    customer_phone: string;
+    customer_college: string;
+    plan_name: string;
+    plan_type: string;
 }
 
 function extractDomain(planName: string): string {
@@ -34,55 +43,39 @@ export async function GET(request: NextRequest) {
         const type = searchParams.get('type') || 'all';
         const domain = searchParams.get('domain') || 'all';
 
-        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const result = await query<TransactionJoin>(`
+            SELECT 
+                t.amount,
+                t.status,
+                t.created_at,
+                c.name as customer_name,
+                c.email as customer_email,
+                c.phone as customer_phone,
+                c.college as customer_college,
+                p.name as plan_name,
+                p.type as plan_type
+            FROM transactions t
+            LEFT JOIN customers c ON t.customer_id = c.id
+            LEFT JOIN plans p ON t.plan_id = p.id
+            ORDER BY t.created_at DESC
+        `);
 
-        let query = supabase
-            .from('transactions')
-            .select(`
-                amount,
-                status,
-                created_at,
-                customers (
-                    name,
-                    email,
-                    phone,
-                    college
-                ),
-                plans (
-                    name,
-                    type
-                )
-            `)
-            .order('created_at', { ascending: false });
-
-        const { data: transactions, error } = await query;
-
-        if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let rows: ExportRow[] = (transactions || []).map((t: any) => {
-            const customer = Array.isArray(t.customers) ? t.customers[0] : t.customers;
-            const plan = Array.isArray(t.plans) ? t.plans[0] : t.plans;
-            
-            return {
-                name: customer?.name || '',
-                email: customer?.email || '',
-                phone: customer?.phone || '',
-                college: customer?.college || '',
-                plan_name: plan?.name || '',
-                plan_type: plan?.type || '',
-                domain: extractDomain(plan?.name || ''),
-                amount: t.amount,
-                status: t.status,
-                date: new Date(t.created_at).toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                })
-            };
-        });
+        let rows: ExportRow[] = result.rows.map((t) => ({
+            name: t.customer_name || '',
+            email: t.customer_email || '',
+            phone: t.customer_phone || '',
+            college: t.customer_college || '',
+            plan_name: t.plan_name || '',
+            plan_type: t.plan_type || '',
+            domain: extractDomain(t.plan_name || ''),
+            amount: t.amount,
+            status: t.status,
+            date: new Date(t.created_at).toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            })
+        }));
 
         if (type === 'internship') {
             rows = rows.filter(r => r.plan_type === 'internship');

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
-import { supabase } from "@/lib/supabase";
+import { supabaseStorage } from "@/lib/supabase-storage";
 
 export async function POST(req: NextRequest) {
     try {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabaseStorage.storage
             .from('products')
             .upload(fileName, buffer, {
                 contentType: file.type,
@@ -46,8 +46,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Upload failed: " + uploadError.message }, { status: 500 });
         }
 
-        // 4. Get Public URL
-        const { data: { publicUrl } } = supabase.storage
+        const { data: { publicUrl } } = supabaseStorage.storage
             .from('products')
             .getPublicUrl(fileName);
 

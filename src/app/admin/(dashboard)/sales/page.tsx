@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";
@@ -22,7 +22,6 @@ interface Transaction {
 }
 
 export default async function SalesPage() {
-    // Verify the user has permission to view sales
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("admin_session");
     
@@ -35,7 +34,6 @@ export default async function SalesPage() {
         redirect('/admin/login');
     }
 
-    // Check if user has read permission for sales
     if (!hasPermission(session.role, 'sales', 'read')) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -46,13 +44,39 @@ export default async function SalesPage() {
             </div>
         );
     }
-    const { data: transactions } = await supabase
-        .from("transactions")
-        .select("*, customers(name, email, phone)")
-        .order("created_at", { ascending: false });
 
-    const totalRevenue = transactions?.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0) || 0;
-    const capturedCount = transactions?.filter(tx => tx.status === 'captured').length || 0;
+    const result = await db.query<{
+        id: string;
+        order_id: string;
+        amount: number;
+        status: string;
+        created_at: string;
+        customer_name: string | null;
+        customer_email: string | null;
+        customer_phone: string | null;
+    }>(
+        `SELECT t.id, t.order_id, t.amount, t.status, t.created_at,
+                c.name as customer_name, c.email as customer_email, c.phone as customer_phone
+        FROM transactions t
+        LEFT JOIN customers c ON t.customer_id = c.id
+        ORDER BY t.created_at DESC`
+    );
+
+    const transactions: Transaction[] = result.rows.map(row => ({
+        id: row.id,
+        order_id: row.order_id,
+        amount: row.amount,
+        status: row.status,
+        created_at: row.created_at,
+        customers: row.customer_name ? {
+            name: row.customer_name,
+            email: row.customer_email || '',
+            phone: row.customer_phone || ''
+        } : null
+    }));
+
+    const totalRevenue = transactions.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+    const capturedCount = transactions.filter(tx => tx.status === 'captured').length;
 
     return (
         <div className="space-y-8">
@@ -72,7 +96,7 @@ export default async function SalesPage() {
                 </div>
                 <div className="p-5 rounded-2xl bg-background/70 backdrop-blur-xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05)]">
                     <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
-                    <p className="text-2xl font-bold text-foreground font-manrope mt-1">{transactions?.length || 0}</p>
+                    <p className="text-2xl font-bold text-foreground font-manrope mt-1">{transactions.length}</p>
                 </div>
                 <div className="p-5 rounded-2xl bg-background/70 backdrop-blur-xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05)]">
                     <p className="text-sm font-medium text-muted-foreground">Successful</p>
@@ -93,7 +117,7 @@ export default async function SalesPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.06]">
-                            {(transactions as Transaction[] | null)?.map((tx) => (
+                            {transactions.map((tx) => (
                                 <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
@@ -132,7 +156,7 @@ export default async function SalesPage() {
                                     </td>
                                 </tr>
                             ))}
-                            {(!transactions || transactions.length === 0) && (
+                            {transactions.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
                                         No transactions found.
@@ -145,7 +169,7 @@ export default async function SalesPage() {
             </div>
 
             <div className="md:hidden space-y-3" role="list" aria-label="Transactions list">
-                {(transactions as Transaction[] | null)?.map((tx) => (
+                {transactions.map((tx) => (
                     <article key={tx.id} className="p-4 rounded-2xl bg-background/70 backdrop-blur-xl border border-white/[0.08] shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05)] space-y-3">
                         <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3">
@@ -183,7 +207,7 @@ export default async function SalesPage() {
                         </div>
                     </article>
                 ))}
-                {(!transactions || transactions.length === 0) && (
+                {transactions.length === 0 && (
                     <div className="p-8 rounded-2xl bg-background/70 backdrop-blur-xl border border-white/[0.08] text-center text-muted-foreground">
                         No transactions found.
                     </div>

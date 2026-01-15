@@ -12,7 +12,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ProductDialog from "./ProductDialog";
-import { supabaseClient } from "@/lib/supabase-client";
 import { useRouter } from "next/navigation";
 
 interface Product {
@@ -34,29 +33,25 @@ export default function ProductsList() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from("products")
-                    .select("*")
-                    .order("created_at", { ascending: false });
-
-                if (error) {
-                    console.error("Error fetching products:", error);
-                    return;
-                }
-
-                if (data) {
-                    setProducts(data);
-                }
-            } catch (err) {
-                console.error("Failed to fetch products:", err);
-            } finally {
-                setLoading(false);
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch('/api/admin/products');
+            if (!response.ok) {
+                console.error("Error fetching products:", response.statusText);
+                return;
             }
+            const data = await response.json();
+            if (data.products) {
+                setProducts(data.products);
+            }
+        } catch (err) {
+            console.error("Failed to fetch products:", err);
+        } finally {
+            setLoading(false);
         }
+    };
 
+    useEffect(() => {
         fetchProducts();
     }, []);
 
@@ -87,11 +82,7 @@ export default function ProductsList() {
     };
 
     const refreshProducts = async () => {
-        const { data } = await supabaseClient
-            .from("products")
-            .select("*")
-            .order("created_at", { ascending: false });
-        if (data) setProducts(data);
+        await fetchProducts();
     };
 
     if (loading) {

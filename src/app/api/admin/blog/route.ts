@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db';
 import { requirePermission, getClientIP, getUserAgent } from '@/lib/auth';
 import { logBlogCreate } from '@/lib/audit';
 import { generateSlug } from '@/lib/blog';
 import { CreateBlogPostRequest } from '@/types/auth';
 
-// GET - List all blog posts (with filters)
 export async function GET(req: NextRequest) {
   const authResult = await requirePermission('blog', 'read', req);
   if (!authResult.authorized) {
@@ -21,65 +20,111 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const offset = (page - 1) * limit;
 
-    let query = supabase
-      .from('blog_posts')
-      .select(`
-        *,
-        admins!blog_posts_author_id_fkey(name, email)
-      `, { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let paramIndex = 1;
 
     if (status) {
-      query = query.eq('status', status);
+      conditions.push(`bp.status = $${paramIndex++}`);
+      values.push(status);
     }
 
     if (search) {
-      query = query.or(`title.ilike.%${search}%,content.ilike.%${search}%`);
+      conditions.push(`(bp.title ILIKE $${paramIndex} OR bp.content ILIKE $${paramIndex})`);
+      values.push(`%${search}%`);
+      paramIndex++;
     }
 
-    const { data: posts, error, count } = await query;
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    if (error) throw error;
+    const countResult = await db.query<{ count: string }>(
+      `SELECT COUNT(*) as count FROM blog_posts bp ${whereClause}`,
+      values
+    );
+    const total = parseInt(countResult.rows[0].count);
 
-    // Fetch labels for each post
-    const postsWithLabels = await Promise.all(
-      (posts || []).map(async (post) => {
-        const { data: labelData } = await supabase
-          .from('blog_post_labels')
-          .select('blog_labels(*)')
-          .eq('blog_post_id', post.id);
-
-        return {
-          ...post,
-          author_name: (post.admins as any)?.name,
-          author_email: (post.admins as any)?.email,
-          labels: labelData?.map((item: any) => item.blog_labels) || [],
-        };
-      })
+    const postsResult = await db.query<{
+      id: string;
+      title: string;
+      slug: string;
+      content: string;
+      excerpt: string | null;
+      featured_image_url: string | null;
+      status: string;
+      published_at: string | null;
+      meta_description: string | null;
+      view_count: number;
+      created_at: string;
+      updated_at: string;
+      author_id: string;
+      author_name: string | null;
+      author_email: string;
+    }>(
+      `SELECT 
+        bp.*, a.name as author_name, a.email as author_email
+      FROM blog_posts bp
+      LEFT JOIN admins a ON bp.author_id = a.id
+      ${whereClause}
+      ORDER BY bp.created_at DESC
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+      [...values, limit, offset]
     );
 
-    // Filter by label if specified
-    let filteredPosts = postsWithLabels;
+    const postIds = postsResult.rows.map(p => p.id);
+    let labelsMap: Record<string, Array<{ id: string; name: string; slug: string; color: string }>> = {};
+
+    if (postIds.length > 0) {
+      const placeholders = postIds.map((_, i) => `$${i + 1}`).join(', ');
+      const labelsResult = await db.query<{
+        blog_post_id: string;
+        id: string;
+        name: string;
+        slug: string;
+        color: string;
+      }>(
+        `SELECT bpl.blog_post_id, bl.id, bl.name, bl.slug, bl.color
+        FROM blog_post_labels bpl
+        JOIN blog_labels bl ON bpl.label_id = bl.id
+        WHERE bpl.blog_post_id IN (${placeholders})`,
+        postIds
+      );
+
+      labelsResult.rows.forEach(row => {
+        if (!labelsMap[row.blog_post_id]) {
+          labelsMap[row.blog_post_id] = [];
+        }
+        labelsMap[row.blog_post_id].push({
+          id: row.id,
+          name: row.name,
+          slug: row.slug,
+          color: row.color
+        });
+      });
+    }
+
+    let posts = postsResult.rows.map(post => ({
+      ...post,
+      labels: labelsMap[post.id] || []
+    }));
+
     if (labelId) {
-      filteredPosts = postsWithLabels.filter(post => 
-        post.labels.some((label: any) => label.id === labelId)
+      posts = posts.filter(post => 
+        post.labels.some(label => label.id === labelId)
       );
     }
 
     return NextResponse.json({
-      posts: filteredPosts,
-      total: labelId ? filteredPosts.length : count,
+      posts,
+      total: labelId ? posts.length : total,
       page,
       limit,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get blog posts error:', error);
     return NextResponse.json({ error: 'Failed to fetch blog posts' }, { status: 500 });
   }
 }
 
-// POST - Create new blog post (marketing only)
 export async function POST(req: NextRequest) {
   const authResult = await requirePermission('blog', 'create', req);
   if (!authResult.authorized) {
@@ -92,55 +137,64 @@ export async function POST(req: NextRequest) {
     const body: CreateBlogPostRequest = await req.json();
     const { title, slug, content, excerpt, featured_image_url, status, meta_description, label_ids } = body;
 
-    // Validation
     if (!title || !content) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
     }
 
-    // Generate or validate slug
     const finalSlug = slug || generateSlug(title);
 
-    // Check if slug already exists
-    const { data: existingPost } = await supabase
-      .from('blog_posts')
-      .select('id')
-      .eq('slug', finalSlug)
-      .maybeSingle();
+    const existingResult = await db.query<{ id: string }>(
+      'SELECT id FROM blog_posts WHERE slug = $1',
+      [finalSlug]
+    );
 
-    if (existingPost) {
+    if (existingResult.rows.length > 0) {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 409 });
     }
 
-    // Create blog post
-    const { data: newPost, error: createError } = await supabase
-      .from('blog_posts')
-      .insert({
+    const insertResult = await db.query<{
+      id: string;
+      title: string;
+      slug: string;
+      content: string;
+      excerpt: string | null;
+      featured_image_url: string | null;
+      author_id: string;
+      status: string;
+      published_at: string | null;
+      meta_description: string | null;
+      created_at: string;
+      updated_at: string;
+    }>(
+      `INSERT INTO blog_posts (title, slug, content, excerpt, featured_image_url, author_id, status, published_at, meta_description)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING *`,
+      [
         title,
-        slug: finalSlug,
+        finalSlug,
         content,
-        excerpt: excerpt || null,
-        featured_image_url: featured_image_url || null,
-        author_id: session.sub,
-        status: status || 'draft',
-        published_at: status === 'published' ? new Date().toISOString() : null,
-        meta_description: meta_description || null,
-      })
-      .select()
-      .single();
+        excerpt || null,
+        featured_image_url || null,
+        session.sub,
+        status || 'draft',
+        status === 'published' ? new Date().toISOString() : null,
+        meta_description || null
+      ]
+    );
 
-    if (createError) throw createError;
+    const newPost = insertResult.rows[0];
 
-    // Add labels if provided
     if (label_ids && label_ids.length > 0) {
-      const labelInserts = label_ids.map(labelId => ({
-        blog_post_id: newPost.id,
-        label_id: labelId,
-      }));
-
-      await supabase.from('blog_post_labels').insert(labelInserts);
+      const labelValues = label_ids.map((labelId, i) => 
+        `($1, $${i + 2})`
+      ).join(', ');
+      
+      await db.query(
+        `INSERT INTO blog_post_labels (blog_post_id, label_id) VALUES ${labelValues}`,
+        [newPost.id, ...label_ids]
+      );
     }
 
-    // Audit log
     const ipAddress = getClientIP(req);
     const userAgent = getUserAgent(req);
     await logBlogCreate(
@@ -152,7 +206,7 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json({ post: newPost }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create blog post error:', error);
     return NextResponse.json({ error: 'Failed to create blog post' }, { status: 500 });
   }

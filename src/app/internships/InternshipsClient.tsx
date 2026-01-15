@@ -82,7 +82,7 @@ function InternshipCard({ group, index }: { group: GroupedPlan, index: number })
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
             viewport={{ once: true, margin: "-50px" }}
-            className="group relative flex flex-col h-full bg-background border border-border/40 hover:border-border transition-colors duration-500 rounded-3xl overflow-hidden"
+            className="group relative flex flex-col h-full bg-card/50 border border-border/50 hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-3xl overflow-hidden backdrop-blur-sm shadow-sm"
         >
             <div className="flex flex-col flex-1 p-8 md:p-10">
                 <div className="flex justify-between items-start gap-4 mb-6">

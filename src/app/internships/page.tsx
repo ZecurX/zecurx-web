@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { query } from '@/lib/db';
 import InternshipsClient from './InternshipsClient';
 
 export const dynamic = 'force-dynamic';
@@ -14,12 +14,11 @@ type Plan = {
 };
 
 export default async function InternshipsPage() {
-    const { data: plans } = await supabase
-        .from('plans')
-        .select('*')
-        .eq('type', 'internship')
-        .eq('active', true)
-        .order('created_at', { ascending: true });
+    const result = await query(`
+        SELECT * FROM plans 
+        WHERE type = 'internship' AND active = true 
+        ORDER BY created_at ASC
+    `);
 
-    return <InternshipsClient plans={(plans as Plan[]) || []} />;
+    return <InternshipsClient plans={(result.rows as Plan[]) || []} />;
 }

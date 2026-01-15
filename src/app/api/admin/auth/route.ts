@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { compare } from "bcryptjs";
-import { supabase } from "@/lib/supabase";
+import * as argon2 from "argon2";
+import { query } from "@/lib/db";
 import { createToken, setSessionCookie, getClientIP, getUserAgent } from "@/lib/auth";
 import { logLogin } from "@/lib/audit";
 import { Admin, Role } from "@/types/auth";
+
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+    if (hash.startsWith('$argon2')) {
+        return argon2.verify(hash, password);
+    }
+    return compare(password, hash);
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -13,30 +21,27 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email and password required" }, { status: 400 });
         }
 
-        // 1. Fetch Admin User with all RBAC fields
-        const { data: admin, error } = await supabase
-            .from('admins')
-            .select('id, email, password_hash, role, name, is_active')
-            .eq('email', email)
-            .single();
+        const result = await query(
+            'SELECT id, email, password_hash, role, name, is_active FROM admins WHERE email = $1 LIMIT 1',
+            [email]
+        );
 
-        if (error || !admin) {
+        const admin = result.rows[0];
+
+        if (!admin) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
-        // 2. Check if account is active
         if (!admin.is_active) {
             return NextResponse.json({ error: "Account is deactivated" }, { status: 401 });
         }
 
-        // 3. Verify Password
-        const isValid = await compare(password, admin.password_hash);
+        const isValid = await verifyPassword(password, admin.password_hash);
 
         if (!isValid) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
-        // 4. Create JWT with role information
         const token = await createToken({
             id: admin.id,
             email: admin.email,
@@ -44,10 +49,8 @@ export async function POST(req: NextRequest) {
             role: admin.role as Role,
         });
 
-        // 5. Set Cookie
         await setSessionCookie(token);
 
-        // 6. Log the login event
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logLogin(
@@ -56,7 +59,6 @@ export async function POST(req: NextRequest) {
             userAgent
         );
 
-        // 7. Return success with user info (excluding sensitive data)
         return NextResponse.json({
             success: true,
             user: {
@@ -72,7 +74,6 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// GET endpoint to fetch current session info
 export async function GET() {
     try {
         const { verifySession } = await import("@/lib/auth");

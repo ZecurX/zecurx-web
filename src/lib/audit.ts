@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { db } from './db';
 import { AuditAction, AuditLog, Role } from '@/types/auth';
 
 interface AuditLogInput {
@@ -13,27 +13,23 @@ interface AuditLogInput {
   userAgent?: string | null;
 }
 
-/**
- * Create an audit log entry
- */
 export async function createAuditLog(input: AuditLogInput): Promise<{ success: boolean; error?: string }> {
   try {
-    const { error } = await supabase.from('audit_logs').insert({
-      admin_id: input.adminId,
-      admin_email: input.adminEmail,
-      admin_role: input.adminRole,
-      action: input.action,
-      resource: input.resource,
-      resource_id: input.resourceId || null,
-      details: input.details || null,
-      ip_address: input.ipAddress || null,
-      user_agent: input.userAgent || null,
-    });
-
-    if (error) {
-      console.error('Failed to create audit log:', error);
-      return { success: false, error: error.message };
-    }
+    await db.query(
+      `INSERT INTO audit_logs (admin_id, admin_email, admin_role, action, resource, resource_id, details, ip_address, user_agent)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        input.adminId,
+        input.adminEmail,
+        input.adminRole,
+        input.action,
+        input.resource,
+        input.resourceId || null,
+        input.details ? JSON.stringify(input.details) : null,
+        input.ipAddress || null,
+        input.userAgent || null,
+      ]
+    );
 
     return { success: true };
   } catch (err) {
@@ -42,9 +38,6 @@ export async function createAuditLog(input: AuditLogInput): Promise<{ success: b
   }
 }
 
-/**
- * Get audit logs with filtering and pagination
- */
 export async function getAuditLogs(options: {
   page?: number;
   limit?: number;
@@ -59,70 +52,68 @@ export async function getAuditLogs(options: {
     const limit = options.limit || 50;
     const offset = (page - 1) * limit;
 
-    let query = supabase
-      .from('audit_logs')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let paramIndex = 1;
 
-    // Apply filters
     if (options.adminId) {
-      query = query.eq('admin_id', options.adminId);
+      conditions.push(`admin_id = $${paramIndex++}`);
+      values.push(options.adminId);
     }
     if (options.action) {
-      query = query.eq('action', options.action);
+      conditions.push(`action = $${paramIndex++}`);
+      values.push(options.action);
     }
     if (options.resource) {
-      query = query.eq('resource', options.resource);
+      conditions.push(`resource = $${paramIndex++}`);
+      values.push(options.resource);
     }
     if (options.startDate) {
-      query = query.gte('created_at', options.startDate);
+      conditions.push(`created_at >= $${paramIndex++}`);
+      values.push(options.startDate);
     }
     if (options.endDate) {
-      query = query.lte('created_at', options.endDate);
+      conditions.push(`created_at <= $${paramIndex++}`);
+      values.push(options.endDate);
     }
 
-    const { data, count, error } = await query;
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    if (error) {
-      return { data: null, count: 0, error: error.message };
-    }
+    const countResult = await db.query<{ count: string }>(
+      `SELECT COUNT(*) as count FROM audit_logs ${whereClause}`,
+      values
+    );
+    const count = parseInt(countResult.rows[0].count);
 
-    return { data: data as AuditLog[], count: count || 0 };
+    const dataResult = await db.query<AuditLog>(
+      `SELECT * FROM audit_logs ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+      [...values, limit, offset]
+    );
+
+    return { data: dataResult.rows, count };
   } catch (err) {
     console.error('Get audit logs error:', err);
     return { data: null, count: 0, error: 'Failed to fetch audit logs' };
   }
 }
 
-/**
- * Delete audit logs older than specified days (for cleanup)
- */
 export async function cleanupOldAuditLogs(daysToKeep: number = 90): Promise<{ success: boolean; deleted?: number; error?: string }> {
   try {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
-    const { data, error } = await supabase
-      .from('audit_logs')
-      .delete()
-      .lt('created_at', cutoffDate.toISOString())
-      .select('id');
+    const result = await db.query<{ id: string }>(
+      `DELETE FROM audit_logs WHERE created_at < $1 RETURNING id`,
+      [cutoffDate.toISOString()]
+    );
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
-
-    return { success: true, deleted: data?.length || 0 };
+    return { success: true, deleted: result.rows.length };
   } catch (err) {
     console.error('Cleanup audit logs error:', err);
     return { success: false, error: 'Failed to cleanup audit logs' };
   }
 }
 
-/**
- * Helper to log login events
- */
 export async function logLogin(
   admin: { id: string; email: string; role: Role },
   ipAddress?: string | null,
@@ -139,9 +130,6 @@ export async function logLogin(
   });
 }
 
-/**
- * Helper to log logout events
- */
 export async function logLogout(
   admin: { id: string; email: string; role: Role },
   ipAddress?: string | null,
@@ -158,9 +146,6 @@ export async function logLogout(
   });
 }
 
-/**
- * Helper to log CRUD operations
- */
 export async function logCRUD(
   admin: { id: string; email: string; role: Role },
   action: 'create' | 'update' | 'delete',
@@ -183,9 +168,6 @@ export async function logCRUD(
   });
 }
 
-/**
- * Helper to log password reset events
- */
 export async function logPasswordReset(
   admin: { id: string; email: string; role: Role },
   targetUserId: string,
@@ -206,9 +188,6 @@ export async function logPasswordReset(
   });
 }
 
-/**
- * Helper to log blog post creation
- */
 export async function logBlogCreate(
   admin: { id: string; email: string; role: Role },
   blogId: string,
@@ -229,9 +208,6 @@ export async function logBlogCreate(
   });
 }
 
-/**
- * Helper to log blog post updates
- */
 export async function logBlogUpdate(
   admin: { id: string; email: string; role: Role },
   blogId: string,
@@ -253,9 +229,6 @@ export async function logBlogUpdate(
   });
 }
 
-/**
- * Helper to log blog post deletion
- */
 export async function logBlogDelete(
   admin: { id: string; email: string; role: Role },
   blogId: string,
@@ -276,9 +249,6 @@ export async function logBlogDelete(
   });
 }
 
-/**
- * Helper to log blog publish/unpublish
- */
 export async function logBlogPublish(
   admin: { id: string; email: string; role: Role },
   blogId: string,

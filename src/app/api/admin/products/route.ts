@@ -1,7 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { db, query } from "@/lib/db";
 import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
+
+export async function GET(req: NextRequest) {
+    const authResult = await requirePermission('products', 'read', req);
+    if (!authResult.authorized) {
+        return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    }
+
+    try {
+        const result = await query(`
+            SELECT * FROM products 
+            ORDER BY created_at DESC
+        `);
+
+        return NextResponse.json({ products: result.rows });
+    } catch (error) {
+        console.error("Get Products Error:", error);
+        return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    }
+}
 
 export async function POST(req: NextRequest) {
     const authResult = await requirePermission('products', 'create', req);
@@ -14,20 +33,41 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        // Basic validation
         if (!body.name || !body.price) {
             return NextResponse.json({ error: "Name and price are required" }, { status: 400 });
         }
 
-        const { data, error } = await supabase
-            .from("products")
-            .insert([body])
-            .select()
-            .single();
+        const result = await db.query<{
+            id: string;
+            name: string;
+            price: number;
+            description: string | null;
+            image: string | null;
+            images: string[] | null;
+            stock: number;
+            features: string[] | null;
+            tags: string[] | null;
+            delivery_days: number;
+            created_at: string;
+        }>(
+            `INSERT INTO products (name, price, description, image, images, stock, features, tags, delivery_days)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING *`,
+            [
+                body.name,
+                body.price,
+                body.description || null,
+                body.image || null,
+                body.images || null,
+                body.stock || 0,
+                body.features || null,
+                body.tags || null,
+                body.delivery_days || 5
+            ]
+        );
 
-        if (error) throw error;
+        const data = result.rows[0];
 
-        // Log the action
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logCRUD(
@@ -41,8 +81,9 @@ export async function POST(req: NextRequest) {
         );
 
         return NextResponse.json(data);
-    } catch (error: any) {
+    } catch (error) {
         console.error("Create Product Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        const message = error instanceof Error ? error.message : "Unknown error";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }
