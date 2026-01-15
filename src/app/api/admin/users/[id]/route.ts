@@ -164,6 +164,8 @@ export async function DELETE(
 
     try {
         const { id } = await params;
+        const { searchParams } = new URL(req.url);
+        const permanent = searchParams.get('permanent') === 'true';
 
         const existingResult = await db.query<{ id: string; email: string; role: string }>(
             'SELECT id, email, role FROM admins WHERE id = $1',
@@ -190,24 +192,41 @@ export async function DELETE(
             );
         }
 
-        await db.query(
-            'UPDATE admins SET is_active = false, updated_at = NOW() WHERE id = $1',
-            [id]
-        );
-
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
-        await logCRUD(
-            { id: auth.session.sub, email: auth.session.email, role: auth.session.role as Role },
-            'delete',
-            'user',
-            id,
-            { email: existingUser.email, role: existingUser.role },
-            ipAddress,
-            userAgent
-        );
 
-        return NextResponse.json({ success: true, message: "User deactivated" });
+        if (permanent) {
+            await db.query('DELETE FROM admins WHERE id = $1', [id]);
+            
+            await logCRUD(
+                { id: auth.session.sub, email: auth.session.email, role: auth.session.role as Role },
+                'delete',
+                'user',
+                id,
+                { email: existingUser.email, role: existingUser.role, permanent: true },
+                ipAddress,
+                userAgent
+            );
+
+            return NextResponse.json({ success: true, message: "User permanently deleted" });
+        } else {
+            await db.query(
+                'UPDATE admins SET is_active = false, updated_at = NOW() WHERE id = $1',
+                [id]
+            );
+
+            await logCRUD(
+                { id: auth.session.sub, email: auth.session.email, role: auth.session.role as Role },
+                'delete',
+                'user',
+                id,
+                { email: existingUser.email, role: existingUser.role, deactivated: true },
+                ipAddress,
+                userAgent
+            );
+
+            return NextResponse.json({ success: true, message: "User deactivated" });
+        }
     } catch (error) {
         console.error("Delete user error:", error);
         return NextResponse.json({ error: "Internal error" }, { status: 500 });
