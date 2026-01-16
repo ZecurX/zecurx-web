@@ -22,9 +22,9 @@ export const ROLE_DISPLAY_NAMES: Record<Role, string> = {
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   [ROLES.SUPER_ADMIN]: 'Full system access including all features and analytics',
   [ROLES.ADMIN]: 'Full business operations access with dashboard and analytics',
-  [ROLES.SALES]: 'Customers, sales, products, leads, and referral codes management',
-  [ROLES.MARKETING]: 'Plans management only (no dashboard or analytics)',
-  [ROLES.MEDIA]: 'Exclusive blog management (no dashboard or analytics)',
+  [ROLES.SALES]: 'Customers, sales, and products management with analytics access',
+  [ROLES.MARKETING]: 'Plans and whitepapers management (no dashboard or analytics)',
+  [ROLES.MEDIA]: 'Exclusive blog and whitepapers management (no dashboard or analytics)',
 };
 
 // Permissions for each role
@@ -39,7 +39,8 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:*',
     'leads:*',
     'referral_codes:*',
-    'blog:read', // Can view blogs but NOT edit
+    'blog:read',
+    'whitepapers:*',
   ],
 
   [ROLES.SALES]: [
@@ -54,11 +55,13 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
 
   [ROLES.MARKETING]: [
     'plans:*',
-    'leads:read', // Can view leads only
+    'leads:read',
+    'whitepapers:*',
   ],
   
   [ROLES.MEDIA]: [
     'blog:*', // Full blog management
+    'whitepapers:*',
   ],
 };
 
@@ -179,7 +182,8 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Plans', href: '/admin/plans', icon: 'Package', resource: RESOURCES.PLANS },
     { name: 'Products', href: '/admin/products', icon: 'ShoppingBag', resource: RESOURCES.PRODUCTS },
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
-    { name: 'Audit Logs', href: '/admin/audit', icon: 'FileText', resource: RESOURCES.AUDIT },
+    { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
+    { name: 'Audit Logs', href: '/admin/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
   ];
 
   return allItems.filter(item => hasPermission(role, item.resource, ACTIONS.READ));
