@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 import { requirePagePermission } from "@/lib/page-auth";
 import { RESOURCES, ACTIONS } from "@/types/auth";
 
-export const dynamic = 'force-dynamic';
-
 interface Sale {
     id: string;
     amount: number;

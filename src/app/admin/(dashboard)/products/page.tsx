@@ -1,8 +1,6 @@
 import { requirePagePermission } from "@/lib/page-auth";
 import { RESOURCES, ACTIONS } from "@/types/auth";
 
-export const dynamic = 'force-dynamic';
-
 export default async function ProductsPage() {
     await requirePagePermission(RESOURCES.PRODUCTS, ACTIONS.READ);
 
