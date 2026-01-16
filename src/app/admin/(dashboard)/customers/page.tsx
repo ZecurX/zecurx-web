@@ -35,7 +35,7 @@ export default async function CustomersPage() {
         college: string | null;
         created_at: string;
     }>(
-        'SELECT id, name, email, phone, college, created_at FROM customers ORDER BY created_at DESC'
+        'SELECT id, name, email, phone, college, created_at FROM customers WHERE COALESCE(is_test, FALSE) = FALSE ORDER BY created_at DESC'
     );
 
     const customerIds = customersResult.rows.map(c => c.id);

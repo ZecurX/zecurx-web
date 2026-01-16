@@ -41,9 +41,10 @@ export default async function PlansPage() {
         description: string | null;
         active: boolean;
         in_stock: boolean;
+        test_mode: boolean;
         created_at: string;
     }>(
-        'SELECT * FROM plans ORDER BY created_at DESC'
+        'SELECT id, name, type, price, description, active, COALESCE(in_stock, true) as in_stock, COALESCE(test_mode, false) as test_mode, created_at FROM plans ORDER BY created_at DESC'
     );
 
     return (

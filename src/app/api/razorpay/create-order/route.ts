@@ -163,14 +163,30 @@ export async function POST(request: NextRequest) {
                 throw error;
             }
         } else {
-            // Original flow for course/internship orders (no verification needed)
+            // Check if this is a plan order and if test_mode is enabled
+            let finalAmount = verifiedAmount;
+            let isTestOrder = false;
+
+            if (itemId) {
+                const planResult = await query(
+                    'SELECT test_mode FROM plans WHERE id = $1',
+                    [itemId]
+                );
+                if (planResult.rows.length > 0 && planResult.rows[0].test_mode) {
+                    finalAmount = 1;
+                    isTestOrder = true;
+                }
+            }
+
             const order = await getRazorpay().orders.create({
-                amount: amountToPaise(verifiedAmount),
+                amount: amountToPaise(finalAmount),
                 currency: CURRENCY,
                 receipt: `rcpt_${Date.now().toString().slice(-8)}_${Math.random().toString(36).substring(2, 6)}`,
                 notes: {
                     itemId,
                     itemName,
+                    isTest: isTestOrder ? 'true' : 'false',
+                    originalAmount: verifiedAmount.toString(),
                     ...metadata
                 },
             });
@@ -181,6 +197,8 @@ export async function POST(request: NextRequest) {
                 currency: order.currency,
                 itemName,
                 itemId,
+                isTestOrder,
+                originalAmount: isTestOrder ? verifiedAmount : undefined,
             });
         }
     } catch (error) {

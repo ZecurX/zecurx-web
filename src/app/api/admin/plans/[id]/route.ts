@@ -39,6 +39,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             updates.push(`in_stock = $${paramIndex++}`);
             values.push(body.in_stock);
         }
+        if (body.test_mode !== undefined) {
+            updates.push(`test_mode = $${paramIndex++}`);
+            values.push(body.test_mode);
+        }
 
         if (updates.length === 0) {
             return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
