@@ -66,22 +66,8 @@ const upcomingSeminars = [
 export default function SeminarsPage() {
     return (
         <>
-            <section className="relative w-full min-h-[90vh] bg-background overflow-hidden flex flex-col items-center justify-center pt-20">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop"
-                        alt="Cybersecurity Operations Center"
-                        fill
-                        className="object-cover opacity-20 grayscale"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,hsl(var(--background))_90%)]" />
-                    
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-                </div>
-
-
+            <section className="relative w-full min-h-[90vh] bg-background overflow-hidden flex flex-col items-center justify-center pt-32 pb-24 border-b border-white/[0.08]">
+                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808033_1px,transparent_1px),linear-gradient(to_bottom,#80808033_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
                 <div className="max-w-5xl mx-auto px-6 relative z-10 w-full flex flex-col items-center text-center">
                     <motion.div
@@ -90,13 +76,9 @@ export default function SeminarsPage() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="flex flex-col items-center"
                     >
-
-
-                        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-foreground mb-8 leading-[0.9]">
+                        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-foreground to-muted-foreground">
                             Forging Digital <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-b from-foreground via-muted-foreground to-transparent">
-                                Resilience.
-                            </span>
+                            Resilience.
                         </h1>
 
                         <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-12">

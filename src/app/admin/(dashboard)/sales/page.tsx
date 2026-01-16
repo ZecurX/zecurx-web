@@ -2,8 +2,6 @@ import { db } from "@/lib/db";
 import { requirePagePermission } from "@/lib/page-auth";
 import { RESOURCES, ACTIONS } from "@/types/auth";
 
-export const dynamic = 'force-dynamic';
-
 interface CustomerInfo {
     name: string;
     email: string;

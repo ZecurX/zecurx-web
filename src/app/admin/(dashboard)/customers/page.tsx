@@ -3,8 +3,6 @@ import CustomersClient from "./CustomersClient";
 import { requirePagePermission } from "@/lib/page-auth";
 import { RESOURCES, ACTIONS } from "@/types/auth";
 
-export const dynamic = 'force-dynamic';
-
 interface Transaction {
     created_at: string;
     amount: number;

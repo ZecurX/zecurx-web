@@ -20,13 +20,15 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
     text: string,
     params?: unknown[]
 ): Promise<QueryResult<T>> {
-    const start = Date.now();
-    const res = await pool.query<T>(text, params as any);
-    const duration = Date.now() - start;
     if (process.env.NODE_ENV === 'development') {
+        const start = Date.now();
+        const res = await pool.query<T>(text, params as any);
+        const duration = Date.now() - start;
         console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
+        return res;
     }
-    return res;
+    
+    return pool.query<T>(text, params as any);
 }
 
 export async function getClient() {
