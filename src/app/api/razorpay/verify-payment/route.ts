@@ -185,10 +185,11 @@ export async function POST(request: NextRequest) {
                     }
 
                     try {
+                        const isTestOrder = notes?.isTest === 'true';
                         await query(`
-                            INSERT INTO transactions (payment_id, order_id, amount, status, customer_id, plan_id)
-                            VALUES ($1, $2, $3, $4, $5, $6)
-                        `, [razorpay_payment_id, razorpay_order_id, amountInRupees, 'captured', customer.id, planId]);
+                            INSERT INTO transactions (payment_id, order_id, amount, status, customer_id, plan_id, is_test)
+                            VALUES ($1, $2, $3, $4, $5, $6, $7)
+                        `, [razorpay_payment_id, razorpay_order_id, amountInRupees, 'captured', customer.id, planId, isTestOrder]);
                     } catch (txError) {
                         console.error('Transaction DB Error:', txError);
                         console.error('Transaction Insert Details:', {

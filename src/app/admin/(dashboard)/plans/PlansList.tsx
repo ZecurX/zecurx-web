@@ -13,6 +13,7 @@ type Plan = {
     description: string | null;
     active: boolean;
     in_stock: boolean;
+    test_mode: boolean;
 };
 
 export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
@@ -99,6 +100,11 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
                                                 Out of Stock
                                             </span>
                                         )}
+                                        {plan.test_mode && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20">
+                                                🧪 Test Mode
+                                            </span>
+                                        )}
                                     </div>
                                     <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors w-full line-clamp-1">{plan.name}</h3>
                                 </div>
@@ -107,9 +113,14 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
                             <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{plan.description}</p>
 
                             <div className="flex items-end justify-between pt-4 border-t border-border/50">
-                                <p className="text-2xl font-bold text-foreground">
-                                    {plan.price === 0 ? "Custom" : `₹${plan.price.toLocaleString('en-IN')}`}
-                                </p>
+                                <div>
+                                    <p className="text-2xl font-bold text-foreground">
+                                        {plan.test_mode ? '₹1' : (plan.price === 0 ? "Custom" : `₹${plan.price.toLocaleString('en-IN')}`)}
+                                    </p>
+                                    {plan.test_mode && (
+                                        <p className="text-xs text-amber-400">Original: ₹{plan.price.toLocaleString('en-IN')}</p>
+                                    )}
+                                </div>
                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
                                         onClick={() => setEditingPlan(plan)}

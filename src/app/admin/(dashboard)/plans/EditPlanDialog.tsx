@@ -11,6 +11,7 @@ type Plan = {
     description: string | null;
     active: boolean;
     in_stock: boolean;
+    test_mode: boolean;
 };
 
 export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan, onClose: () => void, onUpdate: () => void }) {
@@ -20,7 +21,8 @@ export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan
         price: plan.price,
         description: plan.description || '',
         active: plan.active,
-        in_stock: plan.in_stock ?? true
+        in_stock: plan.in_stock ?? true,
+        test_mode: plan.test_mode ?? false
     });
 
     const handleSave = async () => {
@@ -34,7 +36,8 @@ export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan
                     price: Number(formData.price),
                     description: formData.description,
                     active: formData.active,
-                    in_stock: formData.in_stock
+                    in_stock: formData.in_stock,
+                    test_mode: formData.test_mode
                 })
             });
 
@@ -111,6 +114,21 @@ export default function EditPlanDialog({ plan, onClose, onUpdate }: { plan: Plan
                             <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${formData.in_stock ? 'left-7' : 'left-1'}`} />
                         </button>
                         <span className="text-sm text-zinc-300">{formData.in_stock ? "In Stock" : "Out of Stock"}</span>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                        <button
+                            onClick={() => setFormData({ ...formData, test_mode: !formData.test_mode })}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${formData.test_mode ? 'bg-amber-500' : 'bg-zinc-700'}`}
+                        >
+                            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${formData.test_mode ? 'left-7' : 'left-1'}`} />
+                        </button>
+                        <div>
+                            <span className="text-sm text-amber-400 font-medium">🧪 Test Mode</span>
+                            {formData.test_mode && (
+                                <p className="text-xs text-amber-400/70 mt-0.5">Price will be ₹1. Payments marked as test.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
 
