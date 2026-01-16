@@ -21,7 +21,8 @@ import {
     Ticket,
     FlaskConical,
     GraduationCap,
-    Building2
+    Building2,
+    ScrollText
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -55,7 +56,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
     Ticket,
     FlaskConical,
     GraduationCap,
-    Building2
+    Building2,
+    ScrollText
 };
 
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {

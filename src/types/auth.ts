@@ -22,6 +22,7 @@ export const RESOURCES = {
   LEADS: 'leads',
   REFERRAL_CODES: 'referral_codes',
   SYSTEM_TEST: 'system_test',
+  WHITEPAPERS: 'whitepapers',
 } as const;
 
 export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES];
@@ -191,4 +192,47 @@ export interface CreateBlogLabelRequest {
 export interface UpdateBlogLabelRequest {
   name?: string;
   color?: string;
+}
+
+// Whitepaper types
+export type WhitepaperStatus = 'draft' | 'published';
+
+export interface Whitepaper {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  category: string;
+  pages: number;
+  cover_image_url: string | null;
+  pdf_url: string;
+  author_id: string;
+  author_name?: string;
+  author_email?: string;
+  status: WhitepaperStatus;
+  published_at: string | null;
+  download_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateWhitepaperRequest {
+  title: string;
+  slug?: string;
+  summary: string;
+  category: string;
+  pages?: number;
+  cover_image_url?: string;
+  pdf_url: string;
+  status: WhitepaperStatus;
+}
+
+export interface UpdateWhitepaperRequest {
+  title?: string;
+  summary?: string;
+  category?: string;
+  pages?: number;
+  cover_image_url?: string;
+  pdf_url?: string;
+  status?: WhitepaperStatus;
 }
