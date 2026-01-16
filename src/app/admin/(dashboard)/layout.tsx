@@ -99,6 +99,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             icon: "FileText",
             visible: hasPermission(userInfo.role, RESOURCES.AUDIT, ACTIONS.READ)
         },
+        {
+            href: "/admin/system-test",
+            label: "System Test",
+            icon: "FlaskConical",
+            visible: hasPermission(userInfo.role, RESOURCES.SYSTEM_TEST, ACTIONS.READ)
+        },
     ].filter(item => item.visible);
 
     return (
