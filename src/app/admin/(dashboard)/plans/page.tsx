@@ -7,8 +7,6 @@ import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ShieldAlert } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-
 export default async function PlansPage() {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("admin_session");

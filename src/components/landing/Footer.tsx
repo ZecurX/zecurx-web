@@ -82,7 +82,7 @@ export default function Footer() {
                 {/* Bottom Section */}
                 <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-xs text-muted-foreground/60">
-                        &copy; {new Date().getFullYear()} ZecurX Inc. All rights reserved.
+                        &copy; 2026 ZecurX Inc. All rights reserved.
                     </p>
                     <div className="flex gap-8">
                         <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>

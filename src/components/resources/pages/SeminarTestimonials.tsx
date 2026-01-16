@@ -51,8 +51,8 @@ const testimonials = [
         name: "Dr. Farhan Ahmed",
         role: "HOD, IT",
         org: "Yenepoya University",
-        image: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?q=80&w=1000&auto=format&fit=crop",
-        location: "Mangalore"
+        image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1000&auto=format&fit=crop",
+        location: "Bengaluru"
     },
     {
         quote: "The seminar on application security provided our students with critical skills for their future careers. Highly recommended.",

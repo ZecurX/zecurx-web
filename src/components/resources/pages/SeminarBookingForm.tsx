@@ -23,6 +23,14 @@ const bookingSchema = z.object({
     email: z.string().email("Please enter a valid email address"),
     organization: z.string().min(2, "Organization name is required"),
     type: z.enum(["college", "corporate", "keynote"]),
+    topic: z.enum([
+        "Generative AI Security & Defense",
+        "Ransomware Response & Resilience",
+        "Zero Trust Network Architecture",
+        "Cloud Security Posture (CSPM)",
+        "API Security & DevSecOps",
+        "Ethical Hacking & Red Teaming"
+    ]),
     attendees: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Please enter a valid number of attendees",
     }),
@@ -30,6 +38,9 @@ const bookingSchema = z.object({
         message: "Please select a future date",
     }),
     message: z.string().max(500, "Message cannot exceed 500 characters").optional(),
+    privacyPolicy: z.boolean().refine(val => val === true, {
+        message: "You must accept the privacy policy to continue"
+    })
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
@@ -53,6 +64,7 @@ export default function SeminarBookingForm() {
             organization: "",
             attendees: "",
             message: "",
+            privacyPolicy: false
         },
     });
 
@@ -253,11 +265,35 @@ export default function SeminarBookingForm() {
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="message" className="text-base font-medium">Specific Requirements / Topics</Label>
+                                <Label htmlFor="topic" className="text-base font-medium">Topic of Interest</Label>
+                                <Controller
+                                    name="topic"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger className={`h-14 rounded-xl bg-background border-border/60 focus:ring-primary/20 ${errors.topic ? "border-red-500" : ""}`}>
+                                                <SelectValue placeholder="Select a topic..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Generative AI Security & Defense">Generative AI Security & Defense</SelectItem>
+                                                <SelectItem value="Ransomware Response & Resilience">Ransomware Response & Resilience</SelectItem>
+                                                <SelectItem value="Zero Trust Network Architecture">Zero Trust Network Architecture</SelectItem>
+                                                <SelectItem value="Cloud Security Posture (CSPM)">Cloud Security Posture (CSPM)</SelectItem>
+                                                <SelectItem value="API Security & DevSecOps">API Security & DevSecOps</SelectItem>
+                                                <SelectItem value="Ethical Hacking & Red Teaming">Ethical Hacking & Red Teaming</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                                {errors.topic && <p className="text-xs text-red-500 font-medium ml-1">{errors.topic.message}</p>}
+                            </div>
+
+                            <div className="space-y-3">
+                                <Label htmlFor="message" className="text-base font-medium">Additional Requirements / Custom Topics</Label>
                                 <Textarea
                                     id="message"
-                                    placeholder="Tell us about the audience technical level, specific topics of interest (e.g. AI Security, Ransomware), or lab requirements..."
-                                    className={`min-h-[160px] rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all resize-none p-4 ${errors.message ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                                    placeholder="Tell us about specific lab requirements, custom modules, or audience details..."
+                                    className={`min-h-[120px] rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all resize-none p-4 ${errors.message ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                                     {...register("message")}
                                 />
                                 {errors.message && <p className="text-xs text-red-500 font-medium ml-1">{errors.message.message}</p>}
@@ -270,7 +306,24 @@ export default function SeminarBookingForm() {
                                 </div>
                             )}
 
-                            <div className="pt-4">
+                            <div className="pt-4 space-y-6">
+                                <div className="flex items-start gap-3">
+                                    <div className="flex items-center h-5">
+                                        <input
+                                            id="privacyPolicy"
+                                            type="checkbox"
+                                            {...register("privacyPolicy")}
+                                            className="w-5 h-5 rounded border-border/60 bg-background text-primary focus:ring-primary/20 transition-colors cursor-pointer accent-primary"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="privacyPolicy" className="text-sm font-normal text-muted-foreground cursor-pointer select-none">
+                                            I agree to the <a href="/privacy-policy" className="underline hover:text-foreground">privacy policy</a> and consent to being contacted regarding this request.
+                                        </Label>
+                                        {errors.privacyPolicy && <p className="text-xs text-red-500 font-medium">{errors.privacyPolicy.message}</p>}
+                                    </div>
+                                </div>
+
                                 <Button
                                     type="submit"
                                     className="w-full h-14 rounded-xl text-base font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
@@ -288,9 +341,6 @@ export default function SeminarBookingForm() {
                                         </>
                                     )}
                                 </Button>
-                                <p className="text-center text-xs text-muted-foreground mt-4">
-                                    By submitting, you agree to our privacy policy. We typically respond within 24 hours.
-                                </p>
                             </div>
                         </form>
                     </div>
