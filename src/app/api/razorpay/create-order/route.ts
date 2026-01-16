@@ -163,18 +163,46 @@ export async function POST(request: NextRequest) {
                 throw error;
             }
         } else {
-            // Check if this is a plan order and if test_mode is enabled
             let finalAmount = verifiedAmount;
             let isTestOrder = false;
+            let isPromoPrice = false;
 
             if (itemId) {
                 const planResult = await query(
-                    'SELECT test_mode FROM plans WHERE id = $1',
+                    'SELECT test_mode, price, name FROM plans WHERE id = $1',
                     [itemId]
                 );
-                if (planResult.rows.length > 0 && planResult.rows[0].test_mode) {
-                    finalAmount = 1;
-                    isTestOrder = true;
+                if (planResult.rows.length > 0) {
+                    const plan = planResult.rows[0];
+                    
+                    if (plan.test_mode) {
+                        finalAmount = 1;
+                        isTestOrder = true;
+                    } else if (metadata?.promoPrice && metadata.promoPrice !== parseFloat(plan.price)) {
+                        const promoCheckResult = await query(`
+                            SELECT pp.* FROM public.promo_prices pp
+                            WHERE pp.is_active = true
+                            AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
+                            AND pp.valid_from <= NOW()
+                            AND $1 >= pp.min_price 
+                            AND $1 <= pp.max_price
+                            AND (
+                                pp.plan_id = $2 
+                                OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
+                            )
+                            LIMIT 1
+                        `, [metadata.promoPrice, itemId, plan.name]);
+
+                        if (promoCheckResult.rows.length > 0) {
+                            finalAmount = metadata.promoPrice;
+                            isPromoPrice = true;
+                        } else {
+                            return NextResponse.json(
+                                { error: 'Invalid promo price for this plan' },
+                                { status: 400 }
+                            );
+                        }
+                    }
                 }
             }
 
@@ -186,6 +214,7 @@ export async function POST(request: NextRequest) {
                     itemId,
                     itemName,
                     isTest: isTestOrder ? 'true' : 'false',
+                    isPromoPrice: isPromoPrice ? 'true' : 'false',
                     originalAmount: verifiedAmount.toString(),
                     ...metadata
                 },
@@ -198,7 +227,8 @@ export async function POST(request: NextRequest) {
                 itemName,
                 itemId,
                 isTestOrder,
-                originalAmount: isTestOrder ? verifiedAmount : undefined,
+                isPromoPrice,
+                originalAmount: isTestOrder || isPromoPrice ? verifiedAmount : undefined,
             });
         }
     } catch (error) {
