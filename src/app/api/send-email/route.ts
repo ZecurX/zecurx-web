@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { appendToSheet } from '@/lib/google-sheets';
-import path from 'path';
-import fs from 'fs';
+import { fetchFromCdn } from '@/lib/cdn';
 
 export async function POST(request: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -124,50 +123,47 @@ export async function POST(request: NextRequest) {
             </div>
         `;
 
-        // Brochure Attachments - use compressed PDFs
-        const brochureDir = path.join(process.cwd(), 'public/brochures/services/compressed');
-
-        const serviceToPdf: { [key: string]: { filename: string; file: string } } = {
-            'penetration testing': { filename: 'ZecurX_Penetration_Testing.pdf', file: 'penetration-testing.pdf' },
-            'vulnerability management': { filename: 'ZecurX_Red_Teaming.pdf', file: 'red-teaming.pdf' },
-            'red teaming': { filename: 'ZecurX_Red_Teaming.pdf', file: 'red-teaming.pdf' },
-            'web & app security': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
-            'devsecops implementation': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
-            'secure development': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
-            'strategic consulting': { filename: 'ZecurX_Risk_Audit.pdf', file: 'risk-audit.pdf' },
-            'risk audit': { filename: 'ZecurX_Risk_Audit.pdf', file: 'risk-audit.pdf' },
-            'security operations': { filename: 'ZecurX_Security_Ops.pdf', file: 'security-ops.pdf' },
+        const serviceToPdf: { [key: string]: { filename: string; cdnPath: string } } = {
+            'penetration testing': { filename: 'ZecurX_Penetration_Testing.pdf', cdnPath: 'brochures/services/compressed/penetration-testing.pdf' },
+            'vulnerability management': { filename: 'ZecurX_Red_Teaming.pdf', cdnPath: 'brochures/services/compressed/red-teaming.pdf' },
+            'red teaming': { filename: 'ZecurX_Red_Teaming.pdf', cdnPath: 'brochures/services/compressed/red-teaming.pdf' },
+            'web & app security': { filename: 'ZecurX_Security_Ops.pdf', cdnPath: 'brochures/services/compressed/security-ops.pdf' },
+            'devsecops implementation': { filename: 'ZecurX_Security_Ops.pdf', cdnPath: 'brochures/services/compressed/security-ops.pdf' },
+            'secure development': { filename: 'ZecurX_Security_Ops.pdf', cdnPath: 'brochures/services/compressed/security-ops.pdf' },
+            'strategic consulting': { filename: 'ZecurX_Risk_Audit.pdf', cdnPath: 'brochures/services/compressed/risk-audit.pdf' },
+            'risk audit': { filename: 'ZecurX_Risk_Audit.pdf', cdnPath: 'brochures/services/compressed/risk-audit.pdf' },
+            'security operations': { filename: 'ZecurX_Security_Ops.pdf', cdnPath: 'brochures/services/compressed/security-ops.pdf' },
         };
 
         const selectedService = body.service?.toLowerCase() || 'general';
         const selectedPdf = serviceToPdf[selectedService] || serviceToPdf['penetration testing'];
 
-        // Build attachments array for Resend
         let attachments: { filename: string; content: Buffer }[] = [];
         if (isDemo && selectedPdf) {
-            const pdfPath = path.join(brochureDir, selectedPdf.file);
-            try {
-                fs.accessSync(pdfPath, fs.constants.R_OK);
-                const fileContent = fs.readFileSync(pdfPath);
+            const fileContent = await fetchFromCdn(selectedPdf.cdnPath);
+            if (fileContent) {
                 attachments = [{ filename: selectedPdf.filename, content: fileContent }];
                 console.log(`Selected PDF for service "${body.service}": ${selectedPdf.filename}`);
-            } catch {
-                console.warn(`Brochure file not found: ${pdfPath}`);
+            } else {
+                console.warn(`Failed to fetch brochure from CDN: ${selectedPdf.cdnPath}`);
             }
         }
 
-        // Attach course brochure for academy brochure requests
         if (isBrochure && body.brochureLink) {
-            try {
-                // brochureLink is like "/brochures/zxCPPT_Brochure_v3.pdf"
-                const brochurePath = path.join(process.cwd(), 'public', body.brochureLink);
-                fs.accessSync(brochurePath, fs.constants.R_OK);
-                const fileContent = fs.readFileSync(brochurePath);
+            let cdnPath = body.brochureLink;
+            if (cdnPath.startsWith('http')) {
+                cdnPath = cdnPath.replace(/^https?:\/\/[^/]+\//, '');
+            } else if (cdnPath.startsWith('/')) {
+                cdnPath = cdnPath.slice(1);
+            }
+            
+            const fileContent = await fetchFromCdn(cdnPath);
+            if (fileContent) {
                 const filename = `ZecurX_${body.courseTitle?.replace(/\s+/g, '_') || 'Course'}_Brochure.pdf`;
                 attachments = [{ filename, content: fileContent }];
                 console.log(`Attaching course brochure: ${filename}`);
-            } catch (brochureError) {
-                console.warn(`Course brochure not found at: ${body.brochureLink}`, brochureError);
+            } else {
+                console.warn(`Course brochure not found at CDN: ${cdnPath}`);
             }
         }
 

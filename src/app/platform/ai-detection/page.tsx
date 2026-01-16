@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Brain, Search, AlertTriangle, Shield, CheckCircle, Lock } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const aiDetectionData = {
     badge: "Platform Feature",
     title: "AI",
     subtitle: "Detection",
     description: "Stay ahead of sophisticated attacks with AI-driven threat detection. Our models learn your environment to identify anomalies and stop zero-day threats in real-time.",
-    heroImage: "/images/pages/ai-detection.jpeg",
+    heroImage: CDN_ASSETS.pages.aiDetection,
     capabilities: [
         {
             icon: <Brain className="w-6 h-6" />,

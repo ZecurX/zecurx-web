@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Settings, Zap, Shield, Code, Eye, Target } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const securityAutomationData = {
     badge: "Platform Feature",
     title: "Security",
     subtitle: "Automation",
     description: "Automate repetitive tasks and orchestrate your response to incidents. Reduce MTTD and MTTR while freeing up analysts for high-value work.",
-    heroImage: "/images/pages/security-automation.jpeg",
+    heroImage: CDN_ASSETS.pages.securityAutomation,
     capabilities: [
         {
             icon: <Settings className="w-6 h-6" />,

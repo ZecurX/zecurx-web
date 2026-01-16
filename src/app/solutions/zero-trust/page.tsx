@@ -9,6 +9,7 @@ import { TypographicCard } from '@/components/services/ui/TypographicCard';
 import { StatMetric } from '@/components/services/ui/StatMetric';
 import CTASection from '@/components/landing/CTASection';
 import Image from 'next/image';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 export default function ZeroTrustPage() {
     return (
@@ -53,7 +54,7 @@ export default function ZeroTrustPage() {
                             className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
                         >
                             <Image
-                                src="/images/pages/zero-trust.jpeg"
+                                src={CDN_ASSETS.pages.zeroTrust}
                                 alt="Zero Trust Architecture"
                                 fill
                                 className="object-cover dark:invert dark:hue-rotate-180"

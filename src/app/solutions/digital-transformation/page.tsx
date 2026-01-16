@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Zap, Shield, Cloud, Lock, Settings, Globe, Code, Smartphone, LayoutGrid } from "lucide-react";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const digitalTransformationData = {
     badge: "Security Solution",
     title: "Digital",
     subtitle: "Transformation",
     description: "Enable secure modernization while adopting cloud, automation, and emerging technologies. Our comprehensive approach ensures your digital initiatives accelerate business growth without introducing new risks.",
-    heroImage: "/images/pages/digital-transformation.jpeg",
+    heroImage: CDN_ASSETS.pages.digitalTransformation,
     heroImageClassName: "contrast-[1.15] brightness-[1.05]", // Boost contrast to whiten the background
     capabilities: [
         {

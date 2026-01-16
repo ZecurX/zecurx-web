@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Shield, Cpu, Eye, Zap, Lock, Target } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const endpointSecurityData = {
     badge: "Endpoint Security",
     title: "Behavior-Based",
     subtitle: "Endpoint Protection",
     description: "Continuous endpoint visibility and behavior-based protection rather than relying only on signatures. AI models detect abnormal behavior, lateral movement, and zero-day activity.",
-    heroImage: "/images/pages/endpoint-security.jpeg",
+    heroImage: CDN_ASSETS.pages.endpointSecurity,
     capabilities: [
         {
             icon: <Shield className="w-6 h-6" />,

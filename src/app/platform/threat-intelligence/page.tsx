@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Target, Eye, Shield, Globe, Zap, Brain } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const threatIntelligenceData = {
     badge: "Threat Intelligence",
     title: "Proactive",
     subtitle: "Threat Hunting",
     description: "Global threat intelligence combined with proactive threat hunting tailored to your organization. AI correlates threat data to surface hidden threats early.",
-    heroImage: "/images/pages/threat-intelligence.jpeg",
+    heroImage: CDN_ASSETS.pages.threatIntelligence,
     capabilities: [
         {
             icon: <Target className="w-6 h-6" />,

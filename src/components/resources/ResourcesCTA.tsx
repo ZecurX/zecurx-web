@@ -2,6 +2,7 @@
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 export default function ResourcesCTA() {
     return (
@@ -10,7 +11,7 @@ export default function ResourcesCTA() {
         >
             {/* Light Mode: Background */}
             <div
-                style={{ backgroundImage: "url('/assets/light-bg.png')" }}
+                style={{ backgroundImage: `url('${CDN_ASSETS.backgrounds.light}')` }}
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat dark:hidden scale-105"
             />
             {/* Light Mode Overlay for brightness */}
@@ -18,7 +19,7 @@ export default function ResourcesCTA() {
 
             {/* Dark Mode: Background & Overlay */}
             <div
-                style={{ backgroundImage: "url('/assets/dark-bg.png')" }}
+                style={{ backgroundImage: `url('${CDN_ASSETS.backgrounds.dark}')` }}
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat hidden dark:block opacity-100 scale-105"
             />
             {/* Reduced overlay opacity for brightness */}

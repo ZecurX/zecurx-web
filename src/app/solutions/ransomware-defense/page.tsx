@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Shield, Lock, RefreshCw, Eye, Database, AlertTriangle, HardDrive, Activity, Server, FileText } from "lucide-react";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const ransomwareDefenseData = {
     badge: "Security Solution",
     title: "Ransomware",
     subtitle: "Defense",
     description: "Stop ransomware before it encrypts your data. Our multi-layered defense combines AI-driven prevention, deception technology, and automated recovery to ensure business continuity.",
-    heroImage: "/images/pages/ransomware-defense.jpeg",
+    heroImage: CDN_ASSETS.pages.ransomwareDefense,
     capabilities: [
         {
             icon: <Shield className="w-6 h-6" />,

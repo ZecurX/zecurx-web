@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { FileText, Shield, CheckCircle, Eye, Settings, Lock } from "lucide-react";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const complianceData = {
     badge: "Security Solution",
     title: "Compliance &",
     subtitle: "Regulatory Alignment",
     description: "Achieve and maintain compliance with industry regulations and security frameworks. Our automated compliance platform reduces audit burden, demonstrates due diligence, and ensures continuous adherence to required standards.",
-    heroImage: "/images/pages/compliance.jpeg",
+    heroImage: CDN_ASSETS.pages.compliance,
     capabilities: [
         {
             icon: <FileText className="w-6 h-6" />,

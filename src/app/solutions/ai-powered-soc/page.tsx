@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Brain, Eye, Zap, Target, Shield, Settings } from "lucide-react";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const aiPoweredSocData = {
     badge: "Security Solution",
     title: "AI-Powered",
     subtitle: "SOC",
     description: "Modernize your security operations with intelligence-driven detection and AI-powered response. Transform your SOC from reactive to proactive, reducing mean time to detect and respond while empowering analysts to focus on strategic threats.",
-    heroImage: "/images/pages/ai-powered-soc.jpeg",
+    heroImage: CDN_ASSETS.pages.aiPoweredSoc,
     capabilities: [
         {
             icon: <Brain className="w-6 h-6" />,

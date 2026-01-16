@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Code, Shield, Eye, Settings, Lock, Zap } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const applicationSecurityData = {
     badge: "Platform Feature",
     title: "Application",
     subtitle: "Security",
     description: "Secure your applications from code to cloud. Findings are prioritized by risk, allowing developers to fix what matters most.",
-    heroImage: "/images/pages/application-security.jpeg",
+    heroImage: CDN_ASSETS.pages.applicationSecurity,
     capabilities: [
         {
             icon: <Code className="w-6 h-6" />,

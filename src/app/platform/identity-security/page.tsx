@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { UserCheck, Shield, Key, Eye, Lock, Fingerprint } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const identitySecurityData = {
     badge: "Platform Feature",
     title: "Identity",
     subtitle: "Security",
     description: "Secure identities across your enterprise. Detect compromised credentials and lateral movement with identity-centric security.",
-    heroImage: "/images/pages/identity-security.jpeg",
+    heroImage: CDN_ASSETS.pages.identitySecurity,
     capabilities: [
         {
             icon: <UserCheck className="w-6 h-6" />,
