@@ -214,7 +214,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
             </div>
 
             {/* Filters */}
-            <div className={cn(cardClass, "space-y-4")}>
+            <div className={cn(cardClass, "space-y-4 overflow-visible relative z-20")}>
                 <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4 text-muted-foreground" />
                     <span className="text-sm font-medium text-muted-foreground">Filters:</span>
@@ -239,7 +239,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
                     </div>
 
                     {/* Status filter */}
-                    <div className="relative">
+                    <div className="relative z-30">
                         <button
                             onClick={() => { setStatusDropdownOpen(!statusDropdownOpen); setPriorityDropdownOpen(false); }}
                             className={cn(
@@ -252,7 +252,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
                             <ChevronDown className={cn("w-4 h-4 transition-transform", statusDropdownOpen && "rotate-180")} />
                         </button>
                         {statusDropdownOpen && (
-                            <ul className="absolute top-full left-0 right-0 mt-2 z-50 bg-background border border-white/[0.08] rounded-lg py-1 shadow-lg max-h-60 overflow-y-auto">
+                            <ul className="absolute top-full left-0 right-0 mt-2 bg-background border border-white/[0.08] rounded-lg py-1 shadow-xl max-h-60 overflow-y-auto overscroll-contain z-50" onWheel={(e) => e.stopPropagation()}>
                                 <li onClick={() => { setStatusFilter(''); setStatusDropdownOpen(false); setPage(1); }}
                                     className="px-4 py-2 text-sm cursor-pointer hover:bg-white/[0.04] flex items-center justify-between">
                                     <span>All Status</span>
@@ -270,7 +270,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
                     </div>
 
                     {/* Priority filter */}
-                    <div className="relative">
+                    <div className="relative z-30">
                         <button
                             onClick={() => { setPriorityDropdownOpen(!priorityDropdownOpen); setStatusDropdownOpen(false); }}
                             className={cn(
@@ -283,7 +283,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
                             <ChevronDown className={cn("w-4 h-4 transition-transform", priorityDropdownOpen && "rotate-180")} />
                         </button>
                         {priorityDropdownOpen && (
-                            <ul className="absolute top-full left-0 right-0 mt-2 z-50 bg-background border border-white/[0.08] rounded-lg py-1 shadow-lg">
+                            <ul className="absolute top-full left-0 right-0 mt-2 bg-background border border-white/[0.08] rounded-lg py-1 shadow-xl max-h-60 overflow-y-auto overscroll-contain z-50" onWheel={(e) => e.stopPropagation()}>
                                 <li onClick={() => { setPriorityFilter(''); setPriorityDropdownOpen(false); setPage(1); }}
                                     className="px-4 py-2 text-sm cursor-pointer hover:bg-white/[0.04] flex items-center justify-between">
                                     <span>All Priority</span>
@@ -312,7 +312,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
             </div>
 
             {/* Table - Desktop */}
-            <div className="hidden md:block">
+            <div className="hidden md:block relative z-10">
                 <div className={cn(cardClass, "overflow-hidden !p-0")}>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">

@@ -69,11 +69,22 @@ function CheckoutContent() {
     const [referralError, setReferralError] = useState('');
     const [validatingCode, setValidatingCode] = useState(false);
 
+    const [promoPrice, setPromoPrice] = useState<number | null>(null);
+    const [promoPriceValid, setPromoPriceValid] = useState<boolean | null>(null);
+    const [promoPriceError, setPromoPriceError] = useState('');
+    const [originalPlanPrice, setOriginalPlanPrice] = useState<number | null>(null);
+
+    const urlPromoPrice = searchParams.get('promoPrice');
+    const itemId = searchParams.get('itemId') || '';
+    const itemName = searchParams.get('itemName') || '';
+    const urlPrice = Number(searchParams.get('price')) || 0;
+    const itemType = searchParams.get('type') || 'course';
+
     const singleItem = !isCartCheckout ? {
-        id: searchParams.get('itemId') || '',
-        name: searchParams.get('itemName') || '',
-        price: Number(searchParams.get('price')) || 0,
-        type: searchParams.get('type') || 'course'
+        id: itemId,
+        name: itemName,
+        price: promoPriceValid && promoPrice ? promoPrice : urlPrice,
+        type: itemType
     } : null;
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
@@ -134,6 +145,47 @@ function CheckoutContent() {
         }
     }, [searchParams]);
 
+    useEffect(() => {
+        const validatePromoPrice = async () => {
+            if (!urlPromoPrice || !itemId || isCartCheckout) return;
+
+            const priceToValidate = parseFloat(urlPromoPrice);
+            if (isNaN(priceToValidate) || priceToValidate <= 0) {
+                setPromoPriceError('Invalid promo price');
+                setPromoPriceValid(false);
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/promo-prices/validate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        planId: itemId,
+                        promoPrice: priceToValidate
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.valid) {
+                    setPromoPrice(data.promoPrice);
+                    setOriginalPlanPrice(data.originalPrice);
+                    setPromoPriceValid(true);
+                    setPromoPriceError('');
+                } else {
+                    setPromoPriceError(data.error || 'Invalid promo price');
+                    setPromoPriceValid(false);
+                }
+            } catch {
+                setPromoPriceError('Failed to validate promo price');
+                setPromoPriceValid(false);
+            }
+        };
+
+        validatePromoPrice();
+    }, [urlPromoPrice, itemId, isCartCheckout]);
+
     const handleRemoveReferralCode = () => {
         setAppliedCode(null);
         setReferralError('');
@@ -163,8 +215,10 @@ function CheckoutContent() {
 
         const isCollegeValid = singleItem?.type === 'internship' ? formData.college.length > 2 : true;
 
-        setIsFormValid(isBasicValid && isAddressValid && isCollegeValid);
-    }, [formData, isCartCheckout, singleItem?.type]);
+        const isPromoPriceValid = urlPromoPrice ? promoPriceValid === true : true;
+
+        setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid);
+    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -279,13 +333,17 @@ function CheckoutContent() {
                     discountAmount: appliedCode?.discount_amount || 0,
                     itemId: isCartCheckout ? 'cart_checkout' : singleItem?.id,
                     itemName: checkoutItemName,
+                    promoPrice: promoPriceValid ? promoPrice : null,
+                    originalPlanPrice: originalPlanPrice,
                     metadata: {
                         ...formData,
                         items: isCartCheckout ? items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })) : null,
                         type: isCartCheckout ? 'shop_order' : singleItem?.type,
                         referralCode: appliedCode?.code || null,
                         discountAmount: appliedCode?.discount_amount || 0,
-                        originalAmount: checkoutAmount
+                        originalAmount: checkoutAmount,
+                        promoPrice: promoPriceValid ? promoPrice : null,
+                        originalPlanPrice: originalPlanPrice
                     }
                 }),
             });
@@ -603,11 +661,30 @@ function CheckoutContent() {
                                 <div className="pb-6 border-b border-border/50 mb-6">
                                     <div className="flex justify-between items-start mb-2">
                                         <span className="font-medium">{singleItem?.name}</span>
-                                        <span className="font-bold">{formatPrice(singleItem?.price || 0)}</span>
+                                        <div className="text-right">
+                                            {promoPriceValid && originalPlanPrice && promoPrice !== originalPlanPrice ? (
+                                                <>
+                                                    <span className="text-sm text-muted-foreground line-through mr-2">{formatPrice(originalPlanPrice)}</span>
+                                                    <span className="font-bold text-green-500">{formatPrice(singleItem?.price || 0)}</span>
+                                                </>
+                                            ) : (
+                                                <span className="font-bold">{formatPrice(singleItem?.price || 0)}</span>
+                                            )}
+                                        </div>
                                     </div>
-                                    <span className="text-xs text-muted-foreground uppercase tracking-wider bg-muted p-1 px-2 rounded">
-                                        {singleItem?.type}
-                                    </span>
+                                    <div className="flex gap-2 flex-wrap">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-wider bg-muted p-1 px-2 rounded">
+                                            {singleItem?.type}
+                                        </span>
+                                        {promoPriceValid && originalPlanPrice && promoPrice !== originalPlanPrice && (
+                                            <span className="text-xs text-green-600 uppercase tracking-wider bg-green-500/10 p-1 px-2 rounded border border-green-500/30">
+                                                Special Offer
+                                            </span>
+                                        )}
+                                    </div>
+                                    {promoPriceError && (
+                                        <p className="text-xs text-red-500 mt-2">{promoPriceError}</p>
+                                    )}
                                 </div>
                             )}
 
