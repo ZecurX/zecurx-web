@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Send, CheckCircle2, AlertCircle, Shield, Award, Users, BookOpen } from "lucide-react";
+import { Loader2, Send, CheckCircle2, AlertCircle, Shield, Award, BookOpen } from "lucide-react";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import DateTimePicker from "@/components/ui/DateTimePicker";
 import {
     Select,
     SelectContent,
@@ -17,6 +19,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+
+const CDN_BASE = "https://zexc.in-maa-1.linodeobjects.com/partners";
+
+const partnerLogos = [
+    { name: "MSRIT", light: `${CDN_BASE}/ramaiah-light.png`, dark: `${CDN_BASE}/ramaiah-light.png` },
+    { name: "Presidency", light: `${CDN_BASE}/logo.png`, dark: `${CDN_BASE}/logo.png` },
+    { name: "St Pauls", light: `${CDN_BASE}/960px-st-pauls-college-bangalore.png`, dark: `${CDN_BASE}/stpaulswhite.png` },
+    { name: "IIBS", light: `${CDN_BASE}/iibs-logo-02.png`, dark: `${CDN_BASE}/iibs-logo-02.png` },
+];
 
 const bookingSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters").max(50),
@@ -34,13 +45,12 @@ const bookingSchema = z.object({
     attendees: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Please enter a valid number of attendees",
     }),
-    date: z.string().refine((val) => new Date(val) > new Date(), {
-        message: "Please select a future date",
-    }),
+    date: z.string().optional(),
     message: z.string().max(500, "Message cannot exceed 500 characters").optional(),
     privacyPolicy: z.boolean().refine(val => val === true, {
         message: "You must accept the privacy policy to continue"
-    })
+    }),
+    marketingConsent: z.boolean().optional()
 });
 
 type BookingFormValues = z.infer<typeof bookingSchema>;
@@ -49,12 +59,14 @@ export default function SeminarBookingForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [preferredDate, setPreferredDate] = useState<Date | null>(null);
 
     const {
         register,
         handleSubmit,
         control,
         reset,
+        setValue,
         formState: { errors },
     } = useForm<BookingFormValues>({
         resolver: zodResolver(bookingSchema),
@@ -64,21 +76,49 @@ export default function SeminarBookingForm() {
             organization: "",
             attendees: "",
             message: "",
-            privacyPolicy: false
+            privacyPolicy: false,
+            marketingConsent: false
         },
     });
+
+    const handleDateChange = (date: Date | null) => {
+        setPreferredDate(date);
+        setValue("date", date ? date.toISOString() : "");
+    };
 
     const onSubmit = async (data: BookingFormValues) => {
         setIsSubmitting(true);
         setError(null);
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            console.log("Booking Data:", data);
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    formType: 'seminar_booking',
+                    name: data.name,
+                    email: data.email,
+                    organization: data.organization,
+                    seminarType: data.type,
+                    topic: data.topic,
+                    attendees: data.attendees,
+                    preferredDate: data.date || null,
+                    message: data.message || '',
+                    marketingConsent: data.marketingConsent || false,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to submit booking request');
+            }
+
             setIsSuccess(true);
+            setPreferredDate(null);
             reset();
         } catch (err) {
-            setError("Something went wrong. Please try again.");
+            setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -160,15 +200,30 @@ export default function SeminarBookingForm() {
 
                         <div className="pt-8 border-t border-border/50">
                             <div className="flex items-center gap-4">
-                                <div className="flex -space-x-3">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted flex items-center justify-center text-xs font-bold">
-                                            <div className="w-full h-full rounded-full bg-gradient-to-br from-muted-foreground/20 to-muted-foreground/10" />
+                                <div className="flex -space-x-2">
+                                    {partnerLogos.map((partner, i) => (
+                                        <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-white overflow-hidden flex items-center justify-center p-1">
+                                            <Image 
+                                                src={partner.light} 
+                                                alt={partner.name}
+                                                width={32}
+                                                height={32}
+                                                className="w-full h-full object-contain dark:hidden"
+                                                unoptimized
+                                            />
+                                            <Image 
+                                                src={partner.dark} 
+                                                alt={partner.name}
+                                                width={32}
+                                                height={32}
+                                                className="w-full h-full object-contain hidden dark:block"
+                                                unoptimized
+                                            />
                                         </div>
                                     ))}
                                 </div>
                                 <div className="text-sm">
-                                    <span className="font-bold text-foreground block">500+ Sessions</span>
+                                    <span className="font-bold text-foreground block">100+ Sessions</span>
                                     <span className="text-muted-foreground">Delivered globally</span>
                                 </div>
                             </div>
@@ -252,16 +307,12 @@ export default function SeminarBookingForm() {
                             </div>
 
                             <div className="space-y-3">
-                                <Label htmlFor="date" className="text-base font-medium">Preferred Date</Label>
-                                <div className="relative">
-                                    <Input
-                                        id="date"
-                                        type="date"
-                                        {...register("date")}
-                                        className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.date ? "border-red-500 focus-visible:ring-red-500" : ""}`}
-                                    />
-                                </div>
-                                {errors.date && <p className="text-xs text-red-500 font-medium ml-1">{errors.date.message}</p>}
+                                <Label htmlFor="date" className="text-base font-medium">Preferred Date & Time</Label>
+                                <DateTimePicker 
+                                    name="preferred-date"
+                                    onChange={handleDateChange}
+                                />
+                                <p className="text-xs text-muted-foreground/60">Optional - we&apos;ll confirm availability</p>
                             </div>
 
                             <div className="space-y-3">
@@ -306,7 +357,7 @@ export default function SeminarBookingForm() {
                                 </div>
                             )}
 
-                            <div className="pt-4 space-y-6">
+                            <div className="pt-4 space-y-4">
                                 <div className="flex items-start gap-3">
                                     <div className="flex items-center h-5">
                                         <input
@@ -321,6 +372,22 @@ export default function SeminarBookingForm() {
                                             I agree to the <a href="/privacy-policy" className="underline hover:text-foreground">privacy policy</a> and consent to being contacted regarding this request.
                                         </Label>
                                         {errors.privacyPolicy && <p className="text-xs text-red-500 font-medium">{errors.privacyPolicy.message}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-3">
+                                    <div className="flex items-center h-5">
+                                        <input
+                                            id="marketingConsent"
+                                            type="checkbox"
+                                            {...register("marketingConsent")}
+                                            className="w-5 h-5 rounded border-border/60 bg-background text-primary focus:ring-primary/20 transition-colors cursor-pointer accent-primary"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <Label htmlFor="marketingConsent" className="text-sm font-normal text-muted-foreground cursor-pointer select-none">
+                                            Our organization is open to receiving information about ZecurX corporate training solutions and partnership opportunities. <span className="text-muted-foreground/60">(Optional)</span>
+                                        </Label>
                                     </div>
                                 </div>
 

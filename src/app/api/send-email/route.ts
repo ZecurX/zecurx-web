@@ -2,6 +2,95 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { appendToSheet } from '@/lib/google-sheets';
 import { fetchFromCdn } from '@/lib/cdn';
+import { query } from '@/lib/db';
+
+async function saveStudentLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
+    try {
+        const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null;
+        const user_agent = request.headers.get('user-agent') || null;
+        const referer = request.headers.get('referer') || 'Unknown';
+
+        await query(
+            `INSERT INTO student_leads (
+                full_name, email, phone, current_education, field_of_interest,
+                preferred_course, lead_source, source_page, enquiry_type, message,
+                status, priority, ip_address, user_agent
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+            [
+                body.name as string,
+                body.email as string,
+                body.mobile as string || body.phone as string || '',
+                body.college as string || 'Not specified',
+                body.courseTitle as string || body.field_of_interest as string || 'Cybersecurity',
+                body.courseTitle as string || body.itemName as string || null,
+                'Website Form',
+                referer,
+                formType === 'brochure' ? 'Brochure Download' : 'Course Enquiry',
+                body.message as string || null,
+                'NEW',
+                'MEDIUM',
+                ip_address,
+                user_agent,
+            ]
+        );
+        console.log('Student lead saved successfully');
+    } catch (error) {
+        console.error('Failed to save student lead:', error);
+    }
+}
+
+async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
+    try {
+        const ip_address = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null;
+        const user_agent = request.headers.get('user-agent') || null;
+        const referer = request.headers.get('referer') || 'Unknown';
+
+        const enquiryTypeMap: { [key: string]: string } = {
+            'demo': 'Demo Request',
+            'contact': 'Contact Inquiry',
+            'seminar_booking': 'Seminar Booking',
+            'purchase': 'Purchase Inquiry',
+        };
+
+        const serviceType = formType === 'seminar_booking' 
+            ? 'Security Training' 
+            : (body.service as string || 'General Inquiry');
+
+        await query(
+            `INSERT INTO enterprise_leads (
+                contact_person_name, email, phone, company_name, company_size,
+                industry, designation, service_type, lead_source, source_page,
+                enquiry_type, requirements, status, priority, ip_address, user_agent,
+                team_size, start_date
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
+            [
+                body.name as string,
+                body.email as string,
+                body.phone as string || '',
+                body.company as string || body.organization as string || 'Not specified',
+                body.company_size as string || '1-10',
+                body.industry as string || 'Technology',
+                body.role as string || body.designation as string || 'Not specified',
+                serviceType,
+                'Website Form',
+                referer,
+                enquiryTypeMap[formType] || 'General Inquiry',
+                formType === 'seminar_booking' 
+                    ? `Topic: ${body.topic || 'Not specified'}, Type: ${body.seminarType || 'Not specified'}, Attendees: ${body.attendees || 'Not specified'}, Date: ${body.preferredDate || 'Not specified'}. ${body.message || ''}`
+                    : (body.message as string || null),
+                'NEW',
+                'MEDIUM',
+                ip_address,
+                user_agent,
+                formType === 'seminar_booking' ? parseInt(body.attendees as string) || null : null,
+                body.preferredDate as string || null,
+            ]
+        );
+        console.log('Enterprise lead saved successfully');
+    } catch (error) {
+        console.error('Failed to save enterprise lead:', error);
+    }
+}
 
 export async function POST(request: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
@@ -10,7 +99,7 @@ export async function POST(request: NextRequest) {
         const { name, email, subject, message, formType, preferredDate } = body;
 
         // Validate required fields
-        if (!name || !email || (!message && formType !== 'brochure' && formType !== 'purchase')) {
+        if (!name || !email || (!message && formType !== 'brochure' && formType !== 'purchase' && formType !== 'seminar_booking')) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
@@ -23,6 +112,13 @@ export async function POST(request: NextRequest) {
         const isBrochure = formType === 'brochure';
         const isPurchase = formType === 'purchase';
         const isInternship = isPurchase && body.itemName?.toLowerCase().includes('internship');
+        const isSeminarBooking = formType === 'seminar_booking';
+
+        const seminarTypeLabels: { [key: string]: string } = {
+            'college': 'College Workshop (Hands-on)',
+            'corporate': 'Corporate Training (Awareness)',
+            'keynote': 'Keynote / Guest Speaker'
+        };
 
         const emailSubject = isDemo
             ? `New Demo Request from ${name}`
@@ -32,7 +128,9 @@ export async function POST(request: NextRequest) {
                     ? `New Internship Enrollment: ${body.itemName} by ${name}`
                     : isPurchase
                         ? `New Purchase: ${body.itemName} by ${name}`
-                        : `New Contact: ${subject || 'General Inquiry'}`;
+                        : isSeminarBooking
+                            ? `New Seminar Booking: ${body.topic} - ${body.organization}`
+                            : `New Contact: ${subject || 'General Inquiry'}`;
 
         // Save to Google Sheets if it's a purchase/internship
         if (isPurchase || isInternship) {
@@ -53,6 +151,15 @@ export async function POST(request: NextRequest) {
             } catch (sheetError) {
                 console.error('Failed to save to Google Sheets:', sheetError);
             }
+        }
+
+        // Save leads to database based on form type
+        // Student Leads: brochure downloads, internship purchases
+        // Enterprise Leads: demo requests, contact inquiries, seminar bookings, non-internship purchases
+        if (isBrochure || isInternship) {
+            await saveStudentLead(body, request, formType);
+        } else if (isDemo || isContact || isSeminarBooking || (isPurchase && !isInternship)) {
+            await saveEnterpriseLead(body, request, formType);
         }
 
         // Calendar Links Generator
@@ -83,7 +190,33 @@ export async function POST(request: NextRequest) {
             </div>
         ` : '';
 
-        const htmlContent = `
+        const htmlContent = isSeminarBooking ? `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
+                    🎤 New Seminar/Workshop Booking Request
+                </h2>
+                
+                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p style="margin: 0 0 10px 0;"><strong>Contact Person:</strong> ${name}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Organization:</strong> ${body.organization}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Seminar Type:</strong> ${seminarTypeLabels[body.seminarType] || body.seminarType}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Topic:</strong> ${body.topic}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Expected Attendees:</strong> ${body.attendees}</p>
+                    <p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'Not specified'}</p>
+                </div>
+
+                ${body.message ? `
+                <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #333;">Additional Requirements:</h3>
+                    <p style="color: #555; line-height: 1.6;">${body.message.replace(/\n/g, '<br>')}</p>
+                </div>` : ''}
+
+                <p style="color: #888; font-size: 12px; margin-top: 20px;">
+                    This booking request was submitted from the ZecurX website.
+                </p>
+            </div>
+        ` : `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
                     ${isDemo ? '🎯 New Demo Request' : isBrochure ? '📄 Brochure Download Request' : isInternship ? '🎓 New Internship Enrollment' : isPurchase ? '💰 New Purchase' : '📧 New Contact Message'}
@@ -194,6 +327,7 @@ export async function POST(request: NextRequest) {
         else if (isBrochure) userSubject = `Your ${body.courseTitle} Brochure - ZecurX`;
         else if (isInternship) userSubject = `Internship Enrollment Confirmed: ${body.itemName} - ZecurX`;
         else if (isPurchase) userSubject = `Order Confirmation: ${body.itemName} - ZecurX`;
+        else if (isSeminarBooking) userSubject = `Seminar Booking Request Received - ZecurX`;
         else if (isContact && preferredDate) userSubject = 'Meeting Request Received - ZecurX';
 
         let userMessage = '';
@@ -205,6 +339,14 @@ export async function POST(request: NextRequest) {
             userMessage = `Congratulations! You have successfully enrolled in the <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> Our team will contact you shortly with onboarding details, schedule, and access credentials. Welcome to ZecurX!`;
         } else if (isPurchase) {
             userMessage = `Thank you for your purchase of <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> You will receive further instructions shortly regarding access/shipping.`;
+        } else if (isSeminarBooking) {
+            userMessage = `Thank you for your interest in hosting a ZecurX seminar at <strong>${body.organization}</strong>!<br><br>
+            <strong>Booking Details:</strong><br>
+            • Topic: ${body.topic}<br>
+            • Type: ${seminarTypeLabels[body.seminarType] || body.seminarType}<br>
+            • Expected Attendees: ${body.attendees}<br>
+            • Preferred Date: ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'To be confirmed'}<br><br>
+            Our training coordinators will review your requirements and send a customized proposal within 24-48 hours.`;
         } else if (isContact && preferredDate) {
             userMessage = `We have received your message and meeting request. Our team will confirm the meeting for <strong>${new Date(preferredDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</strong> and get back to you shortly.`;
         } else {

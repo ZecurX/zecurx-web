@@ -9,6 +9,7 @@ import {
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
+import TrustedPartners from '@/components/landing/TrustedPartners';
 import { CDN_ASSETS } from '@/lib/cdn';
 
 // Sample courses data - replace with your actual courses
@@ -318,6 +319,8 @@ export default function AcademyPage() {
                     </div>
                 </div>
             </section>
+
+            <TrustedPartners />
 
             <Footer />
         </main>
