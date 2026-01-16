@@ -21,6 +21,7 @@ export const RESOURCES = {
   BLOG: 'blog',
   LEADS: 'leads',
   REFERRAL_CODES: 'referral_codes',
+  SYSTEM_TEST: 'system_test',
 } as const;
 
 export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES];

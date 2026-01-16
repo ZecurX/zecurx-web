@@ -18,7 +18,10 @@ import {
     ChevronRight,
     Menu,
     X,
-    Ticket
+    Ticket,
+    FlaskConical,
+    GraduationCap,
+    Building2
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -49,7 +52,10 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
     ShoppingBag,
     FileText,
     Newspaper,
-    Ticket
+    Ticket,
+    FlaskConical,
+    GraduationCap,
+    Building2
 };
 
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
