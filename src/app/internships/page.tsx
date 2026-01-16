@@ -1,8 +1,6 @@
 import { query } from '@/lib/db';
 import InternshipsClient from './InternshipsClient';
 
-export const dynamic = 'force-dynamic';
-
 type Plan = {
     id: string;
     name: string;

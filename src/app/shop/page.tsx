@@ -6,8 +6,6 @@ import Footer from '@/components/landing/Footer';
 import ProductGrid from '@/components/shop/ProductGrid';
 import { query } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
-
 async function getProducts() {
     try {
         const result = await query(`
