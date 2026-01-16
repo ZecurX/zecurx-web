@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Cloud, Shield, Eye, Settings, Lock, Code } from "lucide-react";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const cloudSecurityData = {
     badge: "Security Solution",
     title: "Cloud",
     subtitle: "Security",
     description: "Secure your multi-cloud environments—AWS, Azure, GCP—with comprehensive visibility and protection. Our cloud-native platform protects everything you build and run in the cloud, from infrastructure to applications to data.",
-    heroImage: "/images/pages/cloud-security-solution.jpeg",
+    heroImage: CDN_ASSETS.pages.cloudSecuritySolution,
     capabilities: [
         {
             icon: <Eye className="w-6 h-6" />,

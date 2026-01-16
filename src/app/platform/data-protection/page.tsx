@@ -2,13 +2,14 @@
 
 import { ShieldCheck, Lock, Eye, Shield, Database, Zap } from 'lucide-react';
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const dataProtectionData = {
     badge: "Data Protection",
     title: "DLP &",
     subtitle: "Encryption",
     description: "Data-centric security with visibility into data usage, movement, and exposure. AI identifies abnormal data access and enforces protection policies.",
-    heroImage: "/images/pages/data-protection.jpeg",
+    heroImage: CDN_ASSETS.pages.dataProtection,
     capabilities: [
         {
             icon: <ShieldCheck className="w-6 h-6" />,

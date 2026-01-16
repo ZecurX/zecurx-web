@@ -46,3 +46,14 @@ opencode.jsonc
 # mcp config
 .mcp.json
 nohup.out
+
+# Large assets (stored in Linode S3 CDN)
+/public/brochures/
+/public/assets/*.png
+/public/images/pages/
+/public/images/features/
+/public/images/*_diagram.png
+/public/images/flipper-zero*.png
+/public/images/dashboard-hero*.png
+/public/hero-bg.png
+/public/logo_new.png

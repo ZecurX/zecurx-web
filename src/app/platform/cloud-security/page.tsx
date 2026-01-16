@@ -2,13 +2,14 @@
 
 import FeaturePageLayout from "@/components/landing/FeaturePageLayout";
 import { Cloud, Shield, Eye, Settings, Lock, Zap } from 'lucide-react';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 const cloudSecurityData = {
     badge: "Cloud Security",
     title: "Multi-Cloud",
     subtitle: "Visibility & Protection",
     description: "Unified visibility across multi-cloud and hybrid environments with policy-driven security controls. AI continuously analyzes cloud posture and auto-remediates risks.",
-    heroImage: "/images/pages/cloud-security.jpeg",
+    heroImage: CDN_ASSETS.pages.cloudSecurity,
     capabilities: [
         {
             icon: <Cloud className="w-6 h-6" />,

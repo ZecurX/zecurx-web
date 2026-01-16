@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -15,6 +14,12 @@ const nextConfig: NextConfig = {
         hostname: 'focncjvcgoyolzlrobli.supabase.co',
         port: '',
         pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'zexc.in-maa-1.linodeobjects.com',
+        port: '',
+        pathname: '/**',
       },
     ],
   },

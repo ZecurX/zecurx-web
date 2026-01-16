@@ -9,6 +9,7 @@ import {
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 // Sample courses data - replace with your actual courses
 const courses = [
@@ -51,7 +52,7 @@ const courses = [
             'Active Directory Attacks',
             'Project-Based Learning',
         ],
-        brochureLink: '/brochures/zxCPEH_Brochure_v3.pdf',
+        brochureLink: CDN_ASSETS.brochures.zxCPEH,
     },
     {
         id: 'zx-cppt',
@@ -71,7 +72,7 @@ const courses = [
             'Custom Exploit Development',
             'Industry Standard Tools',
         ],
-        brochureLink: '/brochures/zxCPPT_Brochure_v3.pdf',
+        brochureLink: CDN_ASSETS.brochures.zxCPPT,
     },
     {
         id: 'zx-gaip',
@@ -107,7 +108,7 @@ const courses = [
             'Log Analysis',
             'Institutional Training',
         ],
-        brochureLink: '/brochures/Course_Brochure_zxCCP.pdf',
+        brochureLink: CDN_ASSETS.brochures.zxCCP,
     },
     {
         id: 'zx-ccf',
@@ -123,7 +124,7 @@ const courses = [
             'Security Ethics',
             'Career Roadmap',
         ],
-        brochureLink: '/brochures/Course_Brochure_zxCCF.pdf',
+        brochureLink: CDN_ASSETS.brochures.zxCCF,
     },
     {
         id: 'zx-cce',
@@ -139,7 +140,7 @@ const courses = [
             'Enterprise Architecture',
             'Strategic Planning',
         ],
-        brochureLink: '/brochures/Course_Brochure_zxCCE.pdf',
+        brochureLink: CDN_ASSETS.brochures.zxCCE,
     },
     {
         id: 'zx-cfd',
