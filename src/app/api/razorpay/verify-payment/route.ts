@@ -40,10 +40,11 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        try {
-            let notes: Record<string, string> | undefined;
-            let amountInRupees: number;
+        // Declare outside try block for access in catch block
+        let notes: Record<string, string> | undefined;
+        let amountInRupees: number = 0;
 
+        try {
             if (isDevMode && metadata) {
                 notes = metadata;
                 amountInRupees = 1;
@@ -190,6 +191,14 @@ export async function POST(request: NextRequest) {
                         `, [razorpay_payment_id, razorpay_order_id, amountInRupees, 'captured', customer.id, planId]);
                     } catch (txError) {
                         console.error('Transaction DB Error:', txError);
+                        console.error('Transaction Insert Details:', {
+                            paymentId: razorpay_payment_id,
+                            orderId: razorpay_order_id,
+                            amount: amountInRupees,
+                            customerId: customer.id,
+                            planId,
+                            errorMessage: txError instanceof Error ? txError.message : String(txError)
+                        });
                     }
                 }
 
@@ -238,6 +247,14 @@ export async function POST(request: NextRequest) {
             }
         } catch (dbError) {
             console.error('Database Sync Failed:', dbError);
+            console.error('DB Error Details:', {
+                paymentId: razorpay_payment_id,
+                orderId: razorpay_order_id,
+                notesEmail: notes?.email,
+                notesName: notes?.name,
+                notesType: notes?.type,
+                errorMessage: dbError instanceof Error ? dbError.message : String(dbError)
+            });
         }
 
         return NextResponse.json({
