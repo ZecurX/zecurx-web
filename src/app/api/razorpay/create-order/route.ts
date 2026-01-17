@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 import { query, getClient } from '@/lib/db';
+import { validateDiscount } from '@/lib/discount-validation';
 
 interface CartItem {
     id: string;
@@ -12,7 +13,7 @@ interface CartItem {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { amount, itemId, itemName, metadata } = body;
+        const { amount, itemId, itemName, metadata, discountAmount = 0 } = body;
 
         // Validate required fields
         if (!amount || !itemId || !itemName) {
@@ -119,20 +120,36 @@ export async function POST(request: NextRequest) {
                     );
                 }
 
-                // Verify total matches
-                if (Math.abs(calculatedTotal - amount) > 0.01) {
+                const discountResult = await validateDiscount(
+                    calculatedTotal,
+                    discountAmount,
+                    metadata?.referralCode,
+                    metadata?.partnerReferralCode,
+                    client
+                );
+
+                if (!discountResult.valid) {
+                    await client.query('ROLLBACK');
+                    return NextResponse.json(
+                        { error: discountResult.error },
+                        { status: 400 }
+                    );
+                }
+
+                const expectedAmount = calculatedTotal - discountResult.verifiedDiscount;
+                if (Math.abs(expectedAmount - amount) > 0.01) {
                     await client.query('ROLLBACK');
                     return NextResponse.json(
                         { 
                             error: 'Total amount mismatch. Please refresh your cart.',
-                            details: `Expected ₹${calculatedTotal}, got ₹${amount}`
+                            details: `Expected ₹${expectedAmount}, got ₹${amount}`
                         },
                         { status: 400 }
                     );
                 }
 
-                // Use server-verified total
-                verifiedAmount = calculatedTotal;
+                // Use server-verified total (with discount applied)
+                verifiedAmount = expectedAmount;
 
                 // Create Razorpay order while rows are still locked
                 const order = await getRazorpay().orders.create({
@@ -168,40 +185,55 @@ export async function POST(request: NextRequest) {
             let isPromoPrice = false;
 
             if (itemId) {
-                const planResult = await query(
-                    'SELECT test_mode, price, name FROM plans WHERE id = $1',
+                const courseResult = await query(
+                    'SELECT price, title FROM courses WHERE id = $1 OR slug = $1',
                     [itemId]
                 );
-                if (planResult.rows.length > 0) {
-                    const plan = planResult.rows[0];
+                if (courseResult.rows.length > 0) {
+                    const course = courseResult.rows[0];
+                    const coursePrice = parseFloat(course.price);
                     
-                    if (plan.test_mode) {
-                        finalAmount = 1;
-                        isTestOrder = true;
-                    } else if (metadata?.promoPrice && metadata.promoPrice !== parseFloat(plan.price)) {
+                    if (metadata?.promoPrice && metadata.promoPrice !== coursePrice) {
                         const promoCheckResult = await query(`
                             SELECT pp.* FROM public.promo_prices pp
+                            LEFT JOIN courses c ON pp.plan_id = c.id
                             WHERE pp.is_active = true
                             AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
                             AND pp.valid_from <= NOW()
                             AND $1 >= pp.min_price 
                             AND $1 <= pp.max_price
                             AND (
-                                pp.plan_id = $2 
+                                (pp.plan_id IS NOT NULL AND (c.id = $2 OR c.slug = $2))
                                 OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
                             )
                             LIMIT 1
-                        `, [metadata.promoPrice, itemId, plan.name]);
+                        `, [metadata.promoPrice, itemId, course.title]);
 
                         if (promoCheckResult.rows.length > 0) {
                             finalAmount = metadata.promoPrice;
                             isPromoPrice = true;
                         } else {
                             return NextResponse.json(
-                                { error: 'Invalid promo price for this plan' },
+                                { error: 'Invalid promo price for this course' },
                                 { status: 400 }
                             );
                         }
+                    } else if (discountAmount > 0) {
+                        const discountResult = await validateDiscount(
+                            coursePrice,
+                            discountAmount,
+                            metadata?.referralCode,
+                            metadata?.partnerReferralCode
+                        );
+
+                        if (!discountResult.valid) {
+                            return NextResponse.json(
+                                { error: discountResult.error },
+                                { status: 400 }
+                            );
+                        }
+                        
+                        finalAmount = coursePrice - discountResult.verifiedDiscount;
                     }
                 }
             }
@@ -233,8 +265,9 @@ export async function POST(request: NextRequest) {
         }
     } catch (error) {
         console.error('Error creating Razorpay order:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         return NextResponse.json(
-            { error: 'Failed to create order. Please try again.' },
+            { error: `Failed to create order: ${errorMessage}` },
             { status: 500 }
         );
     }

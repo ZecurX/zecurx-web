@@ -111,30 +111,48 @@ export async function POST(request: NextRequest) {
 
                         const shopOrderId = orderResult.rows[0]?.id;
 
-                        if (shopOrderId && Array.isArray(items)) {
+                        if (shopOrderId && Array.isArray(items) && items.length > 0) {
+                            const itemValues: unknown[] = [];
+                            const itemPlaceholders: string[] = [];
+                            let paramIndex = 1;
+
                             for (const item of items) {
-                                await query(`
-                                    INSERT INTO shop_order_items (
-                                        order_id, product_id, product_name, product_price, quantity, subtotal
-                                    ) VALUES ($1, $2, $3, $4, $5, $6)
-                                `, [
+                                const qty = item.quantity || 1;
+                                itemPlaceholders.push(
+                                    `($${paramIndex}, $${paramIndex + 1}, $${paramIndex + 2}, $${paramIndex + 3}, $${paramIndex + 4}, $${paramIndex + 5})`
+                                );
+                                itemValues.push(
                                     shopOrderId,
                                     item.id,
                                     item.name,
                                     item.price,
-                                    item.quantity || 1,
-                                    item.price * (item.quantity || 1)
-                                ]);
+                                    qty,
+                                    item.price * qty
+                                );
+                                paramIndex += 6;
+                            }
 
-                                const stockUpdate = await query(`
+                            await query(`
+                                INSERT INTO shop_order_items (
+                                    order_id, product_id, product_name, product_price, quantity, subtotal
+                                ) VALUES ${itemPlaceholders.join(', ')}
+                            `, itemValues);
+
+                            const stockUpdates = items.map(item => ({
+                                id: item.id,
+                                qty: item.quantity || 1
+                            }));
+
+                            for (const update of stockUpdates) {
+                                const stockResult = await query(`
                                     UPDATE products 
                                     SET stock = stock - $1 
                                     WHERE id::text = $2 AND stock >= $1
                                     RETURNING stock
-                                `, [item.quantity || 1, item.id]);
+                                `, [update.qty, update.id]);
 
-                                if (stockUpdate.rowCount === 0) {
-                                    console.error(`CRITICAL: Stock deduction failed for product ${item.id} - insufficient stock or product not found`);
+                                if (stockResult.rowCount === 0) {
+                                    console.error(`CRITICAL: Stock deduction failed for product ${update.id} - insufficient stock or product not found`);
                                 }
                             }
                         }
@@ -242,7 +260,58 @@ export async function POST(request: NextRequest) {
                         }
                     } catch (referralError) {
                         console.error('Referral code tracking error:', referralError);
-                        // Don't fail payment verification due to referral tracking error
+                    }
+                }
+
+                if (notes?.partnerReferralCode) {
+                    try {
+                        const partnerCodeStr = String(notes.partnerReferralCode).toUpperCase().trim();
+                        const discountAmount = Number(notes.discountAmount) || 0;
+                        const originalAmount = Number(notes.originalAmount) || amountInRupees;
+
+                        const partnerResult = await query(
+                            `SELECT id, commission_type, commission_value FROM partner_referrals WHERE code = $1`,
+                            [partnerCodeStr]
+                        );
+
+                        if (partnerResult.rows.length > 0) {
+                            const partner = partnerResult.rows[0];
+                            const partnerReferralId = partner.id;
+
+                            let commissionEarned: number;
+                            if (partner.commission_type === 'percentage') {
+                                commissionEarned = (originalAmount * partner.commission_value) / 100;
+                            } else {
+                                commissionEarned = partner.commission_value;
+                            }
+
+                            await query(`
+                                INSERT INTO partner_referral_usages (
+                                    partner_referral_id, order_id, payment_id, customer_email, customer_name,
+                                    original_amount, discount_applied, final_amount, commission_earned
+                                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                            `, [
+                                partnerReferralId,
+                                razorpay_order_id,
+                                razorpay_payment_id,
+                                email,
+                                name,
+                                originalAmount,
+                                discountAmount,
+                                amountInRupees,
+                                commissionEarned
+                            ]);
+
+                            await query(
+                                `UPDATE partner_referrals 
+                                 SET current_uses = current_uses + 1, 
+                                     total_earnings = total_earnings + $1 
+                                 WHERE id = $2`,
+                                [commissionEarned, partnerReferralId]
+                            );
+                        }
+                    } catch (partnerReferralError) {
+                        console.error('Partner referral tracking error:', partnerReferralError);
                     }
                 }
             }
