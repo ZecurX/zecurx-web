@@ -65,6 +65,8 @@ function CheckoutContent() {
         code: string;
         discount_type: 'percentage' | 'fixed';
         discount_amount: number;
+        isPartnerReferral: boolean;
+        partnerName?: string;
     } | null>(null);
     const [referralError, setReferralError] = useState('');
     const [validatingCode, setValidatingCode] = useState(false);
@@ -93,7 +95,7 @@ function CheckoutContent() {
         ? `${totalItems} item${totalItems > 1 ? 's' : ''} from ZecurX Shop`
         : (singleItem?.name || '');
 
-    // Validate referral code
+    // Validate referral code - checks both regular and partner referral codes
     const validateCode = async (codeToValidate: string) => {
         if (!codeToValidate.trim()) return;
 
@@ -101,7 +103,8 @@ function CheckoutContent() {
         setReferralError('');
 
         try {
-            const res = await fetch('/api/referral-codes/validate', {
+            // First try regular referral codes
+            const regularRes = await fetch('/api/referral-codes/validate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -110,23 +113,48 @@ function CheckoutContent() {
                 })
             });
 
-            const data = await res.json();
+            const regularData = await regularRes.json();
 
-            if (data.valid) {
+            if (regularData.valid) {
                 setAppliedCode({
-                    code: data.code,
-                    discount_type: data.discount_type,
-                    discount_amount: data.discount_amount
+                    code: regularData.code,
+                    discount_type: regularData.discount_type,
+                    discount_amount: regularData.discount_amount,
+                    isPartnerReferral: false
                 });
-                setReferralCode(''); // Clear input after successful application if desired, or keep it. Code below keeps it empty on success in original. 
-                // Actually original setReferralCode('') on success. I'll stick to that or maybe keep the code visible in input? 
-                // The UI shows the applied code in a separate block when appliedCode is set, so clearing input is fine.
                 setReferralCode('');
-            } else {
-                setReferralError(data.error || 'Invalid code');
-                // If auto-applying failed, we might want to populate the input so user sees what failed
-                if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
+                return;
             }
+
+            // If not a regular code, try partner referral codes
+            const partnerRes = await fetch('/api/partner-referrals/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: codeToValidate.trim(),
+                    order_amount: checkoutAmount,
+                    customer_email: formData.email || undefined
+                })
+            });
+
+            const partnerData = await partnerRes.json();
+
+            if (partnerData.valid) {
+                setAppliedCode({
+                    code: partnerData.code,
+                    discount_type: partnerData.user_discount_type,
+                    discount_amount: partnerData.discount_amount,
+                    isPartnerReferral: true,
+                    partnerName: partnerData.partner_name
+                });
+                setReferralCode('');
+                return;
+            }
+
+            // Neither valid - show appropriate error
+            const error = partnerData.error || regularData.error || 'Invalid code';
+            setReferralError(error);
+            if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
         } catch (error) {
             setReferralError('Failed to validate code');
         } finally {
@@ -303,7 +331,8 @@ function CheckoutContent() {
                             items: isCartCheckout ? items : [singleItem],
                             totalAmount: finalAmount,
                             originalAmount: checkoutAmount,
-                            referralCode: appliedCode?.code || null,
+                            referralCode: appliedCode && !appliedCode.isPartnerReferral ? appliedCode.code : null,
+                            partnerReferralCode: appliedCode?.isPartnerReferral ? appliedCode.code : null,
                             discountAmount: appliedCode?.discount_amount || 0,
                             type: isCartCheckout ? 'shop_order' : singleItem?.type
                         }
@@ -339,7 +368,8 @@ function CheckoutContent() {
                         ...formData,
                         items: isCartCheckout ? items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })) : null,
                         type: isCartCheckout ? 'shop_order' : singleItem?.type,
-                        referralCode: appliedCode?.code || null,
+                        referralCode: appliedCode && !appliedCode.isPartnerReferral ? appliedCode.code : null,
+                        partnerReferralCode: appliedCode?.isPartnerReferral ? appliedCode.code : null,
                         discountAmount: appliedCode?.discount_amount || 0,
                         originalAmount: checkoutAmount,
                         promoPrice: promoPriceValid ? promoPrice : null,
@@ -710,7 +740,12 @@ function CheckoutContent() {
                                         <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg p-3">
                                             <div className="flex items-center gap-2">
                                                 <Ticket className="w-4 h-4 text-green-500" />
-                                                <span className="text-sm font-medium text-green-500">{appliedCode.code}</span>
+                                                <div>
+                                                    <span className="text-sm font-medium text-green-500">{appliedCode.code}</span>
+                                                    {appliedCode.isPartnerReferral && appliedCode.partnerName && (
+                                                        <span className="text-xs text-green-500/70 block">via {appliedCode.partnerName}</span>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm font-semibold text-green-500">-{formatPrice(appliedCode.discount_amount)}</span>

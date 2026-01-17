@@ -82,10 +82,24 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             visible: hasPermission(userInfo.role, RESOURCES.PRODUCTS, ACTIONS.READ)
         },
         {
-            href: "/admin/referral-codes",
-            label: "Referral Codes",
+            href: "#referrals",
+            label: "Referrals",
             icon: "Ticket",
-            visible: hasPermission(userInfo.role, RESOURCES.REFERRAL_CODES, ACTIONS.READ)
+            visible: hasPermission(userInfo.role, RESOURCES.REFERRAL_CODES, ACTIONS.READ),
+            children: [
+                {
+                    href: "/admin/referral-codes",
+                    label: "Referral Codes",
+                    icon: "Ticket",
+                    visible: true
+                },
+                {
+                    href: "/admin/partner-referrals",
+                    label: "Partner Referrals",
+                    icon: "Handshake",
+                    visible: true
+                }
+            ]
         },
         {
             href: "/admin/blog",

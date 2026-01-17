@@ -16,13 +16,15 @@ import {
     Home,
     Newspaper,
     ChevronRight,
+    ChevronDown,
     Menu,
     X,
     Ticket,
     FlaskConical,
     GraduationCap,
     Building2,
-    ScrollText
+    ScrollText,
+    Handshake
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -32,6 +34,7 @@ interface NavItem {
     href: string;
     label: string;
     icon: string;
+    children?: NavItem[];
 }
 
 interface AdminSidebarProps {
@@ -57,13 +60,22 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
     FlaskConical,
     GraduationCap,
     Building2,
-    ScrollText
+    ScrollText,
+    Handshake
 };
 
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+    useEffect(() => {
+        const expandedParents = navItems
+            .filter(item => item.children?.some(child => pathname.startsWith(child.href)))
+            .map(item => item.href);
+        setExpandedItems(expandedParents);
+    }, [pathname, navItems]);
 
     useEffect(() => {
         setIsMobileOpen(false);
@@ -79,6 +91,14 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
             document.body.style.overflow = '';
         };
     }, [isMobileOpen]);
+
+    const toggleExpanded = (href: string) => {
+        setExpandedItems(prev =>
+            prev.includes(href)
+                ? prev.filter(h => h !== href)
+                : [...prev, href]
+        );
+    };
 
     const handleLogout = async () => {
         try {
@@ -150,8 +170,83 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                 <ul role="list" aria-labelledby="nav-heading" className="space-y-1">
                     {navItems.map((item) => {
                         const Icon = ICON_MAP[item.icon] || LayoutDashboard;
-                        const isActive = pathname === item.href ||
-                            (item.href !== "/admin" && pathname.startsWith(item.href));
+                        const hasChildren = item.children && item.children.length > 0;
+                        const isExpanded = expandedItems.includes(item.href);
+                        const isChildActive = hasChildren && item.children?.some(child => 
+                            pathname === child.href || pathname.startsWith(child.href)
+                        );
+                        const isActive = !hasChildren && (pathname === item.href ||
+                            (item.href !== "/admin" && pathname.startsWith(item.href)));
+
+                        if (hasChildren) {
+                            return (
+                                <li key={item.href}>
+                                    <button
+                                        onClick={() => toggleExpanded(item.href)}
+                                        className={cn(
+                                            "w-full group flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200",
+                                            "min-h-[44px]",
+                                            "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                            isChildActive
+                                                ? "text-foreground bg-white/[0.04]"
+                                                : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                                        )}
+                                    >
+                                        <Icon
+                                            className={cn(
+                                                "w-5 h-5 transition-transform duration-200",
+                                                !isChildActive && "group-hover:scale-110"
+                                            )}
+                                        />
+                                        <span className="flex-1 text-left">{item.label}</span>
+                                        <ChevronDown
+                                            className={cn(
+                                                "w-4 h-4 transition-transform duration-200",
+                                                isExpanded && "rotate-180"
+                                            )}
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                    {isExpanded && (
+                                        <ul className="mt-1 space-y-1">
+                                            {item.children?.map((child) => {
+                                                const ChildIcon = ICON_MAP[child.icon] || LayoutDashboard;
+                                                const isChildItemActive = pathname === child.href ||
+                                                    pathname.startsWith(child.href);
+
+                                                return (
+                                                    <li key={child.href}>
+                                                        <Link
+                                                            href={child.href}
+                                                            aria-current={isChildItemActive ? "page" : undefined}
+                                                            className={cn(
+                                                                "group flex items-center gap-3 pl-8 pr-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200",
+                                                                "min-h-[40px]",
+                                                                "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                                                isChildItemActive
+                                                                    ? "bg-foreground text-background shadow-lg shadow-foreground/10"
+                                                                    : "text-muted-foreground hover:text-foreground hover:bg-white/[0.04]"
+                                                            )}
+                                                        >
+                                                            <ChildIcon
+                                                                className={cn(
+                                                                    "w-4 h-4 transition-transform duration-200",
+                                                                    !isChildItemActive && "group-hover:scale-110"
+                                                                )}
+                                                            />
+                                                            <span className="flex-1">{child.label}</span>
+                                                            {isChildItemActive && (
+                                                                <ChevronRight className="w-3 h-3 opacity-50" aria-hidden="true" />
+                                                            )}
+                                                        </Link>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                        }
 
                         return (
                             <li key={item.href}>
