@@ -41,6 +41,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'referral_codes:*',
     'blog:read',
     'whitepapers:*',
+    'settings:*',
   ],
 
   [ROLES.SALES]: [

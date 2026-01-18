@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 import { query, getClient } from '@/lib/db';
 import { validateDiscount } from '@/lib/discount-validation';
+import { checkPaymentRateLimit, getClientIp } from '@/lib/rate-limit';
 
 interface CartItem {
     id: string;
@@ -12,6 +13,23 @@ interface CartItem {
 
 export async function POST(request: NextRequest) {
     try {
+        const clientIp = getClientIp(request);
+        const rateLimitResult = await checkPaymentRateLimit(clientIp);
+        
+        if (!rateLimitResult.success) {
+            return NextResponse.json(
+                { error: 'Too many requests. Please try again later.' },
+                { 
+                    status: 429,
+                    headers: {
+                        'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+                        'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+                        'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+                    }
+                }
+            );
+        }
+
         const body = await request.json();
         const { amount, itemId, itemName, metadata, discountAmount = 0 } = body;
 
@@ -46,10 +64,11 @@ export async function POST(request: NextRequest) {
 
             // Use transaction with row locks to prevent race conditions
             const client = await getClient();
+            let shouldRelease = true;
+            
             try {
                 await client.query('BEGIN');
 
-                // Fetch and lock product rows
                 const productIds = items.map(item => item.id);
                 const stockCheck = await client.query(
                     `SELECT id, price, stock FROM products 
@@ -60,6 +79,8 @@ export async function POST(request: NextRequest) {
 
                 if (stockCheck.rows.length !== items.length) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { error: 'One or more products not found' },
                         { status: 404 }
@@ -69,7 +90,6 @@ export async function POST(request: NextRequest) {
                 let calculatedTotal = 0;
                 const unavailableItems: string[] = [];
 
-                // Verify prices and stock availability
                 for (const item of items) {
                     const dbProduct = stockCheck.rows.find(
                         (p: any) => p.id.toString() === item.id.toString()
@@ -77,6 +97,8 @@ export async function POST(request: NextRequest) {
 
                     if (!dbProduct) {
                         await client.query('ROLLBACK');
+                        client.release();
+                        shouldRelease = false;
                         return NextResponse.json(
                             { error: `Product ${item.name} not found` },
                             { status: 404 }
@@ -85,9 +107,10 @@ export async function POST(request: NextRequest) {
 
                     const actualPrice = Number(dbProduct.price);
 
-                    // Verify client price matches database price
                     if (Math.abs(item.price - actualPrice) > 0.01) {
                         await client.query('ROLLBACK');
+                        client.release();
+                        shouldRelease = false;
                         return NextResponse.json(
                             { 
                                 error: 'Price mismatch detected. Please refresh your cart.',
@@ -97,7 +120,6 @@ export async function POST(request: NextRequest) {
                         );
                     }
 
-                    // Verify stock availability
                     const availableStock = Number(dbProduct.stock);
                     if (availableStock < item.quantity) {
                         unavailableItems.push(
@@ -108,9 +130,10 @@ export async function POST(request: NextRequest) {
                     calculatedTotal += actualPrice * item.quantity;
                 }
 
-                // Check if any items are out of stock
                 if (unavailableItems.length > 0) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { 
                             error: 'Insufficient stock',
@@ -130,6 +153,8 @@ export async function POST(request: NextRequest) {
 
                 if (!discountResult.valid) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { error: discountResult.error },
                         { status: 400 }
@@ -139,6 +164,8 @@ export async function POST(request: NextRequest) {
                 const expectedAmount = calculatedTotal - discountResult.verifiedDiscount;
                 if (Math.abs(expectedAmount - amount) > 0.01) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { 
                             error: 'Total amount mismatch. Please refresh your cart.',
@@ -148,10 +175,8 @@ export async function POST(request: NextRequest) {
                     );
                 }
 
-                // Use server-verified total (with discount applied)
                 verifiedAmount = expectedAmount;
 
-                // Create Razorpay order while rows are still locked
                 const order = await getRazorpay().orders.create({
                     amount: amountToPaise(verifiedAmount),
                     currency: CURRENCY,
@@ -165,6 +190,7 @@ export async function POST(request: NextRequest) {
 
                 await client.query('COMMIT');
                 client.release();
+                shouldRelease = false;
 
                 return NextResponse.json({
                     orderId: order.id,
@@ -175,52 +201,58 @@ export async function POST(request: NextRequest) {
                 });
 
             } catch (error) {
-                await client.query('ROLLBACK');
-                client.release();
+                if (shouldRelease) {
+                    try {
+                        await client.query('ROLLBACK');
+                    } catch { /* ignore rollback errors */ }
+                    client.release();
+                }
                 throw error;
             }
         } else {
             let finalAmount = verifiedAmount;
             let isTestOrder = false;
             let isPromoPrice = false;
+            let verifiedFromDb = false;
 
             if (itemId) {
-                const courseResult = await query(
-                    'SELECT price, title FROM courses WHERE id = $1 OR slug = $1',
+                const planResult = await query(
+                    'SELECT id, name, price FROM plans WHERE id::text = $1',
                     [itemId]
                 );
-                if (courseResult.rows.length > 0) {
-                    const course = courseResult.rows[0];
-                    const coursePrice = parseFloat(course.price);
+                
+                if (planResult.rows.length > 0) {
+                    const plan = planResult.rows[0];
+                    const planPrice = parseFloat(plan.price);
                     
-                    if (metadata?.promoPrice && metadata.promoPrice !== coursePrice) {
+                    if (metadata?.promoPrice && Math.abs(metadata.promoPrice - planPrice) > 0.01) {
                         const promoCheckResult = await query(`
                             SELECT pp.* FROM public.promo_prices pp
-                            LEFT JOIN courses c ON pp.plan_id = c.id
                             WHERE pp.is_active = true
                             AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
                             AND pp.valid_from <= NOW()
                             AND $1 >= pp.min_price 
                             AND $1 <= pp.max_price
                             AND (
-                                (pp.plan_id IS NOT NULL AND (c.id = $2 OR c.slug = $2))
+                                pp.plan_id = $2 
                                 OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
                             )
                             LIMIT 1
-                        `, [metadata.promoPrice, itemId, course.title]);
+                        `, [metadata.promoPrice, itemId, plan.name]);
 
                         if (promoCheckResult.rows.length > 0) {
                             finalAmount = metadata.promoPrice;
                             isPromoPrice = true;
+                            verifiedFromDb = true;
                         } else {
                             return NextResponse.json(
-                                { error: 'Invalid promo price for this course' },
+                                { error: 'Invalid promo price for this plan' },
                                 { status: 400 }
                             );
                         }
                     } else if (discountAmount > 0) {
                         const discountResult = await validateDiscount(
-                            coursePrice,
+                            planPrice,
                             discountAmount,
                             metadata?.referralCode,
                             metadata?.partnerReferralCode
@@ -233,9 +265,38 @@ export async function POST(request: NextRequest) {
                             );
                         }
                         
-                        finalAmount = coursePrice - discountResult.verifiedDiscount;
+                        const expectedAmount = planPrice - discountResult.verifiedDiscount;
+                        if (Math.abs(expectedAmount - amount) > 0.01) {
+                            console.error(`Price tampering: Plan ${plan.name} expected ₹${expectedAmount}, got ₹${amount}`);
+                            return NextResponse.json(
+                                { error: 'Invalid amount. Please refresh the page.' },
+                                { status: 400 }
+                            );
+                        }
+                        
+                        finalAmount = expectedAmount;
+                        verifiedFromDb = true;
+                    } else {
+                        if (Math.abs(planPrice - amount) > 0.01) {
+                            console.error(`Price tampering: Plan ${plan.name} costs ₹${planPrice}, but ₹${amount} was sent`);
+                            return NextResponse.json(
+                                { error: 'Invalid amount. Please refresh the page.' },
+                                { status: 400 }
+                            );
+                        }
+                        finalAmount = planPrice;
+                        verifiedFromDb = true;
                     }
                 }
+            }
+
+            // If we couldn't verify from database, reject the order
+            if (!verifiedFromDb) {
+                console.error(`Unverified order attempt: itemId=${itemId}, itemName=${itemName}, amount=${amount}`);
+                return NextResponse.json(
+                    { error: 'Unable to verify product. Please try again.' },
+                    { status: 400 }
+                );
             }
 
             const order = await getRazorpay().orders.create({
@@ -248,6 +309,7 @@ export async function POST(request: NextRequest) {
                     isTest: isTestOrder ? 'true' : 'false',
                     isPromoPrice: isPromoPrice ? 'true' : 'false',
                     originalAmount: verifiedAmount.toString(),
+                    verifiedPrice: finalAmount.toString(),
                     ...metadata
                 },
             });

@@ -132,7 +132,7 @@ export default function CourseCard({
                                     {/* Primary Button */}
                                     {typeof price === 'number' ? (
                                         <a
-                                            href={`/checkout?itemId=${id}&itemName=${encodeURIComponent(title)}&price=${price}&type=course`}
+                                            href={`/checkout?itemId=${id}&type=course`}
                                             className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-lg"
                                         >
                                             Enroll Now

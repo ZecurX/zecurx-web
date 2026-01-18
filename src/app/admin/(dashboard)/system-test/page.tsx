@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Database,
     Mail,
@@ -14,6 +14,8 @@ import {
     RefreshCw,
     Download,
     Send,
+    ToggleLeft,
+    ToggleRight,
 } from "lucide-react";
 
 interface TestResult {
@@ -44,12 +46,44 @@ export default function SystemTestPage() {
 
     const [emailTo, setEmailTo] = useState("");
     const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+    const [lmsResetLinkEnabled, setLmsResetLinkEnabled] = useState<boolean>(true);
+    const [lmsToggleLoading, setLmsToggleLoading] = useState(false);
 
     const updateTest = (name: string, state: Partial<TestState>) => {
         setTests((prev) => ({
             ...prev,
             [name]: { ...prev[name], ...state },
         }));
+    };
+
+    useEffect(() => {
+        fetch("/api/admin/settings?key=lms_reset_link_enabled")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.value !== undefined) {
+                    setLmsResetLinkEnabled(data.value === true || data.value === "true");
+                }
+            })
+            .catch(console.error);
+    }, []);
+
+    const toggleLmsResetLinkSetting = async () => {
+        setLmsToggleLoading(true);
+        try {
+            const newValue = !lmsResetLinkEnabled;
+            const res = await fetch("/api/admin/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: "lms_reset_link_enabled", value: newValue }),
+            });
+            if (res.ok) {
+                setLmsResetLinkEnabled(newValue);
+            }
+        } catch (error) {
+            console.error("Failed to toggle LMS reset link setting:", error);
+        } finally {
+            setLmsToggleLoading(false);
+        }
     };
 
     const runTest = async (
@@ -194,6 +228,37 @@ export default function SystemTestPage() {
                         All tests use mock/test data. No real transactions, customers, or
                         emails to production users will be created.
                     </p>
+                </div>
+            </div>
+
+            <div className={`border rounded-xl p-6 transition-colors ${lmsResetLinkEnabled ? "bg-green-500/10 border-green-500/30" : "bg-amber-500/10 border-amber-500/30"}`}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${lmsResetLinkEnabled ? "bg-green-500/10" : "bg-amber-500/10"}`}>
+                            <Mail className={`w-5 h-5 ${lmsResetLinkEnabled ? "text-green-500" : "text-amber-500"}`} />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-foreground">LMS Password Reset Link in Emails</h3>
+                            <p className="text-sm text-muted-foreground">
+                                {lmsResetLinkEnabled 
+                                    ? "Purchase emails will include LMS password reset link for new users" 
+                                    : "Purchase emails will NOT include LMS password reset link (invoice still sent)"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={toggleLmsResetLinkSetting}
+                        disabled={lmsToggleLoading}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                        {lmsToggleLoading ? (
+                            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                        ) : lmsResetLinkEnabled ? (
+                            <ToggleRight className="w-10 h-10 text-green-500" />
+                        ) : (
+                            <ToggleLeft className="w-10 h-10 text-amber-500" />
+                        )}
+                    </button>
                 </div>
             </div>
 

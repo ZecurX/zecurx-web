@@ -371,30 +371,36 @@ export async function POST(request: NextRequest) {
         `;
 
         // Send user confirmation email
+        // Skip for purchases - the Razorpay webhook sends a complete email with invoice and LMS credentials
         let userEmailSent = false;
-        try {
-            console.log('Attempting to send user email to:', email);
+        if (!isPurchase) {
+            try {
+                console.log('Attempting to send user email to:', email);
 
-            if ((isDemo || isBrochure) && attachments.length > 0) {
-                await resend.emails.send({
-                    from: 'ZecurX <official@zecurx.com>',
-                    to: email,
-                    subject: userSubject,
-                    html: userEmailHtml,
-                    attachments: attachments,
-                });
-            } else {
-                await resend.emails.send({
-                    from: 'ZecurX <official@zecurx.com>',
-                    to: email,
-                    subject: userSubject,
-                    html: userEmailHtml,
-                });
+                if ((isDemo || isBrochure) && attachments.length > 0) {
+                    await resend.emails.send({
+                        from: 'ZecurX <official@zecurx.com>',
+                        to: email,
+                        subject: userSubject,
+                        html: userEmailHtml,
+                        attachments: attachments,
+                    });
+                } else {
+                    await resend.emails.send({
+                        from: 'ZecurX <official@zecurx.com>',
+                        to: email,
+                        subject: userSubject,
+                        html: userEmailHtml,
+                    });
+                }
+                userEmailSent = true;
+                console.log('User confirmation email sent successfully to:', email);
+            } catch (userError) {
+                console.error('Failed to send user confirmation email:', userError);
             }
+        } else {
             userEmailSent = true;
-            console.log('User confirmation email sent successfully to:', email);
-        } catch (userError) {
-            console.error('Failed to send user confirmation email:', userError);
+            console.log('Skipping user email for purchase - webhook handles it with invoice');
         }
 
         // Return response

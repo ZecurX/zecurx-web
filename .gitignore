@@ -57,3 +57,4 @@ nohup.out
 /public/images/dashboard-hero*.png
 /public/hero-bg.png
 /public/logo_new.png
+.env*.local

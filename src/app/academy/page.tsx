@@ -15,7 +15,7 @@ import { CDN_ASSETS } from '@/lib/cdn';
 // Sample courses data - replace with your actual courses
 const courses = [
     {
-        id: 'cybersec-genai-bundle',
+        id: '93a3af86-761a-47a9-80f5-a97534916364',
         title: 'CyberSecurity + Generative AI Bundle',
         description: 'Master the future of security with this comprehensive program combining core cybersecurity skills with cutting-edge Generative AI defense strategies.',
         price: 9500,
@@ -36,7 +36,7 @@ const courses = [
         // brochureLink: '/brochures/Bundle.pdf', // Missing
     },
     {
-        id: 'zx-cpeh',
+        id: '06a10be6-115a-4a83-b338-67168abcce1a',
         title: 'zxCPEH - Certified Professional Ethical Hacker',
         description: 'Advanced ethical hacking methodology. Learn to think like an adversary to secure critical infrastructure.',
         price: 25000,
@@ -56,7 +56,7 @@ const courses = [
         brochureLink: CDN_ASSETS.brochures.zxCPEH,
     },
     {
-        id: 'zx-cppt',
+        id: '1033198a-bf65-4183-9e6e-aab727903039',
         title: 'zxCPPT - Certified Professional Pen Tester',
         description: 'Professional penetration testing certification. Master the art of identifying potential security breaches.',
         price: 35400,
@@ -76,7 +76,7 @@ const courses = [
         brochureLink: CDN_ASSETS.brochures.zxCPPT,
     },
     {
-        id: 'zx-gaip',
+        id: 'b5276793-8c55-4759-8206-3d1a833fe304',
         title: 'zxGAIP - Generative AI Professional',
         description: 'Leverage Generative AI for security operations, automation, and threat intelligence.',
         price: 25000,
@@ -96,7 +96,7 @@ const courses = [
         // brochureLink: '/brochures/zxGAIP.pdf', // Missing
     },
     {
-        id: 'zx-ccp',
+        id: '7f0e2cb3-82c1-4634-9a95-67a2ae14a815',
         title: 'zxCCP - Certified Cybersecurity Practitioner',
         description: 'Practical cybersecurity skills for professionals. Focus on defense, incident handling, and everyday security operations.',
         price: "Institution Only",
@@ -112,7 +112,7 @@ const courses = [
         brochureLink: CDN_ASSETS.brochures.zxCCP,
     },
     {
-        id: 'zx-ccf',
+        id: '3613d162-d801-47c6-9305-719f999738c8',
         title: 'zxCCF - Certified Cybersecurity Foundations',
         description: 'Foundational knowledge for a career in cybersecurity. Understand the landscape, threats, and basic protections.',
         price: "Institution Only",
@@ -128,7 +128,7 @@ const courses = [
         brochureLink: CDN_ASSETS.brochures.zxCCF,
     },
     {
-        id: 'zx-cce',
+        id: 'ef34cbc8-c918-4e64-bd88-799863b299e1',
         title: 'zxCCE - Certified Cybersecurity Expert',
         description: 'Expert-level training for leadership roles. Strategy, governance, and advanced security architecture.',
         price: "Institution Only",
@@ -144,7 +144,7 @@ const courses = [
         brochureLink: CDN_ASSETS.brochures.zxCCE,
     },
     {
-        id: 'zx-cfd',
+        id: '9bce53be-103e-46b9-9fa0-2b91260f38db',
         title: 'zxCFD - Certified Fullstack Dev',
         description: 'Become a security-aware fullstack developer. Build robust, secure applications from the ground up.',
         price: "Contact for Pricing",
