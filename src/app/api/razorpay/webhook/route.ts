@@ -8,6 +8,20 @@ import { processLmsEnrollment } from '@/lib/lms-integration';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
+async function isEmailEnabled(): Promise<boolean> {
+    try {
+        const result = await query<{ value: boolean | string }>(
+            'SELECT value FROM zecurx_admin.settings WHERE key = $1',
+            ['email_enabled']
+        );
+        if (result.rows.length === 0) return true;
+        const val = result.rows[0].value;
+        return val === true || val === 'true';
+    } catch {
+        return true;
+    }
+}
+
 function verifyWebhookSignature(body: string, signature: string): boolean {
     if (!WEBHOOK_SECRET) {
         console.error('RAZORPAY_WEBHOOK_SECRET not configured');
@@ -328,27 +342,32 @@ export async function POST(request: NextRequest) {
                     }
                 }
 
-                try {
-                    await sendInvoiceEmail({
-                        name: notes.name || '',
-                        email: notes.email,
-                        itemName: notes.itemName || 'ZecurX Product',
-                        amount,
-                        paymentId,
-                        orderId,
-                        phone: notes.mobile || notes.phone,
-                        college: notes.college,
-                        isInternship,
-                        lmsResetUrl: lmsResult.resetUrl,
-                        isNewLmsUser: lmsResult.isNewUser,
-                    });
-                    console.log('Webhook: Invoice email sent successfully');
-                } catch (invoiceError) {
-                    console.error('Webhook: Invoice email failed:', invoiceError);
-                    return NextResponse.json(
-                        { error: 'Invoice email delivery failed' },
-                        { status: 500 }
-                    );
+                const emailEnabled = await isEmailEnabled();
+                if (emailEnabled) {
+                    try {
+                        await sendInvoiceEmail({
+                            name: notes.name || '',
+                            email: notes.email,
+                            itemName: notes.itemName || 'ZecurX Product',
+                            amount,
+                            paymentId,
+                            orderId,
+                            phone: notes.mobile || notes.phone,
+                            college: notes.college,
+                            isInternship,
+                            lmsResetUrl: lmsResult.resetUrl,
+                            isNewLmsUser: lmsResult.isNewUser,
+                        });
+                        console.log('Webhook: Invoice email sent successfully');
+                    } catch (invoiceError) {
+                        console.error('Webhook: Invoice email failed:', invoiceError);
+                        return NextResponse.json(
+                            { error: 'Invoice email delivery failed' },
+                            { status: 500 }
+                        );
+                    }
+                } else {
+                    console.log('Webhook: Email notifications disabled - skipping invoice email');
                 }
             }
         }
