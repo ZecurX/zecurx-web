@@ -48,14 +48,15 @@ export async function createLmsUser(
         return null;
     }
     
+    const userId = crypto.randomUUID();
     const tempPassword = crypto.randomBytes(32).toString('hex');
     const hashedPassword = await bcrypt.hash(tempPassword, 10);
     
     const result = await query<LmsUser>(
-        `INSERT INTO public.users (email, name, password, "roleId", "isVerified", "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, true, NOW(), NOW())
+        `INSERT INTO public.users (id, email, name, password, "roleId", "isVerified", "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW())
          RETURNING id, email, name, "roleId"`,
-        [email, name, hashedPassword, roleId]
+        [userId, email, name, hashedPassword, roleId]
     );
     
     return result.rows[0] || null;
@@ -68,12 +69,12 @@ export async function createPasswordResetToken(
     const token = crypto.randomBytes(32).toString('hex');
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const expiresAt = new Date(Date.now() + expiryMinutes * 60 * 1000);
+    const tokenId = crypto.randomUUID();
     
     await query(
-        `UPDATE public.users 
-         SET "passwordResetToken" = $1, "passwordResetExpires" = $2, "updatedAt" = NOW()
-         WHERE id = $3`,
-        [hashedToken, expiresAt, userId]
+        `INSERT INTO public.password_reset_tokens (id, "userId", "tokenHash", "expiresAt", "isAdminTriggered", "createdAt")
+         VALUES ($1, $2, $3, $4, true, NOW())`,
+        [tokenId, userId, hashedToken, expiresAt]
     );
     
     return token;
@@ -99,17 +100,18 @@ export async function createInternship(
     paymentId: string,
     paymentAmount: number
 ): Promise<string | null> {
+    const internshipId = crypto.randomUUID();
     const startDate = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + durationMonths);
     
     const result = await query<{ id: string }>(
         `INSERT INTO public.internships 
-         ("userId", "programName", "programType", "durationMonths", "startDate", "endDate", 
+         (id, "userId", "programName", "programType", "durationMonths", "startDate", "endDate", 
           status, "paymentId", "paymentAmount", "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, $6, 'ACTIVE', $7, $8, NOW(), NOW())
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'ACTIVE', $8, $9, NOW(), NOW())
          RETURNING id`,
-        [userId, programName, programType, durationMonths, startDate, endDate, paymentId, paymentAmount]
+        [internshipId, userId, programName, programType, durationMonths, startDate, endDate, paymentId, paymentAmount]
     );
     
     return result.rows[0]?.id || null;
@@ -129,11 +131,12 @@ export async function createEnrollment(
         return existingEnrollment.rows[0].id;
     }
     
+    const enrollmentId = crypto.randomUUID();
     const result = await query<{ id: string }>(
-        `INSERT INTO public.enrollments ("userId", "courseId", status, "createdAt", "updatedAt")
-         VALUES ($1, $2, 'ACTIVE', NOW(), NOW())
+        `INSERT INTO public.enrollments (id, "userId", "courseId", status, "enrolledAt", "updatedAt")
+         VALUES ($1, $2, $3, 'ACTIVE', NOW(), NOW())
          RETURNING id`,
-        [userId, courseId]
+        [enrollmentId, userId, courseId]
     );
     
     return result.rows[0]?.id || null;
