@@ -183,59 +183,108 @@ export async function POST(request: NextRequest) {
             let finalAmount = verifiedAmount;
             let isTestOrder = false;
             let isPromoPrice = false;
+            let verifiedFromDb = false;
 
             if (itemId) {
-                const courseResult = await query(
-                    'SELECT price, title FROM courses WHERE id = $1 OR slug = $1',
-                    [itemId]
+                // First check if it's a plan (internship)
+                const planResult = await query(
+                    'SELECT id, name, price FROM plans WHERE id::text = $1 OR name = $2',
+                    [itemId, itemName]
                 );
-                if (courseResult.rows.length > 0) {
-                    const course = courseResult.rows[0];
-                    const coursePrice = parseFloat(course.price);
+                
+                if (planResult.rows.length > 0) {
+                    const plan = planResult.rows[0];
+                    const planPrice = parseFloat(plan.price);
                     
-                    if (metadata?.promoPrice && metadata.promoPrice !== coursePrice) {
-                        const promoCheckResult = await query(`
-                            SELECT pp.* FROM public.promo_prices pp
-                            LEFT JOIN courses c ON pp.plan_id = c.id
-                            WHERE pp.is_active = true
-                            AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
-                            AND pp.valid_from <= NOW()
-                            AND $1 >= pp.min_price 
-                            AND $1 <= pp.max_price
-                            AND (
-                                (pp.plan_id IS NOT NULL AND (c.id = $2 OR c.slug = $2))
-                                OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
-                            )
-                            LIMIT 1
-                        `, [metadata.promoPrice, itemId, course.title]);
-
-                        if (promoCheckResult.rows.length > 0) {
-                            finalAmount = metadata.promoPrice;
-                            isPromoPrice = true;
-                        } else {
-                            return NextResponse.json(
-                                { error: 'Invalid promo price for this course' },
-                                { status: 400 }
-                            );
-                        }
-                    } else if (discountAmount > 0) {
-                        const discountResult = await validateDiscount(
-                            coursePrice,
-                            discountAmount,
-                            metadata?.referralCode,
-                            metadata?.partnerReferralCode
+                    // For plans, strictly enforce the database price
+                    if (Math.abs(planPrice - amount) > 0.01) {
+                        console.error(`Price tampering detected: Plan ${plan.name} costs ₹${planPrice}, but ₹${amount} was sent`);
+                        return NextResponse.json(
+                            { 
+                                error: 'Invalid amount. Please refresh the page and try again.',
+                                details: `Price mismatch for ${plan.name}`
+                            },
+                            { status: 400 }
                         );
-
-                        if (!discountResult.valid) {
-                            return NextResponse.json(
-                                { error: discountResult.error },
-                                { status: 400 }
-                            );
-                        }
+                    }
+                    
+                    finalAmount = planPrice;
+                    verifiedFromDb = true;
+                } else {
+                    // Check if it's a course
+                    const courseResult = await query(
+                        'SELECT price, title FROM courses WHERE id = $1 OR slug = $1',
+                        [itemId]
+                    );
+                    if (courseResult.rows.length > 0) {
+                        const course = courseResult.rows[0];
+                        const coursePrice = parseFloat(course.price);
                         
-                        finalAmount = coursePrice - discountResult.verifiedDiscount;
+                        if (metadata?.promoPrice && metadata.promoPrice !== coursePrice) {
+                            const promoCheckResult = await query(`
+                                SELECT pp.* FROM public.promo_prices pp
+                                LEFT JOIN courses c ON pp.plan_id = c.id
+                                WHERE pp.is_active = true
+                                AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
+                                AND pp.valid_from <= NOW()
+                                AND $1 >= pp.min_price 
+                                AND $1 <= pp.max_price
+                                AND (
+                                    (pp.plan_id IS NOT NULL AND (c.id = $2 OR c.slug = $2))
+                                    OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
+                                )
+                                LIMIT 1
+                            `, [metadata.promoPrice, itemId, course.title]);
+
+                            if (promoCheckResult.rows.length > 0) {
+                                finalAmount = metadata.promoPrice;
+                                isPromoPrice = true;
+                                verifiedFromDb = true;
+                            } else {
+                                return NextResponse.json(
+                                    { error: 'Invalid promo price for this course' },
+                                    { status: 400 }
+                                );
+                            }
+                        } else if (discountAmount > 0) {
+                            const discountResult = await validateDiscount(
+                                coursePrice,
+                                discountAmount,
+                                metadata?.referralCode,
+                                metadata?.partnerReferralCode
+                            );
+
+                            if (!discountResult.valid) {
+                                return NextResponse.json(
+                                    { error: discountResult.error },
+                                    { status: 400 }
+                                );
+                            }
+                            
+                            finalAmount = coursePrice - discountResult.verifiedDiscount;
+                            verifiedFromDb = true;
+                        } else {
+                            // No discount - verify exact price match
+                            if (Math.abs(coursePrice - amount) > 0.01) {
+                                return NextResponse.json(
+                                    { error: 'Price mismatch. Please refresh the page.' },
+                                    { status: 400 }
+                                );
+                            }
+                            finalAmount = coursePrice;
+                            verifiedFromDb = true;
+                        }
                     }
                 }
+            }
+
+            // If we couldn't verify from database, reject the order
+            if (!verifiedFromDb) {
+                console.error(`Unverified order attempt: itemId=${itemId}, itemName=${itemName}, amount=${amount}`);
+                return NextResponse.json(
+                    { error: 'Unable to verify product. Please try again.' },
+                    { status: 400 }
+                );
             }
 
             const order = await getRazorpay().orders.create({
@@ -248,6 +297,7 @@ export async function POST(request: NextRequest) {
                     isTest: isTestOrder ? 'true' : 'false',
                     isPromoPrice: isPromoPrice ? 'true' : 'false',
                     originalAmount: verifiedAmount.toString(),
+                    verifiedPrice: finalAmount.toString(),
                     ...metadata
                 },
             });
