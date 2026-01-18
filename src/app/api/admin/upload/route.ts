@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { uploadToS3, generateS3Key } from "@/lib/s3";
+import { getJwtSecret } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,9 +13,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
         try {
-            await jwtVerify(session.value, secret);
+            await jwtVerify(session.value, getJwtSecret());
         } catch {
             return NextResponse.json({ error: "Invalid token" }, { status: 401 });
         }
