@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const itemId = searchParams.get('itemId');
-        const type = searchParams.get('type');
+        const type = searchParams.get('type') || 'course';
 
         if (!itemId) {
             return NextResponse.json<{ error: string }>(
@@ -23,77 +23,22 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // Check plans (internships) first
-        if (type === 'internship' || !type) {
-            const planResult = await query(
-                'SELECT id, name, price, description FROM plans WHERE id::text = $1 AND active = true',
-                [itemId]
-            );
+        const planResult = await query(
+            'SELECT id, name, price, description, type FROM plans WHERE id::text = $1 AND active = true',
+            [itemId]
+        );
+        
+        if (planResult.rows.length > 0) {
+            const plan = planResult.rows[0];
+            const itemType = plan.type === 'internship' ? 'internship' : (type as 'internship' | 'course');
             
-            if (planResult.rows.length > 0) {
-                const plan = planResult.rows[0];
-                return NextResponse.json<ItemPriceResponse>({
-                    id: plan.id.toString(),
-                    name: plan.name,
-                    price: parseFloat(plan.price),
-                    type: 'internship',
-                    description: plan.description || undefined
-                });
-            }
-        }
-
-        // Check courses
-        if (type === 'course' || !type) {
-            const courseResult = await query(
-                'SELECT id, title, price, description FROM courses WHERE id = $1 OR slug = $1',
-                [itemId]
-            );
-            
-            if (courseResult.rows.length > 0) {
-                const course = courseResult.rows[0];
-                return NextResponse.json<ItemPriceResponse>({
-                    id: course.id.toString(),
-                    name: course.title,
-                    price: parseFloat(course.price),
-                    type: 'course',
-                    description: course.description || undefined
-                });
-            }
-        }
-
-        // If type was specified but not found, try the other type
-        if (type === 'internship') {
-            const courseResult = await query(
-                'SELECT id, title, price, description FROM courses WHERE id = $1 OR slug = $1',
-                [itemId]
-            );
-            
-            if (courseResult.rows.length > 0) {
-                const course = courseResult.rows[0];
-                return NextResponse.json<ItemPriceResponse>({
-                    id: course.id.toString(),
-                    name: course.title,
-                    price: parseFloat(course.price),
-                    type: 'course',
-                    description: course.description || undefined
-                });
-            }
-        } else if (type === 'course') {
-            const planResult = await query(
-                'SELECT id, name, price, description FROM plans WHERE id::text = $1 AND active = true',
-                [itemId]
-            );
-            
-            if (planResult.rows.length > 0) {
-                const plan = planResult.rows[0];
-                return NextResponse.json<ItemPriceResponse>({
-                    id: plan.id.toString(),
-                    name: plan.name,
-                    price: parseFloat(plan.price),
-                    type: 'internship',
-                    description: plan.description || undefined
-                });
-            }
+            return NextResponse.json<ItemPriceResponse>({
+                id: plan.id.toString(),
+                name: plan.name,
+                price: parseFloat(plan.price),
+                type: itemType,
+                description: plan.description || undefined
+            });
         }
 
         return NextResponse.json<{ error: string }>(
