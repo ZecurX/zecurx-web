@@ -5,6 +5,7 @@ import { query } from '@/lib/db';
 import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { Resend } from 'resend';
 import { processLmsEnrollment } from '@/lib/lms-integration';
+import { incrementReferralCodeUsage } from '@/lib/discount-validation';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -248,15 +249,19 @@ export async function POST(request: NextRequest) {
 
             console.log(`Payment captured: ${paymentId}, Amount: ₹${amount}`);
 
-            // SECURITY: Verify payment amount matches database price for plans/internships
+            // OPTIMIZATION: Single query to get plan details (eliminates N+1 pattern)
+            let planData: { id: string; price: number; name: string } | null = null;
             if (notes.itemName) {
-                const planResult = await query<{ price: number; name: string }>(
-                    'SELECT price, name FROM plans WHERE name = $1 LIMIT 1',
+                const planResult = await query<{ id: string; price: number; name: string }>(
+                    'SELECT id, price, name FROM plans WHERE name = $1 LIMIT 1',
                     [notes.itemName]
                 );
                 
                 if (planResult.rows.length > 0) {
-                    const expectedPrice = parseFloat(String(planResult.rows[0].price));
+                    planData = planResult.rows[0];
+                    const expectedPrice = parseFloat(String(planData.price));
+                    
+                    // SECURITY: Verify payment amount matches database price
                     if (Math.abs(expectedPrice - amount) > 0.01) {
                         console.error(`SECURITY ALERT: Payment amount mismatch! Expected ₹${expectedPrice} for "${notes.itemName}", got ₹${amount}. Payment ID: ${paymentId}`);
                         return NextResponse.json({ 
@@ -291,22 +296,24 @@ export async function POST(request: NextRequest) {
                 const customer = customerResult.rows[0];
 
                 if (customer) {
-                    let planId = notes.planId || null;
-                    if (!planId && notes.itemName) {
-                        const planResult = await query(
-                            'SELECT id FROM plans WHERE name = $1 LIMIT 1',
-                            [notes.itemName]
-                        );
-                        if (planResult.rows.length > 0) {
-                            planId = planResult.rows[0].id;
-                        }
-                    }
+                    // Use planId from notes or from our cached planData (no second query!)
+                    const planId = notes.planId || planData?.id || null;
 
                     try {
                         await query(`
                             INSERT INTO transactions (payment_id, order_id, amount, status, customer_id, plan_id)
                             VALUES ($1, $2, $3, $4, $5, $6)
                         `, [paymentId, orderId, amount, 'captured', customer.id, planId]);
+                        
+                        if (notes.referralCode || notes.partnerReferralCode) {
+                            const incremented = await incrementReferralCodeUsage(
+                                notes.referralCode,
+                                notes.partnerReferralCode
+                            );
+                            if (incremented) {
+                                console.log(`Webhook: Incremented usage for code: ${notes.referralCode || notes.partnerReferralCode}`);
+                            }
+                        }
                     } catch (txError: unknown) {
                         const errorMessage = txError instanceof Error ? txError.message : 'Unknown error';
                         console.error('Webhook: Transaction DB Error:', errorMessage);
@@ -340,9 +347,15 @@ export async function POST(request: NextRequest) {
                     console.error('Webhook: LMS Integration Error (non-blocking):', lmsError);
                 }
 
+                // OPTIMIZATION: Run Google Sheets and email in parallel, non-blocking
+                const lmsResetLinkEnabled = await isLmsResetLinkEnabled();
+                
+                const backgroundTasks: Promise<{ type: string; success: boolean; error?: unknown }>[] = [];
+                
+                // Google Sheets sync (internships only)
                 if (isInternship) {
-                    try {
-                        await appendToSheet({
+                    backgroundTasks.push(
+                        appendToSheet({
                             name: notes.name || '',
                             email: notes.email,
                             mobile: notes.mobile || notes.phone || '',
@@ -351,20 +364,15 @@ export async function POST(request: NextRequest) {
                             price: amount,
                             paymentId: paymentId,
                             date: new Date().toISOString()
-                        });
-                        console.log('Webhook: Appended to Google Sheets');
-                    } catch (sheetError) {
-                        console.error('Webhook: Google Sheets Error:', sheetError);
-                        return NextResponse.json(
-                            { error: 'Google Sheets sync failed' },
-                            { status: 500 }
-                        );
-                    }
+                        })
+                        .then(() => ({ type: 'sheets', success: true }))
+                        .catch((error) => ({ type: 'sheets', success: false, error }))
+                    );
                 }
-
-                const lmsResetLinkEnabled = await isLmsResetLinkEnabled();
-                try {
-                    await sendInvoiceEmail({
+                
+                // Invoice email
+                backgroundTasks.push(
+                    sendInvoiceEmail({
                         name: notes.name || '',
                         email: notes.email,
                         itemName: notes.itemName || 'ZecurX Product',
@@ -376,15 +384,27 @@ export async function POST(request: NextRequest) {
                         isInternship,
                         lmsResetUrl: lmsResetLinkEnabled ? lmsResult.resetUrl : undefined,
                         isNewLmsUser: lmsResetLinkEnabled ? lmsResult.isNewUser : undefined,
-                    });
-                    console.log(`Webhook: Invoice email sent successfully (LMS reset link: ${lmsResetLinkEnabled ? 'included' : 'excluded'})`);
-                } catch (invoiceError) {
-                    console.error('Webhook: Invoice email failed:', invoiceError);
-                    return NextResponse.json(
-                        { error: 'Invoice email delivery failed' },
-                        { status: 500 }
-                    );
+                    })
+                    .then(() => ({ type: 'email', success: true }))
+                    .catch((error) => ({ type: 'email', success: false, error }))
+                );
+                
+                // Run all background tasks in parallel (non-blocking - don't fail webhook)
+                const results = await Promise.allSettled(backgroundTasks);
+                
+                // Log results but don't return errors (payment was already processed)
+                for (const result of results) {
+                    if (result.status === 'fulfilled') {
+                        const { type, success, error } = result.value;
+                        if (success) {
+                            console.log(`Webhook: ${type === 'sheets' ? 'Google Sheets sync' : 'Invoice email'} completed successfully`);
+                        } else {
+                            console.error(`Webhook: ${type === 'sheets' ? 'Google Sheets' : 'Invoice email'} failed (non-blocking):`, error);
+                        }
+                    }
                 }
+                
+                console.log(`Webhook: Payment processing completed (LMS reset link: ${lmsResetLinkEnabled ? 'included' : 'excluded'})`);
             }
         }
 
