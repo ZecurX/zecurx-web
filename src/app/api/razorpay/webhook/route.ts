@@ -248,6 +248,26 @@ export async function POST(request: NextRequest) {
 
             console.log(`Payment captured: ${paymentId}, Amount: ₹${amount}`);
 
+            // SECURITY: Verify payment amount matches database price for plans/internships
+            if (notes.itemName) {
+                const planResult = await query<{ price: number; name: string }>(
+                    'SELECT price, name FROM plans WHERE name = $1 LIMIT 1',
+                    [notes.itemName]
+                );
+                
+                if (planResult.rows.length > 0) {
+                    const expectedPrice = parseFloat(String(planResult.rows[0].price));
+                    if (Math.abs(expectedPrice - amount) > 0.01) {
+                        console.error(`SECURITY ALERT: Payment amount mismatch! Expected ₹${expectedPrice} for "${notes.itemName}", got ₹${amount}. Payment ID: ${paymentId}`);
+                        return NextResponse.json({ 
+                            received: true, 
+                            warning: 'Amount mismatch - invoice not sent',
+                            event: eventType 
+                        });
+                    }
+                }
+            }
+
             if (notes.email) {
                 const customerResult = await query(`
                     INSERT INTO customers (email, name, phone, whatsapp, college)
