@@ -8,11 +8,11 @@ import { processLmsEnrollment } from '@/lib/lms-integration';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-async function isEmailEnabled(): Promise<boolean> {
+async function isLmsResetLinkEnabled(): Promise<boolean> {
     try {
         const result = await query<{ value: boolean | string }>(
             'SELECT value FROM zecurx_admin.settings WHERE key = $1',
-            ['email_enabled']
+            ['lms_reset_link_enabled']
         );
         if (result.rows.length === 0) return true;
         const val = result.rows[0].value;
@@ -342,32 +342,28 @@ export async function POST(request: NextRequest) {
                     }
                 }
 
-                const emailEnabled = await isEmailEnabled();
-                if (emailEnabled) {
-                    try {
-                        await sendInvoiceEmail({
-                            name: notes.name || '',
-                            email: notes.email,
-                            itemName: notes.itemName || 'ZecurX Product',
-                            amount,
-                            paymentId,
-                            orderId,
-                            phone: notes.mobile || notes.phone,
-                            college: notes.college,
-                            isInternship,
-                            lmsResetUrl: lmsResult.resetUrl,
-                            isNewLmsUser: lmsResult.isNewUser,
-                        });
-                        console.log('Webhook: Invoice email sent successfully');
-                    } catch (invoiceError) {
-                        console.error('Webhook: Invoice email failed:', invoiceError);
-                        return NextResponse.json(
-                            { error: 'Invoice email delivery failed' },
-                            { status: 500 }
-                        );
-                    }
-                } else {
-                    console.log('Webhook: Email notifications disabled - skipping invoice email');
+                const lmsResetLinkEnabled = await isLmsResetLinkEnabled();
+                try {
+                    await sendInvoiceEmail({
+                        name: notes.name || '',
+                        email: notes.email,
+                        itemName: notes.itemName || 'ZecurX Product',
+                        amount,
+                        paymentId,
+                        orderId,
+                        phone: notes.mobile || notes.phone,
+                        college: notes.college,
+                        isInternship,
+                        lmsResetUrl: lmsResetLinkEnabled ? lmsResult.resetUrl : undefined,
+                        isNewLmsUser: lmsResetLinkEnabled ? lmsResult.isNewUser : undefined,
+                    });
+                    console.log(`Webhook: Invoice email sent successfully (LMS reset link: ${lmsResetLinkEnabled ? 'included' : 'excluded'})`);
+                } catch (invoiceError) {
+                    console.error('Webhook: Invoice email failed:', invoiceError);
+                    return NextResponse.json(
+                        { error: 'Invoice email delivery failed' },
+                        { status: 500 }
+                    );
                 }
             }
         }

@@ -46,8 +46,8 @@ export default function SystemTestPage() {
 
     const [emailTo, setEmailTo] = useState("");
     const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
-    const [emailEnabled, setEmailEnabled] = useState<boolean>(true);
-    const [emailToggleLoading, setEmailToggleLoading] = useState(false);
+    const [lmsResetLinkEnabled, setLmsResetLinkEnabled] = useState<boolean>(true);
+    const [lmsToggleLoading, setLmsToggleLoading] = useState(false);
 
     const updateTest = (name: string, state: Partial<TestState>) => {
         setTests((prev) => ({
@@ -57,32 +57,32 @@ export default function SystemTestPage() {
     };
 
     useEffect(() => {
-        fetch("/api/admin/settings?key=email_enabled")
+        fetch("/api/admin/settings?key=lms_reset_link_enabled")
             .then((res) => res.json())
             .then((data) => {
                 if (data.value !== undefined) {
-                    setEmailEnabled(data.value === true || data.value === "true");
+                    setLmsResetLinkEnabled(data.value === true || data.value === "true");
                 }
             })
             .catch(console.error);
     }, []);
 
-    const toggleEmailSetting = async () => {
-        setEmailToggleLoading(true);
+    const toggleLmsResetLinkSetting = async () => {
+        setLmsToggleLoading(true);
         try {
-            const newValue = !emailEnabled;
+            const newValue = !lmsResetLinkEnabled;
             const res = await fetch("/api/admin/settings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ key: "email_enabled", value: newValue }),
+                body: JSON.stringify({ key: "lms_reset_link_enabled", value: newValue }),
             });
             if (res.ok) {
-                setEmailEnabled(newValue);
+                setLmsResetLinkEnabled(newValue);
             }
         } catch (error) {
-            console.error("Failed to toggle email setting:", error);
+            console.error("Failed to toggle LMS reset link setting:", error);
         } finally {
-            setEmailToggleLoading(false);
+            setLmsToggleLoading(false);
         }
     };
 
@@ -231,32 +231,32 @@ export default function SystemTestPage() {
                 </div>
             </div>
 
-            <div className={`border rounded-xl p-6 transition-colors ${emailEnabled ? "bg-green-500/10 border-green-500/30" : "bg-red-500/10 border-red-500/30"}`}>
+            <div className={`border rounded-xl p-6 transition-colors ${lmsResetLinkEnabled ? "bg-green-500/10 border-green-500/30" : "bg-amber-500/10 border-amber-500/30"}`}>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${emailEnabled ? "bg-green-500/10" : "bg-red-500/10"}`}>
-                            <Mail className={`w-5 h-5 ${emailEnabled ? "text-green-500" : "text-red-500"}`} />
+                        <div className={`p-2 rounded-lg ${lmsResetLinkEnabled ? "bg-green-500/10" : "bg-amber-500/10"}`}>
+                            <Mail className={`w-5 h-5 ${lmsResetLinkEnabled ? "text-green-500" : "text-amber-500"}`} />
                         </div>
                         <div>
-                            <h3 className="font-semibold text-foreground">Purchase Email Notifications</h3>
+                            <h3 className="font-semibold text-foreground">LMS Password Reset Link in Emails</h3>
                             <p className="text-sm text-muted-foreground">
-                                {emailEnabled 
-                                    ? "Emails will be sent to customers on successful purchase" 
-                                    : "Emails are disabled - customers will NOT receive purchase confirmations"}
+                                {lmsResetLinkEnabled 
+                                    ? "Purchase emails will include LMS password reset link for new users" 
+                                    : "Purchase emails will NOT include LMS password reset link (invoice still sent)"}
                             </p>
                         </div>
                     </div>
                     <button
-                        onClick={toggleEmailSetting}
-                        disabled={emailToggleLoading}
+                        onClick={toggleLmsResetLinkSetting}
+                        disabled={lmsToggleLoading}
                         className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
                     >
-                        {emailToggleLoading ? (
+                        {lmsToggleLoading ? (
                             <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                        ) : emailEnabled ? (
+                        ) : lmsResetLinkEnabled ? (
                             <ToggleRight className="w-10 h-10 text-green-500" />
                         ) : (
-                            <ToggleLeft className="w-10 h-10 text-red-500" />
+                            <ToggleLeft className="w-10 h-10 text-amber-500" />
                         )}
                     </button>
                 </div>
