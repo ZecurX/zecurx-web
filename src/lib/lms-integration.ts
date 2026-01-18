@@ -21,7 +21,7 @@ interface CourseMapping {
 
 async function getRoleId(roleType: RoleType): Promise<string | null> {
     const result = await query<{ id: string }>(
-        'SELECT id FROM public.roles WHERE type = $1 LIMIT 1',
+        'SELECT id FROM public."Role" WHERE type = $1 LIMIT 1',
         [roleType]
     );
     return result.rows[0]?.id || null;
