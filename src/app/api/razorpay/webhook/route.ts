@@ -4,6 +4,7 @@ import { appendToSheet } from '@/lib/google-sheets';
 import { query } from '@/lib/db';
 import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { Resend } from 'resend';
+import { processLmsEnrollment } from '@/lib/lms-integration';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -34,6 +35,8 @@ async function sendInvoiceEmail(data: {
     phone?: string;
     college?: string;
     isInternship: boolean;
+    lmsResetUrl?: string;
+    isNewLmsUser?: boolean;
 }): Promise<void> {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const invoiceNumber = generateInvoiceNumber();
@@ -110,17 +113,23 @@ async function sendInvoiceEmail(data: {
                 <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
                     <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
                     <ul style="color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
+                        ${data.lmsResetUrl ? `<li><strong>Set up your LMS account:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> (valid for 24 hours)</li>` : ''}
                         <li>Our team will contact you within 24-48 hours</li>
-                        <li>You'll receive access credentials for the learning portal</li>
                         <li>Onboarding session will be scheduled</li>
                     </ul>
                 </div>
                 ` : `
                 <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
                     <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
+                    ${data.lmsResetUrl ? `
+                    <p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">
+                        <strong>Access your course:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> and log in to the learning portal. (Link valid for 24 hours)
+                    </p>
+                    ` : `
                     <p style="color: #555; margin: 0; line-height: 1.6;">
                         You will receive further instructions regarding delivery/access within 24-48 hours.
                     </p>
+                    `}
                 </div>
                 `}
 
@@ -276,6 +285,27 @@ export async function POST(request: NextRequest) {
 
                 const isInternship = notes.itemName?.toLowerCase().includes('internship');
 
+                let lmsResult: { success: boolean; resetUrl?: string; isNewUser?: boolean } = { success: true };
+                
+                try {
+                    lmsResult = await processLmsEnrollment({
+                        email: notes.email,
+                        name: notes.name || '',
+                        phone: notes.mobile || notes.phone,
+                        planName: notes.itemName || '',
+                        paymentId,
+                        amount,
+                    });
+                    
+                    if (lmsResult.success && lmsResult.isNewUser) {
+                        console.log(`Webhook: LMS user created for ${notes.email}, reset URL generated`);
+                    } else if (lmsResult.success) {
+                        console.log(`Webhook: LMS enrollment processed for existing user ${notes.email}`);
+                    }
+                } catch (lmsError) {
+                    console.error('Webhook: LMS Integration Error (non-blocking):', lmsError);
+                }
+
                 if (isInternship) {
                     try {
                         await appendToSheet({
@@ -309,6 +339,8 @@ export async function POST(request: NextRequest) {
                         phone: notes.mobile || notes.phone,
                         college: notes.college,
                         isInternship,
+                        lmsResetUrl: lmsResult.resetUrl,
+                        isNewLmsUser: lmsResult.isNewUser,
                     });
                     console.log('Webhook: Invoice email sent successfully');
                 } catch (invoiceError) {
