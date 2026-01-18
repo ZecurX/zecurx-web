@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const fetchSession = useCallback(async () => {
         try {
-            const response = await fetch("/api/admin/auth", {
+            const response = await fetch("/api/zx-ctrl-6fdbff/auth", {
                 method: "GET",
                 credentials: "include",
             });
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const logout = useCallback(async () => {
         try {
-            await fetch("/api/admin/logout", {
+            await fetch("/api/zx-ctrl-6fdbff/logout", {
                 method: "POST",
                 credentials: "include",
             });
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error("Logout error:", error);
         } finally {
             setUser(null);
-            router.push("/admin/login");
+            router.push("/zx-ctrl-6fdbff/login");
         }
     }, [router]);
 

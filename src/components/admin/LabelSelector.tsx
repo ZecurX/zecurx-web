@@ -44,7 +44,7 @@ export default function LabelSelector({
   const fetchLabels = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/blog/labels');
+      const response = await fetch('/api/zx-ctrl-6fdbff/blog/labels');
       if (response.ok) {
         const data = await response.json();
         setLabels(data);

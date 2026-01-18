@@ -10,7 +10,7 @@ export async function requirePagePermission(resource: Resource, action: Action) 
   const session = cookieStore.get('admin_session');
 
   if (!session?.value) {
-    redirect('/admin/login');
+    redirect('/zx-ctrl-6fdbff/login');
   }
 
   try {
@@ -21,18 +21,18 @@ export async function requirePagePermission(resource: Resource, action: Action) 
 
     if (!canAccess) {
       const roleRedirects: Record<string, string> = {
-        media: '/admin/blog',
-        marketing: '/admin/plans',
-        sales: '/admin',
-        admin: '/admin',
-        super_admin: '/admin',
+        media: '/zx-ctrl-6fdbff/blog',
+        marketing: '/zx-ctrl-6fdbff/plans',
+        sales: '/zx-ctrl-6fdbff',
+        admin: '/zx-ctrl-6fdbff',
+        super_admin: '/zx-ctrl-6fdbff',
       };
 
-      redirect(roleRedirects[user.role] || '/admin/login');
+      redirect(roleRedirects[user.role] || '/zx-ctrl-6fdbff/login');
     }
 
     return user;
   } catch {
-    redirect('/admin/login');
+    redirect('/zx-ctrl-6fdbff/login');
   }
 }

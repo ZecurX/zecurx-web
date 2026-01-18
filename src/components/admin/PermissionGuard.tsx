@@ -22,7 +22,7 @@ export function PermissionGuard({ children, resource, action }: PermissionGuardP
     if (isLoading) return;
 
     if (!user) {
-      router.push('/admin/login');
+      router.push('/zx-ctrl-6fdbff/login');
       return;
     }
 
@@ -30,14 +30,14 @@ export function PermissionGuard({ children, resource, action }: PermissionGuardP
 
     if (!canAccess) {
       const roleRedirects: Record<string, string> = {
-        media: '/admin/blog',
-        marketing: '/admin/plans',
-        sales: '/admin',
-        admin: '/admin',
-        super_admin: '/admin',
+        media: '/zx-ctrl-6fdbff/blog',
+        marketing: '/zx-ctrl-6fdbff/plans',
+        sales: '/zx-ctrl-6fdbff',
+        admin: '/zx-ctrl-6fdbff',
+        super_admin: '/zx-ctrl-6fdbff',
       };
 
-      router.push(roleRedirects[user.role] || '/admin/login');
+      router.push(roleRedirects[user.role] || '/zx-ctrl-6fdbff/login');
       return;
     }
 

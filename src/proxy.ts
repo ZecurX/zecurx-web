@@ -8,29 +8,29 @@ import { getJwtSecret } from '@/lib/auth';
 
 // Route to resource mapping for permission checks
 const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = {
-    '/admin/users': { resource: RESOURCES.USERS, action: ACTIONS.READ },
-    '/admin/customers': { resource: RESOURCES.CUSTOMERS, action: ACTIONS.READ },
-    '/admin/sales': { resource: RESOURCES.SALES, action: ACTIONS.READ },
-    '/admin/plans': { resource: RESOURCES.PLANS, action: ACTIONS.READ },
-    '/admin/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
-    '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
-    '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/users': { resource: RESOURCES.USERS, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/customers': { resource: RESOURCES.CUSTOMERS, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/sales': { resource: RESOURCES.SALES, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/plans': { resource: RESOURCES.PLANS, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
+    '/zx-ctrl-6fdbff/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
 };
 
 export async function proxy(request: NextRequest) {
-    // Only run on /admin routes
-    if (!request.nextUrl.pathname.startsWith('/admin')) {
+    // Only run on admin routes (obscured path)
+    if (!request.nextUrl.pathname.startsWith('/zx-ctrl-6fdbff')) {
         return NextResponse.next();
     }
 
     // Exclude login page from protection
-    if (request.nextUrl.pathname === '/admin/login') {
+    if (request.nextUrl.pathname === '/zx-ctrl-6fdbff/login') {
         const session = request.cookies.get('admin_session');
         // If already logged in, redirect to dashboard
         if (session) {
             try {
                 await jwtVerify(session.value, getJwtSecret());
-                return NextResponse.redirect(new URL('/admin', request.url));
+                return NextResponse.redirect(new URL('/zx-ctrl-6fdbff', request.url));
             } catch {
                 // Invalid token, allow access to login page
             }
@@ -42,7 +42,7 @@ export async function proxy(request: NextRequest) {
     const session = request.cookies.get('admin_session');
 
     if (!session) {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
+        return NextResponse.redirect(new URL('/zx-ctrl-6fdbff/login', request.url));
     }
 
     try {
@@ -66,7 +66,7 @@ export async function proxy(request: NextRequest) {
                 
                 if (!hasPermission(userRole, permission.resource as any, permission.action as any)) {
                     // Redirect to dashboard with access denied
-                    return NextResponse.redirect(new URL('/admin?access_denied=1', request.url));
+                    return NextResponse.redirect(new URL('/zx-ctrl-6fdbff?access_denied=1', request.url));
                 }
                 break;
             }
@@ -75,10 +75,10 @@ export async function proxy(request: NextRequest) {
         return response;
     } catch {
         // Invalid or expired token
-        return NextResponse.redirect(new URL('/admin/login', request.url));
+        return NextResponse.redirect(new URL('/zx-ctrl-6fdbff/login', request.url));
     }
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/zx-ctrl-6fdbff/:path*'],
 };

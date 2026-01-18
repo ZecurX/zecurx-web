@@ -176,15 +176,15 @@ export function getSidebarItemsForRole(role: Role): {
   resource: Resource;
 }[] {
   const allItems = [
-    { name: 'Dashboard', href: '/admin', icon: 'LayoutDashboard', resource: RESOURCES.DASHBOARD },
-    { name: 'Users', href: '/admin/users', icon: 'Users', resource: RESOURCES.USERS },
-    { name: 'Customers', href: '/admin/customers', icon: 'UserCircle', resource: RESOURCES.CUSTOMERS },
-    { name: 'Sales', href: '/admin/sales', icon: 'CreditCard', resource: RESOURCES.SALES },
-    { name: 'Plans', href: '/admin/plans', icon: 'Package', resource: RESOURCES.PLANS },
-    { name: 'Products', href: '/admin/products', icon: 'ShoppingBag', resource: RESOURCES.PRODUCTS },
-    { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
-    { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
-    { name: 'Audit Logs', href: '/admin/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
+    { name: 'Dashboard', href: '/zx-ctrl-6fdbff', icon: 'LayoutDashboard', resource: RESOURCES.DASHBOARD },
+    { name: 'Users', href: '/zx-ctrl-6fdbff/users', icon: 'Users', resource: RESOURCES.USERS },
+    { name: 'Customers', href: '/zx-ctrl-6fdbff/customers', icon: 'UserCircle', resource: RESOURCES.CUSTOMERS },
+    { name: 'Sales', href: '/zx-ctrl-6fdbff/sales', icon: 'CreditCard', resource: RESOURCES.SALES },
+    { name: 'Plans', href: '/zx-ctrl-6fdbff/plans', icon: 'Package', resource: RESOURCES.PLANS },
+    { name: 'Products', href: '/zx-ctrl-6fdbff/products', icon: 'ShoppingBag', resource: RESOURCES.PRODUCTS },
+    { name: 'Blog', href: '/zx-ctrl-6fdbff/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
+    { name: 'Whitepapers', href: '/zx-ctrl-6fdbff/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
+    { name: 'Audit Logs', href: '/zx-ctrl-6fdbff/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
   ];
 
   return allItems.filter(item => hasPermission(role, item.resource, ACTIONS.READ));
