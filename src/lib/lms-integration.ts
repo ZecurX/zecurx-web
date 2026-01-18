@@ -1,6 +1,6 @@
 import { query } from './db';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
+import * as argon2 from 'argon2';
 
 type RoleType = 'SUPERADMIN' | 'ADMIN' | 'INSTRUCTOR' | 'STUDENT' | 'INTERN';
 
@@ -50,11 +50,11 @@ export async function createLmsUser(
     
     const userId = crypto.randomUUID();
     const tempPassword = crypto.randomBytes(32).toString('hex');
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    const hashedPassword = await argon2.hash(tempPassword);
     
     const result = await query<LmsUser>(
-        `INSERT INTO public.users (id, email, name, password, "roleId", "isVerified", "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW())
+        `INSERT INTO public.users (id, email, name, password, "roleId", "isVerified", "isLmsUser", "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, true, true, NOW(), NOW())
          RETURNING id, email, name, "roleId"`,
         [userId, email, name, hashedPassword, roleId]
     );
@@ -66,8 +66,8 @@ export async function createPasswordResetToken(
     userId: string,
     expiryMinutes: number = 1440
 ): Promise<string | null> {
-    const token = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const token = crypto.randomBytes(64).toString('hex');
+    const hashedToken = await argon2.hash(token);
     const expiresAt = new Date(Date.now() + expiryMinutes * 60 * 1000);
     const tokenId = crypto.randomUUID();
     
