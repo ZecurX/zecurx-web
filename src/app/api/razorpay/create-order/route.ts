@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 import { query, getClient } from '@/lib/db';
 import { validateDiscount } from '@/lib/discount-validation';
+import { checkPaymentRateLimit, getClientIp } from '@/lib/rate-limit';
 
 interface CartItem {
     id: string;
@@ -12,6 +13,23 @@ interface CartItem {
 
 export async function POST(request: NextRequest) {
     try {
+        const clientIp = getClientIp(request);
+        const rateLimitResult = await checkPaymentRateLimit(clientIp);
+        
+        if (!rateLimitResult.success) {
+            return NextResponse.json(
+                { error: 'Too many requests. Please try again later.' },
+                { 
+                    status: 429,
+                    headers: {
+                        'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+                        'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+                        'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+                    }
+                }
+            );
+        }
+
         const body = await request.json();
         const { amount, itemId, itemName, metadata, discountAmount = 0 } = body;
 
@@ -46,10 +64,11 @@ export async function POST(request: NextRequest) {
 
             // Use transaction with row locks to prevent race conditions
             const client = await getClient();
+            let shouldRelease = true;
+            
             try {
                 await client.query('BEGIN');
 
-                // Fetch and lock product rows
                 const productIds = items.map(item => item.id);
                 const stockCheck = await client.query(
                     `SELECT id, price, stock FROM products 
@@ -60,6 +79,8 @@ export async function POST(request: NextRequest) {
 
                 if (stockCheck.rows.length !== items.length) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { error: 'One or more products not found' },
                         { status: 404 }
@@ -69,7 +90,6 @@ export async function POST(request: NextRequest) {
                 let calculatedTotal = 0;
                 const unavailableItems: string[] = [];
 
-                // Verify prices and stock availability
                 for (const item of items) {
                     const dbProduct = stockCheck.rows.find(
                         (p: any) => p.id.toString() === item.id.toString()
@@ -77,6 +97,8 @@ export async function POST(request: NextRequest) {
 
                     if (!dbProduct) {
                         await client.query('ROLLBACK');
+                        client.release();
+                        shouldRelease = false;
                         return NextResponse.json(
                             { error: `Product ${item.name} not found` },
                             { status: 404 }
@@ -85,9 +107,10 @@ export async function POST(request: NextRequest) {
 
                     const actualPrice = Number(dbProduct.price);
 
-                    // Verify client price matches database price
                     if (Math.abs(item.price - actualPrice) > 0.01) {
                         await client.query('ROLLBACK');
+                        client.release();
+                        shouldRelease = false;
                         return NextResponse.json(
                             { 
                                 error: 'Price mismatch detected. Please refresh your cart.',
@@ -97,7 +120,6 @@ export async function POST(request: NextRequest) {
                         );
                     }
 
-                    // Verify stock availability
                     const availableStock = Number(dbProduct.stock);
                     if (availableStock < item.quantity) {
                         unavailableItems.push(
@@ -108,9 +130,10 @@ export async function POST(request: NextRequest) {
                     calculatedTotal += actualPrice * item.quantity;
                 }
 
-                // Check if any items are out of stock
                 if (unavailableItems.length > 0) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { 
                             error: 'Insufficient stock',
@@ -130,6 +153,8 @@ export async function POST(request: NextRequest) {
 
                 if (!discountResult.valid) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { error: discountResult.error },
                         { status: 400 }
@@ -139,6 +164,8 @@ export async function POST(request: NextRequest) {
                 const expectedAmount = calculatedTotal - discountResult.verifiedDiscount;
                 if (Math.abs(expectedAmount - amount) > 0.01) {
                     await client.query('ROLLBACK');
+                    client.release();
+                    shouldRelease = false;
                     return NextResponse.json(
                         { 
                             error: 'Total amount mismatch. Please refresh your cart.',
@@ -148,10 +175,8 @@ export async function POST(request: NextRequest) {
                     );
                 }
 
-                // Use server-verified total (with discount applied)
                 verifiedAmount = expectedAmount;
 
-                // Create Razorpay order while rows are still locked
                 const order = await getRazorpay().orders.create({
                     amount: amountToPaise(verifiedAmount),
                     currency: CURRENCY,
@@ -165,6 +190,7 @@ export async function POST(request: NextRequest) {
 
                 await client.query('COMMIT');
                 client.release();
+                shouldRelease = false;
 
                 return NextResponse.json({
                     orderId: order.id,
@@ -175,8 +201,12 @@ export async function POST(request: NextRequest) {
                 });
 
             } catch (error) {
-                await client.query('ROLLBACK');
-                client.release();
+                if (shouldRelease) {
+                    try {
+                        await client.query('ROLLBACK');
+                    } catch { /* ignore rollback errors */ }
+                    client.release();
+                }
                 throw error;
             }
         } else {
