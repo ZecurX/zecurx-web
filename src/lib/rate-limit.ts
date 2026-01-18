@@ -1,9 +1,5 @@
-import { LRUCache } from 'lru-cache';
-
-type RateLimitOptions = {
-    uniqueTokenPerInterval?: number;
-    interval?: number;
-};
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 type RateLimitResult = {
     success: boolean;
@@ -12,48 +8,51 @@ type RateLimitResult = {
     reset: number;
 };
 
-const tokenCache = new LRUCache<string, number[]>({
-    max: 500,
-    ttl: 60000,
-});
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const isUpstashConfigured = Boolean(UPSTASH_URL && UPSTASH_TOKEN);
 
-export function rateLimit(options?: RateLimitOptions) {
-    const interval = options?.interval || 60000;
+let redis: Redis | null = null;
+let paymentRateLimiter: Ratelimit | null = null;
+let validateRateLimiter: Ratelimit | null = null;
 
-    return {
-        check: async (limit: number, token: string): Promise<RateLimitResult> => {
-            const now = Date.now();
-            const windowStart = now - interval;
+if (isUpstashConfigured) {
+    redis = new Redis({
+        url: UPSTASH_URL!,
+        token: UPSTASH_TOKEN!,
+    });
 
-            let tokenData = tokenCache.get(token);
-            if (!tokenData) {
-                tokenData = [];
-                tokenCache.set(token, tokenData);
-            }
+    paymentRateLimiter = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(10, '60 s'),
+        analytics: true,
+        prefix: 'ratelimit:payment',
+    });
 
-            const recentRequests = tokenData.filter(timestamp => timestamp > windowStart);
-
-            recentRequests.push(now);
-            tokenCache.set(token, recentRequests);
-
-            const remaining = Math.max(0, limit - recentRequests.length);
-            const success = recentRequests.length <= limit;
-            const reset = Math.ceil((windowStart + interval) / 1000);
-
-            return { success, limit, remaining, reset };
-        },
-    };
+    validateRateLimiter = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(20, '10 s'),
+        analytics: true,
+        prefix: 'ratelimit:validate',
+    });
+} else {
+    console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
 }
 
-const paymentRateLimiter = rateLimit({ interval: 60000 });
-const validateRateLimiter = rateLimit({ interval: 10000 });
-
 export async function checkPaymentRateLimit(ip: string): Promise<RateLimitResult> {
-    return paymentRateLimiter.check(10, `payment:${ip}`);
+    if (!paymentRateLimiter) {
+        return { success: true, limit: 10, remaining: 10, reset: 0 };
+    }
+    const { success, limit, remaining, reset } = await paymentRateLimiter.limit(`payment:${ip}`);
+    return { success, limit, remaining, reset: Math.ceil(reset / 1000) };
 }
 
 export async function checkValidateRateLimit(ip: string): Promise<RateLimitResult> {
-    return validateRateLimiter.check(20, `validate:${ip}`);
+    if (!validateRateLimiter) {
+        return { success: true, limit: 20, remaining: 20, reset: 0 };
+    }
+    const { success, limit, remaining, reset } = await validateRateLimiter.limit(`validate:${ip}`);
+    return { success, limit, remaining, reset: Math.ceil(reset / 1000) };
 }
 
 export function getClientIp(request: Request): string {
@@ -66,4 +65,8 @@ export function getClientIp(request: Request): string {
         return realIp;
     }
     return 'unknown';
+}
+
+export function isRateLimitingEnabled(): boolean {
+    return isUpstashConfigured;
 }

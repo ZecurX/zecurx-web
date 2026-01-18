@@ -434,11 +434,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
-    return NextResponse.json({ 
-        status: 'ok', 
-        message: 'Razorpay webhook endpoint is active',
-        supportedEvents: ['payment.captured', 'payment.failed', 'refund.created'],
-        features: ['Invoice PDF generation', 'Email notifications', 'Google Sheets logging']
-    });
-}
+// GET method removed for security - prevents info disclosure about webhook capabilities
