@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { jwtVerify } from 'jose';
 import { AdminJWTPayload, Resource, Action } from '@/types/auth';
 import { hasPermission } from '@/lib/permissions';
+import { getJwtSecret } from '@/lib/auth';
 
 export async function requirePagePermission(resource: Resource, action: Action) {
   const cookieStore = await cookies();
@@ -13,8 +14,7 @@ export async function requirePagePermission(resource: Resource, action: Action) 
   }
 
   try {
-    const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
-    const { payload } = await jwtVerify(session.value, secret);
+    const { payload } = await jwtVerify(session.value, getJwtSecret());
     const user = payload as unknown as AdminJWTPayload;
 
     const canAccess = hasPermission(user.role, resource, action);
