@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Database,
     Mail,
@@ -14,6 +14,8 @@ import {
     RefreshCw,
     Download,
     Send,
+    ToggleLeft,
+    ToggleRight,
 } from "lucide-react";
 
 interface TestResult {
@@ -44,12 +46,44 @@ export default function SystemTestPage() {
 
     const [emailTo, setEmailTo] = useState("");
     const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+    const [emailEnabled, setEmailEnabled] = useState<boolean>(true);
+    const [emailToggleLoading, setEmailToggleLoading] = useState(false);
 
     const updateTest = (name: string, state: Partial<TestState>) => {
         setTests((prev) => ({
             ...prev,
             [name]: { ...prev[name], ...state },
         }));
+    };
+
+    useEffect(() => {
+        fetch("/api/admin/settings?key=email_enabled")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.value !== undefined) {
+                    setEmailEnabled(data.value === true || data.value === "true");
+                }
+            })
+            .catch(console.error);
+    }, []);
+
+    const toggleEmailSetting = async () => {
+        setEmailToggleLoading(true);
+        try {
+            const newValue = !emailEnabled;
+            const res = await fetch("/api/admin/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: "email_enabled", value: newValue }),
+            });
+            if (res.ok) {
+                setEmailEnabled(newValue);
+            }
+        } catch (error) {
+            console.error("Failed to toggle email setting:", error);
+        } finally {
+            setEmailToggleLoading(false);
+        }
     };
 
     const runTest = async (
@@ -194,6 +228,37 @@ export default function SystemTestPage() {
                         All tests use mock/test data. No real transactions, customers, or
                         emails to production users will be created.
                     </p>
+                </div>
+            </div>
+
+            <div className={`border rounded-xl p-6 transition-colors ${emailEnabled ? "bg-green-500/10 border-green-500/30" : "bg-red-500/10 border-red-500/30"}`}>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${emailEnabled ? "bg-green-500/10" : "bg-red-500/10"}`}>
+                            <Mail className={`w-5 h-5 ${emailEnabled ? "text-green-500" : "text-red-500"}`} />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-foreground">Purchase Email Notifications</h3>
+                            <p className="text-sm text-muted-foreground">
+                                {emailEnabled 
+                                    ? "Emails will be sent to customers on successful purchase" 
+                                    : "Emails are disabled - customers will NOT receive purchase confirmations"}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={toggleEmailSetting}
+                        disabled={emailToggleLoading}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                    >
+                        {emailToggleLoading ? (
+                            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                        ) : emailEnabled ? (
+                            <ToggleRight className="w-10 h-10 text-green-500" />
+                        ) : (
+                            <ToggleLeft className="w-10 h-10 text-red-500" />
+                        )}
+                    </button>
                 </div>
             </div>
 
