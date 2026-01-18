@@ -144,7 +144,7 @@ function InternshipCard({ group, index }: { group: GroupedPlan, index: number })
 
                     {currentPlan.in_stock ? (
                         <Link
-                            href={`/checkout?itemId=${currentPlan.id}&itemName=${encodeURIComponent(currentPlan.name)}&price=${currentPlan.price}&type=internship`}
+                            href={`/checkout?itemId=${currentPlan.id}&type=internship`}
                             className="relative px-8 py-3.5 bg-foreground text-background text-sm font-semibold rounded-full hover:bg-foreground/90 transition-all duration-300 flex items-center gap-2 group/btn shadow-lg shadow-foreground/5 hover:shadow-foreground/10 hover:-translate-y-0.5"
                         >
                             <span>Apply Now</span>
