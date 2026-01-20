@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     let userInfo: { id: string; email: string; name: string; role: Role } | null = null;
 
     try {
-        const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || process.env.ADMIN_PASSWORD);
         const { payload } = await jwtVerify(session.value, secret);
         const jwtPayload = payload as unknown as AdminJWTPayload;
 
