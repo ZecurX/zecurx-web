@@ -17,30 +17,41 @@ export default async function AdminDashboard() {
     // Enforce permission check BEFORE any database queries
     await requirePagePermission(RESOURCES.DASHBOARD, ACTIONS.READ);
 
-    const [
-        transactionsResult,
-        customerCountResult,
-        activePlanCountResult,
-        recentSalesResult
-    ] = await Promise.all([
-        db.query<{ amount: number }>('SELECT amount FROM transactions'),
-        db.query<{ count: string }>('SELECT COUNT(*) as count FROM customers'),
-        db.query<{ count: string }>("SELECT COUNT(*) as count FROM plans WHERE active = true"),
-        db.query<Sale>(
-            `SELECT t.id, t.amount, t.status, t.created_at,
-                    c.name as customer_name, c.email as customer_email
-            FROM transactions t
-            LEFT JOIN customers c ON t.customer_id = c.id
-            ORDER BY t.created_at DESC
-            LIMIT 5`
-        )
-    ]);
+    let transactionCount = 0;
+    let customerCount = 0;
+    let activePlanCount = 0;
+    let totalRevenue = 0;
+    let recentSales: Sale[] = [];
 
-    const transactionCount = transactionsResult.rows.length;
-    const customerCount = parseInt(customerCountResult.rows[0].count);
-    const activePlanCount = parseInt(activePlanCountResult.rows[0].count);
-    const totalRevenue = transactionsResult.rows.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
-    const recentSales = recentSalesResult.rows;
+    try {
+        const [
+            transactionsResult,
+            customerCountResult,
+            activePlanCountResult,
+            recentSalesResult
+        ] = await Promise.all([
+            db.query<{ amount: number }>('SELECT amount FROM transactions'),
+            db.query<{ count: string }>('SELECT COUNT(*) as count FROM customers'),
+            db.query<{ count: string }>("SELECT COUNT(*) as count FROM plans WHERE active = true"),
+            db.query<Sale>(
+                `SELECT t.id, t.amount, t.status, t.created_at,
+                        c.name as customer_name, c.email as customer_email
+                FROM transactions t
+                LEFT JOIN customers c ON t.customer_id = c.id
+                ORDER BY t.created_at DESC
+                LIMIT 5`
+            )
+        ]);
+
+        transactionCount = transactionsResult.rows.length;
+        customerCount = parseInt(customerCountResult.rows[0].count);
+        activePlanCount = parseInt(activePlanCountResult.rows[0].count);
+        totalRevenue = transactionsResult.rows.reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0);
+        recentSales = recentSalesResult.rows;
+    } catch (error) {
+        console.error('Dashboard data fetch error:', error);
+        // Continue with default values - page will still render
+    }
 
     return (
         <div className="space-y-8">

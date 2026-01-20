@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         const codeUpper = code.toUpperCase().trim();
 
         const result = await query(`
-            SELECT * FROM public.partner_referrals 
+            SELECT * FROM partner_referrals 
             WHERE code = $1 AND is_active = true
         `, [codeUpper]);
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
         if (customer_email) {
             const usageCheck = await query(`
-                SELECT id FROM public.partner_referral_usages 
+                SELECT id FROM partner_referral_usages 
                 WHERE partner_referral_id = $1 AND customer_email = $2
             `, [partnerReferral.id, customer_email.toLowerCase().trim()]);
 

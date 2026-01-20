@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
                 pr.*,
                 COUNT(pru.id) as usage_count,
                 COALESCE(SUM(pru.original_amount), 0) as total_revenue_generated
-            FROM public.partner_referrals pr
-            LEFT JOIN public.partner_referral_usages pru ON pr.id = pru.partner_referral_id
+            FROM partner_referrals pr
+            LEFT JOIN partner_referral_usages pru ON pr.id = pru.partner_referral_id
             GROUP BY pr.id
             ORDER BY pr.created_at DESC
         `);

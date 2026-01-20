@@ -19,6 +19,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
     try {
         const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
+        if (!process.env.ADMIN_PASSWORD) {
+            console.error('ADMIN_PASSWORD environment variable is not set');
+            redirect("/admin/login");
+        }
         const { payload } = await jwtVerify(session.value, secret);
         const jwtPayload = payload as unknown as AdminJWTPayload;
 
@@ -28,7 +32,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             name: jwtPayload.name,
             role: jwtPayload.role,
         };
-    } catch {
+    } catch (error) {
+        console.error('JWT verification failed:', error);
         redirect("/admin/login");
     }
 

@@ -3,8 +3,8 @@ import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
 export async function POST() {
     try {
-        const accessKeyId = process.env.LINODE_ACCESS_KEY_ID;
-        const secretAccessKey = process.env.LINODE_SECRET_ACCESS_KEY;
+        const accessKeyId = process.env.LINODE_S3_ACCESS_KEY;
+        const secretAccessKey = process.env.LINODE_S3_SECRET_KEY;
         const endpoint = process.env.LINODE_S3_ENDPOINT;
         const bucket = process.env.LINODE_S3_BUCKET;
 
