@@ -1,18 +1,43 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { AdminJWTPayload, Role, RESOURCES, ACTIONS } from './src/types/auth';
-import { hasPermission } from './src/lib/permissions';
+
+type Role = 'super_admin' | 'admin' | 'sales' | 'marketing' | 'media';
+
+interface AdminJWTPayload {
+    sub: string;
+    email: string;
+    name: string;
+    role: Role;
+    iat: number;
+    exp: number;
+}
+
+const ROLE_PERMISSIONS: Record<Role, string[]> = {
+    super_admin: ['*'],
+    admin: ['dashboard:*', 'customers:*', 'sales:*', 'plans:*', 'products:*', 'leads:*', 'referral_codes:*', 'blog:read', 'whitepapers:*', 'settings:*'],
+    sales: ['dashboard:*', 'customers:*', 'sales:*', 'products:*', 'leads:*', 'referral_codes:*'],
+    marketing: ['plans:*', 'leads:read', 'whitepapers:*'],
+    media: ['blog:*', 'whitepapers:*'],
+};
 
 const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = {
-    '/admin/users': { resource: RESOURCES.USERS, action: ACTIONS.READ },
-    '/admin/customers': { resource: RESOURCES.CUSTOMERS, action: ACTIONS.READ },
-    '/admin/sales': { resource: RESOURCES.SALES, action: ACTIONS.READ },
-    '/admin/plans': { resource: RESOURCES.PLANS, action: ACTIONS.READ },
-    '/admin/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
-    '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
-    '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
+    '/admin/users': { resource: 'users', action: 'read' },
+    '/admin/customers': { resource: 'customers', action: 'read' },
+    '/admin/sales': { resource: 'sales', action: 'read' },
+    '/admin/plans': { resource: 'plans', action: 'read' },
+    '/admin/products': { resource: 'products', action: 'read' },
+    '/admin/audit': { resource: 'audit', action: 'read' },
+    '/admin/blog': { resource: 'blog', action: 'read' },
 };
+
+function hasPermission(role: Role, resource: string, action: string): boolean {
+    const permissions = ROLE_PERMISSIONS[role];
+    if (permissions.includes('*')) return true;
+    if (permissions.includes(`${resource}:${action}`)) return true;
+    if (permissions.includes(`${resource}:*`)) return true;
+    return false;
+}
 
 function getJwtSecret(): Uint8Array {
     const secret = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD;
@@ -34,7 +59,7 @@ export async function middleware(request: NextRequest) {
                 await jwtVerify(session.value, getJwtSecret());
                 return NextResponse.redirect(new URL('/admin', request.url));
             } catch {
-                // Invalid token - allow access to login
+                // Invalid token - allow login page access
             }
         }
         return NextResponse.next();
@@ -60,9 +85,7 @@ export async function middleware(request: NextRequest) {
         
         for (const [route, permission] of Object.entries(ROUTE_PERMISSIONS)) {
             if (pathname === route || pathname.startsWith(`${route}/`)) {
-                const userRole = jwtPayload.role as Role;
-                
-                if (!hasPermission(userRole, permission.resource as any, permission.action as any)) {
+                if (!hasPermission(jwtPayload.role, permission.resource, permission.action)) {
                     return NextResponse.redirect(new URL('/admin?access_denied=1', request.url));
                 }
                 break;
