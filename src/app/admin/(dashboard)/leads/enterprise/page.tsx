@@ -16,7 +16,7 @@ export default async function EnterpriseLeadsPage() {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || process.env.ADMIN_PASSWORD);
         const { payload } = await jwtVerify(session.value, secret);
         const user = payload as unknown as AdminJWTPayload;
 
