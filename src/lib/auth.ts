@@ -4,8 +4,15 @@ import { NextRequest } from 'next/server';
 import { AdminJWTPayload, Role, Resource, Action, ROLES } from '@/types/auth';
 import { hasPermission as checkPermission } from './permissions';
 
-const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
 const JWT_EXPIRATION = '24h';
+
+export function getJwtSecret(): Uint8Array {
+    const secret = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD;
+    if (!secret) {
+        throw new Error('JWT_SECRET or ADMIN_PASSWORD environment variable is required');
+    }
+    return new TextEncoder().encode(secret);
+}
 
 /**
  * Verify the admin session from cookies
@@ -25,7 +32,7 @@ export async function verifySession(tokenValue?: string): Promise<AdminJWTPayloa
       return null;
     }
     
-    const { payload } = await jwtVerify(sessionValue, JWT_SECRET);
+    const { payload } = await jwtVerify(sessionValue, getJwtSecret());
     return payload as unknown as AdminJWTPayload;
   } catch {
     return null;
@@ -43,7 +50,7 @@ export async function verifySessionFromRequest(request: NextRequest): Promise<Ad
       return null;
     }
     
-    const { payload } = await jwtVerify(session.value, JWT_SECRET);
+    const { payload } = await jwtVerify(session.value, getJwtSecret());
     return payload as unknown as AdminJWTPayload;
   } catch {
     return null;
@@ -68,7 +75,7 @@ export async function createToken(admin: {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(JWT_EXPIRATION)
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
   
   return token;
 }

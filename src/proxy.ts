@@ -4,6 +4,7 @@ import { jwtVerify } from 'jose';
 import { AdminJWTPayload, Role, ROLES } from '@/types/auth';
 import { hasPermission } from '@/lib/permissions';
 import { RESOURCES, ACTIONS } from '@/types/auth';
+import { getJwtSecret } from '@/lib/auth';
 
 // Route to resource mapping for permission checks
 const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = {
@@ -28,8 +29,7 @@ export async function proxy(request: NextRequest) {
         // If already logged in, redirect to dashboard
         if (session) {
             try {
-                const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
-                await jwtVerify(session.value, secret);
+                await jwtVerify(session.value, getJwtSecret());
                 return NextResponse.redirect(new URL('/admin', request.url));
             } catch {
                 // Invalid token, allow access to login page
@@ -46,8 +46,7 @@ export async function proxy(request: NextRequest) {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.ADMIN_PASSWORD);
-        const { payload } = await jwtVerify(session.value, secret);
+        const { payload } = await jwtVerify(session.value, getJwtSecret());
         const jwtPayload = payload as unknown as AdminJWTPayload;
 
         // Add user info to request headers for use in pages/API routes
