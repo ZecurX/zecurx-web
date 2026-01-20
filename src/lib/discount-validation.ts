@@ -90,3 +90,45 @@ export async function validateDiscount(
 
     return { valid: true, verifiedDiscount };
 }
+
+export async function incrementReferralCodeUsage(
+    referralCode?: string | null,
+    partnerReferralCode?: string | null,
+    client?: PoolClient
+): Promise<boolean> {
+    if (!referralCode && !partnerReferralCode) {
+        return true;
+    }
+
+    const executor = createQueryExecutor(client);
+
+    if (referralCode) {
+        const result = await executor.query(`
+            UPDATE referral_codes 
+            SET current_uses = current_uses + 1, updated_at = NOW()
+            WHERE code = $1 
+            AND is_active = true
+            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (max_uses IS NULL OR current_uses < max_uses)
+            RETURNING id
+        `, [referralCode]);
+        
+        return result.rows.length > 0;
+    }
+
+    if (partnerReferralCode) {
+        const result = await executor.query(`
+            UPDATE partner_referrals 
+            SET current_uses = current_uses + 1, updated_at = NOW()
+            WHERE code = $1 
+            AND is_active = true
+            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (max_uses IS NULL OR current_uses < max_uses)
+            RETURNING id
+        `, [partnerReferralCode]);
+        
+        return result.rows.length > 0;
+    }
+
+    return true;
+}

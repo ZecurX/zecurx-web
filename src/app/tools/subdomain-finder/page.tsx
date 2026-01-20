@@ -38,7 +38,7 @@ export default function SubdomainFinderPage() {
                 throw new Error(data.error || 'Scan failed');
             }
 
-            setResults(data.subdomains || []);
+            setResults(data.results || data.subdomains || []);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {

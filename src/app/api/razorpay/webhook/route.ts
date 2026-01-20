@@ -4,8 +4,24 @@ import { appendToSheet } from '@/lib/google-sheets';
 import { query } from '@/lib/db';
 import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { Resend } from 'resend';
+import { processLmsEnrollment } from '@/lib/lms-integration';
+import { incrementReferralCodeUsage } from '@/lib/discount-validation';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
+
+async function isLmsResetLinkEnabled(): Promise<boolean> {
+    try {
+        const result = await query<{ value: boolean | string }>(
+            'SELECT value FROM zecurx_admin.settings WHERE key = $1',
+            ['lms_reset_link_enabled']
+        );
+        if (result.rows.length === 0) return true;
+        const val = result.rows[0].value;
+        return val === true || val === 'true';
+    } catch {
+        return true;
+    }
+}
 
 function verifyWebhookSignature(body: string, signature: string): boolean {
     if (!WEBHOOK_SECRET) {
@@ -34,6 +50,8 @@ async function sendInvoiceEmail(data: {
     phone?: string;
     college?: string;
     isInternship: boolean;
+    lmsResetUrl?: string;
+    isNewLmsUser?: boolean;
 }): Promise<void> {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const invoiceNumber = generateInvoiceNumber();
@@ -110,17 +128,23 @@ async function sendInvoiceEmail(data: {
                 <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
                     <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
                     <ul style="color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
+                        ${data.lmsResetUrl ? `<li><strong>Set up your LMS account:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> (valid for 24 hours)</li>` : ''}
                         <li>Our team will contact you within 24-48 hours</li>
-                        <li>You'll receive access credentials for the learning portal</li>
                         <li>Onboarding session will be scheduled</li>
                     </ul>
                 </div>
                 ` : `
                 <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
                     <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
+                    ${data.lmsResetUrl ? `
+                    <p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">
+                        <strong>Access your course:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> and log in to the learning portal. (Link valid for 24 hours)
+                    </p>
+                    ` : `
                     <p style="color: #555; margin: 0; line-height: 1.6;">
                         You will receive further instructions regarding delivery/access within 24-48 hours.
                     </p>
+                    `}
                 </div>
                 `}
 
@@ -225,6 +249,30 @@ export async function POST(request: NextRequest) {
 
             console.log(`Payment captured: ${paymentId}, Amount: ₹${amount}`);
 
+            // OPTIMIZATION: Single query to get plan details (eliminates N+1 pattern)
+            let planData: { id: string; price: number; name: string } | null = null;
+            if (notes.itemName) {
+                const planResult = await query<{ id: string; price: number; name: string }>(
+                    'SELECT id, price, name FROM plans WHERE name = $1 LIMIT 1',
+                    [notes.itemName]
+                );
+                
+                if (planResult.rows.length > 0) {
+                    planData = planResult.rows[0];
+                    const expectedPrice = parseFloat(String(planData.price));
+                    
+                    // SECURITY: Verify payment amount matches database price
+                    if (Math.abs(expectedPrice - amount) > 0.01) {
+                        console.error(`SECURITY ALERT: Payment amount mismatch! Expected ₹${expectedPrice} for "${notes.itemName}", got ₹${amount}. Payment ID: ${paymentId}`);
+                        return NextResponse.json({ 
+                            received: true, 
+                            warning: 'Amount mismatch - invoice not sent',
+                            event: eventType 
+                        });
+                    }
+                }
+            }
+
             if (notes.email) {
                 const customerResult = await query(`
                     INSERT INTO customers (email, name, phone, whatsapp, college)
@@ -248,22 +296,24 @@ export async function POST(request: NextRequest) {
                 const customer = customerResult.rows[0];
 
                 if (customer) {
-                    let planId = notes.planId || null;
-                    if (!planId && notes.itemName) {
-                        const planResult = await query(
-                            'SELECT id FROM plans WHERE name = $1 LIMIT 1',
-                            [notes.itemName]
-                        );
-                        if (planResult.rows.length > 0) {
-                            planId = planResult.rows[0].id;
-                        }
-                    }
+                    // Use planId from notes or from our cached planData (no second query!)
+                    const planId = notes.planId || planData?.id || null;
 
                     try {
                         await query(`
                             INSERT INTO transactions (payment_id, order_id, amount, status, customer_id, plan_id)
                             VALUES ($1, $2, $3, $4, $5, $6)
                         `, [paymentId, orderId, amount, 'captured', customer.id, planId]);
+                        
+                        if (notes.referralCode || notes.partnerReferralCode) {
+                            const incremented = await incrementReferralCodeUsage(
+                                notes.referralCode,
+                                notes.partnerReferralCode
+                            );
+                            if (incremented) {
+                                console.log(`Webhook: Incremented usage for code: ${notes.referralCode || notes.partnerReferralCode}`);
+                            }
+                        }
                     } catch (txError: unknown) {
                         const errorMessage = txError instanceof Error ? txError.message : 'Unknown error';
                         console.error('Webhook: Transaction DB Error:', errorMessage);
@@ -276,9 +326,36 @@ export async function POST(request: NextRequest) {
 
                 const isInternship = notes.itemName?.toLowerCase().includes('internship');
 
+                let lmsResult: { success: boolean; resetUrl?: string; isNewUser?: boolean } = { success: true };
+                
+                try {
+                    lmsResult = await processLmsEnrollment({
+                        email: notes.email,
+                        name: notes.name || '',
+                        phone: notes.mobile || notes.phone,
+                        planName: notes.itemName || '',
+                        paymentId,
+                        amount,
+                    });
+                    
+                    if (lmsResult.success && lmsResult.isNewUser) {
+                        console.log(`Webhook: LMS user created for ${notes.email}, reset URL generated`);
+                    } else if (lmsResult.success) {
+                        console.log(`Webhook: LMS enrollment processed for existing user ${notes.email}`);
+                    }
+                } catch (lmsError) {
+                    console.error('Webhook: LMS Integration Error (non-blocking):', lmsError);
+                }
+
+                // OPTIMIZATION: Run Google Sheets and email in parallel, non-blocking
+                const lmsResetLinkEnabled = await isLmsResetLinkEnabled();
+                
+                const backgroundTasks: Promise<{ type: string; success: boolean; error?: unknown }>[] = [];
+                
+                // Google Sheets sync (internships only)
                 if (isInternship) {
-                    try {
-                        await appendToSheet({
+                    backgroundTasks.push(
+                        appendToSheet({
                             name: notes.name || '',
                             email: notes.email,
                             mobile: notes.mobile || notes.phone || '',
@@ -287,19 +364,15 @@ export async function POST(request: NextRequest) {
                             price: amount,
                             paymentId: paymentId,
                             date: new Date().toISOString()
-                        });
-                        console.log('Webhook: Appended to Google Sheets');
-                    } catch (sheetError) {
-                        console.error('Webhook: Google Sheets Error:', sheetError);
-                        return NextResponse.json(
-                            { error: 'Google Sheets sync failed' },
-                            { status: 500 }
-                        );
-                    }
+                        })
+                        .then(() => ({ type: 'sheets', success: true }))
+                        .catch((error) => ({ type: 'sheets', success: false, error }))
+                    );
                 }
-
-                try {
-                    await sendInvoiceEmail({
+                
+                // Invoice email
+                backgroundTasks.push(
+                    sendInvoiceEmail({
                         name: notes.name || '',
                         email: notes.email,
                         itemName: notes.itemName || 'ZecurX Product',
@@ -309,15 +382,29 @@ export async function POST(request: NextRequest) {
                         phone: notes.mobile || notes.phone,
                         college: notes.college,
                         isInternship,
-                    });
-                    console.log('Webhook: Invoice email sent successfully');
-                } catch (invoiceError) {
-                    console.error('Webhook: Invoice email failed:', invoiceError);
-                    return NextResponse.json(
-                        { error: 'Invoice email delivery failed' },
-                        { status: 500 }
-                    );
+                        lmsResetUrl: lmsResetLinkEnabled ? lmsResult.resetUrl : undefined,
+                        isNewLmsUser: lmsResetLinkEnabled ? lmsResult.isNewUser : undefined,
+                    })
+                    .then(() => ({ type: 'email', success: true }))
+                    .catch((error) => ({ type: 'email', success: false, error }))
+                );
+                
+                // Run all background tasks in parallel (non-blocking - don't fail webhook)
+                const results = await Promise.allSettled(backgroundTasks);
+                
+                // Log results but don't return errors (payment was already processed)
+                for (const result of results) {
+                    if (result.status === 'fulfilled') {
+                        const { type, success, error } = result.value;
+                        if (success) {
+                            console.log(`Webhook: ${type === 'sheets' ? 'Google Sheets sync' : 'Invoice email'} completed successfully`);
+                        } else {
+                            console.error(`Webhook: ${type === 'sheets' ? 'Google Sheets' : 'Invoice email'} failed (non-blocking):`, error);
+                        }
+                    }
                 }
+                
+                console.log(`Webhook: Payment processing completed (LMS reset link: ${lmsResetLinkEnabled ? 'included' : 'excluded'})`);
             }
         }
 
@@ -347,11 +434,4 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function GET() {
-    return NextResponse.json({ 
-        status: 'ok', 
-        message: 'Razorpay webhook endpoint is active',
-        supportedEvents: ['payment.captured', 'payment.failed', 'refund.created'],
-        features: ['Invoice PDF generation', 'Email notifications', 'Google Sheets logging']
-    });
-}
+// GET method removed for security - prevents info disclosure about webhook capabilities
