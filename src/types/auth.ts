@@ -23,6 +23,7 @@ export const RESOURCES = {
   REFERRAL_CODES: 'referral_codes',
   SYSTEM_TEST: 'system_test',
   WHITEPAPERS: 'whitepapers',
+  SETTINGS: 'settings',
 } as const;
 
 export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES];

@@ -78,15 +78,54 @@ function CheckoutContent() {
 
     const urlPromoPrice = searchParams.get('promoPrice');
     const itemId = searchParams.get('itemId') || '';
-    const itemName = searchParams.get('itemName') || '';
-    const urlPrice = Number(searchParams.get('price')) || 0;
     const itemType = searchParams.get('type') || 'course';
 
-    const singleItem = !isCartCheckout ? {
-        id: itemId,
-        name: itemName,
-        price: promoPriceValid && promoPrice ? promoPrice : urlPrice,
-        type: itemType
+    const [fetchedItem, setFetchedItem] = useState<{
+        id: string;
+        name: string;
+        price: number;
+        type: string;
+    } | null>(null);
+    const [isLoadingItem, setIsLoadingItem] = useState(!isCartCheckout && !!itemId);
+    const [itemFetchError, setItemFetchError] = useState('');
+
+    useEffect(() => {
+        const fetchItemPrice = async () => {
+            if (isCartCheckout || !itemId) return;
+            
+            setIsLoadingItem(true);
+            setItemFetchError('');
+            
+            try {
+                const res = await fetch(`/api/checkout/item-price?itemId=${encodeURIComponent(itemId)}&type=${encodeURIComponent(itemType)}`);
+                const data = await res.json();
+                
+                if (!res.ok || data.error) {
+                    setItemFetchError(data.error || 'Failed to load item');
+                    return;
+                }
+                
+                setFetchedItem({
+                    id: data.id,
+                    name: data.name,
+                    price: data.price,
+                    type: data.type
+                });
+            } catch {
+                setItemFetchError('Failed to load item details');
+            } finally {
+                setIsLoadingItem(false);
+            }
+        };
+        
+        fetchItemPrice();
+    }, [itemId, itemType, isCartCheckout]);
+
+    const singleItem = !isCartCheckout && fetchedItem ? {
+        id: fetchedItem.id,
+        name: fetchedItem.name,
+        price: promoPriceValid && promoPrice ? promoPrice : fetchedItem.price,
+        type: fetchedItem.type
     } : null;
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
@@ -244,9 +283,11 @@ function CheckoutContent() {
         const isCollegeValid = singleItem?.type === 'internship' ? formData.college.length > 2 : true;
 
         const isPromoPriceValid = urlPromoPrice ? promoPriceValid === true : true;
+        
+        const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
-        setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid);
-    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid]);
+        setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid && isItemReady);
+    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -480,6 +521,31 @@ function CheckoutContent() {
                     <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
                     <button onClick={() => router.push('/shop')} className="text-primary hover:underline">
                         Continue Shopping
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isCartCheckout && isLoadingItem) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <p className="text-muted-foreground">Loading checkout...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isCartCheckout && itemFetchError) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold mb-4">Unable to Load Item</h1>
+                    <p className="text-muted-foreground mb-4">{itemFetchError}</p>
+                    <button onClick={() => router.back()} className="text-primary hover:underline">
+                        Go Back
                     </button>
                 </div>
             </div>
