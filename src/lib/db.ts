@@ -8,10 +8,6 @@ const pool = new Pool({
     connectionTimeoutMillis: 15000,
 });
 
-pool.on('connect', (client) => {
-    client.query('SET search_path TO zecurx_admin, public');
-});
-
 pool.on('error', (err) => {
     console.error('Unexpected error on idle client', err);
 });
@@ -20,15 +16,22 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
     text: string,
     params?: unknown[]
 ): Promise<QueryResult<T>> {
-    if (process.env.NODE_ENV === 'development') {
-        const start = Date.now();
-        const res = await pool.query<T>(text, params as any);
-        const duration = Date.now() - start;
-        console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
-        return res;
+    const client = await pool.connect();
+    try {
+        await client.query('SET search_path TO zecurx_admin, public');
+        
+        if (process.env.NODE_ENV === 'development') {
+            const start = Date.now();
+            const res = await client.query<T>(text, params as any);
+            const duration = Date.now() - start;
+            console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
+            return res;
+        }
+        
+        return await client.query<T>(text, params as any);
+    } finally {
+        client.release();
     }
-    
-    return pool.query<T>(text, params as any);
 }
 
 export async function getClient() {
