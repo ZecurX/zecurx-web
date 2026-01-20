@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
-import { AdminJWTPayload, Role, ROLES } from '@/types/auth';
-import { hasPermission } from '@/lib/permissions';
-import { RESOURCES, ACTIONS } from '@/types/auth';
-import { getJwtSecret } from '@/lib/auth';
+import { AdminJWTPayload, Role, RESOURCES, ACTIONS } from './src/types/auth';
+import { hasPermission } from './src/lib/permissions';
 
-// Route to resource mapping for permission checks
 const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = {
     '/admin/users': { resource: RESOURCES.USERS, action: ACTIONS.READ },
     '/admin/customers': { resource: RESOURCES.CUSTOMERS, action: ACTIONS.READ },
@@ -15,30 +12,35 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
     '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
     '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
+    '/admin/leads': { resource: RESOURCES.LEADS, action: ACTIONS.READ },
 };
 
-export async function proxy(request: NextRequest) {
-    // Only run on /admin routes
+function getJwtSecret(): Uint8Array {
+    const secret = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD;
+    if (!secret) {
+        throw new Error('JWT_SECRET or ADMIN_PASSWORD environment variable is required');
+    }
+    return new TextEncoder().encode(secret);
+}
+
+export async function middleware(request: NextRequest) {
     if (!request.nextUrl.pathname.startsWith('/admin')) {
         return NextResponse.next();
     }
 
-    // Exclude login page from protection
     if (request.nextUrl.pathname === '/admin/login') {
         const session = request.cookies.get('admin_session');
-        // If already logged in, redirect to dashboard
         if (session) {
             try {
                 await jwtVerify(session.value, getJwtSecret());
                 return NextResponse.redirect(new URL('/admin', request.url));
             } catch {
-                // Invalid token, allow access to login page
+                // Invalid token - allow access to login
             }
         }
         return NextResponse.next();
     }
 
-    // Protect other admin routes
     const session = request.cookies.get('admin_session');
 
     if (!session) {
@@ -49,23 +51,19 @@ export async function proxy(request: NextRequest) {
         const { payload } = await jwtVerify(session.value, getJwtSecret());
         const jwtPayload = payload as unknown as AdminJWTPayload;
 
-        // Add user info to request headers for use in pages/API routes
         const response = NextResponse.next();
         response.headers.set('x-user-id', jwtPayload.sub);
         response.headers.set('x-user-email', jwtPayload.email);
         response.headers.set('x-user-role', jwtPayload.role);
         response.headers.set('x-user-name', jwtPayload.name || '');
 
-        // Check route-level permissions
         const pathname = request.nextUrl.pathname;
         
-        // Find matching route permission
         for (const [route, permission] of Object.entries(ROUTE_PERMISSIONS)) {
             if (pathname === route || pathname.startsWith(`${route}/`)) {
                 const userRole = jwtPayload.role as Role;
                 
                 if (!hasPermission(userRole, permission.resource as any, permission.action as any)) {
-                    // Redirect to dashboard with access denied
                     return NextResponse.redirect(new URL('/admin?access_denied=1', request.url));
                 }
                 break;
@@ -74,7 +72,6 @@ export async function proxy(request: NextRequest) {
 
         return response;
     } catch {
-        // Invalid or expired token
         return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 }
