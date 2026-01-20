@@ -12,6 +12,7 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/products': { resource: RESOURCES.PRODUCTS, action: ACTIONS.READ },
     '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
     '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
+    '/admin/leads': { resource: RESOURCES.LEADS, action: ACTIONS.READ },
 };
 
 function getJwtSecret(): Uint8Array {
