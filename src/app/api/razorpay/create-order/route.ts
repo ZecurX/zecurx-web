@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
 
             if (itemId) {
                 const planResult = await query(
-                    'SELECT id, name, price FROM plans WHERE id::text = $1',
+                    'SELECT id, name, price FROM zecurx_admin.plans WHERE id::text = $1',
                     [itemId]
                 );
                 
@@ -225,28 +225,48 @@ export async function POST(request: NextRequest) {
                     const plan = planResult.rows[0];
                     const planPrice = parseFloat(plan.price);
                     
-                    if (metadata?.promoPrice && Math.abs(metadata.promoPrice - planPrice) > 0.01) {
-                        const promoCheckResult = await query(`
-                            SELECT pp.* FROM public.promo_prices pp
-                            WHERE pp.is_active = true
-                            AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
-                            AND pp.valid_from <= NOW()
-                            AND $1 >= pp.min_price 
-                            AND $1 <= pp.max_price
-                            AND (
-                                pp.plan_id = $2 
-                                OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
-                            )
-                            LIMIT 1
-                        `, [metadata.promoPrice, itemId, plan.name]);
+                    if ((metadata?.promoPrice || metadata?.promoCode) && (!metadata?.promoPrice || Math.abs(metadata.promoPrice - planPrice) > 0.01)) {
+                        let promoCheckResult;
+                        
+                        if (metadata?.promoCode) {
+                            promoCheckResult = await query(`
+                                SELECT pp.* FROM zecurx_admin.promo_prices pp
+                                WHERE pp.promo_code = $1
+                                AND pp.is_active = true
+                                AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
+                                AND pp.valid_from <= NOW()
+                                AND (pp.max_uses IS NULL OR pp.current_uses < pp.max_uses)
+                                AND (
+                                    pp.plan_id = $2 
+                                    OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
+                                )
+                                LIMIT 1
+                            `, [metadata.promoCode.toUpperCase(), itemId, plan.name]);
+                        } else {
+                            promoCheckResult = await query(`
+                                SELECT pp.* FROM zecurx_admin.promo_prices pp
+                                WHERE pp.is_active = true
+                                AND (pp.valid_until IS NULL OR pp.valid_until > NOW())
+                                AND pp.valid_from <= NOW()
+                                AND $1 >= pp.min_price 
+                                AND $1 <= pp.max_price
+                                AND (pp.max_uses IS NULL OR pp.current_uses < pp.max_uses)
+                                AND (
+                                    pp.plan_id = $2 
+                                    OR ($3 ILIKE pp.plan_name_pattern AND pp.plan_name_pattern IS NOT NULL)
+                                )
+                                LIMIT 1
+                            `, [metadata.promoPrice, itemId, plan.name]);
+                        }
 
                         if (promoCheckResult.rows.length > 0) {
-                            finalAmount = metadata.promoPrice;
+                            const promo = promoCheckResult.rows[0];
+                            finalAmount = parseFloat(promo.min_price);
                             isPromoPrice = true;
                             verifiedFromDb = true;
                         } else {
                             return NextResponse.json(
-                                { error: 'Invalid promo price for this plan' },
+                                { error: 'Invalid or expired promo' },
                                 { status: 400 }
                             );
                         }
