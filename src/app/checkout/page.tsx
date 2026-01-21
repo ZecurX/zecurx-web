@@ -75,8 +75,10 @@ function CheckoutContent() {
     const [promoPriceValid, setPromoPriceValid] = useState<boolean | null>(null);
     const [promoPriceError, setPromoPriceError] = useState('');
     const [originalPlanPrice, setOriginalPlanPrice] = useState<number | null>(null);
+    const [resolvedPromoCode, setResolvedPromoCode] = useState<string | null>(null);
 
     const urlPromoPrice = searchParams.get('promoPrice');
+    const urlPromoCode = searchParams.get('promoCode');
     const itemId = searchParams.get('itemId') || '';
     const itemType = searchParams.get('type') || 'course';
 
@@ -214,14 +216,7 @@ function CheckoutContent() {
 
     useEffect(() => {
         const validatePromoPrice = async () => {
-            if (!urlPromoPrice || !itemId || isCartCheckout) return;
-
-            const priceToValidate = parseFloat(urlPromoPrice);
-            if (isNaN(priceToValidate) || priceToValidate <= 0) {
-                setPromoPriceError('Invalid promo price');
-                setPromoPriceValid(false);
-                return;
-            }
+            if ((!urlPromoPrice && !urlPromoCode) || !itemId || isCartCheckout) return;
 
             try {
                 const res = await fetch('/api/promo-prices/validate', {
@@ -229,7 +224,8 @@ function CheckoutContent() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         planId: itemId,
-                        promoPrice: priceToValidate
+                        promoPrice: urlPromoPrice ? parseFloat(urlPromoPrice) : undefined,
+                        promoCode: urlPromoCode || undefined
                     })
                 });
 
@@ -240,18 +236,19 @@ function CheckoutContent() {
                     setOriginalPlanPrice(data.originalPrice);
                     setPromoPriceValid(true);
                     setPromoPriceError('');
+                    setResolvedPromoCode(data.promoCode || null);
                 } else {
-                    setPromoPriceError(data.error || 'Invalid promo price');
+                    setPromoPriceError(data.error || 'Invalid promo');
                     setPromoPriceValid(false);
                 }
             } catch {
-                setPromoPriceError('Failed to validate promo price');
+                setPromoPriceError('Failed to validate promo');
                 setPromoPriceValid(false);
             }
         };
 
         validatePromoPrice();
-    }, [urlPromoPrice, itemId, isCartCheckout]);
+    }, [urlPromoPrice, urlPromoCode, itemId, isCartCheckout]);
 
     const handleRemoveReferralCode = () => {
         setAppliedCode(null);
@@ -282,7 +279,7 @@ function CheckoutContent() {
 
         const isCollegeValid = singleItem?.type === 'internship' ? formData.college.length > 2 : true;
 
-        const isPromoPriceValid = urlPromoPrice ? promoPriceValid === true : true;
+        const isPromoPriceValid = (urlPromoPrice || urlPromoCode) ? promoPriceValid === true : true;
         
         const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
@@ -414,6 +411,7 @@ function CheckoutContent() {
                         discountAmount: appliedCode?.discount_amount || 0,
                         originalAmount: checkoutAmount,
                         promoPrice: promoPriceValid ? promoPrice : null,
+                        promoCode: resolvedPromoCode,
                         originalPlanPrice: originalPlanPrice
                     }
                 }),
