@@ -314,6 +314,29 @@ export async function POST(request: NextRequest) {
                                 console.log(`Webhook: Incremented usage for code: ${notes.referralCode || notes.partnerReferralCode}`);
                             }
                         }
+                        
+                        if (notes.isPromoPrice === 'true' && (notes.promoPrice || notes.promoCode)) {
+                            try {
+                                if (notes.promoCode) {
+                                    await query(`
+                                        UPDATE zecurx_admin.promo_prices 
+                                        SET current_uses = current_uses + 1, updated_at = NOW()
+                                        WHERE promo_code = $1 AND is_active = true
+                                    `, [notes.promoCode.toUpperCase()]);
+                                } else {
+                                    await query(`
+                                        UPDATE zecurx_admin.promo_prices 
+                                        SET current_uses = current_uses + 1, updated_at = NOW()
+                                        WHERE is_active = true
+                                        AND $1 >= min_price AND $1 <= max_price
+                                        AND (plan_id = $2 OR ($3 ILIKE plan_name_pattern AND plan_name_pattern IS NOT NULL))
+                                    `, [parseFloat(notes.promoPrice), notes.itemId, notes.itemName]);
+                                }
+                                console.log(`Webhook: Incremented promo usage for ${notes.promoCode || notes.promoPrice}`);
+                            } catch (promoErr) {
+                                console.error('Webhook: Failed to increment promo usage (non-blocking):', promoErr);
+                            }
+                        }
                     } catch (txError: unknown) {
                         const errorMessage = txError instanceof Error ? txError.message : 'Unknown error';
                         console.error('Webhook: Transaction DB Error:', errorMessage);
