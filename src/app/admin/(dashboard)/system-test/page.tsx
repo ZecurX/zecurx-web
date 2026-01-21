@@ -16,7 +16,10 @@ import {
     Send,
     ToggleLeft,
     ToggleRight,
+    Link2,
+    ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 interface TestResult {
     success: boolean;
@@ -261,6 +264,26 @@ export default function SystemTestPage() {
                     </button>
                 </div>
             </div>
+
+            <Link 
+                href="/admin/system-test/promo-links"
+                className="border border-border rounded-xl p-6 bg-card hover:border-primary/50 transition-colors block group"
+            >
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                            <Link2 className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-foreground">Promo Link Generator</h3>
+                            <p className="text-sm text-muted-foreground">
+                                Create custom checkout links with special pricing, usage limits, and expiration
+                            </p>
+                        </div>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+            </Link>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Database Test */}
