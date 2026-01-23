@@ -32,7 +32,7 @@ export default function TrustedPartners() {
             Partners
           </span>
         </h2>
-        
+
         <div className="relative w-full overflow-hidden">
           <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
@@ -41,7 +41,7 @@ export default function TrustedPartners() {
             {partners.map((partner, i) => (
               <div
                 key={i}
-                className="h-24 w-56 shrink-0 flex items-center justify-center rounded-xl bg-muted/30 border border-border hover:bg-muted/50 hover:border-border/80 transition-all cursor-default p-4"
+                className="h-24 w-56 shrink-0 flex items-center justify-center rounded-xl bg-white dark:bg-muted/30 border border-border hover:bg-gray-50 dark:hover:bg-muted/50 hover:border-border/80 transition-all cursor-default p-4"
               >
                 <Image
                   src={partner.light}
