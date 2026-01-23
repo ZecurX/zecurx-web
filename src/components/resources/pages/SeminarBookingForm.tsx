@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Send, CheckCircle2, AlertCircle, Shield, Award, BookOpen } from "lucide-react";
 import Image from "next/image";
 
@@ -23,10 +24,69 @@ import {
 const CDN_BASE = "https://zexc.in-maa-1.linodeobjects.com/partners";
 
 const partnerLogos = [
-    { name: "MSRIT", light: `${CDN_BASE}/ramaiah-light.png`, dark: `${CDN_BASE}/ramaiah-light.png` },
-    { name: "Presidency", light: `${CDN_BASE}/logo.png`, dark: `${CDN_BASE}/logo.png` },
-    { name: "St Pauls", light: `${CDN_BASE}/960px-st-pauls-college-bangalore.png`, dark: `${CDN_BASE}/stpaulswhite.png` },
+    { name: "RIBS", light: `${CDN_BASE}/ribs.png`, dark: `${CDN_BASE}/ribs.png` },
+    { name: "Sapthagiri", light: `${CDN_BASE}/sapthagiri.png`, dark: `${CDN_BASE}/sapthagiri.png` },
     { name: "IIBS", light: `${CDN_BASE}/iibs-logo-02.png`, dark: `${CDN_BASE}/iibs-logo-02.png` },
+    { name: "Mount Carmel", light: `${CDN_BASE}/250px-mount_carmel_college_bangalore_logo.png`, dark: `${CDN_BASE}/250px-mount_carmel_college_bangalore_logo.png` },
+];
+
+const testimonials = [
+    {
+        quote: "The ZecurX seminar on Zero Trust Architecture was a game-changer for our students.",
+        name: "Dr. Rajesh Kumar",
+        role: "HOD, Computer Science",
+        org: "MSRIT",
+        initials: "RK"
+    },
+    {
+        quote: "An exceptional session covering Generative AI vulnerabilities. Exactly what our learners needed.",
+        name: "Prof. Vikram Singh",
+        role: "Dean of Technology",
+        org: "Presidency University",
+        initials: "VS"
+    },
+    {
+        quote: "Our students gained practical skills in ethical hacking that went far beyond the curriculum.",
+        name: "Fr. Thomas",
+        role: "Principal",
+        org: "St. Paul's College",
+        initials: "FT"
+    },
+    {
+        quote: "ZecurX brought industry-standard cybersecurity training to our campus. Eye-opening!",
+        name: "Dr. Anjali Menon",
+        role: "Director",
+        org: "RIBS",
+        initials: "AM"
+    },
+    {
+        quote: "The depth of knowledge shared during the cyber defense workshop was outstanding.",
+        name: "Prof. Suresh Gowda",
+        role: "Placement Officer",
+        org: "MSRCASC",
+        initials: "SG"
+    },
+    {
+        quote: "A comprehensive deep dive into cybersecurity with real-world case studies.",
+        name: "Dr. Farhan Ahmed",
+        role: "HOD, IT",
+        org: "Yenepoya University",
+        initials: "FA"
+    },
+    {
+        quote: "The seminar on application security provided critical skills for future careers.",
+        name: "Prof. Lakshmi Narayan",
+        role: "Principal",
+        org: "Nagarjuna Degree College",
+        initials: "LN"
+    },
+    {
+        quote: "Excellent training on information security. The practical approach was invaluable.",
+        name: "Dr. R. K. Mishra",
+        role: "Director",
+        org: "IIBS",
+        initials: "RM"
+    },
 ];
 
 const bookingSchema = z.object({
@@ -40,7 +100,10 @@ const bookingSchema = z.object({
         "Zero Trust Network Architecture",
         "Cloud Security Posture (CSPM)",
         "API Security & DevSecOps",
-        "Ethical Hacking & Red Teaming"
+        "Ethical Hacking & Red Teaming",
+        "Offensive Security",
+        "Technological Awareness",
+        "Other"
     ]),
     attendees: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Please enter a valid number of attendees",
@@ -60,6 +123,15 @@ export default function SeminarBookingForm() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [preferredDate, setPreferredDate] = useState<Date | null>(null);
+    const [testimonialIndex, setTestimonialIndex] = useState(0);
+
+    // Auto-rotate testimonials every 3 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTestimonialIndex((prev) => (prev + 1) % testimonials.length);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
 
     const {
         register,
@@ -148,15 +220,15 @@ export default function SeminarBookingForm() {
     return (
         <section className="pt-32 pb-12 md:pt-40 md:pb-24 bg-background relative overflow-hidden">
             {/* Background Decorations */}
+            <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.03] pointer-events-none" />
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6">
                 <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
-                    
+
                     {/* Left Column: Context & Benefits */}
                     <div className="lg:col-span-2 lg:sticky lg:top-32 space-y-12 relative">
-                        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.08] pointer-events-none -z-10" />
 
                         <div>
                             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
@@ -203,16 +275,16 @@ export default function SeminarBookingForm() {
                                 <div className="flex -space-x-2">
                                     {partnerLogos.map((partner, i) => (
                                         <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-white overflow-hidden flex items-center justify-center p-1">
-                                            <Image 
-                                                src={partner.light} 
+                                            <Image
+                                                src={partner.light}
                                                 alt={partner.name}
                                                 width={32}
                                                 height={32}
                                                 className="w-full h-full object-contain dark:hidden"
                                                 unoptimized
                                             />
-                                            <Image 
-                                                src={partner.dark} 
+                                            <Image
+                                                src={partner.dark}
                                                 alt={partner.name}
                                                 width={32}
                                                 height={32}
@@ -224,16 +296,46 @@ export default function SeminarBookingForm() {
                                 </div>
                                 <div className="text-sm">
                                     <span className="font-bold text-foreground block">100+ Sessions</span>
-                                    <span className="text-muted-foreground">Delivered globally</span>
+                                    <span className="text-muted-foreground">Delivering sessions across Bengaluru</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Testimonial - Auto-rotating */}
+                        <div className="pt-8 border-t border-border/50">
+                            <div className="rounded-2xl bg-muted/30 border border-border p-6 relative overflow-hidden min-h-[140px]">
+                                <div className="absolute -top-1 left-4 text-4xl font-serif text-primary/60 select-none">
+                                    &ldquo;
+                                </div>
+                                <AnimatePresence mode="wait">
+                                    <motion.div
+                                        key={testimonialIndex}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">
+                                            {testimonials[testimonialIndex].quote}
+                                        </p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                                                {testimonials[testimonialIndex].initials}
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-foreground text-sm">{testimonials[testimonialIndex].name}</div>
+                                                <div className="text-xs text-muted-foreground">{testimonials[testimonialIndex].role} • {testimonials[testimonialIndex].org}</div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                </AnimatePresence>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Column: The Form */}
                     <div className="lg:col-span-3 bg-card border border-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-black/5 relative overflow-hidden">
-                        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-[0.08] pointer-events-none" />
-                        
+
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 relative z-10">
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="space-y-3">
@@ -298,6 +400,7 @@ export default function SeminarBookingForm() {
                                     <Input
                                         id="attendees"
                                         type="number"
+                                        min="1"
                                         placeholder="e.g. 150"
                                         {...register("attendees")}
                                         className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.attendees ? "border-red-500 focus-visible:ring-red-500" : ""}`}
@@ -308,7 +411,7 @@ export default function SeminarBookingForm() {
 
                             <div className="space-y-3">
                                 <Label htmlFor="date" className="text-base font-medium">Preferred Date & Time</Label>
-                                <DateTimePicker 
+                                <DateTimePicker
                                     name="preferred-date"
                                     onChange={handleDateChange}
                                 />
@@ -332,6 +435,9 @@ export default function SeminarBookingForm() {
                                                 <SelectItem value="Cloud Security Posture (CSPM)">Cloud Security Posture (CSPM)</SelectItem>
                                                 <SelectItem value="API Security & DevSecOps">API Security & DevSecOps</SelectItem>
                                                 <SelectItem value="Ethical Hacking & Red Teaming">Ethical Hacking & Red Teaming</SelectItem>
+                                                <SelectItem value="Offensive Security">Offensive Security</SelectItem>
+                                                <SelectItem value="Technological Awareness">Technological Awareness</SelectItem>
+                                                <SelectItem value="Other">Other (Specify in message)</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     )}
