@@ -15,6 +15,7 @@ const isUpstashConfigured = Boolean(UPSTASH_URL && UPSTASH_TOKEN);
 let redis: Redis | null = null;
 let paymentRateLimiter: Ratelimit | null = null;
 let validateRateLimiter: Ratelimit | null = null;
+let seminarRateLimiter: Ratelimit | null = null;
 
 if (isUpstashConfigured) {
     redis = new Redis({
@@ -35,6 +36,13 @@ if (isUpstashConfigured) {
         analytics: true,
         prefix: 'ratelimit:validate',
     });
+
+    seminarRateLimiter = new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(5, '60 s'), // Strict limit for OTP/Booking
+        analytics: true,
+        prefix: 'ratelimit:seminar',
+    });
 } else {
     console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
 }
@@ -44,6 +52,14 @@ export async function checkPaymentRateLimit(ip: string): Promise<RateLimitResult
         return { success: true, limit: 10, remaining: 10, reset: 0 };
     }
     const { success, limit, remaining, reset } = await paymentRateLimiter.limit(`payment:${ip}`);
+    return { success, limit, remaining, reset: Math.ceil(reset / 1000) };
+}
+
+export async function checkSeminarRateLimit(ip: string): Promise<RateLimitResult> {
+    if (!seminarRateLimiter) {
+        return { success: true, limit: 5, remaining: 5, reset: 0 };
+    }
+    const { success, limit, remaining, reset } = await seminarRateLimiter.limit(`seminar:${ip}`);
     return { success, limit, remaining, reset: Math.ceil(reset / 1000) };
 }
 
