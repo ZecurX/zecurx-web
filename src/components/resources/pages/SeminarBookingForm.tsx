@@ -142,7 +142,14 @@ const bookingSchema = z.object({
     attendees: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Please enter a valid number of attendees",
     }),
-    date: z.string().min(1, "Please select a preferred date"),
+    date: z.string().min(1, "Please select a preferred date").refine((val) => {
+        const date = new Date(val);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date >= today;
+    }, {
+        message: "Date cannot be in the past"
+    }),
 
     // Additional
     message: z.string().max(500, "Message cannot exceed 500 characters").optional(),
@@ -663,6 +670,7 @@ export default function SeminarBookingForm() {
                                     <DateTimePicker
                                         name="preferred-date"
                                         onChange={handleDateChange}
+                                        minDate={new Date()}
                                     />
                                     {errors.date && <p className="text-xs text-red-500 font-medium ml-1">{errors.date.message}</p>}
                                 </div>
