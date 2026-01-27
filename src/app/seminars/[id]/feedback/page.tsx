@@ -40,7 +40,6 @@ import {
     PublicSeminar,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
-    CareerInterest
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";
 
@@ -83,7 +82,6 @@ const STEPS = [
 
 export default function FeedbackPage() {
     const params = useParams();
-    const router = useRouter();
     const searchParams = useSearchParams();
     const seminarId = params.id as string;
     const registrationId = searchParams.get("registration");
