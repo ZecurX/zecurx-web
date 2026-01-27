@@ -166,7 +166,7 @@ export default function SeminarBookingForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [preferredDate, setPreferredDate] = useState<Date | null>(null);
+    const [, setPreferredDate] = useState<Date | null>(null);
     const [testimonialIndex, setTestimonialIndex] = useState(0);
 
     useEffect(() => {
