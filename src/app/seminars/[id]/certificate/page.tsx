@@ -10,7 +10,6 @@ import {
     ArrowLeft,
     Mail,
     Award,
-    Download,
     ExternalLink,
     FileText,
     XCircle

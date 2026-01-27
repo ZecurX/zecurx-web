@@ -28,7 +28,6 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
 const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgColor: string }> = {
@@ -40,7 +39,6 @@ const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgCol
 
 export default function SeminarDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { user } = useAuth();
   const seminarId = params.id as string;
 

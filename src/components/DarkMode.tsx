@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 const imgTexture = "https://www.figma.com/api/mcp/asset/d4f2360a-213a-4250-8533-f28806bfb567";
 const imgGroup268 = "https://www.figma.com/api/mcp/asset/0c41bf4a-28da-4f7f-b4d8-eff2fad4e914";
@@ -67,14 +68,14 @@ export default function DarkMode() {
               <div className="absolute flex h-[552.289px] items-center justify-center left-[calc(50%-187.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
                 <div className="flex-none rotate-[90deg]">
                   <div className="h-[1065px] relative w-[552.289px]" data-node-id="1:15">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup268} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup268} fill unoptimized />
                   </div>
                 </div>
               </div>
               <div className="absolute flex h-[552.289px] items-center justify-center left-[calc(50%+876.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
                 <div className="flex-none rotate-[90deg]">
                   <div className="h-[1065px] relative w-[552.289px]" data-node-id="1:28">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup269} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup269} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -104,7 +105,7 @@ export default function DarkMode() {
             <div className="absolute flex items-center justify-center left-[210px] size-[82px] top-[326px]">
               <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                 <div className="relative size-[82px]" data-node-id="1:51">
-                  <img alt="" className="block max-w-none size-full" src={imgEllipse88} />
+                  <Image alt="" className="block max-w-none size-full" src={imgEllipse88} fill unoptimized />
                 </div>
               </div>
             </div>
@@ -112,7 +113,7 @@ export default function DarkMode() {
               <div className="absolute flex items-center justify-center left-[396px] size-[82px] top-[326px]">
                 <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                   <div className="relative size-[82px]" data-node-id="1:53">
-                    <img alt="" className="block max-w-none size-full" src={imgEllipse89} />
+                    <Image alt="" className="block max-w-none size-full" src={imgEllipse89} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -128,7 +129,7 @@ export default function DarkMode() {
             <div className="absolute flex items-center justify-center left-[303px] size-[82px] top-[326px]">
               <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                 <div className="relative size-[82px]" data-node-id="1:57">
-                  <img alt="" className="block max-w-none size-full" src={imgEllipse89} />
+                  <Image alt="" className="block max-w-none size-full" src={imgEllipse89} fill unoptimized />
                 </div>
               </div>
             </div>
@@ -156,7 +157,7 @@ export default function DarkMode() {
             Book a Demo
           </p>
           <div className="absolute left-[112px] size-[34px] top-[3px]" data-node-id="1:69">
-            <img alt="" className="block max-w-none size-full" src={imgGroup218} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup218} fill unoptimized />
           </div>
         </button>
         <button className="absolute bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] border-solid content-stretch flex h-[40px] items-center justify-center left-[1040px] px-[25px] py-px rounded-[77px] top-[783px] w-[112px] cursor-pointer hover:bg-[rgba(255,255,255,0.2)] transition-colors" data-name="Button" data-node-id="1:74">
@@ -215,7 +216,7 @@ export default function DarkMode() {
             Book a Demo
           </p>
           <div className="absolute left-[112px] size-[34px] top-[3px]" data-node-id="1:94">
-            <img alt="" className="block max-w-none size-full" src={imgGroup218} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup218} fill unoptimized />
           </div>
         </button>
         <button className="absolute bg-black border border-[rgba(255,255,255,0.2)] border-solid content-stretch flex h-[40px] items-center justify-center left-[1029px] px-[25px] py-px rounded-[77px] top-[796px] w-[112px] cursor-pointer hover:bg-[rgba(255,255,255,0.1)] transition-colors" data-name="Button" data-node-id="1:99">
@@ -226,22 +227,22 @@ export default function DarkMode() {
         <div className="absolute border-8 border-[#1f1f1f] border-solid h-[597px] left-[770px] rounded-[30px] top-[264px] w-[551px]" data-node-id="1:101" />
         <div className="absolute bg-[#171717] h-[347px] left-[781px] rounded-[20px] top-[274px] w-[530px]" data-node-id="1:102" />
         <div className="absolute left-[55px] size-[10px] top-[391px]" data-node-id="1:103">
-          <img alt="" className="block max-w-none size-full" src={imgEllipse99} />
+          <Image alt="" className="block max-w-none size-full" src={imgEllipse99} fill unoptimized />
         </div>
       </div>
       <div className="absolute bg-[#0a0a0a] h-[1065px] left-1/2 overflow-clip top-[3904px] translate-x-[-50%] w-[1440px]" data-name="why zecurx" data-node-id="1:104">
         <div className="absolute contents left-[calc(50%-186.85px)] top-1/2 translate-x-[-50%] translate-y-[-50%]" data-node-id="1:105">
           <div className="absolute h-[1065px] left-[calc(50%-1013.67px)] top-1/2 translate-x-[-50%] translate-y-[-50%] w-[552.288px]" data-node-id="1:106">
-            <img alt="" className="block max-w-none size-full" src={imgGroup265} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup265} fill unoptimized />
           </div>
           <div className="absolute h-[1065px] left-[calc(50%+88.02px)] top-1/2 translate-x-[-50%] translate-y-[-50%] w-[552.288px]" data-node-id="1:119">
-            <img alt="" className="block max-w-none size-full" src={imgGroup266} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup266} fill unoptimized />
           </div>
           <div className="absolute h-[1065px] left-[calc(50%-462.82px)] top-1/2 translate-x-[-50%] translate-y-[-50%] w-[552.288px]" data-node-id="1:132">
-            <img alt="" className="block max-w-none size-full" src={imgGroup264} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup264} fill unoptimized />
           </div>
           <div className="absolute h-[1065px] left-[calc(50%+639.97px)] top-1/2 translate-x-[-50%] translate-y-[-50%] w-[552.288px]" data-node-id="1:145">
-            <img alt="" className="block max-w-none size-full" src={imgGroup267} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup267} fill unoptimized />
           </div>
         </div>
         <p className="absolute bg-clip-text font-manrope font-medium leading-[65px] left-1/2 text-[0px] text-[150px] text-center top-[157px] tracking-[-11px] translate-x-[-50%]" data-node-id="1:158" style={{ WebkitTextFillColor: "transparent", backgroundImage: "linear-gradient(191.07540650070132deg, rgba(180, 180, 180, 1) 27.322%, rgba(255, 255, 255, 1) 52.973%, rgba(180, 180, 180, 1) 81.347%)" }}>
@@ -258,7 +259,7 @@ export default function DarkMode() {
         <div className="absolute contents left-[calc(50%+12px)] top-[671px] translate-x-[-50%]" data-node-id="1:159">
           <div className="absolute bg-[#212121] content-stretch flex gap-[10px] items-center justify-center left-[417px] px-[30px] py-[3px] rounded-[64px] top-[838px]" data-node-id="1:160">
             <div className="relative shrink-0 size-[6px]" data-node-id="1:161">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse100} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse100} fill unoptimized />
             </div>
             <p className="font-inter font-normal leading-[65px] not-italic relative shrink-0 text-[#a6a6a6] text-[20px] text-center tracking-[-1px]" data-node-id="1:162">
               Enterprise-grade security architecture
@@ -266,7 +267,7 @@ export default function DarkMode() {
           </div>
           <div className="absolute bg-[#151515] border-2 border-[#ffe477] border-solid content-stretch flex gap-[10px] h-[71px] items-center justify-center left-[111px] px-[30px] py-[10px] rounded-[64px] top-[676px]" data-node-id="1:163">
             <div className="relative shrink-0 size-[6px]" data-node-id="1:164">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse100} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse100} fill unoptimized />
             </div>
             <p className="font-inter font-normal leading-[65px] not-italic relative shrink-0 text-[20px] text-center text-white tracking-[-1px]" data-node-id="1:165">
               Security built into systems, not bolted on
@@ -274,7 +275,7 @@ export default function DarkMode() {
           </div>
           <div className="absolute bg-[#212121] content-stretch flex gap-[10px] items-center justify-center left-[543px] px-[30px] py-[3px] rounded-[64px] top-[676px]" data-node-id="1:166">
             <div className="relative shrink-0 size-[6px]" data-node-id="1:167">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse100} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse100} fill unoptimized />
             </div>
             <p className="font-inter font-normal leading-[65px] not-italic relative shrink-0 text-[#a6a6a6] text-[20px] text-center tracking-[-1px]" data-node-id="1:168">
               ISO-aligned processes
@@ -282,13 +283,13 @@ export default function DarkMode() {
           </div>
           <div className="absolute bg-[#212121] content-stretch flex gap-[10px] items-center justify-center left-[61px] px-[30px] py-[3px] rounded-[64px] top-[757px]" data-node-id="1:169">
             <div className="relative shrink-0 size-[6px]" data-node-id="1:170">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse100} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse100} fill unoptimized />
             </div>
             <p className="font-inter font-normal leading-[65px] not-italic relative shrink-0 text-[#a6a6a6] text-[20px] text-center tracking-[-1px]" data-node-id="1:171">{`AI-driven automation & intelligence`}</p>
           </div>
           <div className="absolute bg-[#212121] content-stretch flex gap-[10px] items-center justify-center left-[444px] px-[30px] py-[3px] rounded-[64px] top-[757px]" data-node-id="1:172">
             <div className="relative shrink-0 size-[6px]" data-node-id="1:173">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse100} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse100} fill unoptimized />
             </div>
             <p className="font-inter font-normal leading-[65px] not-italic relative shrink-0 text-[#a6a6a6] text-[20px] text-center tracking-[-1px]" data-node-id="1:174">
               Experienced security professionals
@@ -301,7 +302,7 @@ export default function DarkMode() {
         </div>
         <div className="absolute h-[184px] left-[235px] top-[355px] w-[969px]" data-node-id="1:177">
           <div className="absolute inset-[-0.06%_0_0_0]">
-            <img alt="" className="block max-w-none size-full" src={imgGroup262} />
+            <Image alt="" className="block max-w-none size-full" src={imgGroup262} fill unoptimized />
           </div>
         </div>
         <p className="absolute font-manrope font-semibold leading-[65px] left-[295.5px] text-[25px] text-center text-white top-[410px] translate-x-[-50%]" data-node-id="1:185">
@@ -373,12 +374,12 @@ export default function DarkMode() {
           </button>
         </div>
         <div className="absolute left-[1191px] size-[70.352px] top-[289px]" data-node-id="1:222">
-          <img alt="" className="block max-w-none size-full" src={imgGroup256} />
+          <Image alt="" className="block max-w-none size-full" src={imgGroup256} fill unoptimized />
         </div>
         <div className="absolute flex items-center justify-center left-[1273.35px] size-[70.352px] top-[289px]">
           <div className="flex-none rotate-[180deg]">
             <div className="relative size-[70.352px]" data-node-id="1:227">
-              <img alt="" className="block max-w-none size-full" src={imgGroup277} />
+              <Image alt="" className="block max-w-none size-full" src={imgGroup277} fill unoptimized />
             </div>
           </div>
         </div>
@@ -400,14 +401,14 @@ export default function DarkMode() {
           <div className="absolute flex h-[552.288px] items-center justify-center left-[calc(50%-187.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
             <div className="flex-none rotate-[90deg]">
               <div className="h-[1065px] relative w-[552.288px]" data-node-id="1:238">
-                <img alt="" className="block max-w-none size-full" src={imgGroup270} />
+                <Image alt="" className="block max-w-none size-full" src={imgGroup270} fill unoptimized />
               </div>
             </div>
           </div>
           <div className="absolute flex h-[552.288px] items-center justify-center left-[calc(50%+876.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
             <div className="flex-none rotate-[90deg]">
               <div className="h-[1065px] relative w-[552.288px]" data-node-id="1:251">
-                <img alt="" className="block max-w-none size-full" src={imgGroup271} />
+                <Image alt="" className="block max-w-none size-full" src={imgGroup271} fill unoptimized />
               </div>
             </div>
           </div>
@@ -428,28 +429,28 @@ export default function DarkMode() {
               </div>
               <div className="absolute left-[33.97px] size-[1372.051px] top-[-604.95px]" data-name="Element" data-node-id="1:272">
                 <div className="absolute inset-[-12.24%]">
-                  <img alt="" className="block max-w-none size-full" src={imgElement} />
+                  <Image alt="" className="block max-w-none size-full" src={imgElement} fill unoptimized />
                 </div>
               </div>
             </div>
             <div className="absolute left-[32.97px] size-[1372.051px] top-[-605.95px]" data-name="Element" data-node-id="1:273">
               <div className="absolute inset-[-12.24%]">
-                <img alt="" className="block max-w-none size-full" src={imgElement1} />
+                <Image alt="" className="block max-w-none size-full" src={imgElement1} fill unoptimized />
               </div>
             </div>
             <div className="absolute left-[-194.96px] size-[605.817px] top-[-240.45px]" data-name="Element" data-node-id="1:274">
               <div className="absolute inset-[-38.76%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                <img alt="" className="block max-w-none size-full" src={imgElement2} />
+                <Image alt="" className="block max-w-none size-full" src={imgElement2} fill unoptimized />
               </div>
             </div>
             <div className="absolute h-[274.963px] left-[-64.48px] top-[-138.48px] w-[263.857px]" data-name="Element" data-node-id="1:275">
               <div className="absolute inset-[-142.56%_-148.57%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                <img alt="" className="block max-w-none size-full" src={imgElement3} />
+                <Image alt="" className="block max-w-none size-full" src={imgElement3} fill unoptimized />
               </div>
             </div>
             <div className="absolute left-[145px] size-[1101.389px] top-[-471px]" data-name="Element" data-node-id="1:276">
               <div className="absolute inset-[-10.37%]" style={{ "--fill-0": "rgba(0, 0, 0, 1)" } as React.CSSProperties}>
-                <img alt="" className="block max-w-none size-full" src={imgElement4} />
+                <Image alt="" className="block max-w-none size-full" src={imgElement4} fill unoptimized />
               </div>
             </div>
           </div>
@@ -504,7 +505,7 @@ export default function DarkMode() {
           </div>
           <div className="absolute left-1/2 size-[116px] top-[133px] translate-x-[-50%]" data-node-id="1:294">
             <div className="absolute inset-[-245.69%]">
-              <img alt="" className="block max-w-none size-full" src={imgEllipse106} />
+              <Image alt="" className="block max-w-none size-full" src={imgEllipse106} fill unoptimized />
             </div>
           </div>
         </div>
@@ -529,7 +530,7 @@ export default function DarkMode() {
         <div className="absolute contents left-[69px] top-[6774px]" data-node-id="1:306">
           <div className="absolute content-stretch flex gap-[8px] h-[32px] items-center left-[73px] top-[6784px] w-[117.508px]" data-name="Container" data-node-id="1:307">
             <div className="relative shrink-0 size-[32px]" data-name="Icon" data-node-id="1:308">
-              <img alt="" className="block max-w-none size-full" src={imgIcon} />
+              <Image alt="" className="block max-w-none size-full" src={imgIcon} fill unoptimized />
             </div>
             <div className="flex-[1_0_0] h-[32px] min-h-px min-w-px relative shrink-0" data-name="Text" data-node-id="1:310">
               <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
@@ -606,7 +607,7 @@ export default function DarkMode() {
           </p>
           <div className="absolute h-0 left-[69px] top-[7042px] w-[1336px]" data-node-id="1:351">
             <div className="absolute inset-[-0.5px_0_0_0]">
-              <img alt="" className="block max-w-none size-full" src={imgLine102} />
+              <Image alt="" className="block max-w-none size-full" src={imgLine102} fill unoptimized />
             </div>
           </div>
         </div>
@@ -616,14 +617,14 @@ export default function DarkMode() {
           <div className="absolute flex h-[552.288px] items-center justify-center left-[calc(50%-187.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
             <div className="flex-none rotate-[90deg]">
               <div className="h-[1065px] relative w-[552.288px]" data-node-id="1:354">
-                <img alt="" className="block max-w-none size-full" src={imgGroup272} />
+                <Image alt="" className="block max-w-none size-full" src={imgGroup272} fill unoptimized />
               </div>
             </div>
           </div>
           <div className="absolute flex h-[552.288px] items-center justify-center left-[calc(50%+876.5px)] top-[calc(50%+0.64px)] translate-x-[-50%] translate-y-[-50%] w-[1065px]">
             <div className="flex-none rotate-[90deg]">
               <div className="h-[1065px] relative w-[552.288px]" data-node-id="1:367">
-                <img alt="" className="block max-w-none size-full" src={imgGroup273} />
+                <Image alt="" className="block max-w-none size-full" src={imgGroup273} fill unoptimized />
               </div>
             </div>
           </div>
@@ -644,7 +645,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[637.659px] relative w-[442.652px]" data-name="Element" data-node-id="1:387">
                   <div className="absolute inset-[-62.73%_-90.36%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgElement5} />
+                    <Image alt="" className="block max-w-none size-full" src={imgElement5} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -653,7 +654,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[637.659px] relative w-[442.652px]" data-name="Element" data-node-id="1:388">
                   <div className="absolute inset-[-62.73%_-90.36%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgElement5} />
+                    <Image alt="" className="block max-w-none size-full" src={imgElement5} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -662,7 +663,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[1172.974px] relative w-[443.639px]" data-name="Element" data-node-id="1:389">
                   <div className="absolute inset-[-5.12%_-13.52%]">
-                    <img alt="" className="block max-w-none size-full" src={imgElement6} />
+                    <Image alt="" className="block max-w-none size-full" src={imgElement6} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -671,7 +672,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg] scale-y-[-100%]">
                 <div className="h-[1172.974px] relative w-[443.639px]" data-name="Element" data-node-id="1:390">
                   <div className="absolute inset-[-5.12%_-13.52%]">
-                    <img alt="" className="block max-w-none size-full" src={imgElement7} />
+                    <Image alt="" className="block max-w-none size-full" src={imgElement7} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -680,7 +681,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[1582.875px] relative w-[907.205px]" data-name="Element" data-node-id="1:391">
                   <div className="absolute inset-[-12.64%_-22.05%]">
-                    <img alt="" className="block max-w-none size-full" src={imgElement8} />
+                    <Image alt="" className="block max-w-none size-full" src={imgElement8} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -692,7 +693,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg]">
                   <div className="h-[1465.191px] relative w-[561.628px]" data-name="Element" data-node-id="1:394">
                     <div className="absolute inset-[-3.55%_-9.26%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement9} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement9} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -701,7 +702,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                   <div className="h-[1465.191px] relative w-[561.628px]" data-name="Element" data-node-id="1:395">
                     <div className="absolute inset-[-3.55%_-9.26%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement10} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement10} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -710,7 +711,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg]">
                   <div className="h-[860.469px] relative w-[94.357px]" data-name="Element" data-node-id="1:396">
                     <div className="absolute inset-[-4.65%_-42.39%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement11} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement11} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -719,7 +720,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                   <div className="h-[860.469px] relative w-[94.357px]" data-name="Element" data-node-id="1:397">
                     <div className="absolute inset-[-4.65%_-42.39%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement12} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement12} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -728,7 +729,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg]">
                   <div className="h-[755.468px] relative w-[432.301px]" data-name="Element" data-node-id="1:398">
                     <div className="absolute inset-[-5.29%_-9.25%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement13} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement13} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -737,7 +738,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg] scale-y-[-100%]">
                   <div className="h-[755.468px] relative w-[432.301px]" data-name="Element" data-node-id="1:399">
                     <div className="absolute inset-[-5.29%_-9.25%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement14} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement14} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -746,7 +747,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg]">
                   <div className="h-[926.003px] relative w-[476.777px]" data-name="Element" data-node-id="1:400">
                     <div className="absolute inset-[-6.48%_-12.58%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement15} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement15} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -757,7 +758,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg] scale-y-[-100%]">
                   <div className="h-[1465.191px] relative w-[561.628px]" data-name="Element" data-node-id="1:402">
                     <div className="absolute inset-[-3.55%_-9.26%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement16} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement16} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -766,7 +767,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg]">
                   <div className="h-[1465.191px] relative w-[561.628px]" data-name="Element" data-node-id="1:403">
                     <div className="absolute inset-[-3.55%_-9.26%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement17} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement17} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -775,7 +776,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg] scale-y-[-100%]">
                   <div className="h-[860.469px] relative w-[94.357px]" data-name="Element" data-node-id="1:404">
                     <div className="absolute inset-[-4.65%_-42.39%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement18} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement18} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -784,7 +785,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg]">
                   <div className="h-[860.469px] relative w-[94.357px]" data-name="Element" data-node-id="1:405">
                     <div className="absolute inset-[-4.65%_-42.39%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement19} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement19} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -793,7 +794,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg] scale-y-[-100%]">
                   <div className="h-[755.468px] relative w-[432.301px]" data-name="Element" data-node-id="1:406">
                     <div className="absolute inset-[-5.29%_-9.25%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement20} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement20} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -802,7 +803,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[90deg]">
                   <div className="h-[755.468px] relative w-[432.301px]" data-name="Element" data-node-id="1:407">
                     <div className="absolute inset-[-5.29%_-9.25%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement21} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement21} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -811,7 +812,7 @@ export default function DarkMode() {
                 <div className="flex-none rotate-[270deg] scale-y-[-100%]">
                   <div className="h-[926.003px] relative w-[476.777px]" data-name="Element" data-node-id="1:408">
                     <div className="absolute inset-[-6.48%_-12.58%]">
-                      <img alt="" className="block max-w-none size-full" src={imgElement22} />
+                      <Image alt="" className="block max-w-none size-full" src={imgElement22} fill unoptimized />
                     </div>
                   </div>
                 </div>
@@ -823,7 +824,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[248.486px] relative w-[327.375px]" data-name="Light Ellipses" data-node-id="1:410">
                   <div className="absolute inset-[-80.49%_-61.09%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgLightEllipses} />
+                    <Image alt="" className="block max-w-none size-full" src={imgLightEllipses} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -832,7 +833,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[248.486px] relative w-[327.375px]" data-name="Light Ellipses" data-node-id="1:411">
                   <div className="absolute inset-[-80.49%_-61.09%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgLightEllipses} />
+                    <Image alt="" className="block max-w-none size-full" src={imgLightEllipses} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -841,26 +842,26 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[1456.618px] relative w-[142.336px]" data-name="Light Ellipses" data-node-id="1:412">
                   <div className="absolute inset-[-13.73%_-140.51%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgLightEllipses1} />
+                    <Image alt="" className="block max-w-none size-full" src={imgLightEllipses1} fill unoptimized />
                   </div>
                 </div>
               </div>
             </div>
             <div className="absolute h-[781.211px] left-1/2 top-[639.56px] translate-x-[-50%] w-[1190.052px]" data-name="Dark Ellipses" data-node-id="1:413">
               <div className="absolute inset-[-12.8%_-8.4%]" style={{ "--fill-0": "rgba(0, 0, 0, 1)" } as React.CSSProperties}>
-                <img alt="" className="block max-w-none size-full" src={imgDarkEllipses} />
+                <Image alt="" className="block max-w-none size-full" src={imgDarkEllipses} fill unoptimized />
               </div>
             </div>
             <div className="absolute h-[781.211px] left-1/2 top-[-396.77px] translate-x-[-50%] w-[1190.052px]" data-name="Dark Ellipses" data-node-id="1:414">
               <div className="absolute inset-[-12.8%_-8.4%]" style={{ "--fill-0": "rgba(0, 0, 0, 1)" } as React.CSSProperties}>
-                <img alt="" className="block max-w-none size-full" src={imgDarkEllipses1} />
+                <Image alt="" className="block max-w-none size-full" src={imgDarkEllipses1} fill unoptimized />
               </div>
             </div>
             <div className="absolute flex h-[503.364px] items-center justify-center left-[1360.76px] top-1/2 translate-y-[-50%] w-[637.659px]">
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[637.659px] relative w-[503.364px]" data-name="Light Ellipses" data-node-id="1:415">
                   <div className="absolute inset-[-47.05%_-59.6%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgLightEllipses2} />
+                    <Image alt="" className="block max-w-none size-full" src={imgLightEllipses2} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -869,7 +870,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[270deg]">
                 <div className="h-[637.659px] relative w-[503.364px]" data-name="Light Ellipses" data-node-id="1:416">
                   <div className="absolute inset-[-47.05%_-59.6%]" style={{ "--fill-0": "rgba(35, 136, 255, 1)" } as React.CSSProperties}>
-                    <img alt="" className="block max-w-none size-full" src={imgLightEllipses2} />
+                    <Image alt="" className="block max-w-none size-full" src={imgLightEllipses2} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -883,7 +884,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:420">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup263} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup263} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -897,7 +898,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:425">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup274} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup274} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -911,7 +912,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:430">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup275} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup275} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -925,7 +926,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:435">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup276} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup276} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -939,7 +940,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:440">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup275} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup275} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -953,7 +954,7 @@ export default function DarkMode() {
               <div className="flex-none rotate-[4.946deg]">
                 <div className="h-[5.355px] relative w-[6.568px]" data-node-id="1:445">
                   <div className="absolute inset-[0_-9.73%_0_0]">
-                    <img alt="" className="block max-w-none size-full" src={imgGroup275} />
+                    <Image alt="" className="block max-w-none size-full" src={imgGroup275} fill unoptimized />
                   </div>
                 </div>
               </div>
@@ -972,7 +973,7 @@ export default function DarkMode() {
         </p>
         <div className="absolute content-stretch flex gap-[8px] h-[32px] items-center left-[63px] top-[51px] w-[117.508px]" data-name="Container" data-node-id="1:451">
           <div className="relative shrink-0 size-[32px]" data-name="Icon" data-node-id="1:452">
-            <img alt="" className="block max-w-none size-full" src={imgIcon} />
+            <Image alt="" className="block max-w-none size-full" src={imgIcon} fill unoptimized />
           </div>
           <div className="flex-[1_0_0] h-[32px] min-h-px min-w-px relative shrink-0" data-name="Text" data-node-id="1:454">
             <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
@@ -999,7 +1000,7 @@ export default function DarkMode() {
               Talk to a Security Expert
             </p>
             <div className="absolute left-[197px] size-[34px] top-[3px]" data-node-id="1:464">
-              <img alt="" className="block max-w-none size-full" src={imgGroup218} />
+              <Image alt="" className="block max-w-none size-full" src={imgGroup218} fill unoptimized />
             </div>
           </button>
           <button className="absolute backdrop-blur-[2px] backdrop-filter bg-[rgba(255,255,255,0.2)] border border-[rgba(255,255,255,0.2)] border-solid content-stretch flex h-[40px] items-center justify-center left-[724px] px-[25px] py-px rounded-[77px] top-[508px] w-[235px] cursor-pointer hover:bg-[rgba(255,255,255,0.3)] transition-colors" data-name="Button" data-node-id="1:469">
@@ -1009,7 +1010,7 @@ export default function DarkMode() {
           </button>
         </div>
         <div className="absolute left-[655px] size-[131px] top-[753px]" data-node-id="1:471">
-          <img alt="" className="block max-w-none size-full" src={imgEllipse105} />
+          <Image alt="" className="block max-w-none size-full" src={imgEllipse105} fill unoptimized />
         </div>
         <div className="absolute h-[228px] left-[1440px] top-[1116px] w-[1255px]" data-node-id="1:472" />
         <div className="absolute contents left-0 top-[1146px]" data-node-id="1:473">
