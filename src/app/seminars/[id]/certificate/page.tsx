@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PublicSeminar } from "@/types/seminar";
+import CoursePromoModal from "@/components/marketing/CoursePromoModal";
 
 type Step = "email" | "otp" | "status" | "success";
 
@@ -46,6 +47,7 @@ export default function CertificatePage() {
     const [email, setEmail] = useState("");
     const [otp, setOtp] = useState("");
     const [status, setStatus] = useState<CertificateStatus | null>(null);
+    const [showPromo, setShowPromo] = useState(false);
 
     useEffect(() => {
         async function fetchSeminar() {
@@ -122,6 +124,8 @@ export default function CertificatePage() {
 
             if (result.hasCertificate && result.certificateId) {
                 setStep("success");
+                // Show promo modal after a short delay for better UX
+                setTimeout(() => setShowPromo(true), 1500);
             } else {
                 setStep("status");
             }
@@ -466,6 +470,11 @@ export default function CertificatePage() {
                     )}
                 </motion.div>
             </div>
+            
+            <CoursePromoModal 
+                isOpen={showPromo} 
+                onClose={() => setShowPromo(false)} 
+            />
         </div>
     );
 }
