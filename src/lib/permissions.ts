@@ -41,6 +41,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'referral_codes:*',
     'blog:read',
     'whitepapers:*',
+    'seminars:*',
     'settings:*',
   ],
 
@@ -182,6 +183,7 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Sales', href: '/admin/sales', icon: 'CreditCard', resource: RESOURCES.SALES },
     { name: 'Plans', href: '/admin/plans', icon: 'Package', resource: RESOURCES.PLANS },
     { name: 'Products', href: '/admin/products', icon: 'ShoppingBag', resource: RESOURCES.PRODUCTS },
+    { name: 'Seminars', href: '/admin/seminars', icon: 'CalendarDays', resource: RESOURCES.SEMINARS },
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
     { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
     { name: 'Audit Logs', href: '/admin/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
