@@ -124,8 +124,8 @@ export default function CertificatePage() {
 
             if (result.hasCertificate && result.certificateId) {
                 setStep("success");
-                // Show promo modal after a short delay for better UX
-                setTimeout(() => setShowPromo(true), 1500);
+                // Show promo modal immediately before they interact with the certificate
+                setShowPromo(true);
             } else {
                 setStep("status");
             }
