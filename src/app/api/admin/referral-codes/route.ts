@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
             do {
                 code = generateCode();
                 const existing = await query(
-                    `SELECT id FROM referral_codes WHERE code = $1`,
+                    `SELECT id FROM public.referral_codes WHERE code = $1`,
                     [code]
                 );
                 if (existing.rows.length === 0) break;
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
         } else {
             // Check if code already exists
             const existing = await query(
-                `SELECT id FROM referral_codes WHERE code = $1`,
+                `SELECT id FROM public.referral_codes WHERE code = $1`,
                 [code]
             );
             if (existing.rows.length > 0) {
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
         }
 
         const result = await db.query<ReferralCode>(
-            `INSERT INTO referral_codes (
+            `INSERT INTO public.referral_codes (
                 code, discount_type, discount_value, min_order_amount, 
                 max_discount, max_uses, valid_from, valid_until, is_active, created_by
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)

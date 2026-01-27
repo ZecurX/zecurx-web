@@ -120,11 +120,11 @@ export async function POST(req: NextRequest) {
             do {
                 code = generateCode();
                 const existingPartner = await query(
-                    `SELECT id FROM partner_referrals WHERE code = $1`,
+                    `SELECT id FROM public.partner_referrals WHERE code = $1`,
                     [code]
                 );
                 const existingRegular = await query(
-                    `SELECT id FROM referral_codes WHERE code = $1`,
+                    `SELECT id FROM public.referral_codes WHERE code = $1`,
                     [code]
                 );
                 if (existingPartner.rows.length === 0 && existingRegular.rows.length === 0) break;
@@ -139,11 +139,11 @@ export async function POST(req: NextRequest) {
             }
         } else {
             const existingPartner = await query(
-                `SELECT id FROM partner_referrals WHERE code = $1`,
+                `SELECT id FROM public.partner_referrals WHERE code = $1`,
                 [code]
             );
             const existingRegular = await query(
-                `SELECT id FROM referral_codes WHERE code = $1`,
+                `SELECT id FROM public.referral_codes WHERE code = $1`,
                 [code]
             );
             if (existingPartner.rows.length > 0 || existingRegular.rows.length > 0) {
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
         }
 
         const result = await db.query<PartnerReferral>(
-            `INSERT INTO partner_referrals (
+            `INSERT INTO public.partner_referrals (
                 partner_name, partner_email, partner_phone, partner_notes,
                 code, user_discount_type, user_discount_value, max_user_discount, min_order_amount,
                 commission_type, commission_value, max_uses, valid_from, valid_until, is_active, created_by
