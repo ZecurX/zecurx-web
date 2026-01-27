@@ -18,8 +18,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 pr.*,
                 COUNT(pru.id) as usage_count,
                 COALESCE(SUM(pru.original_amount), 0) as total_revenue_generated
-            FROM partner_referrals pr
-            LEFT JOIN partner_referral_usages pru ON pr.id = pru.partner_referral_id
+            FROM public.partner_referrals pr
+            LEFT JOIN public.partner_referral_usages pru ON pr.id = pru.partner_referral_id
             WHERE pr.id = $1
             GROUP BY pr.id
         `, [id]);
@@ -73,11 +73,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         if (body.code !== undefined) {
             const existingPartner = await query(
-                `SELECT id FROM partner_referrals WHERE code = $1 AND id != $2`,
+                `SELECT id FROM public.partner_referrals WHERE code = $1 AND id != $2`,
                 [body.code.toUpperCase().trim(), id]
             );
             const existingRegular = await query(
-                `SELECT id FROM referral_codes WHERE code = $1`,
+                `SELECT id FROM public.referral_codes WHERE code = $1`,
                 [body.code.toUpperCase().trim()]
             );
             if (existingPartner.rows.length > 0 || existingRegular.rows.length > 0) {
@@ -171,7 +171,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         values.push(id);
 
         const result = await db.query<PartnerReferral>(
-            `UPDATE partner_referrals SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+            `UPDATE public.partner_referrals SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
             values
         );
 
@@ -210,12 +210,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     try {
         const { id } = await params;
 
-        const existing = await query(`SELECT code, partner_name FROM partner_referrals WHERE id = $1`, [id]);
+        const existing = await query(`SELECT code, partner_name FROM public.partner_referrals WHERE id = $1`, [id]);
         if (existing.rows.length === 0) {
             return NextResponse.json({ error: "Partner referral not found" }, { status: 404 });
         }
 
-        await db.query('DELETE FROM partner_referrals WHERE id = $1', [id]);
+        await db.query('DELETE FROM public.partner_referrals WHERE id = $1', [id]);
 
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);

@@ -17,6 +17,7 @@ export default function CartPage() {
         code: string;
         discount_type: 'percentage' | 'fixed';
         discount_amount: number;
+        isPartnerReferral?: boolean;
     } | null>(null);
     const [referralError, setReferralError] = useState('');
     const [validatingCode, setValidatingCode] = useState(false);
@@ -57,7 +58,8 @@ export default function CartPage() {
                 setAppliedCode({
                     code: data.code,
                     discount_type: data.discount_type,
-                    discount_amount: data.discount_amount
+                    discount_amount: data.discount_amount,
+                    isPartnerReferral: data.isPartnerReferral || false
                 });
                 setReferralCode('');
             } else {
