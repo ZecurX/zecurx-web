@@ -18,8 +18,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 rc.*,
                 COALESCE(SUM(rcu.discount_applied), 0) as total_discount_given,
                 COUNT(rcu.id) as usage_count
-            FROM referral_codes rc
-            LEFT JOIN referral_code_usages rcu ON rc.id = rcu.referral_code_id
+            FROM public.referral_codes rc
+            LEFT JOIN public.referral_code_usages rcu ON rc.id = rcu.referral_code_id
             WHERE rc.id = $1
             GROUP BY rc.id
         `, [id]);
@@ -54,7 +54,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         if (body.code !== undefined) {
             // Check if code already exists (excluding current record)
             const existing = await query(
-                `SELECT id FROM referral_codes WHERE code = $1 AND id != $2`,
+                `SELECT id FROM public.referral_codes WHERE code = $1 AND id != $2`,
                 [body.code.toUpperCase().trim(), id]
             );
             if (existing.rows.length > 0) {
@@ -126,7 +126,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         values.push(id);
 
         const result = await db.query<ReferralCode>(
-            `UPDATE referral_codes SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
+            `UPDATE public.referral_codes SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,
             values
         );
 
@@ -166,12 +166,12 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         const { id } = await params;
 
         // Get the code before deleting for audit log
-        const existing = await query(`SELECT code FROM referral_codes WHERE id = $1`, [id]);
+        const existing = await query(`SELECT code FROM public.referral_codes WHERE id = $1`, [id]);
         if (existing.rows.length === 0) {
             return NextResponse.json({ error: "Referral code not found" }, { status: 404 });
         }
 
-        await db.query('DELETE FROM referral_codes WHERE id = $1', [id]);
+        await db.query('DELETE FROM public.referral_codes WHERE id = $1', [id]);
 
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
