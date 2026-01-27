@@ -40,10 +40,6 @@ import {
     PublicSeminar,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
-    FeedbackStep1,
-    FeedbackStep2,
-    FeedbackStep3,
-    FeedbackStep4,
     CareerInterest
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";

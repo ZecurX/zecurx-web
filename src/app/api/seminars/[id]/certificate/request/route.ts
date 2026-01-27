@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { createOtp, sendOtpEmail } from '@/lib/otp';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
-import { Seminar, SeminarRegistration } from '@/types/seminar';
+import { Seminar } from '@/types/seminar';
 
 export async function POST(
     request: NextRequest,

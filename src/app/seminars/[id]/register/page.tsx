@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,7 +45,6 @@ type RegistrationFormValues = z.infer<typeof registrationSchema>;
 
 export default function RegisterPage() {
     const params = useParams();
-    const router = useRouter();
     const seminarId = params.id as string;
 
     const [seminar, setSeminar] = useState<PublicSeminar | null>(null);
@@ -77,7 +76,7 @@ export default function RegisterPage() {
                 } else {
                     setError('Seminar not found');
                 }
-            } catch (err) {
+            } catch {
                 setError('Failed to load seminar');
             } finally {
                 setLoading(false);

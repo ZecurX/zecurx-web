@@ -47,7 +47,13 @@ if (isUpstashConfigured) {
     console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
 }
 
-// ... existing functions ...
+export async function checkPaymentRateLimit(ip: string): Promise<RateLimitResult> {
+    if (!paymentRateLimiter) {
+        return { success: true, limit: 10, remaining: 10, reset: 0 };
+    }
+    const { success, limit, remaining, reset } = await paymentRateLimiter.limit(`payment:${ip}`);
+    return { success, limit, remaining, reset: Math.ceil(reset / 1000) };
+}
 
 export async function checkSeminarRateLimit(ip: string): Promise<RateLimitResult> {
     if (!seminarRateLimiter) {

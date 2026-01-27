@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
             attendees,
             preferredDate,
             message,
-            marketingConsent,
         } = body;
 
         if (!name || !email || !organization || !title || !description || !speakerName || !duration || !preferredDate) {
