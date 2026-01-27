@@ -23,6 +23,7 @@ export const RESOURCES = {
   REFERRAL_CODES: 'referral_codes',
   SYSTEM_TEST: 'system_test',
   WHITEPAPERS: 'whitepapers',
+  SEMINARS: 'seminars',
   SETTINGS: 'settings',
 } as const;
 
