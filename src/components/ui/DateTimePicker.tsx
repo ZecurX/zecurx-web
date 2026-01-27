@@ -3,12 +3,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from './button';
 
 interface DateTimePickerProps {
     name?: string;
     onChange?: (date: Date | null) => void;
     required?: boolean;
+    minDate?: Date;
 }
 
 const MONTHS = [
@@ -31,7 +31,7 @@ const TIME_SLOTS = Array.from({ length: 19 }, (_, i) => {
     };
 });
 
-export default function DateTimePicker({ name, onChange, required }: DateTimePickerProps) {
+export default function DateTimePicker({ name, onChange, required, minDate }: DateTimePickerProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -99,7 +99,13 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
     };
 
     const prevMonth = () => {
-        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+        const prev = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1);
+        // Allow going back only if the previous month is not before the minDate's month
+        if (minDate) {
+            const minMonthDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+            if (prev < minMonthDate) return;
+        }
+        setCurrentMonth(prev);
     };
 
     // Format display value
@@ -166,7 +172,12 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
                         <div className="p-4 sm:flex-1 border-b sm:border-b-0 sm:border-r border-border min-w-[280px] sm:h-full flex flex-col">
                             {/* Header */}
                             <div className="flex items-center justify-between mb-4 shrink-0">
-                                <button type="button" onClick={prevMonth} className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors">
+                                <button 
+                                    type="button" 
+                                    onClick={prevMonth} 
+                                    disabled={minDate && new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1) <= new Date(minDate.getFullYear(), minDate.getMonth(), 1)}
+                                    className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
+                                >
                                     <ChevronLeft className="w-5 h-5" />
                                 </button>
                                 <span className="text-sm font-semibold text-foreground">
@@ -196,22 +207,32 @@ export default function DateTimePicker({ name, onChange, required }: DateTimePic
                                     
                                     const isToday = new Date().toDateString() === date.toDateString();
 
+                                    // Check if date is disabled (before minDate)
+                                    // Set time to 00:00:00 for accurate date comparison
+                                    const isBeforeMinDate = minDate ? 
+                                        new Date(date.getFullYear(), date.getMonth(), date.getDate()) < 
+                                        new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()) 
+                                        : false;
+
                                     return (
                                         <button
                                             key={i}
                                             type="button"
-                                            onClick={() => handleDateSelect(date)}
+                                            onClick={() => !isBeforeMinDate && handleDateSelect(date)}
+                                            disabled={isBeforeMinDate}
                                             className={`
                                                 text-sm p-2 rounded-lg transition-all relative
                                                 ${isSelected 
                                                     ? 'bg-primary text-primary-foreground font-medium shadow-md' 
-                                                    : 'text-foreground hover:bg-muted hover:text-primary'
+                                                    : isBeforeMinDate
+                                                        ? 'text-muted-foreground/30 cursor-not-allowed'
+                                                        : 'text-foreground hover:bg-muted hover:text-primary'
                                                 }
-                                                ${isToday && !isSelected ? 'text-primary font-medium' : ''}
+                                                ${isToday && !isSelected && !isBeforeMinDate ? 'text-primary font-medium' : ''}
                                             `}
                                         >
                                             {date.getDate()}
-                                            {isToday && !isSelected && (
+                                            {isToday && !isSelected && !isBeforeMinDate && (
                                                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full" />
                                             )}
                                         </button>
