@@ -7,8 +7,6 @@ import {
     Video,
     Clock,
     Users,
-    AlertTriangle,
-    GraduationCap,
     MapPin,
     Award,
     Loader2
@@ -19,12 +17,7 @@ import TrustedPartners from "@/components/landing/TrustedPartners";
 import SeminarTestimonials from "./SeminarTestimonials";
 import { PublicSeminar } from "@/types/seminar";
 
-const seminarTypes = [
-    { icon: Video, label: "Technical Seminars", desc: "Deep-dive sessions" },
-    { icon: AlertTriangle, label: "Security Briefings", desc: "Threat updates" },
-    { icon: Users, label: "Expert Panels", desc: "Industry discussions" },
-    { icon: GraduationCap, label: "Training Sessions", desc: "Hands-on learning" },
-];
+
 
 export default function SeminarsPage() {
     const [seminars, setSeminars] = useState<PublicSeminar[]>([]);
@@ -41,7 +34,7 @@ export default function SeminarsPage() {
                 } else {
                     setError('Failed to load seminars');
                 }
-            } catch (err) {
+            } catch {
                 setError('Failed to load seminars');
             } finally {
                 setLoading(false);
