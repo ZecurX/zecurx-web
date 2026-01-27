@@ -64,6 +64,10 @@ export interface ValidateReferralCodeResponse {
     discount_amount?: number;
     final_amount?: number;
     error?: string;
+    // Partner referral fields
+    isPartnerReferral?: boolean;
+    partner_referral_id?: string;
+    partner_name?: string;
 }
 
 // API response types
