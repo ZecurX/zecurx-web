@@ -1,109 +1,132 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import {
-    ArrowLeft,
     Video,
-    Calendar,
     Clock,
     Users,
-    Play,
-    ExternalLink,
-    AlertTriangle,
-    GraduationCap,
-    MapPin
+    MapPin,
+    Award,
+    Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import SeminarTestimonials from "./SeminarTestimonials";
+import { PublicSeminar } from "@/types/seminar";
 
-const seminarTypes = [
-    { icon: Video, label: "Technical Seminars", desc: "Deep-dive sessions" },
-    { icon: AlertTriangle, label: "Security Briefings", desc: "Threat updates" },
-    { icon: Users, label: "Expert Panels", desc: "Industry discussions" },
-    { icon: GraduationCap, label: "Training Sessions", desc: "Hands-on learning" },
-];
 
-const upcomingSeminars = [
-    {
-        title: "Adversarial AI: When LLMs Hallucinate Exploits",
-        description: "Beyond prompt injection. We analyze how autonomous agents are being weaponized to rewrite malicious code in real-time, and how to architect defense layers that assume AI breach.",
-        date: "Feb 12, 2025",
-        time: "14:00 EST",
-        duration: "90 min",
-        speaker: "Dr. Sarah Chen, Lead Researcher",
-        type: "Threat Briefing",
-        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop",
-        location: "Encrypted Stream"
-    },
-    {
-        title: "The Death of Trust: Zero-Knowledge Architectures",
-        description: "Moving beyond 'Zero Trust' marketing to mathematical certainty. Implementing ZK-proofs for identity verification in decentralized corporate networks.",
-        date: "Feb 19, 2025",
-        time: "11:00 EST",
-        duration: "120 min",
-        speaker: "Michael Torres, Principal Architect",
-        type: "Technical Workshop",
-        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
-        location: "Presidency University, Lab 4"
-    },
-    {
-        title: "Sub-Atomic Red Teaming: Firmware & Hardware Attacks",
-        description: "Software patches don't fix silicon flaws. A deep dive into side-channel attacks, voltage glitching, and supply chain interdiction detection.",
-        date: "Feb 26, 2025",
-        time: "10:00 EST",
-        duration: "3 hrs",
-        speaker: "The ZecurX Offensive Team",
-        type: "Deep Dive",
-        image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
-        location: "MSRIT Cyber Range"
-    }
-];
 
 export default function SeminarsPage() {
+    const [seminars, setSeminars] = useState<PublicSeminar[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function fetchSeminars() {
+            try {
+                const response = await fetch('/api/seminars?all=true');
+                const data = await response.json();
+                if (data.success) {
+                    setSeminars(data.seminars);
+                } else {
+                    setError('Failed to load seminars');
+                }
+            } catch {
+                setError('Failed to load seminars');
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchSeminars();
+    }, []);
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return {
+            month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+            day: date.getDate().toString(),
+            full: date.toLocaleDateString('en-US', { dateStyle: 'medium' }),
+        };
+    };
+
+    const isPastSeminar = (dateStr: string) => {
+        return new Date(dateStr) < new Date();
+    };
+
+    const upcomingSeminars = seminars.filter(s => !isPastSeminar(s.date));
+    const pastSeminars = seminars.filter(s => isPastSeminar(s.date)).reverse(); // Most recent past first
+
+    const upcomingSeminar = upcomingSeminars.length > 0 ? upcomingSeminars[0] : null;
+
+    const displaySeminars = [...upcomingSeminars, ...pastSeminars];
+
     return (
         <>
             <section className="relative w-full min-h-[90vh] bg-background overflow-hidden flex flex-col items-center justify-center pt-32 pb-24 border-b border-white/[0.08]">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808033_1px,transparent_1px),linear-gradient(to_bottom,#80808033_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+                <div className="absolute inset-0 z-0 select-none opacity-30 dark:opacity-20 mix-blend-luminosity">
+                    <Image
+                        src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2670&auto=format&fit=crop"
+                        alt="University students walking in hall"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-background/80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
+                </div>
 
-                <div className="max-w-5xl mx-auto px-6 relative z-10 w-full flex flex-col items-center text-center">
+                <div className="absolute inset-0 z-[1] h-full w-full bg-[linear-gradient(to_right,rgba(128,128,128,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(128,128,128,0.1)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10 w-full flex flex-col items-center text-center">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="flex flex-col items-center"
                     >
-                        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter mb-8 leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-foreground to-muted-foreground">
-                            Forging Digital <br />
-                            Resilience.
+
+                        <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.1] text-foreground">
+                            Shape the Future of <br />
+                            <span className="text-muted-foreground">Digital Security.</span>
                         </h1>
 
-                        <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mb-12">
-                            Elite briefings for the modern defender. Deconstructing active threats and rebuilding security postures from first principles.
+                        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-12">
+                            A collaborative community for students and researchers. <span className="text-foreground font-medium">Learn from experts</span>, master real-world skills, and build a safer digital world.
                         </p>
 
-                        <div className="w-full max-w-lg p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent backdrop-blur-xl">
-                            <div className="rounded-[1.4rem] bg-background/80 border border-white/5 p-2 pr-2 sm:pr-2 flex flex-col sm:flex-row items-center gap-4">
-                                <div className="hidden sm:flex h-14 w-14 rounded-2xl bg-muted/50 items-center justify-center border border-white/5 shrink-0">
-                                    <Video className="w-6 h-6 text-foreground" />
-                                </div>
-                                
-                                <div className="flex-1 text-center sm:text-left py-2 sm:py-0">
-                                    <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mb-1">Next Session</div>
-                                    <div className="text-sm font-bold text-foreground">Adversarial AI Defense</div>
-                                    <div className="text-xs text-muted-foreground">Feb 12 • 14:00 EST</div>
-                                </div>
+                        {upcomingSeminar && (
+                            <div className="w-full max-w-xl group relative">
+                                <div className="absolute -inset-0.5 bg-gradient-to-b from-primary/50 to-primary/0 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                                <div className="relative rounded-2xl bg-card border border-border p-2">
+                                    <div className="rounded-xl bg-muted/40 p-4 flex flex-col sm:flex-row items-center gap-6">
+                                        <div className="hidden sm:flex h-16 w-16 rounded-xl bg-background items-center justify-center border border-border shrink-0">
+                                            <Video className="w-6 h-6 text-primary" />
+                                        </div>
 
-                                <Link href="/book-seminar" className="w-full sm:w-auto">
-                                    <Button className="w-full h-12 px-8 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-semibold shadow-lg shadow-foreground/5 transition-all">
-                                        Book Now
-                                    </Button>
-                                </Link>
+                                        <div className="flex-1 text-center sm:text-left space-y-1">
+                                            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                                                <span className="text-[10px] uppercase tracking-widest text-primary font-semibold">Upcoming Session</span>
+                                            </div>
+                                            <div className="text-lg font-bold text-foreground line-clamp-1">{upcomingSeminar.title}</div>
+                                            <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">
+                                                <Clock className="w-3 h-3" />
+                                                <span>{formatDate(upcomingSeminar.date).full} &bull; {upcomingSeminar.time}</span>
+                                            </div>
+                                        </div>
+
+                                        <Link href={`/seminars/${upcomingSeminar.id}/register`} className="w-full sm:w-auto shrink-0">
+                                            <Button size="lg" className="w-full font-semibold">
+                                                Reserve Seat
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        )}
+
                     </motion.div>
                 </div>
             </section>
@@ -116,85 +139,144 @@ export default function SeminarsPage() {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                         <div>
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4">Upcoming <span className="text-muted-foreground">Events</span></h2>
-                            <p className="text-muted-foreground max-w-lg text-lg font-light">Register for our scheduled workshops, webinars, and offline seminars.</p>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-4">Seminars & <span className="text-muted-foreground">Workshops</span></h2>
+                            <p className="text-muted-foreground max-w-lg text-lg font-light">Register for upcoming sessions or access certificates for past events.</p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-6">
-                        {upcomingSeminars.map((seminar, i) => (
-                            <div
-                                key={i}
-                                className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row items-stretch shadow-sm hover:shadow-md"
-                            >
-                                <div className="hidden md:flex w-32 shrink-0 flex-col items-center justify-center border-r border-border bg-muted/20 p-6 text-center group-hover:bg-muted/40 transition-colors">
-                                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{seminar.date.split(' ')[0]}</span>
-                                    <span className="text-3xl font-bold text-foreground my-1">{seminar.date.split(' ')[1].replace(',', '')}</span>
-                                    <span className="text-xs text-muted-foreground">{seminar.time}</span>
-                                </div>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-20">
+                            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-20">
+                            <p className="text-muted-foreground">{error}</p>
+                        </div>
+                    ) : seminars.length === 0 ? (
+                        <div className="text-center py-20">
+                            <p className="text-muted-foreground text-lg">No upcoming seminars at the moment.</p>
+                            <p className="text-muted-foreground/60 mt-2">Check back soon or book a custom seminar for your institution.</p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-6">
+                            {displaySeminars.map((seminar) => {
+                                const dateInfo = formatDate(seminar.date);
+                                const showRegister = seminar.registration_enabled;
+                                const showCertificate = seminar.certificate_enabled;
 
-                                <div className="relative h-48 md:hidden w-full">
-                                    <Image
-                                        src={seminar.image}
-                                        alt={seminar.title}
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute top-4 left-4 bg-background/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                                        {seminar.date} • {seminar.time}
-                                    </div>
-                                </div>
+                                return (
+                                    <div
+                                        key={seminar.id}
+                                        className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row items-stretch shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="hidden md:flex w-32 shrink-0 flex-col items-center justify-center border-r border-border bg-muted/20 p-6 text-center group-hover:bg-muted/40 transition-colors">
+                                            <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{dateInfo.month}</span>
+                                            <span className="text-3xl font-bold text-foreground my-1">{dateInfo.day}</span>
+                                            <span className="text-xs text-muted-foreground">{seminar.time}</span>
+                                        </div>
 
-                                <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <span className="px-2.5 py-0.5 rounded-full border border-border bg-muted/30 text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
-                                            {seminar.type}
-                                        </span>
-                                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                            <Clock className="w-3 h-3" /> {seminar.duration}
-                                        </span>
-                                    </div>
-
-                                    <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                                        {seminar.title}
-                                    </h3>
-
-                                    <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mb-6">
-                                        {seminar.description}
-                                    </p>
-
-                                    <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                                <Users className="w-3 h-3 text-foreground" />
+                                        <div className="relative h-48 md:hidden w-full">
+                                            {seminar.image_url ? (
+                                                <Image
+                                                    src={seminar.image_url}
+                                                    alt={seminar.title}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-muted/30 flex items-center justify-center">
+                                                    <Video className="w-12 h-12 text-muted-foreground/30" />
+                                                </div>
+                                            )}
+                                            <div className="absolute top-4 left-4 bg-background/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                                                {dateInfo.full} &bull; {seminar.time}
                                             </div>
-                                            <span className="text-foreground font-medium">{seminar.speaker.split(',')[0]}</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-muted-foreground" />
-                                            {seminar.location}
+
+                                        <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <span className="px-2.5 py-0.5 rounded-full border border-border bg-muted/30 text-[10px] uppercase tracking-wide font-semibold text-muted-foreground">
+                                                    {seminar.seminar_type || 'Seminar'}
+                                                </span>
+                                                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                    <Clock className="w-3 h-3" /> {seminar.duration}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                                                {seminar.title}
+                                            </h3>
+
+                                            <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mb-6 line-clamp-2">
+                                                {seminar.description}
+                                            </p>
+
+                                            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                        <Users className="w-3 h-3 text-foreground" />
+                                                    </div>
+                                                    <span className="text-foreground font-medium">{seminar.speaker_name}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="w-4 h-4 text-muted-foreground" />
+                                                    {seminar.location_type === 'online' ? 'Online' : seminar.venue_address || seminar.organization_name}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="hidden md:flex w-56 shrink-0 flex-col items-center justify-center gap-3 border-l border-border bg-muted/5 p-6 group-hover:bg-muted/20 transition-colors">
+                                            {showRegister ? (
+                                                <Link href={`/seminars/${seminar.id}/register`} className="w-full">
+                                                    <Button className="w-full rounded-full shadow-sm hover:shadow-md transition-all">
+                                                        Register Now
+                                                    </Button>
+                                                </Link>
+                                            ) : showCertificate ? (
+                                                <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full rounded-full transition-all"
+                                                    >
+                                                        <Award className="w-4 h-4 mr-2" />
+                                                        Get Certificate
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
+                                                    Closed
+                                                </Button>
+                                            )}
+                                        </div>
+
+                                        <div className="p-6 pt-0 md:hidden flex flex-col gap-3">
+                                            {showRegister ? (
+                                                <Link href={`/seminars/${seminar.id}/register`} className="w-full">
+                                                    <Button className="w-full rounded-full">
+                                                        Register Now
+                                                    </Button>
+                                                </Link>
+                                            ) : showCertificate ? (
+                                                <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full rounded-full"
+                                                    >
+                                                        <Award className="w-4 h-4 mr-2" />
+                                                        Get Certificate
+                                                    </Button>
+                                                </Link>
+                                            ) : (
+                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
+                                                    Closed
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="hidden md:flex w-48 shrink-0 flex-col items-center justify-center border-l border-border bg-muted/5 p-6 group-hover:bg-muted/20 transition-colors">
-                                    <Link href="/book-seminar" className="w-full">
-                                        <Button className="w-full rounded-full shadow-sm hover:shadow-md transition-all">
-                                            Register Now
-                                        </Button>
-                                    </Link>
-                                </div>
-
-                                <div className="p-6 pt-0 md:hidden">
-                                    <Link href="/book-seminar" className="w-full">
-                                        <Button className="w-full rounded-full">
-                                            Register Now
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -202,7 +284,7 @@ export default function SeminarsPage() {
                 <div className="max-w-5xl mx-auto px-6">
                     <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-card to-muted/20 border border-border p-12 text-center">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.1),transparent_50%)]" />
-                        
+
                         <div className="relative z-10 flex flex-col items-center">
                             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 text-foreground">
                                 Ready to Secure Your <span className="text-muted-foreground">Organization?</span>

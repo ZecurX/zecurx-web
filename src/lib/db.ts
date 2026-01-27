@@ -9,7 +9,7 @@ const pool = new Pool({
 });
 
 pool.on('connect', (client) => {
-    client.query('SET search_path TO zecurx_admin, public');
+    client.query('SET search_path TO zecurx_admin, seminar, public');
 });
 
 pool.on('error', (err) => {
