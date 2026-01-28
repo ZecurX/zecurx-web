@@ -21,7 +21,8 @@ import {
   ExternalLink,
   Copy,
   Award,
-  MessageSquare
+  MessageSquare,
+  Trash2
 } from 'lucide-react';
 import { Seminar, SeminarRegistration, SeminarStatus } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -29,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgColor: string }> = {
   pending: { label: 'Pending Approval', color: 'text-yellow-600', bgColor: 'bg-yellow-500/10 border-yellow-500/20' },
@@ -40,6 +42,7 @@ const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgCol
 export default function SeminarDetailPage() {
   const params = useParams();
   const { user } = useAuth();
+  const router = useRouter();
   const seminarId = params.id as string;
 
   const [seminar, setSeminar] = useState<Seminar | null>(null);
@@ -158,6 +161,30 @@ export default function SeminarDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!seminar) return;
+    
+    if (!confirm(`Are you sure you want to delete "${seminar.title}"? This action cannot be undone and will remove all registrations and certificates associated with this seminar.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        router.push('/admin/seminars');
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to delete seminar');
+      }
+    } catch (error) {
+      console.error('Error deleting seminar:', error);
+      alert('An error occurred while deleting the seminar');
+    }
+  };
+
   const toggleAttendance = async (registrationId: string, attended: boolean) => {
     try {
       const res = await fetch(`/api/admin/seminars/${seminarId}/registrations`, {
@@ -233,6 +260,17 @@ export default function SeminarDetailPage() {
         <div className={cn("px-3 py-1.5 rounded-full text-sm font-medium border", statusConfig.bgColor, statusConfig.color)}>
           {statusConfig.label}
         </div>
+        {canManage && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDelete}
+            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete
+          </Button>
+        )}
       </div>
 
       {seminar.status === 'pending' && canManage && (
