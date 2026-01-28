@@ -4,6 +4,8 @@ import { query } from '@/lib/db';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar } from '@/types/seminar';
 
+const BROCHURE_URL = 'https://zexc.in-maa-1.linodeobjects.com/brochures/zecurx-seminar-brochure.pdf';
+
 export async function POST(request: NextRequest) {
     const clientIp = getClientIp(request);
     const limit = await checkSeminarRateLimit(clientIp);
@@ -164,6 +166,16 @@ export async function POST(request: NextRequest) {
                         <li>You'll get a unique registration link to share with your students</li>
                         <li>Students can register and receive their certificates after the seminar</li>
                     </ol>
+                </div>
+
+                <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                    <h3 style="margin-top: 0; color: #1a56db;">Download Our Seminar Brochure</h3>
+                    <p style="color: #555; margin-bottom: 15px;">
+                        Share this with your faculty and students to learn more about our cybersecurity seminars.
+                    </p>
+                    <a href="${BROCHURE_URL}" style="display: inline-block; background: #1a56db; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                        Download Brochure (PDF)
+                    </a>
                 </div>
 
                 <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">

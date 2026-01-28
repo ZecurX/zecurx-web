@@ -15,7 +15,8 @@ import {
   AlertCircle,
   Loader2,
   ChevronRight,
-  Building2
+  Building2,
+  Trash2
 } from 'lucide-react';
 import { Seminar, SeminarStatus } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -128,6 +129,28 @@ export default function SeminarsListPage() {
     } catch (error) {
       console.error('Error rejecting seminar:', error);
       alert('An error occurred while rejecting the seminar');
+    }
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone and will remove all registrations and certificates associated with this seminar.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/seminars/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        fetchSeminars();
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to delete seminar');
+      }
+    } catch (error) {
+      console.error('Error deleting seminar:', error);
+      alert('An error occurred while deleting the seminar');
     }
   };
 
@@ -282,6 +305,15 @@ export default function SeminarsListPage() {
                           Reject
                         </button>
                       </>
+                    )}
+                    {canManageSeminars && (
+                      <button
+                        onClick={() => handleDelete(seminar.id, seminar.title)}
+                        className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-500/10 rounded-lg transition-colors"
+                        title="Delete seminar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     )}
                     <Link
                       href={`/admin/seminars/${seminar.id}`}

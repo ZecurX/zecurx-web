@@ -59,8 +59,6 @@ export default function SeminarsPage() {
     const upcomingSeminars = seminars.filter(s => !isPastSeminar(s.date));
     const pastSeminars = seminars.filter(s => isPastSeminar(s.date)).reverse(); // Most recent past first
 
-    const upcomingSeminar = upcomingSeminars.length > 0 ? upcomingSeminars[0] : null;
-
     const displaySeminars = [...upcomingSeminars, ...pastSeminars];
 
     return (
@@ -89,43 +87,37 @@ export default function SeminarsPage() {
                     >
 
                         <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight mb-8 leading-[1.1] text-foreground">
-                            Shape the Future of <br />
-                            <span className="text-muted-foreground">Digital Security.</span>
+                            Cybersecurity <br />
+                            <span className="text-muted-foreground">Seminars & Workshops.</span>
                         </h1>
 
                         <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mb-12">
-                            A collaborative community for students and researchers. <span className="text-foreground font-medium">Learn from experts</span>, master real-world skills, and build a safer digital world.
+                            Expert-led sessions on ethical hacking, threat intelligence, and security best practices. <span className="text-foreground font-medium">Free for students</span> — register below or book a session for your institution.
                         </p>
 
-                        {upcomingSeminar && (
-                            <div className="w-full max-w-xl group relative">
-                                <div className="absolute -inset-0.5 bg-gradient-to-b from-primary/50 to-primary/0 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                                <div className="relative rounded-2xl bg-card border border-border p-2">
-                                    <div className="rounded-xl bg-muted/40 p-4 flex flex-col sm:flex-row items-center gap-6">
-                                        <div className="hidden sm:flex h-16 w-16 rounded-xl bg-background items-center justify-center border border-border shrink-0">
-                                            <Video className="w-6 h-6 text-primary" />
-                                        </div>
-
-                                        <div className="flex-1 text-center sm:text-left space-y-1">
-                                            <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                                                <span className="text-[10px] uppercase tracking-widest text-primary font-semibold">Upcoming Session</span>
-                                            </div>
-                                            <div className="text-lg font-bold text-foreground line-clamp-1">{upcomingSeminar.title}</div>
-                                            <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">
-                                                <Clock className="w-3 h-3" />
-                                                <span>{formatDate(upcomingSeminar.date).full} &bull; {upcomingSeminar.time}</span>
-                                            </div>
-                                        </div>
-
-                                        <Link href={`/seminars/${upcomingSeminar.id}/register`} className="w-full sm:w-auto shrink-0">
-                                            <Button size="lg" className="w-full font-semibold">
-                                                Reserve Seat
-                                            </Button>
-                                        </Link>
+                        <div className="w-full max-w-xl group relative">
+                            <div className="absolute -inset-0.5 bg-gradient-to-b from-primary/50 to-primary/0 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                            <div className="relative rounded-2xl bg-card border border-border p-2">
+                                <div className="rounded-xl bg-muted/40 p-4 flex flex-col sm:flex-row items-center gap-6">
+                                    <div className="hidden sm:flex h-16 w-16 rounded-xl bg-background items-center justify-center border border-border shrink-0">
+                                        <Video className="w-6 h-6 text-primary" />
                                     </div>
+
+                                    <div className="flex-1 text-center sm:text-left space-y-1">
+                                        <div className="text-lg font-bold text-foreground">Ready to Level Up?</div>
+                                        <div className="text-sm text-muted-foreground">
+                                            Book a seminar for your institution or join an upcoming session.
+                                        </div>
+                                    </div>
+
+                                    <Link href="/book-seminar" className="w-full sm:w-auto shrink-0">
+                                        <Button size="lg" className="w-full font-semibold">
+                                            Book a Seminar
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
-                        )}
+                        </div>
 
                     </motion.div>
                 </div>
@@ -226,13 +218,14 @@ export default function SeminarsPage() {
                                         </div>
 
                                         <div className="hidden md:flex w-56 shrink-0 flex-col items-center justify-center gap-3 border-l border-border bg-muted/5 p-6 group-hover:bg-muted/20 transition-colors">
-                                            {showRegister ? (
+                                            {showRegister && (
                                                 <Link href={`/seminars/${seminar.id}/register`} className="w-full">
                                                     <Button className="w-full rounded-full shadow-sm hover:shadow-md transition-all">
                                                         Register Now
                                                     </Button>
                                                 </Link>
-                                            ) : showCertificate ? (
+                                            )}
+                                            {showCertificate ? (
                                                 <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
                                                     <Button
                                                         variant="outline"
@@ -243,20 +236,32 @@ export default function SeminarsPage() {
                                                     </Button>
                                                 </Link>
                                             ) : (
-                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
-                                                    Closed
+                                                <Button
+                                                    disabled
+                                                    variant="outline"
+                                                    className="w-full rounded-full opacity-50 cursor-not-allowed"
+                                                    title="Certificate will be available after admin approval"
+                                                >
+                                                    <Award className="w-4 h-4 mr-2" />
+                                                    Get Certificate
                                                 </Button>
+                                            )}
+                                            {!showRegister && !showCertificate && (
+                                                <span className="text-xs text-muted-foreground text-center">
+                                                    Awaiting admin approval
+                                                </span>
                                             )}
                                         </div>
 
                                         <div className="p-6 pt-0 md:hidden flex flex-col gap-3">
-                                            {showRegister ? (
+                                            {showRegister && (
                                                 <Link href={`/seminars/${seminar.id}/register`} className="w-full">
                                                     <Button className="w-full rounded-full">
                                                         Register Now
                                                     </Button>
                                                 </Link>
-                                            ) : showCertificate ? (
+                                            )}
+                                            {showCertificate ? (
                                                 <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
                                                     <Button
                                                         variant="outline"
@@ -267,8 +272,14 @@ export default function SeminarsPage() {
                                                     </Button>
                                                 </Link>
                                             ) : (
-                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
-                                                    Closed
+                                                <Button
+                                                    disabled
+                                                    variant="outline"
+                                                    className="w-full rounded-full opacity-50 cursor-not-allowed"
+                                                    title="Certificate will be available after admin approval"
+                                                >
+                                                    <Award className="w-4 h-4 mr-2" />
+                                                    Get Certificate
                                                 </Button>
                                             )}
                                         </div>
