@@ -219,8 +219,16 @@ export default function SeminarsPage() {
                                                     <span className="text-foreground font-medium">{seminar.speaker_name}</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <MapPin className="w-4 h-4 text-muted-foreground" />
-                                                    {seminar.location_type === 'online' ? 'Online' : seminar.venue_address || seminar.organization_name}
+                                                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                        <MapPin className="w-3 h-3 text-muted-foreground" />
+                                                    </div>
+                                                    <span className="text-foreground font-medium">{seminar.organization_name}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                                        <Video className="w-3 h-3 text-muted-foreground" />
+                                                    </div>
+                                                    {seminar.location_type === 'online' ? 'Online' : seminar.venue_address || 'On-site'}
                                                 </div>
                                             </div>
                                         </div>
