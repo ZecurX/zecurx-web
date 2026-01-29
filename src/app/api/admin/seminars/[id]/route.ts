@@ -65,7 +65,9 @@ export async function PATCH(
             'title', 'description', 'date', 'time', 'duration',
             'speaker_name', 'speaker_title', 'seminar_type', 'topic',
             'location_type', 'venue_address', 'image_url', 'brochure_url',
-            'max_attendees', 'registration_enabled', 'certificate_enabled', 'status'
+            'max_attendees', 'registration_enabled', 'certificate_enabled', 'status',
+            'organization_name', 'contact_person', 'contact_email', 'contact_phone',
+            'additional_notes', 'rejection_reason'
         ];
 
         const updates: string[] = [];

@@ -21,14 +21,19 @@ import {
   ExternalLink,
   Copy,
   Award,
-  MessageSquare
+  MessageSquare,
+  Pencil,
+  Star,
+  Download
 } from 'lucide-react';
-import { Seminar, SeminarRegistration, SeminarStatus } from '@/types/seminar';
+import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import EditSeminarDialog from './EditSeminarDialog';
+import EditRegistrationDialog from './EditRegistrationDialog';
 
 const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgColor: string }> = {
   pending: { label: 'Pending Approval', color: 'text-yellow-600', bgColor: 'bg-yellow-500/10 border-yellow-500/20' },
@@ -44,10 +49,24 @@ export default function SeminarDetailPage() {
 
   const [seminar, setSeminar] = useState<Seminar | null>(null);
   const [registrations, setRegistrations] = useState<SeminarRegistration[]>([]);
+  const [feedback, setFeedback] = useState<SeminarFeedback[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<'details' | 'registrations'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'registrations' | 'feedback'>('details');
+  const [showEditSeminar, setShowEditSeminar] = useState(false);
+  const [editingRegistration, setEditingRegistration] = useState<SeminarRegistration | null>(null);
+
+  useEffect(() => {
+    if (showEditSeminar || editingRegistration) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showEditSeminar, editingRegistration]);
 
   const [registrationEnabled, setRegistrationEnabled] = useState(false);
   const [certificateEnabled, setCertificateEnabled] = useState(false);
@@ -82,10 +101,23 @@ export default function SeminarDetailPage() {
     }
   }, [seminarId]);
 
+  const fetchFeedback = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}/feedback`);
+      if (res.ok) {
+        const data = await res.json();
+        setFeedback(data.feedback || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch feedback:', error);
+    }
+  }, [seminarId]);
+
   useEffect(() => {
     fetchSeminar();
     fetchRegistrations();
-  }, [fetchSeminar, fetchRegistrations]);
+    fetchFeedback();
+  }, [fetchSeminar, fetchRegistrations, fetchFeedback]);
 
   const handleSaveSettings = async () => {
     setSaving(true);
@@ -184,6 +216,69 @@ export default function SeminarDetailPage() {
     navigator.clipboard.writeText(link);
   };
 
+  const downloadCSV = (data: any[], filename: string, headers: string[], mapping: (item: any) => string[]) => {
+    const csvRows = [
+      headers.join(','),
+      ...data.map(item => mapping(item).map(val => 
+        `"${String(val || '').replace(/"/g, '""')}"`
+      ).join(','))
+    ];
+    
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', `${filename}.csv`);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleDownloadRegistrations = () => {
+    if (!seminar) return;
+    const headers = ['Full Name', 'Email', 'Phone', 'College', 'Year', 'City/State', 'Verified', 'Attended', 'Registered At'];
+    const mapping = (reg: SeminarRegistration) => [
+      reg.full_name,
+      reg.email,
+      reg.phone || '',
+      reg.college_name || '',
+      reg.year || '',
+      reg.city_state || '',
+      reg.email_verified ? 'Yes' : 'No',
+      reg.attended ? 'Yes' : 'No',
+      new Date(reg.registered_at).toLocaleString()
+    ];
+    downloadCSV(registrations, `registrations-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`, headers, mapping);
+  };
+
+  const handleDownloadFeedback = () => {
+    if (!seminar) return;
+    const headers = [
+      'Submitted At', 'Full Name', 'Email', 'College', 'Year', 'City/State', 
+      'Rating', 'Career Interests', 'Offensive Security Reason', 
+      'Most Valuable Part', 'Future Suggestions', 'Interested in ZecurX', 
+      'Certificate Name', 'Reminder Contact'
+    ];
+    const mapping = (item: SeminarFeedback) => [
+      new Date(item.submitted_at).toLocaleString(),
+      item.full_name,
+      item.email,
+      item.college_name || '',
+      item.year || '',
+      item.city_state || '',
+      item.seminar_rating?.toString() || '',
+      item.career_interest || '',
+      item.offensive_security_reason || '',
+      item.most_valuable_part || '',
+      item.future_suggestions || '',
+      item.join_zecurx ? 'Yes' : 'No',
+      item.certificate_name,
+      item.reminder_contact || ''
+    ];
+    downloadCSV(feedback, `feedback-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`, headers, mapping);
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
       weekday: 'long',
@@ -227,7 +322,14 @@ export default function SeminarDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{seminar.title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{seminar.title}</h1>
+            {canManage && (
+              <Button size="icon" variant="ghost" onClick={() => setShowEditSeminar(true)}>
+                <Pencil className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground mt-1">{seminar.organization_name}</p>
         </div>
         <div className={cn("px-3 py-1.5 rounded-full text-sm font-medium border", statusConfig.bgColor, statusConfig.color)}>
@@ -291,6 +393,20 @@ export default function SeminarDetailPage() {
           Registrations
           <span className="px-1.5 py-0.5 text-xs bg-muted rounded-full">
             {registrations.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab('feedback')}
+          className={cn(
+            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2",
+            activeTab === 'feedback'
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Feedback
+          <span className="px-1.5 py-0.5 text-xs bg-muted rounded-full">
+            {feedback.length}
           </span>
         </button>
       </div>
@@ -564,8 +680,20 @@ export default function SeminarDetailPage() {
       )}
 
       {activeTab === 'registrations' && (
-        <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden">
-          {registrations.length === 0 ? (
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleDownloadRegistrations}
+              disabled={registrations.length === 0}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV
+            </Button>
+          </div>
+          <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden">
+            {registrations.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground">No registrations yet</h3>
@@ -595,6 +723,9 @@ export default function SeminarDetailPage() {
                     </th>
                     <th className="text-center px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Attended
+                    </th>
+                    <th className="text-right px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -631,6 +762,11 @@ export default function SeminarDetailPage() {
                           {reg.attended && <CheckCircle2 className="w-4 h-4" />}
                         </button>
                       </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button size="icon" variant="ghost" onClick={() => setEditingRegistration(reg)}>
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -638,6 +774,96 @@ export default function SeminarDetailPage() {
             </div>
           )}
         </div>
+      </div>
+    )}
+
+    {activeTab === 'feedback' && (
+      <div className="space-y-4">
+        <div className="flex justify-end">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleDownloadFeedback}
+            disabled={feedback.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download CSV
+          </Button>
+        </div>
+        <div className="space-y-4">
+          {feedback.length === 0 ? (
+            <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
+              <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground">No feedback yet</h3>
+              <p className="text-muted-foreground mt-1">
+                Student feedback will appear here after they receive certificates
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {feedback.map((item) => (
+                <div key={item.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-semibold text-foreground">{item.full_name}</h3>
+                      <p className="text-sm text-muted-foreground">{item.email} • {item.college_name}</p>
+                    </div>
+                    <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-lg">
+                      <Star className="w-4 h-4 text-primary fill-primary" />
+                      <span className="font-bold text-primary">{item.seminar_rating}/5</span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-border/50">
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Career Interests</p>
+                        <p className="text-sm text-foreground">{item.career_interest || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Most Valuable Part</p>
+                        <p className="text-sm text-foreground italic">"{item.most_valuable_part}"</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Future Suggestions</p>
+                        <p className="text-sm text-foreground">{item.future_suggestions || 'None'}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Certificate Name</p>
+                        <p className="text-sm font-medium text-primary uppercase">{item.certificate_name}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-2 text-[10px] text-muted-foreground flex justify-between items-center">
+                    <span>Submitted on {new Date(item.submitted_at).toLocaleString()}</span>
+                    {item.join_zecurx && (
+                      <span className="bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-medium">Interested in ZecurX</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {showEditSeminar && seminar && (
+        <EditSeminarDialog 
+          seminar={seminar} 
+          onClose={() => setShowEditSeminar(false)} 
+          onUpdate={fetchSeminar} 
+        />
+      )}
+      
+      {editingRegistration && (
+        <EditRegistrationDialog 
+          registration={editingRegistration} 
+          onClose={() => setEditingRegistration(null)} 
+          onUpdate={fetchRegistrations} 
+        />
       )}
     </div>
   );

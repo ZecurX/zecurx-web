@@ -32,7 +32,7 @@ export async function POST(
         }
 
         const verification = await verifyOtp(
-            email.toLowerCase(),
+            email.trim().toLowerCase(),
             otp,
             'certificate',
             seminarId
@@ -61,18 +61,22 @@ export async function POST(
 
         const existingCertResult = await query<Certificate>(
             `SELECT * FROM seminar.certificates WHERE seminar_id = $1 AND recipient_email = $2`,
-            [seminarId, email.toLowerCase()]
+            [seminarId, email.trim().toLowerCase()]
         );
 
         if (existingCertResult.rows.length > 0) {
             const cert = existingCertResult.rows[0];
             
             // Resend the certificate email
-            await sendCertificateEmail(cert, email.toLowerCase());
+            await sendCertificateEmail(cert, email.trim().toLowerCase());
             
             return NextResponse.json({
                 success: true,
                 status: 'certificate_sent',
+                hasRegistration: true,
+                hasCertificate: true,
+                hasFeedback: true,
+                certificateId: cert.certificate_id,
                 message: 'Certificate found and sent to your email',
                 certificate: {
                     certificateId: cert.certificate_id,
@@ -81,10 +85,11 @@ export async function POST(
             });
         }
 
+        // Check registration and auto-verify if needed since they passed OTP
         const regResult = await query<SeminarRegistration>(
             `SELECT * FROM seminar.registrations 
-             WHERE seminar_id = $1 AND email = $2 AND email_verified = true`,
-            [seminarId, email.toLowerCase()]
+             WHERE seminar_id = $1 AND email = $2`,
+            [seminarId, email.trim().toLowerCase()]
         );
 
         if (regResult.rows.length === 0) {
@@ -92,6 +97,8 @@ export async function POST(
                 success: true,
                 status: 'not_registered',
                 hasRegistration: false,
+                hasCertificate: false,
+                hasFeedback: false,
                 message: 'You must be registered for this seminar to receive a certificate.',
                 seminar: {
                     id: seminar.id,
@@ -102,10 +109,24 @@ export async function POST(
 
         const registration = regResult.rows[0];
 
+        // If registration was not verified, verify it now since they passed the certificate OTP
+        if (!registration.email_verified) {
+            await query(
+                `UPDATE seminar.registrations 
+                 SET email_verified = true, verified_at = NOW()
+                 WHERE id = $1`,
+                [registration.id]
+            );
+        }
+
         return NextResponse.json({
             success: true,
             status: 'proceed_to_feedback',
             hasRegistration: true,
+            hasCertificate: false,
+            hasFeedback: false,
+            registrationId: registration.id,
+            userName: registration.full_name,
             registration: {
                 id: registration.id,
                 fullName: registration.full_name,

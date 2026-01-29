@@ -21,7 +21,8 @@ export async function POST(
     try {
         const { id: seminarId } = await params;
         const body = await request.json();
-        const { email, fullName, phone, collegeName, year, cityState } = body;
+        const { email: rawEmail, fullName, phone, collegeName, year, cityState } = body;
+        const email = rawEmail?.trim().toLowerCase();
 
         if (!email || !fullName) {
             return NextResponse.json(
@@ -51,7 +52,7 @@ export async function POST(
         const existingReg = await query<SeminarRegistration>(
             `SELECT * FROM seminar.registrations 
              WHERE seminar_id = $1 AND email = $2`,
-            [seminarId, email.toLowerCase()]
+            [seminarId, email]
         );
 
         if (existingReg.rows.length > 0) {
@@ -65,20 +66,20 @@ export async function POST(
 
             await query(
                 `UPDATE seminar.registrations 
-                 SET full_name = $1, phone = $2, college_name = $3, year = $4, city_state = $5
-                 WHERE id = $6`,
+                  SET full_name = $1, phone = $2, college_name = $3, year = $4, city_state = $5
+                  WHERE id = $6`,
                 [fullName, phone || null, collegeName || null, year || null, cityState || null, reg.id]
             );
         } else {
             await query(
                 `INSERT INTO seminar.registrations 
-                 (seminar_id, full_name, email, phone, college_name, year, city_state)
-                 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-                [seminarId, fullName, email.toLowerCase(), phone || null, collegeName || null, year || null, cityState || null]
+                  (seminar_id, full_name, email, phone, college_name, year, city_state)
+                  VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                [seminarId, fullName, email, phone || null, collegeName || null, year || null, cityState || null]
             );
         }
 
-        const otp = await createOtp(email.toLowerCase(), 'registration', seminarId);
+        const otp = await createOtp(email, 'registration', seminarId);
 
         const emailSent = await sendOtpEmail(
             email,
