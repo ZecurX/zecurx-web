@@ -131,10 +131,6 @@ const bookingSchema = z.object({
         "Other"
     ]),
 
-    // Speaker Info
-    speakerName: z.string().min(2, "Speaker name is required"),
-    speakerTitle: z.string().optional(),
-
     // Logistics
     duration: z.string().min(1, "Please select duration"),
     locationType: z.enum(["online", "onsite"]),
@@ -201,8 +197,6 @@ export default function SeminarBookingForm() {
             title: "",
             description: "",
             seminarType: "",
-            speakerName: "",
-            speakerTitle: "",
             duration: "",
             locationType: "onsite",
             venueAddress: "",
@@ -240,10 +234,6 @@ export default function SeminarBookingForm() {
                     description: data.description,
                     seminarType: data.seminarType,
                     topic: data.topic,
-
-                    // Speaker
-                    speakerName: data.speakerName,
-                    speakerTitle: data.speakerTitle || '',
 
                     // Logistics
                     duration: data.duration,
@@ -547,33 +537,6 @@ export default function SeminarBookingForm() {
                                             )}
                                         />
                                         {errors.topic && <p className="text-xs text-red-500 font-medium ml-1">{errors.topic.message}</p>}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Section: Speaker Information */}
-                            <div className="space-y-6">
-                                <h3 className="text-lg font-semibold text-foreground border-b border-border pb-3">Speaker Information</h3>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <Label htmlFor="speakerName" className="text-base font-medium">Speaker Name *</Label>
-                                        <Input
-                                            id="speakerName"
-                                            placeholder="e.g. Dr. Sarah Chen"
-                                            {...register("speakerName")}
-                                            className={`h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all ${errors.speakerName ? "border-red-500 focus-visible:ring-red-500" : ""}`}
-                                        />
-                                        {errors.speakerName && <p className="text-xs text-red-500 font-medium ml-1">{errors.speakerName.message}</p>}
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <Label htmlFor="speakerTitle" className="text-base font-medium">Speaker Title/Designation</Label>
-                                        <Input
-                                            id="speakerTitle"
-                                            placeholder="e.g. Lead Researcher"
-                                            {...register("speakerTitle")}
-                                            className="h-14 rounded-xl bg-background border-border/60 focus:border-primary/50 transition-all"
-                                        />
                                     </div>
                                 </div>
                             </div>

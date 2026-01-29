@@ -48,21 +48,48 @@ export async function PATCH(
     try {
         const { id: seminarId } = await params;
         const body = await request.json();
-        const { registrationId, attended } = body;
+        const { registrationId, ...updateFields } = body;
 
-        if (!registrationId || typeof attended !== 'boolean') {
+        if (!registrationId) {
             return NextResponse.json(
-                { error: 'Registration ID and attended status are required' },
+                { error: 'Registration ID is required' },
                 { status: 400 }
             );
         }
 
+        const allowedFields = [
+            'full_name', 'email', 'phone', 'college_name', 
+            'year', 'city_state', 'attended', 'email_verified', 'is_retroactive'
+        ];
+
+        const updates: string[] = [];
+        const values: unknown[] = [];
+        let paramIndex = 1;
+
+        for (const [key, value] of Object.entries(updateFields)) {
+            const dbKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+            if (allowedFields.includes(dbKey)) {
+                updates.push(`${dbKey} = $${paramIndex}`);
+                values.push(value);
+                paramIndex++;
+            }
+        }
+
+        if (updates.length === 0) {
+            return NextResponse.json(
+                { error: 'No valid fields to update' },
+                { status: 400 }
+            );
+        }
+
+        values.push(registrationId, seminarId);
+
         const result = await query<SeminarRegistration>(
             `UPDATE seminar.registrations 
-             SET attended = $1
-             WHERE id = $2 AND seminar_id = $3
+             SET ${updates.join(', ')}
+             WHERE id = $${paramIndex} AND seminar_id = $${paramIndex + 1}
              RETURNING *`,
-            [attended, registrationId, seminarId]
+            values
         );
 
         if (result.rows.length === 0) {
