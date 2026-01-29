@@ -22,7 +22,8 @@ export async function POST(
     try {
         const { id: seminarId } = await params;
         const body = await request.json();
-        const { email, otp } = body;
+        const { email: rawEmail, otp } = body;
+        const email = rawEmail?.trim().toLowerCase();
 
         if (!email || !otp) {
             return NextResponse.json(
@@ -32,7 +33,7 @@ export async function POST(
         }
 
         const verification = await verifyOtp(
-            email.toLowerCase(),
+            email,
             otp,
             'registration',
             seminarId
@@ -47,10 +48,10 @@ export async function POST(
 
         const regResult = await query<SeminarRegistration>(
             `UPDATE seminar.registrations 
-             SET email_verified = true, verified_at = NOW()
-             WHERE seminar_id = $1 AND email = $2
-             RETURNING *`,
-            [seminarId, email.toLowerCase()]
+              SET email_verified = true, verified_at = NOW()
+              WHERE seminar_id = $1 AND email = $2
+              RETURNING *`,
+            [seminarId, email]
         );
 
         if (regResult.rows.length === 0) {

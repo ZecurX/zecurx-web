@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { createOtp, sendOtpEmail } from '@/lib/otp';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
-import { Seminar } from '@/types/seminar';
+import { Seminar, SeminarRegistration } from '@/types/seminar';
 
 export async function POST(
     request: NextRequest,
@@ -51,10 +51,24 @@ export async function POST(
             );
         }
 
-        const otp = await createOtp(email.toLowerCase(), 'certificate', seminarId);
+        // CHECK REGISTRATION BEFORE SENDING OTP
+        const regResult = await query<SeminarRegistration>(
+            `SELECT * FROM seminar.registrations 
+             WHERE seminar_id = $1 AND email = $2`,
+            [seminarId, email.trim().toLowerCase()]
+        );
+
+        if (regResult.rows.length === 0) {
+            return NextResponse.json(
+                { error: 'You must be registered for this seminar to receive a certificate.' },
+                { status: 404 }
+            );
+        }
+
+        const otp = await createOtp(email.trim().toLowerCase(), 'certificate', seminarId);
 
         const emailSent = await sendOtpEmail(
-            email,
+            email.trim(),
             otp,
             'certificate',
             seminar.title

@@ -28,8 +28,6 @@ export async function POST(request: NextRequest) {
             description,
             seminarType,
             topic,
-            speakerName,
-            speakerTitle,
             duration,
             locationType,
             venueAddress,
@@ -38,12 +36,16 @@ export async function POST(request: NextRequest) {
             message,
         } = body;
 
-        if (!name || !email || !organization || !title || !description || !speakerName || !duration || !preferredDate) {
+        if (!name || !email || !organization || !title || !description || !duration || !preferredDate) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 }
             );
         }
+
+        // Default speaker info if not provided (removed from form)
+        const speakerName = body.speakerName || 'ZecurX Team';
+        const speakerTitle = body.speakerTitle || 'Cybersecurity Experts';
 
         const date = new Date(preferredDate);
         const timeStr = date.toLocaleTimeString('en-US', {
