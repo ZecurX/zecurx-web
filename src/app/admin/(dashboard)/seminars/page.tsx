@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { 
-  Search, 
-  Eye, 
+import {
+  Search,
+  Eye,
   Calendar,
   CalendarDays,
   MapPin,
@@ -15,7 +15,8 @@ import {
   AlertCircle,
   Loader2,
   ChevronRight,
-  Building2
+  Building2,
+  Trash2
 } from 'lucide-react';
 import { Seminar, SeminarStatus } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -131,6 +132,26 @@ export default function SeminarsListPage() {
     }
   };
 
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Are you sure you want to permanently delete "${title}"?\n\nThis action cannot be undone and will remove all associated registrations and data.`)) return;
+
+    try {
+      const res = await fetch(`/api/admin/seminars/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        fetchSeminars();
+      } else {
+        const error = await res.json();
+        alert(error.error || 'Failed to delete seminar');
+      }
+    } catch (error) {
+      console.error('Error deleting seminar:', error);
+      alert('An error occurred while deleting the seminar');
+    }
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -156,7 +177,7 @@ export default function SeminarsListPage() {
             Manage college seminar bookings and registrations
           </p>
         </div>
-        
+
         {pendingCount > 0 && (
           <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-600">
             <AlertCircle className="w-4 h-4" />
@@ -176,7 +197,7 @@ export default function SeminarsListPage() {
             className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           />
         </div>
-        
+
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as SeminarStatus | 'all')}
@@ -199,8 +220,8 @@ export default function SeminarsListPage() {
           <CalendarDays className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground">No seminars found</h3>
           <p className="text-muted-foreground mt-1">
-            {search || statusFilter !== 'all' 
-              ? 'Try adjusting your filters' 
+            {search || statusFilter !== 'all'
+              ? 'Try adjusting your filters'
               : 'Seminar bookings will appear here when colleges submit requests'}
           </p>
         </div>
@@ -212,7 +233,7 @@ export default function SeminarsListPage() {
             const isPast = isPastDate(seminar.date);
 
             return (
-              <div 
+              <div
                 key={seminar.id}
                 className="group flex flex-col p-5 bg-card/40 border border-border/50 rounded-xl hover:bg-card/60 transition-colors"
               >
@@ -236,7 +257,7 @@ export default function SeminarsListPage() {
                     <h3 className="font-semibold text-foreground text-lg">
                       {seminar.title}
                     </h3>
-                    
+
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1.5">
                         <Building2 className="w-4 h-4" />
@@ -291,6 +312,15 @@ export default function SeminarsListPage() {
                       <span>View</span>
                       <ChevronRight className="w-4 h-4" />
                     </Link>
+                    {canManageSeminars && (
+                      <button
+                        onClick={() => handleDelete(seminar.id, seminar.title)}
+                        className="flex items-center gap-1 px-3 py-1.5 text-red-500 hover:text-red-600 hover:bg-red-500/10 rounded-lg transition-colors text-sm"
+                        title="Delete seminar"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
