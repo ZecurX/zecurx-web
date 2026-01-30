@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { 
+import {
   ArrowLeft,
   Calendar,
   CalendarDays,
@@ -24,7 +24,9 @@ import {
   MessageSquare,
   Pencil,
   Star,
-  Download
+  Download,
+  Send,
+  X
 } from 'lucide-react';
 import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -56,9 +58,17 @@ export default function SeminarDetailPage() {
   const [activeTab, setActiveTab] = useState<'details' | 'registrations' | 'feedback'>('details');
   const [showEditSeminar, setShowEditSeminar] = useState(false);
   const [editingRegistration, setEditingRegistration] = useState<SeminarRegistration | null>(null);
+  const [registrationEnabled, setRegistrationEnabled] = useState(false);
+  const [certificateEnabled, setCertificateEnabled] = useState(false);
+
+  // Notify all participants state
+  const [showNotifyDialog, setShowNotifyDialog] = useState(false);
+  const [notifySubject, setNotifySubject] = useState('');
+  const [notifyMessage, setNotifyMessage] = useState('');
+  const [sendingNotification, setSendingNotification] = useState(false);
 
   useEffect(() => {
-    if (showEditSeminar || editingRegistration) {
+    if (showEditSeminar || editingRegistration || showNotifyDialog) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -66,10 +76,7 @@ export default function SeminarDetailPage() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showEditSeminar, editingRegistration]);
-
-  const [registrationEnabled, setRegistrationEnabled] = useState(false);
-  const [certificateEnabled, setCertificateEnabled] = useState(false);
+  }, [showEditSeminar, editingRegistration, showNotifyDialog]);
 
   const fetchSeminar = useCallback(async () => {
     try {
@@ -78,8 +85,8 @@ export default function SeminarDetailPage() {
         const data = await res.json();
         setSeminar(data.seminar);
         if (!saving) {
-            setRegistrationEnabled(data.seminar.registration_enabled);
-            setCertificateEnabled(data.seminar.certificate_enabled);
+          setRegistrationEnabled(data.seminar.registration_enabled);
+          setCertificateEnabled(data.seminar.certificate_enabled);
         }
       }
     } catch (error) {
@@ -216,14 +223,49 @@ export default function SeminarDetailPage() {
     navigator.clipboard.writeText(link);
   };
 
+  const handleNotifyAll = async () => {
+    if (!notifySubject.trim() || !notifyMessage.trim()) {
+      alert('Please enter both subject and message');
+      return;
+    }
+
+    setSendingNotification(true);
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}/notify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subject: notifySubject,
+          message: notifyMessage,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message);
+        setShowNotifyDialog(false);
+        setNotifySubject('');
+        setNotifyMessage('');
+      } else {
+        alert(data.error || 'Failed to send notifications');
+      }
+    } catch (error) {
+      console.error('Error sending notifications:', error);
+      alert('An error occurred while sending notifications');
+    } finally {
+      setSendingNotification(false);
+    }
+  };
+
   const downloadCSV = (data: any[], filename: string, headers: string[], mapping: (item: any) => string[]) => {
     const csvRows = [
       headers.join(','),
-      ...data.map(item => mapping(item).map(val => 
+      ...data.map(item => mapping(item).map(val =>
         `"${String(val || '').replace(/"/g, '""')}"`
       ).join(','))
     ];
-    
+
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -255,9 +297,9 @@ export default function SeminarDetailPage() {
   const handleDownloadFeedback = () => {
     if (!seminar) return;
     const headers = [
-      'Submitted At', 'Full Name', 'Email', 'College', 'Year', 'City/State', 
-      'Rating', 'Career Interests', 'Offensive Security Reason', 
-      'Most Valuable Part', 'Future Suggestions', 'Interested in ZecurX', 
+      'Submitted At', 'Full Name', 'Email', 'College', 'Year', 'City/State',
+      'Rating', 'Career Interests', 'Offensive Security Reason',
+      'Most Valuable Part', 'Future Suggestions', 'Interested in ZecurX',
       'Certificate Name', 'Reminder Contact'
     ];
     const mapping = (item: SeminarFeedback) => [
@@ -315,7 +357,7 @@ export default function SeminarDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link 
+        <Link
           href="/admin/seminars"
           className="p-2 hover:bg-muted rounded-lg transition-colors"
         >
@@ -416,7 +458,7 @@ export default function SeminarDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-card/40 border border-border/50 rounded-xl p-6">
               <h2 className="font-semibold text-foreground mb-4">Seminar Details</h2>
-              
+
               <div className="space-y-4">
                 {seminar.description && (
                   <div>
@@ -490,7 +532,7 @@ export default function SeminarDetailPage() {
 
             <div className="bg-card/40 border border-border/50 rounded-xl p-6">
               <h2 className="font-semibold text-foreground mb-4">Contact Information</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
@@ -552,7 +594,7 @@ export default function SeminarDetailPage() {
             {seminar.status === 'approved' && (
               <div className="bg-card/40 border border-border/50 rounded-xl p-6">
                 <h2 className="font-semibold text-foreground mb-4">Quick Links</h2>
-                
+
                 <div className="space-y-3">
                   <div>
                     <Label className="text-muted-foreground">Registration Link</Label>
@@ -599,7 +641,7 @@ export default function SeminarDetailPage() {
             {canManage && (
               <div className="bg-card/40 border border-border/50 rounded-xl p-6">
                 <h2 className="font-semibold text-foreground mb-4">Settings</h2>
-                
+
                 <div className="space-y-4">
                   <label className="flex items-center justify-between p-3 bg-muted/50 rounded-lg cursor-pointer">
                     <div className="flex items-center gap-3">
@@ -633,8 +675,8 @@ export default function SeminarDetailPage() {
                     />
                   </label>
 
-                  <Button 
-                    onClick={handleSaveSettings} 
+                  <Button
+                    onClick={handleSaveSettings}
                     disabled={saving || saveSuccess}
                     className={`w-full transition-all ${saveSuccess ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
                   >
@@ -661,7 +703,7 @@ export default function SeminarDetailPage() {
 
             <div className="bg-card/40 border border-border/50 rounded-xl p-6">
               <h2 className="font-semibold text-foreground mb-4">Statistics</h2>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <p className="text-2xl font-bold text-foreground">{registrations.length}</p>
@@ -681,10 +723,19 @@ export default function SeminarDetailPage() {
 
       {activeTab === 'registrations' && (
         <div className="space-y-4">
-          <div className="flex justify-end">
-            <Button 
-              variant="outline" 
-              size="sm" 
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowNotifyDialog(true)}
+              disabled={registrations.length === 0}
+            >
+              <Send className="w-4 h-4 mr-2" />
+              Notify All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleDownloadRegistrations}
               disabled={registrations.length === 0}
             >
@@ -694,176 +745,259 @@ export default function SeminarDetailPage() {
           </div>
           <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden">
             {registrations.length === 0 ? (
-            <div className="text-center py-12">
-              <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No registrations yet</h3>
-              <p className="text-muted-foreground mt-1">
-                Registrations will appear here when students sign up
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50 border-b border-border">
-                  <tr>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      College
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Year
-                    </th>
-                    <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Registered
-                    </th>
-                    <th className="text-center px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Attended
-                    </th>
-                    <th className="text-right px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {registrations.map((reg) => (
-                    <tr key={reg.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3">
-                        <p className="font-medium text-foreground">{reg.full_name}</p>
-                      </td>
-                      <td className="px-4 py-3">
-                        <a href={`mailto:${reg.email}`} className="text-sm text-primary hover:underline">
-                          {reg.email}
-                        </a>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {reg.college_name || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {reg.year || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">
-                        {new Date(reg.registered_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => toggleAttendance(reg.id, !reg.attended)}
-                          className={cn(
-                            "w-6 h-6 rounded-full flex items-center justify-center mx-auto transition-colors",
-                            reg.attended
-                              ? "bg-green-500/10 text-green-600"
-                              : "bg-muted text-muted-foreground hover:bg-muted/80"
-                          )}
-                        >
-                          {reg.attended && <CheckCircle2 className="w-4 h-4" />}
-                        </button>
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Button size="icon" variant="ghost" onClick={() => setEditingRegistration(reg)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                      </td>
+              <div className="text-center py-12">
+                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground">No registrations yet</h3>
+                <p className="text-muted-foreground mt-1">
+                  Registrations will appear here when students sign up
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50 border-b border-border">
+                    <tr>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        College
+                      </th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Year
+                      </th>
+                      <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Registered
+                      </th>
+                      <th className="text-center px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Attended
+                      </th>
+                      <th className="text-right px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {registrations.map((reg) => (
+                      <tr key={reg.id} className="hover:bg-muted/30 transition-colors">
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-foreground">{reg.full_name}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <a href={`mailto:${reg.email}`} className="text-sm text-primary hover:underline">
+                            {reg.email}
+                          </a>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">
+                          {reg.college_name || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">
+                          {reg.year || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-muted-foreground">
+                          {new Date(reg.registered_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => toggleAttendance(reg.id, !reg.attended)}
+                            className={cn(
+                              "w-6 h-6 rounded-full flex items-center justify-center mx-auto transition-colors",
+                              reg.attended
+                                ? "bg-green-500/10 text-green-600"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            )}
+                          >
+                            {reg.attended && <CheckCircle2 className="w-4 h-4" />}
+                          </button>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Button size="icon" variant="ghost" onClick={() => setEditingRegistration(reg)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {activeTab === 'feedback' && (
-      <div className="space-y-4">
-        <div className="flex justify-end">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleDownloadFeedback}
-            disabled={feedback.length === 0}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download CSV
-          </Button>
-        </div>
+      {activeTab === 'feedback' && (
         <div className="space-y-4">
-          {feedback.length === 0 ? (
-            <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
-              <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No feedback yet</h3>
-              <p className="text-muted-foreground mt-1">
-                Student feedback will appear here after they receive certificates
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {feedback.map((item) => (
-                <div key={item.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-semibold text-foreground">{item.full_name}</h3>
-                      <p className="text-sm text-muted-foreground">{item.email} • {item.college_name}</p>
-                    </div>
-                    <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-lg">
-                      <Star className="w-4 h-4 text-primary fill-primary" />
-                      <span className="font-bold text-primary">{item.seminar_rating}/5</span>
-                    </div>
-                  </div>
-                  
-                  <div className="grid md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-border/50">
-                    <div className="space-y-3">
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadFeedback}
+              disabled={feedback.length === 0}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download CSV
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {feedback.length === 0 ? (
+              <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
+                <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground">No feedback yet</h3>
+                <p className="text-muted-foreground mt-1">
+                  Student feedback will appear here after they receive certificates
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-4">
+                {feedback.map((item) => (
+                  <div key={item.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
+                    <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Career Interests</p>
-                        <p className="text-sm text-foreground">{item.career_interest || 'Not specified'}</p>
+                        <h3 className="font-semibold text-foreground">{item.full_name}</h3>
+                        <p className="text-sm text-muted-foreground">{item.email} • {item.college_name}</p>
                       </div>
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Most Valuable Part</p>
-                        <p className="text-sm text-foreground italic">"{item.most_valuable_part}"</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Future Suggestions</p>
-                        <p className="text-sm text-foreground">{item.future_suggestions || 'None'}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Certificate Name</p>
-                        <p className="text-sm font-medium text-primary uppercase">{item.certificate_name}</p>
+                      <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-lg">
+                        <Star className="w-4 h-4 text-primary fill-primary" />
+                        <span className="font-bold text-primary">{item.seminar_rating}/5</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-4 pt-2 text-[10px] text-muted-foreground flex justify-between items-center">
-                    <span>Submitted on {new Date(item.submitted_at).toLocaleString()}</span>
-                    {item.join_zecurx && (
-                      <span className="bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-medium">Interested in ZecurX</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    )}
 
-    {showEditSeminar && seminar && (
-        <EditSeminarDialog 
-          seminar={seminar} 
-          onClose={() => setShowEditSeminar(false)} 
-          onUpdate={fetchSeminar} 
+                    <div className="grid md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-border/50">
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Career Interests</p>
+                          <p className="text-sm text-foreground">{item.career_interest || 'Not specified'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Most Valuable Part</p>
+                          <p className="text-sm text-foreground italic">"{item.most_valuable_part}"</p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Future Suggestions</p>
+                          <p className="text-sm text-foreground">{item.future_suggestions || 'None'}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Certificate Name</p>
+                          <p className="text-sm font-medium text-primary uppercase">{item.certificate_name}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-2 text-[10px] text-muted-foreground flex justify-between items-center">
+                      <span>Submitted on {new Date(item.submitted_at).toLocaleString()}</span>
+                      {item.join_zecurx && (
+                        <span className="bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-medium">Interested in ZecurX</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showEditSeminar && seminar && (
+        <EditSeminarDialog
+          seminar={seminar}
+          onClose={() => setShowEditSeminar(false)}
+          onUpdate={fetchSeminar}
         />
       )}
-      
+
       {editingRegistration && (
-        <EditRegistrationDialog 
-          registration={editingRegistration} 
-          onClose={() => setEditingRegistration(null)} 
-          onUpdate={fetchRegistrations} 
+        <EditRegistrationDialog
+          registration={editingRegistration}
+          onClose={() => setEditingRegistration(null)}
+          onUpdate={fetchRegistrations}
         />
+      )}
+
+      {/* Notify All Participants Dialog */}
+      {showNotifyDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => !sendingNotification && setShowNotifyDialog(false)}
+          />
+          <div className="relative bg-card border border-border rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Notify All Participants</h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Send an email to all {registrations.filter(r => r.email_verified).length} verified participants
+                </p>
+              </div>
+              <button
+                onClick={() => !sendingNotification && setShowNotifyDialog(false)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+                disabled={sendingNotification}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <Label htmlFor="notify-subject" className="text-foreground">Subject</Label>
+                <Input
+                  id="notify-subject"
+                  value={notifySubject}
+                  onChange={(e) => setNotifySubject(e.target.value)}
+                  placeholder="e.g., Important Update About Tomorrow's Seminar"
+                  className="mt-1.5"
+                  disabled={sendingNotification}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="notify-message" className="text-foreground">Message</Label>
+                <textarea
+                  id="notify-message"
+                  value={notifyMessage}
+                  onChange={(e) => setNotifyMessage(e.target.value)}
+                  placeholder="Write your message here..."
+                  rows={6}
+                  className="mt-1.5 w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
+                  disabled={sendingNotification}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  This message will be sent to all verified participants along with seminar details.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-border bg-muted/30">
+              <Button
+                variant="outline"
+                onClick={() => setShowNotifyDialog(false)}
+                disabled={sendingNotification}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleNotifyAll}
+                disabled={sendingNotification || !notifySubject.trim() || !notifyMessage.trim()}
+              >
+                {sendingNotification ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Send to All
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
