@@ -169,27 +169,23 @@ export default function SeminarsPage() {
                                         key={seminar.id}
                                         className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row items-stretch shadow-sm hover:shadow-md"
                                     >
+                                        {/* Desktop date sidebar */}
                                         <div className="hidden md:flex w-32 shrink-0 flex-col items-center justify-center border-r border-border bg-muted/20 p-6 text-center group-hover:bg-muted/40 transition-colors">
                                             <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{dateInfo.month}</span>
                                             <span className="text-3xl font-bold text-foreground my-1">{dateInfo.day}</span>
                                             <span className="text-xs text-muted-foreground">{seminar.time}</span>
                                         </div>
 
-                                        <div className="relative h-48 md:hidden w-full">
-                                            {seminar.image_url ? (
-                                                <Image
-                                                    src={seminar.image_url}
-                                                    alt={seminar.title}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full bg-muted/30 flex items-center justify-center">
-                                                    <Video className="w-12 h-12 text-muted-foreground/30" />
+                                        {/* Mobile date badge */}
+                                        <div className="md:hidden flex items-center gap-4 p-4 pb-0">
+                                            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-muted/40 border border-border shrink-0">
+                                                <div className="text-center">
+                                                    <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{dateInfo.month}</span>
+                                                    <span className="block text-lg font-bold text-foreground leading-none">{dateInfo.day}</span>
                                                 </div>
-                                            )}
-                                            <div className="absolute top-4 left-4 bg-background/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                                                {dateInfo.full} &bull; {seminar.time}
+                                            </div>
+                                            <div className="flex-1">
+                                                <span className="text-xs text-muted-foreground">{dateInfo.full} • {seminar.time}</span>
                                             </div>
                                         </div>
 
@@ -234,13 +230,14 @@ export default function SeminarsPage() {
                                         </div>
 
                                         <div className="hidden md:flex w-56 shrink-0 flex-col items-center justify-center gap-3 border-l border-border bg-muted/5 p-6 group-hover:bg-muted/20 transition-colors">
-                                            {showRegister ? (
+                                            {showRegister && (
                                                 <Link href={`/seminars/${seminar.id}/register`} className="w-full">
                                                     <Button className="w-full rounded-full shadow-sm hover:shadow-md transition-all">
                                                         Register Now
                                                     </Button>
                                                 </Link>
-                                            ) : showCertificate ? (
+                                            )}
+                                            {showCertificate ? (
                                                 <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
                                                     <Button
                                                         variant="outline"
@@ -251,20 +248,26 @@ export default function SeminarsPage() {
                                                     </Button>
                                                 </Link>
                                             ) : (
-                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
-                                                    Closed
+                                                <Button
+                                                    disabled
+                                                    variant="outline"
+                                                    className="w-full rounded-full opacity-50 cursor-not-allowed"
+                                                >
+                                                    <Award className="w-4 h-4 mr-2" />
+                                                    Get Certificate
                                                 </Button>
                                             )}
                                         </div>
 
                                         <div className="p-6 pt-0 md:hidden flex flex-col gap-3">
-                                            {showRegister ? (
+                                            {showRegister && (
                                                 <Link href={`/seminars/${seminar.id}/register`} className="w-full">
                                                     <Button className="w-full rounded-full">
                                                         Register Now
                                                     </Button>
                                                 </Link>
-                                            ) : showCertificate ? (
+                                            )}
+                                            {showCertificate ? (
                                                 <Link href={`/seminars/${seminar.id}/certificate`} className="w-full">
                                                     <Button
                                                         variant="outline"
@@ -275,8 +278,13 @@ export default function SeminarsPage() {
                                                     </Button>
                                                 </Link>
                                             ) : (
-                                                <Button disabled variant="outline" className="w-full rounded-full opacity-50">
-                                                    Closed
+                                                <Button
+                                                    disabled
+                                                    variant="outline"
+                                                    className="w-full rounded-full opacity-50 cursor-not-allowed"
+                                                >
+                                                    <Award className="w-4 h-4 mr-2" />
+                                                    Get Certificate
                                                 </Button>
                                             )}
                                         </div>
