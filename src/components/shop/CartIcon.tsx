@@ -10,8 +10,8 @@ export default function CartIcon() {
 
     return (
         <Link href="/cart" className="relative group">
-            <div className="p-2 rounded-full hover:bg-muted/50 transition-colors">
-                <ShoppingCart className="w-5 h-5 text-foreground group-hover:text-primary transition-colors" />
+            <div className="p-3 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:scale-110 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
+                <ShoppingCart className="w-6 h-6" />
                 
                 <AnimatePresence>
                     {totalItems > 0 && (

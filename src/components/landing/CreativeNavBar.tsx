@@ -1,52 +1,27 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
-import CartIcon from '../shop/CartIcon';
+import CartIcon from '@/components/shop/CartIcon';
 
 // Navigation Data
 const navData = {
-    platform: {
-        label: "Platform",
-        href: "/platform",
-        description: "Unified security architecture",
-        items: [
-            { title: "Endpoint Security", href: "/platform/endpoint-security", desc: "Behavior-based protection for all devices" },
-            { title: "Cloud Security", href: "/platform/cloud-security", desc: "Multi-cloud visibility and control" },
-            { title: "Identity Security", href: "/platform/identity-security", desc: "Zero trust access management" },
-            { title: "Application Security", href: "/platform/application-security", desc: "Secure your development lifecycle" },
-            { title: "Threat Intelligence", href: "/platform/threat-intelligence", desc: "Proactive threat hunting capabilities" },
-            { title: "AI Detection", href: "/platform/ai-detection", desc: "ML-powered threat analytics" },
-        ]
-    },
-    solutions: {
-        label: "Solutions",
-        href: "/solutions",
-        description: "Tailored security strategies",
-        items: [
-            { title: "Digital Transformation", href: "/solutions/digital-transformation", desc: "Secure your modernization journey" },
-            { title: "AI-Powered SOC", href: "/solutions/ai-powered-soc", desc: "Intelligent security operations" },
-            { title: "Zero Trust", href: "/solutions/zero-trust", desc: "Never trust, always verify" },
-            { title: "Ransomware Defense", href: "/solutions/ransomware-defense", desc: "Complete protection strategy" },
-            { title: "Compliance", href: "/solutions/compliance", desc: "Meet regulatory requirements" },
-        ]
-    },
     services: {
         label: "Services",
         href: "/services",
         description: "Expert security services",
         items: [
-            { title: "Penetration Testing", href: "/services/offensive/penetration-testing", desc: "Adversary simulation and red teaming" },
-            { title: "Vulnerability Management", href: "/services/offensive/vulnerability-management", desc: "Risk prioritization and remediation" },
-            { title: "Secure Development", href: "/services/engineering/secure-development", desc: "Build secure applications" },
-            { title: "DevSecOps", href: "/services/engineering/devsecops", desc: "Security automation pipelines" },
-            { title: "VulnHunter Suite", href: "/tools", desc: "Free security tools" },
+            { title: "Application Security", href: "/services/application-security", desc: "Web, API & mobile penetration testing" },
+            { title: "Cloud Security", href: "/services/cloud-security", desc: "AWS, GCP & Azure security assessments" },
+            { title: "Secure Code Review", href: "/services/secure-code-review", desc: "Manual review + SAST analysis" },
+            { title: "DevSecOps", href: "/services/devsecops", desc: "CI/CD security & Kubernetes hardening" },
+            { title: "AI Security", href: "/services/ai-security", desc: "LLM threat modeling & abuse testing" },
+            { title: "Secure Development", href: "/services/secure-development", desc: "Build secure MVPs & prototypes" },
         ]
     },
     resources: {
@@ -55,27 +30,17 @@ const navData = {
         description: "Learn and explore",
         items: [
             { title: "Blog", href: "/blog", desc: "Latest security insights and updates" },
-            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth research and analysis" },
+            { title: "Guides & Checklists", href: "/resources/guides", desc: "Practical security guides" },
             { title: "Research", href: "/resources/research", desc: "Security research publications" },
-            { title: "Seminars", href: "/resources/seminars", desc: "On-demand learning sessions" },
         ]
     },
 };
 
-export default function CreativeNavBar({ forceDark = false }: { forceDark?: boolean }) {
-    const router = useRouter();
+export default function CreativeNavBar({ forceDark = false, showCart = false }: { forceDark?: boolean, showCart?: boolean }) {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-    const [scrolled, setScrolled] = useState(false);
     const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    
-    // Smooth scroll detection
-    const { scrollY } = useScroll();
-    
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        setScrolled(latest > 20);
-    });
 
     useEffect(() => {
         if (mobileMenuOpen) {
@@ -85,12 +50,6 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
         }
         return () => { document.body.style.overflow = ''; };
     }, [mobileMenuOpen]);
-
-    const handleNavigation = (href: string) => {
-        setActiveDropdown(null);
-        setMobileMenuOpen(false);
-        router.push(href);
-    };
 
     const handleMouseEnter = (key: string) => {
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -172,16 +131,7 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                     )} />
                                 </Link>
                             ))}
-                            
-                            <Link
-                                href="/why-zecurx"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                Why ZecurX
-                            </Link>
+
                             <Link
                                 href="/industries"
                                 className={cn(
@@ -191,19 +141,28 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                             >
                                 Industries
                             </Link>
+                            <Link
+                                href="/tools"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                Security Toolkit
+                            </Link>
+                            <Link
+                                href="/how-we-work"
+                                className={cn(
+                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
+                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                How We Work
+                            </Link>
                         </nav>
 
                         {/* Right Actions */}
                         <div className="hidden lg:flex items-center gap-2">
-                            <Link
-                                href="/shop"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                Shop
-                            </Link>
                             <Link
                                 href="/academy"
                                 className={cn(
@@ -214,10 +173,9 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                 Academy
                             </Link>
                             
-                            <CartIcon />
-                            
-                            <div className="mx-3">
+                            <div className="mx-3 flex items-center gap-3">
                                 <ThemeToggle />
+                                {showCart && <CartIcon />}
                             </div>
                             
                             <Button
@@ -239,8 +197,8 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
 
                         {/* Mobile Toggle */}
                         <div className="lg:hidden flex items-center gap-3">
-                            <CartIcon />
                             <ThemeToggle />
+                            {showCart && <CartIcon />}
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 className="p-2 text-foreground hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
@@ -272,56 +230,47 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                             >
                                 <div className="p-4">
                                     <motion.div 
-                                        className="grid grid-cols-[200px_1fr] gap-6 min-h-[200px]"
+                                        className={cn(
+                                            "grid gap-2",
+                                            activeDropdown === "services" ? "grid-cols-3 min-w-[600px]" : "grid-cols-2 min-w-[400px]"
+                                        )}
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.2, delay: 0.05 }}
                                     >
-                                        {/* Sidebar */}
-                                        <div className="p-4 bg-gray-50 dark:bg-white/[0.03] rounded-xl flex flex-col justify-between">
-                                            <div>
-                                                <h3 className="text-base font-semibold text-foreground mb-1">
-                                                    {navData[activeDropdown as keyof typeof navData].label}
-                                                </h3>
-                                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                                    {navData[activeDropdown as keyof typeof navData].description}
-                                                </p>
-                                            </div>
-                                            <Link
-                                                href={navData[activeDropdown as keyof typeof navData].href}
-                                                onClick={() => setActiveDropdown(null)}
-                                                className="group flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-primary transition-colors mt-4"
+                                        {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
+                                            <motion.div
+                                                key={item.title}
+                                                initial={{ opacity: 0, y: 5 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ duration: 0.15, delay: i * 0.02 }}
                                             >
-                                                Explore all
-                                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                                            </Link>
-                                        </div>
-
-                                        {/* Links Grid */}
-                                        <div className="grid grid-cols-2 gap-1">
-                                            {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
-                                                <motion.div
-                                                    key={item.title}
-                                                    initial={{ opacity: 0, y: 5 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ duration: 0.15, delay: i * 0.02 }}
+                                                <Link
+                                                    href={item.href}
+                                                    onClick={() => setActiveDropdown(null)}
+                                                    className="group block p-3 rounded-xl hover:bg-white/[0.04] transition-colors"
                                                 >
-                                                    <Link
-                                                        href={item.href}
-                                                        onClick={() => setActiveDropdown(null)}
-                                                        className="group block p-3 rounded-xl hover:bg-white/[0.04] transition-colors"
-                                                    >
-                                                        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors mb-0.5">
-                                                            {item.title}
-                                                        </div>
-                                                        <div className="text-xs text-muted-foreground/70 group-hover:text-muted-foreground transition-colors line-clamp-1">
-                                                            {item.desc}
-                                                        </div>
-                                                    </Link>
-                                                </motion.div>
-                                            ))}
-                                        </div>
+                                                    <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors mb-0.5">
+                                                        {item.title}
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground/70 group-hover:text-muted-foreground transition-colors line-clamp-1">
+                                                        {item.desc}
+                                                    </div>
+                                                </Link>
+                                            </motion.div>
+                                        ))}
                                     </motion.div>
+
+                                    <div className="mt-3 pt-3 border-t border-white/[0.06]">
+                                        <Link
+                                            href={navData[activeDropdown as keyof typeof navData].href}
+                                            onClick={() => setActiveDropdown(null)}
+                                            className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3"
+                                        >
+                                            View all {navData[activeDropdown as keyof typeof navData].label}
+                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                                        </Link>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
@@ -413,11 +362,19 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                     ))}
 
                                     <Link
-                                        href="/why-zecurx"
+                                        href="/industries"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
                                     >
-                                        Why ZecurX
+                                        Industries
+                                    </Link>
+
+                                    <Link
+                                        href="/how-we-work"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
+                                    >
+                                        How We Work
                                     </Link>
 
                                     <Link
@@ -426,14 +383,6 @@ export default function CreativeNavBar({ forceDark = false }: { forceDark?: bool
                                         className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
                                     >
                                         Academy
-                                    </Link>
-
-                                    <Link
-                                        href="/shop"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
-                                    >
-                                        Shop
                                     </Link>
                                 </div>
                             </div>

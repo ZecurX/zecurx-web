@@ -1,17 +1,17 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Why ZecurX - Leading Cybersecurity Innovation & Expertise | ZecurX",
-  description: "Discover why organizations trust ZecurX for advanced cybersecurity. Learn about our AI-powered approach, expert team, and proven track record.",
-  keywords: ["cybersecurity company", "security expertise", "AI security", "threat protection"],
+  title: "How We Work - Our Security Approach & Engagement Model | ZecurX",
+  description: "Learn how ZecurX delivers practical, real-world security. Our approach, engagement model, and security bundles for startups, SMEs, and AI teams.",
+  keywords: ["cybersecurity approach", "security engagement", "penetration testing process", "security assessment"],
   openGraph: {
-    title: "Why ZecurX - Leading Cybersecurity Innovation & Expertise | ZecurX",
-    description: "Discover why organizations trust ZecurX for advanced cybersecurity. Learn about our AI-powered approach, expert team, and proven track record.",
+    title: "How We Work - Our Security Approach & Engagement Model | ZecurX",
+    description: "Learn how ZecurX delivers practical, real-world security. Our approach, engagement model, and security bundles for startups, SMEs, and AI teams.",
     type: "website",
-    url: "https://zecurx.com/why-zecurx",
+    url: "https://zecurx.com/how-we-work",
   },
   alternates: {
-    canonical: "https://zecurx.com/why-zecurx",
+    canonical: "https://zecurx.com/how-we-work",
   },
 };
 

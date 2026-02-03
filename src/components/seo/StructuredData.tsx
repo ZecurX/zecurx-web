@@ -7,7 +7,7 @@ export function getOrganizationSchema(): WithContext<Organization> {
     name: 'ZecurX',
     url: 'https://zecurx.com',
     logo: 'https://zecurx.com/logo.png',
-    description: 'Advanced cybersecurity solutions including threat intelligence, endpoint security, cloud protection, zero-trust architecture, and professional security training with ISO-verified certifications.',
+    description: 'Cybersecurity services for startups, SMEs, and AI teams. We help you ship secure products with practical security testing, cloud security assessments, and compliance support.',
     email: 'official@zecurx.com',
     sameAs: [
       'https://twitter.com/zecurx',
@@ -29,7 +29,7 @@ export function getWebSiteSchema(): WithContext<WebSite> {
     '@type': 'WebSite',
     name: 'ZecurX',
     url: 'https://zecurx.com',
-    description: 'Advanced cybersecurity solutions including threat intelligence, endpoint security, cloud protection, and zero-trust architecture.',
+    description: 'Cybersecurity services for startups, SMEs, and AI teams. Application security, cloud security, and compliance support.',
     publisher: {
       '@type': 'Organization',
       name: 'ZecurX',

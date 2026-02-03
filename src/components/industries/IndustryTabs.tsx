@@ -2,106 +2,105 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Building2, Landmark, GraduationCap, Server, Activity, ShieldCheck, AlertTriangle, ArrowRight, Rocket } from "lucide-react";
+import { Rocket, Brain, Building2, GraduationCap, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const industries = [
     {
-        id: "tech",
-        name: "Technology",
-        subtitle: "Tech & SaaS",
-        icon: Server,
-        description: "High-growth tech companies require secure architecture that scales with innovation.",
-        threats: "API attacks, Cloud misconfigurations, Supply chain vulnerabilities",
-        solutions: [
-            { title: "DevSecOps Integration", desc: "Security embedded into CI/CD pipelines." },
-            { title: "Cloud Native Protection", desc: "Runtime protection for containers & K8s." },
-            { title: "API Security", desc: "Automated discovery and abuse prevention." }
-        ],
-        outcome: "Secure innovation at scale with zero friction."
-    },
-    {
-        id: "bfsi",
-        name: "Financial Services",
-        subtitle: "Banking & fintech",
-        icon: Building2,
-        description: "Financial institutions face sophisticated fraud and strict compliance mandates.",
-        threats: "Financial fraud, Identity theft, Advanced persistent threats (APTs)",
-        solutions: [
-            { title: "Zero Trust Architecture", desc: "Identity-centric access controls." },
-            { title: "Fraud Detection AI", desc: "Real-time transaction analysis." },
-            { title: "Data Loss Prevention", desc: "Protecting sensitive financial data." }
-        ],
-        outcome: "70% reduction in account takeover attempts."
-    },
-    {
-        id: "healthcare",
-        name: "Healthcare",
-        subtitle: "HIPAA compliance",
-        icon: Activity,
-        description: "Protecting patient lives implies protecting patient data and connected devices.",
-        threats: "PHI theft, Ransomware, IoMT vulnerabilities",
-        solutions: [
-            { title: "IoMT Security", desc: "Securing connected medical devices." },
-            { title: "Ransomware Defense", desc: "Immutable backups and rapid recovery." },
-            { title: "HIPAA Compliance", desc: "Automated compliance auditing." }
-        ],
-        outcome: "Ensured continuity of critical care systems."
-    },
-    {
-        id: "gov",
-        name: "Government",
-        subtitle: "Critical infrastructure",
-        icon: Landmark,
-        description: "Defending national interests against state-sponsored actors and cyber warfare.",
-        threats: "Nation-state espionage, Critical infrastructure attacks, Insider threats",
-        solutions: [
-            { title: "Sovereign Cloud Security", desc: "Data residency and strict access control." },
-            { title: "Threat Intelligence", desc: "Global situational awareness." },
-            { title: "Cross-Agency Defense", desc: "Unified threat visibility." }
-        ],
-        outcome: "Resilient public services and data sovereignty."
-    },
-    {
-        id: "edu",
-        name: "Education",
-        subtitle: "Research protection",
-        icon: GraduationCap,
-        description: "Open academic environments are prime targets for intellectual property theft.",
-        threats: "DDoS attacks, Research data theft, Student data privacy",
-        solutions: [
-            { title: "Network Segmentation", desc: "Isolating research from guest networks." },
-            { title: "Identity Management", desc: "Securing student and faculty access." },
-            { title: "DDoS Mitigation", desc: "Ensuring uptime during critical periods." }
-        ],
-        outcome: "Protected $50M+ in proprietary research data."
-    },
-    {
-        id: "startups",
-        name: "Startups",
-        subtitle: "Scalable security",
+        id: "saas-startups",
+        name: "SaaS & Startups",
+        subtitle: "Seed to Series B",
         icon: Rocket,
-        description: "Fast-moving startups need security that enables speed rather than slowing it down.",
-        threats: "Data leaks, Compliance blockers, resource constraints",
-        solutions: [
-            { title: "Automated Compliance", desc: "SOC2/ISO readiness in weeks." },
-            { title: "Cloud Security Posture", desc: "Fix misconfigurations automatically." },
-            { title: "Endpoint Protection", desc: "Lightweight agents for remote teams." }
+        description: "Security that enables speed, not slows you down. Get audit-ready without dedicated security hires.",
+        challenges: [
+            "Need SOC 2 / ISO 27001 for enterprise deals",
+            "No dedicated security team or budget",
+            "Shipping fast with limited security review",
+            "Cloud misconfigurations from rapid deployment"
         ],
-        outcome: "SOC2 readiness achieved in record time."
+        solutions: [
+            { title: "Application Security", desc: "Web, API & mobile penetration testing" },
+            { title: "Cloud Security", desc: "AWS, GCP & Azure security assessments" },
+            { title: "Secure Code Review", desc: "Manual review + SAST analysis" },
+            { title: "DevSecOps", desc: "CI/CD security & Kubernetes hardening" }
+        ],
+        cta: "Get Startup Pack",
+        href: "/contact"
+    },
+    {
+        id: "ai-companies",
+        name: "AI Companies",
+        subtitle: "LLM & ML Products",
+        icon: Brain,
+        description: "Specialized security for AI-powered applications. Protect your models, data pipelines, and user trust.",
+        challenges: [
+            "Prompt injection and jailbreak vulnerabilities",
+            "Training data poisoning risks",
+            "Model theft and IP protection",
+            "Regulatory uncertainty around AI"
+        ],
+        solutions: [
+            { title: "AI Security", desc: "LLM threat modeling & abuse testing" },
+            { title: "Secure Code Review", desc: "Manual review + SAST analysis" },
+            { title: "Application Security", desc: "Web, API & mobile penetration testing" },
+            { title: "Secure Development", desc: "Build secure MVPs & prototypes" }
+        ],
+        cta: "Get AI Security Pack",
+        href: "/contact"
+    },
+    {
+        id: "smes",
+        name: "SMEs",
+        subtitle: "Growing Businesses",
+        icon: Building2,
+        description: "Enterprise-grade security without enterprise complexity. Practical protection for established businesses.",
+        challenges: [
+            "Growing attack surface with business expansion",
+            "Compliance requirements from partners",
+            "Limited internal security expertise",
+            "Balancing security spend with growth"
+        ],
+        solutions: [
+            { title: "Application Security", desc: "Web, API & mobile penetration testing" },
+            { title: "Cloud Security", desc: "AWS, GCP & Azure security assessments" },
+            { title: "DevSecOps", desc: "CI/CD security & Kubernetes hardening" },
+            { title: "Secure Code Review", desc: "Manual review + SAST analysis" }
+        ],
+        cta: "Get SME Essentials",
+        href: "/contact"
+    },
+    {
+        id: "edtech",
+        name: "EdTech & Colleges",
+        subtitle: "Education Sector",
+        icon: GraduationCap,
+        description: "Protect student data, research IP, and institutional reputation. Security for open academic environments.",
+        challenges: [
+            "Student PII and FERPA compliance",
+            "Research data and IP protection",
+            "Open network environments",
+            "Limited security budgets"
+        ],
+        solutions: [
+            { title: "Application Security", desc: "Web, API & mobile penetration testing" },
+            { title: "Secure Code Review", desc: "Manual review + SAST analysis" },
+            { title: "Cloud Security", desc: "AWS, GCP & Azure security assessments" },
+            { title: "Secure Development", desc: "Build secure MVPs & prototypes" }
+        ],
+        cta: "Get Education Pack",
+        href: "/contact"
     }
 ];
-
-import { useSearchParams } from "next/navigation";
 
 const IndustryItem = ({ ind, activeTab, setActiveTab }: { ind: typeof industries[0], activeTab: string, setActiveTab: (id: string) => void }) => {
     const isActive = ind.id === activeTab;
     return (
         <div
-            key={ind.id}
             className={cn(
-                "group cursor-pointer relative flex items-center justify-between py-4 px-6 rounded-xl transition-all duration-300 border",
+                "group cursor-pointer relative flex items-center justify-between py-5 px-6 rounded-2xl transition-all duration-300 border",
                 isActive ? "bg-muted/60 shadow-md border-border" : "border-transparent hover:bg-muted/30"
             )}
             onClick={() => setActiveTab(ind.id)}
@@ -109,28 +108,28 @@ const IndustryItem = ({ ind, activeTab, setActiveTab }: { ind: typeof industries
             {isActive && (
                 <motion.div
                     layoutId="active-tab-indicator"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-foreground rounded-r-full"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-primary rounded-r-full"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
             )}
 
             <div className="relative z-10 flex items-center gap-4 w-full">
                 <div className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300",
-                    isActive ? "bg-foreground text-background shadow-lg shadow-foreground/10" : "bg-muted text-muted-foreground group-hover:bg-foreground/5 group-hover:text-foreground"
+                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                    isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
                 )}>
-                    <ind.icon className="w-5 h-5" />
+                    <ind.icon className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
                     <h3 className={cn(
-                        "text-base font-manrope font-bold transition-colors",
+                        "text-lg font-manrope font-bold transition-colors",
                         isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                     )}>
                         {ind.name}
                     </h3>
                     <p className={cn(
-                        "text-xs font-medium transition-colors line-clamp-1",
-                        isActive ? "text-foreground/70" : "text-muted-foreground/50"
+                        "text-sm font-medium transition-colors",
+                        isActive ? "text-primary" : "text-muted-foreground/60"
                     )}>
                         {ind.subtitle}
                     </p>
@@ -139,9 +138,9 @@ const IndustryItem = ({ ind, activeTab, setActiveTab }: { ind: typeof industries
                     <motion.div
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-foreground"
+                        className="text-primary"
                     >
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-5 h-5" />
                     </motion.div>
                 )}
             </div>
@@ -155,7 +154,6 @@ export default function IndustryTabs() {
     const initialTab = searchParams.get("tab");
     const [activeTab, setActiveTab] = useState(initialTab && industries.find(i => i.id === initialTab) ? initialTab : industries[0].id);
 
-    // Effect to scroll to section if deep link present
     useEffect(() => {
         if (initialTab) {
             const element = document.getElementById("industry-tabs");
@@ -165,64 +163,33 @@ export default function IndustryTabs() {
         }
     }, [initialTab]);
 
-    // Helper to get active industry object
     const activeIndustry = industries.find(i => i.id === activeTab) || industries[0];
-
-    const enterpriseIndustries = industries.slice(0, 3);
-    const publicGrowthIndustries = industries.slice(3, 6);
 
     return (
         <section id="industry-tabs" className="relative w-full py-24 bg-background text-foreground">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-manrope font-medium text-foreground">
-                        Tailored Defense for Every Sector
+                    <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground">
+                        Security for Your Industry
                     </h2>
-                    <p className="mt-4 text-muted-foreground max-w-3xl mx-auto text-lg">
-                        Select your industry to see how ZecurX addresses your specific challenges with precision-engineered security solutions.
+                    <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg font-light">
+                        We specialize in helping these sectors ship secure products without slowing down.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-                    {/* Left: Industry List */}
-                    <div className="lg:col-span-4 flex flex-col gap-6">
-                        {/* Enterprise Column */}
-                        <div className="space-y-2">
-                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-4">
-                                Enterprise
-                            </h4>
-                            <div className="space-y-1">
-                                {enterpriseIndustries.map((ind) => (
-                                    <IndustryItem 
-                                        key={ind.id} 
-                                        ind={ind} 
-                                        activeTab={activeTab} 
-                                        setActiveTab={setActiveTab} 
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Public & Growth Column */}
-                        <div className="space-y-2">
-                            <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-4">
-                                Public & Growth
-                            </h4>
-                            <div className="space-y-1">
-                                {publicGrowthIndustries.map((ind) => (
-                                    <IndustryItem 
-                                        key={ind.id} 
-                                        ind={ind} 
-                                        activeTab={activeTab} 
-                                        setActiveTab={setActiveTab} 
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                    <div className="lg:col-span-4 flex flex-col gap-2">
+                        {industries.map((ind) => (
+                            <IndustryItem 
+                                key={ind.id} 
+                                ind={ind} 
+                                activeTab={activeTab} 
+                                setActiveTab={setActiveTab} 
+                            />
+                        ))}
                     </div>
 
-                    {/* Right: Content Area */}
                     <div className="lg:col-span-8 relative">
                         <div className="sticky top-32">
                             <AnimatePresence mode="wait">
@@ -232,63 +199,73 @@ export default function IndustryTabs() {
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="relative z-10 bg-background border border-border p-8 md:p-12 rounded-3xl min-h-[500px] flex flex-col justify-between group hover:border-foreground/80/30 transition-colors duration-500"
+                                    className="relative z-10 bg-gradient-to-br from-muted/30 to-background border border-border p-8 md:p-10 rounded-3xl min-h-[520px] flex flex-col"
                                 >
-                                    {/* Decorative Corner */}
-                                    <div className="absolute top-8 right-8 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
-                                        <activeIndustry.icon className="w-32 h-32 text-foreground stroke-[1px]" />
+                                    <div className="absolute top-8 right-8 opacity-5">
+                                        <activeIndustry.icon className="w-32 h-32 text-foreground stroke-[0.5px]" />
                                     </div>
                                     
-                                    <div className="relative z-10">
-                                        <div className="flex items-center gap-4 mb-8">
-                                            <span className="text-xs font-mono text-foreground/80 uppercase tracking-widest">
-                                                // {activeIndustry.id.toUpperCase()}_SECTOR
-                                            </span>
-                                            <div className="h-px flex-1 bg-border" />
+                                    <div className="relative z-10 flex-1">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                                <activeIndustry.icon className="w-5 h-5 text-primary" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-2xl font-manrope font-bold text-foreground">
+                                                    {activeIndustry.name}
+                                                </h3>
+                                            </div>
                                         </div>
 
-                                        <h3 className="text-3xl md:text-4xl font-manrope font-medium text-foreground mb-8 leading-tight max-w-2xl">
+                                        <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-xl">
                                             {activeIndustry.description}
-                                        </h3>
+                                        </p>
 
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="space-y-3 p-6 bg-muted/30 rounded-2xl border border-border/50">
-                                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-wide mb-2">
-                                                    <AlertTriangle className="w-3 h-3" />
-                                                    Threat Vector
-                                                </div>
-                                                <p className="text-base text-foreground leading-relaxed font-medium">
-                                                    {activeIndustry.threats}
-                                                </p>
+                                        <div className="grid md:grid-cols-2 gap-6 mb-8">
+                                            <div className="space-y-4">
+                                                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+                                                    Common Challenges
+                                                </h4>
+                                                <ul className="space-y-2">
+                                                    {activeIndustry.challenges.map((challenge, i) => (
+                                                        <li key={i} className="flex items-start gap-2 text-sm text-foreground/80">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 mt-2 flex-shrink-0" />
+                                                            {challenge}
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
 
-                                            <div className="space-y-3 p-6 bg-foreground/80/5 rounded-2xl border border-foreground/80/20">
-                                                <div className="flex items-center gap-2 text-xs font-bold text-foreground/80 uppercase tracking-wide mb-2">
-                                                    <ShieldCheck className="w-3 h-3" />
-                                                    ZecurX Defense
-                                                </div>
-                                                <p className="text-base text-foreground leading-relaxed font-medium">
-                                                    {activeIndustry.outcome}
-                                                </p>
+                                            <div className="space-y-4">
+                                                <h4 className="text-sm font-bold text-primary uppercase tracking-wide flex items-center gap-2">
+                                                    <ShieldCheck className="w-4 h-4" />
+                                                    How We Help
+                                                </h4>
+                                                <ul className="space-y-2">
+                                                    {activeIndustry.solutions.map((solution, i) => (
+                                                        <li key={i} className="flex items-start gap-2 text-sm">
+                                                            <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                                            <span className="text-foreground">{solution.title}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Action Area */}
-                                    <div className="mt-12 pt-8 border-t border-border/50 flex flex-wrap gap-6 items-center justify-between relative z-10">
-                                        <Button className="rounded-full px-8 h-12 gap-2 text-base bg-foreground text-background hover:bg-foreground/90 transition-all shadow-lg hover:shadow-xl">
-                                            View Case Studies
-                                            <ArrowRight className="w-4 h-4" />
+                                    <div className="pt-6 border-t border-border/50 flex flex-wrap gap-4 items-center justify-between relative z-10">
+                                        <Button asChild className="rounded-full px-8 h-12 gap-2 text-base">
+                                            <Link href={activeIndustry.href}>
+                                                {activeIndustry.cta}
+                                                <ArrowRight className="w-4 h-4" />
+                                            </Link>
                                         </Button>
 
-                                        <div className="flex items-center gap-4">
-                                            <div className="text-right">
-                                                <span className="block text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Active Modules</span>
-                                                <span className="block text-xl font-manrope font-bold text-foreground">
-                                                    {activeIndustry.solutions.length} <span className="text-sm font-normal text-muted-foreground">/ 12</span>
-                                                </span>
-                                            </div>
-                                        </div>
+                                        <Button asChild variant="ghost" className="rounded-full px-6 h-12 gap-2">
+                                            <Link href="/services">
+                                                View All Services
+                                            </Link>
+                                        </Button>
                                     </div>
 
                                 </motion.div>

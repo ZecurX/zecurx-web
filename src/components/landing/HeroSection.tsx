@@ -57,7 +57,7 @@ export default function HeroSection() {
 
                     <ScrollAnimation direction="up" delay={0.2}>
                         <p className="max-w-xl text-xl text-muted-foreground font-light leading-relaxed">
-                            Unified visibility, automated detection, and seamless response. Protect your infrastructure with the world's most advanced AI security platform.
+                            We help startups, SMEs, and AI teams secure applications, cloud infrastructure, and AI systems with practical, real-world security testing.
                         </p>
                     </ScrollAnimation>
 
