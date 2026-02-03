@@ -30,8 +30,10 @@ const navData = {
         description: "Learn and explore",
         items: [
             { title: "Blog", href: "/blog", desc: "Latest security insights and updates" },
+            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research papers" },
             { title: "Guides & Checklists", href: "/resources/guides", desc: "Practical security guides" },
             { title: "Research", href: "/resources/research", desc: "Security research publications" },
+            { title: "Seminar", href: "/resources/seminars", desc: "Live workshops & training events" },
         ]
     },
 };
