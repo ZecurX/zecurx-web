@@ -198,7 +198,7 @@ export default function InternshipsClient({ plans }: { plans: Plan[] }) {
                             >
                                 View Positions
                             </button>
-                            <Link href="/why-zecurx" className="px-8 py-4 border border-border text-foreground font-semibold rounded-full hover:bg-muted/50 transition-colors">
+                            <Link href="/how-we-work" className="px-8 py-4 border border-border text-foreground font-semibold rounded-full hover:bg-muted/50 transition-colors">
                                 Learn More
                             </Link>
                         </div>

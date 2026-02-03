@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ShoppingBag, AlertCircle, Truck, Check, Cpu, Wifi, Radio } from 'lucide-react';
 import { useState, MouseEvent, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
+import { useCartAnimation } from '@/context/CartAnimationContext';
 import { getProductImages } from '@/lib/productImages';
 
 interface ProductCardProps {
@@ -21,6 +22,8 @@ interface ProductCardProps {
     deliveryDays?: number;
 }
 
+import { Minus, Plus } from 'lucide-react';
+
 export default function ProductCard({
     id,
     name,
@@ -34,10 +37,13 @@ export default function ProductCard({
     delay = 0,
     deliveryDays = 20,
 }: ProductCardProps) {
-    const { addItem } = useCart();
+    const { addItem, items, updateQuantity } = useCart();
+    const { fly } = useCartAnimation();
     
     const allImages = getProductImages(name, image, images);
-    
+    const cartItem = items.find(item => item.id === id);
+    const quantity = cartItem?.quantity || 0;
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isAdded, setIsAdded] = useState(false);
     const [cycleInterval, setCycleInterval] = useState<NodeJS.Timeout | null>(null);
@@ -208,41 +214,66 @@ export default function ProductCard({
                         <span className="text-lg font-mono font-bold text-foreground tracking-tight">{formatPrice(price)}</span>
                     </div>
 
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            addItem({ id, name, price, image: allImages[0], deliveryDays });
-                            setIsAdded(true);
-                            setTimeout(() => setIsAdded(false), 2000);
-                        }}
-                        disabled={stock === 0}
-                        className={`
-                            relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300
-                            ${stock === 0
-                                ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
-                                : isAdded
-                                    ? 'bg-green-500 text-white shadow-[0_0_20px_-5px_#22c55e]'
-                                    : 'bg-foreground text-background hover:bg-primary hover:text-white hover:shadow-[0_0_20px_-5px_var(--primary)]'
-                            }
-                        `}
-                    >
-                        {isAdded ? (
-                            <>
-                                <Check className="w-3.5 h-3.5" />
-                                <span>Added</span>
-                            </>
-                        ) : stock === 0 ? (
-                            <>
-                                <AlertCircle className="w-3.5 h-3.5" />
-                                <span>Empty</span>
-                            </>
-                        ) : (
-                            <>
-                                <ShoppingBag className="w-3.5 h-3.5" />
-                                <span>Add</span>
-                            </>
-                        )}
-                    </button>
+                    {quantity > 0 ? (
+                        <div className="flex items-center bg-primary text-primary-foreground rounded-lg overflow-hidden h-[38px] shadow-lg shadow-primary/20">
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    updateQuantity(id, quantity - 1);
+                                }}
+                                className="px-3 h-full hover:bg-black/20 transition-colors flex items-center justify-center"
+                            >
+                                <Minus className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="font-mono font-bold text-sm min-w-[20px] text-center">{quantity}</span>
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    updateQuantity(id, quantity + 1);
+                                }}
+                                className="px-3 h-full hover:bg-black/20 transition-colors flex items-center justify-center"
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                addItem({ id, name, price, image: allImages[0], deliveryDays });
+                                fly(e.currentTarget as HTMLElement, allImages[0]);
+                                setIsAdded(true);
+                                setTimeout(() => setIsAdded(false), 2000);
+                            }}
+                            disabled={stock === 0}
+                            className={`
+                                relative overflow-hidden flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 h-[38px]
+                                ${stock === 0
+                                    ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                                    : isAdded
+                                        ? 'bg-green-500 text-white shadow-[0_0_20px_-5px_#22c55e]'
+                                        : 'bg-foreground text-background hover:bg-primary hover:text-primary-foreground hover:shadow-[0_0_20px_-5px_var(--primary)]'
+                                }
+                            `}
+                        >
+                            {isAdded ? (
+                                <>
+                                    <Check className="w-3.5 h-3.5" />
+                                    <span>Added</span>
+                                </>
+                            ) : stock === 0 ? (
+                                <>
+                                    <AlertCircle className="w-3.5 h-3.5" />
+                                    <span>Empty</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ShoppingBag className="w-3.5 h-3.5" />
+                                    <span>Add</span>
+                                </>
+                            )}
+                        </button>
+                    )}
                 </div>
                 
                 <div className="mt-3 pt-3 border-t border-dashed border-border/40 flex items-center justify-between text-[10px] text-muted-foreground">

@@ -1,10 +1,11 @@
 import React, { Suspense } from 'react';
-import { motion } from 'framer-motion';
-import { Shield, Zap, Package, ArrowRight, Search } from 'lucide-react';
+import { Shield, Zap, Package, ArrowRight } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import ProductGrid from '@/components/shop/ProductGrid';
+import CartIcon from '@/components/shop/CartIcon';
 import { query } from '@/lib/db';
+import { CartAnimationProvider } from '@/context/CartAnimationContext';
 
 async function getProducts() {
     try {
@@ -23,10 +24,15 @@ export default async function ShopPage() {
     const products = await getProducts();
 
     return (
-        <main className="min-h-screen bg-background text-foreground selection:bg-primary/30">
-            <CreativeNavBar />
-
-            <section className="relative pt-40 pb-20 overflow-hidden min-h-[50vh] flex items-center">
+        <CartAnimationProvider>
+            <main className="min-h-screen bg-background text-foreground selection:bg-primary/30">
+                <CreativeNavBar />
+                
+                <div className="fixed bottom-8 right-8 z-50" id="cart-icon-container">
+                    <CartIcon />
+                </div>
+                
+                <section className="relative pt-40 pb-20 overflow-hidden min-h-[50vh] flex items-center">
                 <div className="absolute inset-0 z-0 pointer-events-none">
                      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-primary/10 blur-[120px] rounded-full z-10" />
                      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
@@ -127,6 +133,7 @@ export default async function ShopPage() {
             </section>
 
             <Footer />
-        </main>
+            </main>
+        </CartAnimationProvider>
     );
 }

@@ -11,39 +11,39 @@ import {
 export function FeaturesSectionWithHoverEffects() {
     const features = [
         {
-            title: "Secure Digital Transformation",
+            title: "Application Security Testing",
             description:
-                "Enable secure modernization while adopting cloud, automation, and emerging technologies.",
+                "Find vulnerabilities in your web, mobile, and API applications before attackers do.",
             icon: <Zap className="w-6 h-6" />,
         },
         {
-            title: "AI-Powered Security Operations",
+            title: "AI & LLM Security",
             description:
-                "Modernize SOC operations with intelligence-driven detection and response.",
+                "Secure your AI applications against prompt injection, jailbreaks, and model vulnerabilities.",
             icon: <Brain className="w-6 h-6" />,
         },
         {
-            title: "Zero Trust Architecture",
+            title: "Cloud Security Assessment",
             description:
-                "Move beyond perimeter-based security to continuous verification and least-privilege access.",
+                "Review your AWS, GCP, or Azure configurations for misconfigurations and security gaps.",
             icon: <Shield className="w-6 h-6" />,
         },
         {
-            title: "Ransomware Defense",
+            title: "Secure Development Training",
             description:
-                "Protect critical systems and data against ransomware and extortion attacks.",
+                "Train your developers to write secure code and catch vulnerabilities early.",
             icon: <Lock className="w-6 h-6" />,
         },
         {
-            title: "Cloud & SaaS Security",
+            title: "DevSecOps Integration",
             description:
-                "Secure cloud workloads and SaaS platforms without slowing adoption.",
+                "Embed security into your CI/CD pipelines without slowing down releases.",
             icon: <Cloud className="w-6 h-6" />,
         },
         {
-            title: "Compliance & Risk Management",
+            title: "Compliance Readiness",
             description:
-                "Align security with regulatory requirements and business risk priorities.",
+                "Get audit-ready for SOC 2, ISO 27001, HIPAA, and other frameworks.",
             icon: <ClipboardCheck className="w-6 h-6" />,
         },
     ];

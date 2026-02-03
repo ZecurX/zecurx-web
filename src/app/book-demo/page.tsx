@@ -107,16 +107,16 @@ function BookDemoContent() {
                             See ZecurX in <span className="text-muted-foreground">Action.</span>
                         </h1>
                         <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed">
-                            Experience how our unified security platform minimizes risk, automates compliance, and accelerates your security engineering workflows.
+                            Get a personalized walkthrough of how we can help secure your applications, cloud infrastructure, or AI systems.
                         </p>
                     </div>
 
                     <div className="space-y-4 pt-4">
                         {[
-                            "Full platform walkthrough tailored to your infrastructure",
-                            "Deep dive into AI-driven threat detection",
-                            "Custom implementation roadmap",
-                            "Q&A with a Lead Security Engineer"
+                            "Tailored security assessment scoping for your stack",
+                            "Understanding your compliance and audit needs",
+                            "Custom approach for your security challenges",
+                            "Q&A with our security team"
                         ].map((item, i) => (
                             <div key={i} className="flex items-start gap-3">
                                 <CheckCircle2 className="w-5 h-5 text-foreground mt-1 shrink-0" />

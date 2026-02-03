@@ -3,8 +3,7 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, type Easing } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Shield, Zap, Lock, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -35,19 +34,6 @@ const itemVariants = {
   },
 };
 
-// Floating card animation
-const floatVariants = {
-  initial: { y: 0 },
-  animate: {
-    y: [-8, 8, -8],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      ease: "easeInOut" as const,
-    },
-  },
-};
-
 // Animated Grid Pattern Component (inline for simplicity)
 function AnimatedGridPattern({ className }: { className?: string }) {
   return (
@@ -60,59 +46,6 @@ function AnimatedGridPattern({ className }: { className?: string }) {
         }}
       />
     </div>
-  );
-}
-
-// Premium Badge Component
-function PremiumBadge() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-      className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl cursor-pointer hover:bg-white/10 transition-all duration-300"
-    >
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-      </span>
-      <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
-        Enterprise-Grade Security Platform
-      </span>
-      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-    </motion.div>
-  );
-}
-
-// Glassmorphic Stat Card
-function StatCard({ 
-  icon: Icon, 
-  value, 
-  label,
-  delay = 0 
-}: { 
-  icon: React.ElementType; 
-  value: string; 
-  label: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6, delay, ease: EASE_OUT_EXPO }}
-      className="group relative p-4 rounded-2xl bg-white/5 dark:bg-white/5 border border-white/10 backdrop-blur-xl hover:bg-white/10 hover:border-white/20 transition-all duration-300"
-    >
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-primary/10 text-primary">
-          <Icon className="w-5 h-5" />
-        </div>
-        <div>
-          <div className="text-xl font-bold text-foreground">{value}</div>
-          <div className="text-sm text-muted-foreground">{label}</div>
-        </div>
-      </div>
-    </motion.div>
   );
 }
 
@@ -130,7 +63,7 @@ export default function HeroSectionV3() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background bg-noise pt-24 pb-16 lg:pt-32 lg:pb-24"
+      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background pt-24 pb-16 lg:pt-32 lg:pb-24"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
@@ -157,19 +90,14 @@ export default function HeroSectionV3() {
           animate="visible"
           className="flex flex-col items-center text-center"
         >
-          {/* Badge */}
-          <motion.div variants={itemVariants}>
-            <PremiumBadge />
-          </motion.div>
-
           {/* Headline */}
           <motion.h1
             variants={itemVariants}
             className="mt-8 text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold font-manrope tracking-tighter leading-[0.9] text-foreground"
           >
-            <span className="block">Security that</span>
+            <span className="block">Security that helps</span>
             <span className="block mt-2 bg-gradient-to-r from-foreground via-foreground/80 to-foreground/50 dark:from-white dark:via-white/80 dark:to-white/50 bg-clip-text text-transparent">
-              evolves with you.
+              you ship faster.
             </span>
           </motion.h1>
 
@@ -178,12 +106,10 @@ export default function HeroSectionV3() {
             variants={itemVariants}
             className="mt-6 md:mt-8 max-w-2xl text-lg md:text-xl text-muted-foreground leading-relaxed text-balance"
           >
-            Unified visibility, automated detection, and seamless response. 
-            Protect your infrastructure with AI-powered threat intelligence 
-            trusted by leading enterprises.
+            ZecurX helps startups and AI teams secure applications, cloud infrastructure, and AI systems.
           </motion.p>
 
-          {/* CTA Buttons */}
+            {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
             className="mt-8 md:mt-10 flex flex-col sm:flex-row items-center gap-4"
@@ -193,7 +119,7 @@ export default function HeroSectionV3() {
               size="lg"
               className="group relative h-12 px-8 rounded-full overflow-hidden shadow-[0_0_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_0_40px_-10px_rgba(255,255,255,0.2)]"
             >
-              <Link href="/book-demo">
+              <Link href="/contact">
                 <span className="relative z-10">Start Protecting</span>
                 <ArrowRight className="w-4 h-4 relative z-10 ml-2 group-hover:translate-x-1 transition-transform" />
                 <div className="absolute inset-0 bg-gradient-to-r from-foreground to-foreground/90 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -206,8 +132,8 @@ export default function HeroSectionV3() {
               size="lg"
               className="h-12 px-8 rounded-full border-border/50 hover:bg-muted/50 hover:border-border transition-all"
             >
-              <Link href="/contact">
-                Talk to Sales
+              <Link href="/book-demo">
+                Talk to Experts
               </Link>
             </Button>
           </motion.div>
