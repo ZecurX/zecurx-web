@@ -1,13 +1,12 @@
 "use client";
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     GraduationCap, Award, Users,
-    BookOpen, ArrowRight, ShoppingBag, X, Sparkles
+    BookOpen, ArrowRight, ShoppingBag, ShoppingCart
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
@@ -173,55 +172,34 @@ const stats = [
 ];
 
 export default function AcademyPage() {
-    const [showShopBar, setShowShopBar] = useState(true);
-    
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
 
-            {/* Bottom Floating Shop Bar */}
-            <AnimatePresence>
-                {showShopBar && (
-                    <motion.div
-                        initial={{ y: 100, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 100, opacity: 0 }}
-                        transition={{ type: "spring", damping: 25, stiffness: 300, delay: 1 }}
-                        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40"
+            <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.5 }}
+                className="fixed top-24 left-1/2 -translate-x-1/2 z-40"
+            >
+                <div className="flex items-center bg-foreground/95 backdrop-blur-xl rounded-full p-1.5 shadow-lg shadow-black/10 border border-white/10">
+                    <Link
+                        href="/shop"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-background hover:text-background/80 transition-colors"
                     >
-                        <div className="flex items-center gap-3 px-5 py-3 rounded-full bg-foreground/95 text-background backdrop-blur-xl shadow-2xl shadow-black/20 border border-white/10">
-                            <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                    <Sparkles className="w-4 h-4 text-primary" />
-                                </div>
-                                <span className="text-sm font-medium hidden sm:inline">
-                                    New! ZecurX Merch Store is live
-                                </span>
-                                <span className="text-sm font-medium sm:hidden">
-                                    Merch Store Live
-                                </span>
-                            </div>
-                            
-                            <Link
-                                href="/shop"
-                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-background text-foreground text-sm font-semibold hover:bg-background/90 transition-colors group"
-                            >
-                                <ShoppingBag className="w-4 h-4" />
-                                <span>Shop Now</span>
-                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                            </Link>
-                            
-                            <button
-                                onClick={() => setShowShopBar(false)}
-                                className="p-1.5 rounded-full hover:bg-white/10 transition-colors ml-1"
-                                aria-label="Dismiss"
-                            >
-                                <X className="w-4 h-4 text-background/60" />
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>Shop</span>
+                    </Link>
+                    
+                    <Link
+                        href="/cart"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
+                    >
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>Cart</span>
+                    </Link>
+                </div>
+            </motion.div>
 
             {/* HERO SECTION */}
             <section className="relative pt-40 pb-20 overflow-hidden">
