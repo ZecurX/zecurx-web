@@ -1,7 +1,6 @@
 import HeroSectionV3 from "@/components/landing/HeroSectionV3";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import WhatWeDoSection from "@/components/landing/WhatWeDoSection";
-import PlatformCapabilitiesSection from "@/components/landing/PlatformCapabilitiesSection";
 import WhyZecurXSection from "@/components/landing/WhyZecurXSection";
 import IndustriesSection from "@/components/landing/IndustriesSection";
 import ReadyToSecureSection from "@/components/landing/ReadyToSecureSection";
@@ -10,12 +9,12 @@ import Footer from "@/components/landing/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ZecurX - Advanced Cybersecurity Solutions, Training & Threat Intelligence",
-  description: "Protect your business with ZecurX's cutting-edge cybersecurity platform. We deliver threat intelligence, endpoint security, cloud protection, zero-trust architecture, and professional security training with ISO-verified certifications.",
-  keywords: ["cybersecurity", "threat intelligence", "endpoint security", "AI security", "zero trust architecture", "cloud security", "security automation", "cybersecurity training", "ethical hacking certification", "penetration testing certification"],
+  title: "ZecurX - Cybersecurity Services for Startups, SMEs & AI Teams",
+  description: "Security that helps you ship faster. We help startups, SMEs, and AI teams secure applications, cloud infrastructure, and AI systems with practical, real-world security.",
+  keywords: ["cybersecurity services", "application security", "penetration testing", "cloud security", "DevSecOps", "AI security", "startup security"],
   openGraph: {
-    title: "ZecurX - Advanced Cybersecurity Solutions, Training & Threat Intelligence",
-    description: "Protect your business with ZecurX's cutting-edge cybersecurity platform. Threat intelligence, endpoint security, cloud protection, zero-trust architecture, and ISO-verified security certifications.",
+    title: "ZecurX - Cybersecurity Services for Startups, SMEs & AI Teams",
+    description: "Security that helps you ship faster. We help startups, SMEs, and AI teams secure applications, cloud infrastructure, and AI systems.",
     type: "website",
     url: "https://zecurx.com",
   },
@@ -30,7 +29,6 @@ export default function Home() {
       <CreativeNavBar />
       <HeroSectionV3 />
       <WhatWeDoSection />
-      <PlatformCapabilitiesSection />
       <WhyZecurXSection />
       <IndustriesSection />
       <ReadyToSecureSection />

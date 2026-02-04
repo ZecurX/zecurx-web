@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Industry Solutions - Sector-Specific Cybersecurity | ZecurX",
-  description: "Tailored cybersecurity solutions for finance, healthcare, retail, manufacturing, and government sectors with industry-specific compliance.",
-  keywords: ["industry cybersecurity", "sector security", "compliance solutions", "vertical security"],
+  title: "Industries We Serve - SaaS, AI, SMEs & EdTech Security | ZecurX",
+  description: "Specialized security services for SaaS startups, AI companies, SMEs, and educational institutions. We understand your unique challenges.",
+  keywords: ["startup security", "AI security", "SME cybersecurity", "EdTech security", "SaaS security"],
   openGraph: {
-    title: "Industry Solutions - Sector-Specific Cybersecurity | ZecurX",
-    description: "Tailored cybersecurity solutions for finance, healthcare, retail, manufacturing, and government sectors with industry-specific compliance.",
+    title: "Industries We Serve - SaaS, AI, SMEs & EdTech Security | ZecurX",
+    description: "Specialized security services for SaaS startups, AI companies, SMEs, and educational institutions.",
     type: "website",
     url: "https://zecurx.com/industries",
   },

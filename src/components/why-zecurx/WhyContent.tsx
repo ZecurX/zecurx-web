@@ -2,36 +2,94 @@
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Cpu, Target, BookOpen, CheckCircle2, ChevronLeft, ChevronRight, Quote, Users, Award, GitCompare, ArrowRight } from "lucide-react";
+import { 
+    ChevronLeft, ChevronRight, Quote, ArrowRight, CheckCircle2
+} from "lucide-react";
+import Link from "next/link";
 
 const testimonials = [
     {
         quote: "ZecurX delivered exceptional quality from UI/UX design to full-stack development. Their VAPT assessment gave us confidence in our platform's security. Truly enterprise-grade service.",
         name: "Gurudev Engicon Pvt. Ltd.",
         role: "Enterprise Client",
-        services: "Full-Stack Development, VAPT, Brand Identity"
     },
     {
         quote: "The team transformed our online presence with a beautiful, mobile-first website. Their security hardening and 24/7 support gives us peace of mind.",
         name: "Honey Herbal Beauty Parlour",
         role: "Business Client",
-        services: "Web Design, Development, Security"
-    },
-    {
-        quote: "When we engaged ZecurX, it was a complete transformation. Now we've found a partner that helps us engineer resilience rather than just buying tools.",
-        name: "Major Financial Institution",
-        role: "CISO",
-        services: "Security Consulting, Threat Assessment"
     },
     {
         quote: "Their threat-driven approach identified vulnerabilities our previous auditors missed. Professional, thorough, and truly security-focused.",
         name: "Technology Startup",
         role: "CTO",
-        services: "Penetration Testing, Security Review"
     }
 ];
 
-import { Button } from "@/components/ui/button";
+const engagementPhases = [
+    {
+        step: "01",
+        title: "Discovery & Threat Modeling",
+        desc: "We don't just run scans. We learn your architecture, business logic, and threat model. We identify critical assets and potential attack vectors specific to your stack."
+    },
+    {
+        step: "02",
+        title: "Deep-Dive Assessment",
+        desc: "Our engineers perform manual penetration testing and code review. We simulate real-world attacks (BOLA, IDOR, Injection) that automated tools miss."
+    },
+    {
+        step: "03",
+        title: "Reporting & Remediation",
+        desc: "You get a developer-friendly report with reproduction steps and code fixes. We don't just dump a PDF; we walk your engineering team through the fixes."
+    },
+    {
+        step: "04",
+        title: "Verification Retest",
+        desc: "After you patch, we verify. We ensure the vulnerabilities are truly closed and no regressions were introduced."
+    }
+];
+
+const securityBundles = [
+    {
+        name: "Startup Pack",
+        tagline: "For early-stage teams",
+        description: "Essential security for seed to Series A startups. Get audit-ready without slowing down development.",
+        features: [
+            "Web/Mobile App Penetration Test",
+            "Cloud Configuration Review",
+            "Developer Security Training",
+            "Compliance Readiness Check"
+        ]
+    },
+    {
+        name: "AI Product Pack",
+        tagline: "For LLM-powered apps",
+        description: "Specialized security for AI applications. Prompt injection, model security, and responsible AI practices.",
+        features: [
+            "LLM Security Assessment",
+            "Prompt Injection Testing",
+            "RAG Pipeline Review",
+            "AI Risk Documentation"
+        ]
+    },
+    {
+        name: "SME Essentials",
+        tagline: "For growing businesses",
+        description: "Comprehensive security for established SMEs. Regular assessments, compliance support, and security advisory.",
+        features: [
+            "Quarterly Security Assessments",
+            "ISO 27001 / SOC 2 Prep",
+            "Incident Response Planning",
+            "Virtual CISO Advisory"
+        ]
+    }
+];
+
+const whatWeDontDo = [
+    "Sell endpoint agents or antivirus software",
+    "Operate 24/7 SOC or SIEM monitoring services",
+    "Provide managed IT support or helpdesk",
+    "Resell third-party security hardware"
+];
 
 export default function WhyContent() {
     const containerRef = useRef(null);
@@ -42,7 +100,6 @@ export default function WhyContent() {
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
-    // Testimonial carousel state
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
 
@@ -60,11 +117,8 @@ export default function WhyContent() {
         return () => clearInterval(interval);
     }, [isPaused, nextTestimonial]);
 
-    const cardClassName = "group relative overflow-hidden bg-gradient-to-b from-muted/50 to-background border border-border/40 p-8 rounded-3xl hover:border-foreground/20 transition-all duration-500 hover:shadow-2xl hover:shadow-foreground/5";
-
     return (
         <section ref={containerRef} className="relative w-full py-24 overflow-hidden bg-background text-foreground">
-            {/* --- Parallax Background Elements --- */}
             <motion.div
                 style={{ y: backgroundY }}
                 className="absolute inset-0 pointer-events-none"
@@ -72,233 +126,137 @@ export default function WhyContent() {
                 <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(circle,currentColor_1px,transparent_1px)] [background-size:24px_24px]" />
             </motion.div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-40">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 space-y-32">
 
-                {/* SECTION 1: Overview (Why ZecurX?) */}
-                <div id="overview" className="scroll-mt-24">
-                    <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div className="max-w-2xl">
-                            <h2 className="text-4xl md:text-5xl font-manrope font-semibold text-foreground tracking-tight">
-                                Engineered for <span className="text-foreground">Resilience</span>
-                            </h2>
-                            <p className="text-lg text-muted-foreground mt-4 leading-relaxed font-light">
-                                ZecurX protects the people, processes, and technologies that drive modern enterprise. Powered by world-class security expertise.
-                            </p>
-                        </div>
-                        <div className="hidden md:block h-px flex-1 bg-gradient-to-r from-border to-transparent ml-12 mb-4" />
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {[
-                            {
-                                title: "Threat Driven",
-                                desc: "Security informed by how real attackers think, move, and exploit — not assumptions.",
-                                icon: Target
-                            },
-                            {
-                                title: "AI Powered",
-                                desc: "Harnesses the power of big data and artificial intelligence for instant visibility.",
-                                icon: Cpu
-                            },
-                            {
-                                title: "Unified Platform",
-                                desc: "Eliminates complexity with a consolidated security approach that strengthens resilience.",
-                                icon: ShieldCheck
-                            }
-                        ].map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="group p-8 rounded-3xl bg-white/[0.02] border border-white/10 hover:bg-white/[0.04] hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
-                            >
-                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                                    <item.icon className="w-6 h-6 text-primary" />
-                                </div>
-                                <h3 className="text-xl font-manrope font-bold mb-3 text-foreground">{item.title}</h3>
-                                <p className="text-muted-foreground leading-relaxed font-light">{item.desc}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* SECTION 2: Leadership */}
-                <div id="leadership" className="scroll-mt-24">
-                    <div className="grid lg:grid-cols-2 gap-16 items-start">
-                        <div className="sticky top-32">
-                            <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6">Leadership & Expertise</h2>
-                            <p className="text-xl text-muted-foreground leading-relaxed max-w-lg font-light">
-                                Led by security professionals with hands-on technical experience, not just managerial oversight. We've been in the trenches.
-                            </p>
+                <div id="approach" className="scroll-mt-24 border-t border-white/5 pt-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-32">
+                                <h2 className="text-3xl font-bold text-foreground mb-6 leading-tight">
+                                    Our <br />
+                                    <span className="text-muted-foreground">Approach</span>
+                                </h2>
+                                <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                                    Security that fits how modern teams actually work. We test like attackers, not auditors.
+                                </p>
+                                <div className="hidden lg:block w-12 h-1 bg-primary mb-8" />
+                            </div>
                         </div>
 
-                        <div className="space-y-6">
-                            {[
-                                {
-                                    title: "Technical-First Leadership",
-                                    desc: "Our leadership team comes from red team operations, secure architecture, and incident response backgrounds. We understand the technical reality of defense.",
-                                    icon: Users
-                                },
-                                {
-                                    title: "Research-Driven Innovation",
-                                    desc: "We invest heavily in academic partnerships and independent research initiatives to stay ahead of emerging threats before they become mainstream.",
-                                    icon: BookOpen
-                                }
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.2 }}
-                                    className="flex gap-6 p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
-                                >
-                                    <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                        <item.icon className="w-6 h-6 text-primary" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-manrope font-bold mb-2 text-foreground">{item.title}</h3>
-                                        <p className="text-muted-foreground leading-relaxed font-light">{item.desc}</p>
-                                    </div>
-                                </motion.div>
-                            ))}
+                        <div className="lg:col-span-2 flex flex-col space-y-12">
+                            <div className="group border-l-2 border-primary/20 pl-8">
+                                <h3 className="text-xl font-bold text-foreground mb-3">Real-World Attack Simulation</h3>
+                                <p className="text-muted-foreground leading-relaxed text-lg">
+                                    We test like actual attackers. We perform manual exploitation, business logic testing, and complex attack chaining that automated scanners simply cannot find.
+                                </p>
+                            </div>
+                            <div className="group border-l-2 border-primary/20 pl-8">
+                                <h3 className="text-xl font-bold text-foreground mb-3">Developer-Friendly Reporting</h3>
+                                <p className="text-muted-foreground leading-relaxed text-lg">
+                                    We speak your language. Our reports focus on reproduction steps, root cause analysis, and code-level remediation advice that your engineers can implement immediately.
+                                </p>
+                            </div>
+                            <div className="group border-l-2 border-primary/20 pl-8">
+                                <h3 className="text-xl font-bold text-foreground mb-3">Risk-Based Prioritization</h3>
+                                <p className="text-muted-foreground leading-relaxed text-lg">
+                                    Not all bugs are critical. We help you prioritize fixes based on real exploitability and business impact, so you focus on what actually matters.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* SECTION 3: Certifications */}
-                <div id="certifications" className="scroll-mt-24">
-                    <div className="mb-16 flex flex-col items-center text-center">
-                        <h2 className="text-3xl md:text-4xl font-manrope font-semibold text-foreground mb-4">Global Standards</h2>
-                        <p className="text-lg text-muted-foreground max-w-2xl font-light">
-                            We align with globally recognized security frameworks to ensure trust, compliance, and audit readiness.
+                <div id="engagement" className="scroll-mt-24 border-t border-white/5 pt-24">
+                    <div className="mb-16">
+                        <h2 className="text-3xl font-bold text-foreground mb-6">How We Engage</h2>
+                        <p className="text-muted-foreground text-lg max-w-3xl">
+                            A transparent, structured process designed to get you from assessment to secure deployment efficiently.
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
-                        {[
-                            { name: "ISO/IEC 27001", category: "Security Management" },
-                            { name: "NIST CSF", category: "Risk Framework" },
-                            { name: "OWASP Top 10", category: "Application Security" },
-                            { name: "CIS Controls", category: "Security Controls" },
-                            { name: "SOC 2 Type II", category: "Audit Compliance" },
-                            { name: "GDPR", category: "Data Privacy" },
-                            { name: "HIPAA", category: "Healthcare Security" },
-                            { name: "PCI DSS", category: "Payment Security" }
-                        ].map((cert, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.03 }}
-                                className="group relative overflow-hidden px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/10 hover:border-primary/30 transition-all duration-300 hover:bg-white/[0.05] flex items-center gap-3 cursor-default"
-                            >
-                                <div className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
-                                <span className="text-sm font-medium text-foreground">{cert.name}</span>
-                                <span className="text-xs text-muted-foreground border-l border-white/10 pl-3 group-hover:text-foreground/70 transition-colors">{cert.category}</span>
-                            </motion.div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {engagementPhases.map((phase, i) => (
+                            <div key={i} className="relative">
+                                {i < engagementPhases.length - 1 && (
+                                    <div className="hidden lg:block absolute top-6 -right-4 w-[1px] h-16 bg-white/10" />
+                                )}
+                                
+                                <div className="flex flex-col h-full p-6 rounded-2xl bg-muted/5 border border-white/5 hover:border-primary/20 transition-colors">
+                                    <span className="text-4xl font-mono font-bold text-primary/20 mb-6">{phase.step}</span>
+                                    <h3 className="text-lg font-bold text-foreground mb-3">{phase.title}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                        {phase.desc}
+                                    </p>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>
 
-                {/* SECTION 4: Methodology (The ZecurX Difference) */}
-                <div id="methodology" className="scroll-mt-24">
+                <div id="bundles" className="scroll-mt-24 border-t border-white/5 pt-24">
                     <div className="mb-16">
-                        <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground mb-6">The ZecurX Difference</h2>
-                        <p className="text-xl text-muted-foreground max-w-3xl font-light">Technology augmented with deep security expertise. We don't just alert you to problems; we help you fix them.</p>
+                        <h2 className="text-3xl font-bold text-foreground mb-6">Security Bundles</h2>
+                        <p className="text-muted-foreground text-lg max-w-3xl">
+                            Packaged engagements designed for specific needs. Clear scope, clear value.
+                        </p>
                     </div>
 
-                    <div className="flex flex-col border-t border-white/10">
-                        {[
-                            {
-                                title: "World-Class Intelligence",
-                                desc: "All data is enriched with integrated threat intelligence to provide a full picture of attacks.",
-                                link: "Learn more about Threat Intel",
-                                icon: BookOpen
-                            },
-                            {
-                                title: "24/7 Threat Hunting",
-                                desc: "Our elite team proactively searches for threats on your behalf, catching what automated tools miss.",
-                                link: "Learn more about Services",
-                                icon: Target
-                            },
-                            {
-                                title: "Fully Managed Service",
-                                desc: "Gain instant security maturity. Our experts configure and operate the solution for you.",
-                                link: "Explore Managed Security",
-                                icon: ShieldCheck
-                            }
-                        ].map((item, i) => (
-                            <motion.div
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {securityBundles.map((bundle, i) => (
+                            <div
                                 key={i}
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="group relative border-b border-white/10 py-12 md:py-16 px-4 hover:bg-white/[0.02] transition-colors cursor-pointer"
+                                className="flex flex-col p-8 rounded-2xl bg-muted/10 border border-white/10 hover:border-primary/30 transition-all duration-300"
                             >
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                    <div className="flex items-start gap-6 md:gap-12">
-                                        <span className="text-sm font-mono text-primary/50 pt-2">0{i + 1}</span>
-                                        <div>
-                                            <h3 className="text-2xl md:text-3xl font-manrope font-medium text-foreground group-hover:text-primary transition-colors mb-4">{item.title}</h3>
-                                            <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed font-light group-hover:text-foreground/80 transition-colors">{item.desc}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-4 md:pl-12">
-                                        <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-300">
-                                            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary-foreground -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
+                                <h3 className="text-2xl font-bold text-foreground mb-2">{bundle.name}</h3>
+                                <p className="text-sm text-primary font-medium mb-6 uppercase tracking-wide">{bundle.tagline}</p>
+                                <p className="text-muted-foreground leading-relaxed mb-8 flex-1 border-b border-white/5 pb-8">
+                                    {bundle.description}
+                                </p>
+                                
+                                <ul className="space-y-4">
+                                    {bundle.features.map((feature, j) => (
+                                        <li key={j} className="flex items-start gap-3 text-sm text-foreground/80">
+                                            <div className="mt-1 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         ))}
                     </div>
                 </div>
 
-                {/* SECTION 5: Comparison (3 Reasons + Testimonials) */}
-                <div id="comparison" className="scroll-mt-24 grid lg:grid-cols-2 gap-16 items-center pb-24">
-                    <div>
-                        <h2 className="text-4xl font-manrope font-bold text-foreground mb-12">Why industry leaders choose ZecurX</h2>
-                        <div className="space-y-8">
-                            {[
-                                {
-                                    title: "Better Protection",
-                                    desc: "Get protection across the entire threat lifecycle by combining machine learning, AI, and offensive insight in a single solution."
-                                },
-                                {
-                                    title: "Better Performance",
-                                    desc: "A single lightweight approach works everywhere preventing friction and ensuring business continuity."
-                                },
-                                {
-                                    title: "Better Value",
-                                    desc: "Get better protection while simplifying your stack. An extensible platform that grows with you without adding complexity."
-                                }
-                            ].map((reason, i) => (
-                                <div key={i} className="flex gap-6 group">
-                                    <div className="mt-1 w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center flex-shrink-0 group-hover:bg-foreground group-hover:text-background transition-all duration-300">
-                                        <CheckCircle2 className="w-6 h-6 text-foreground group-hover:text-background transition-colors" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-foreground transition-colors">{reason.title}</h3>
-                                        <p className="text-muted-foreground leading-relaxed">{reason.desc}</p>
-                                    </div>
-                                </div>
-                            ))}
+                <div id="what-we-dont-do" className="scroll-mt-24 border-t border-white/5 pt-24">
+                    <div className="grid lg:grid-cols-2 gap-16">
+                        <div>
+                            <h2 className="text-3xl font-bold text-foreground mb-6">What We Don&apos;t Do</h2>
+                            <p className="text-lg text-muted-foreground leading-relaxed mb-8">
+                                We believe in specialization. To maintain high quality, we explicitly do <strong>not</strong> offer these services:
+                            </p>
+                            <ul className="space-y-4">
+                                {whatWeDontDo.map((item, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-muted-foreground">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50" />
+                                        <span>{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="p-8 rounded-2xl bg-primary/5 border border-primary/10">
+                            <h3 className="text-xl font-bold text-foreground mb-4">What We Excel At</h3>
+                            <p className="text-muted-foreground leading-relaxed mb-8">
+                                We focus 100% on **offensive security assessment** and **security engineering**. We help you find bugs and fix them. That&apos;s it. No product reselling, no managed services fluff.
+                            </p>
+                            <Link href="/services" className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-2">
+                                Explore Our Services <ArrowRight className="w-4 h-4" />
+                            </Link>
                         </div>
                     </div>
+                </div>
 
-                    {/* Testimonial Carousel */}
-                    <div
-                        className="relative overflow-hidden bg-gradient-to-br from-muted/50 to-background border border-border rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-black/5"
-                        onMouseEnter={() => setIsPaused(true)}
-                        onMouseLeave={() => setIsPaused(false)}
-                    >
-                        {/* Decorative Quote Icon */}
+                <div id="testimonials" className="scroll-mt-24 pb-24 border-t border-white/5 pt-24">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-muted/10 to-background border border-white/10 rounded-3xl p-8 md:p-12">
                         <Quote className="absolute top-8 right-8 w-24 h-24 text-foreground/5 -rotate-12 pointer-events-none" />
 
                         <div className="relative z-10">
@@ -307,36 +265,34 @@ export default function WhyContent() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={prevTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm cursor-pointer"
-                                        aria-label="Previous testimonial"
+                                        className="w-10 h-10 rounded-full bg-background/50 hover:bg-background border border-white/10 flex items-center justify-center text-foreground transition-colors"
                                     >
                                         <ChevronLeft className="w-5 h-5" />
                                     </button>
                                     <button
                                         onClick={nextTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background hover:bg-muted border border-border flex items-center justify-center text-foreground transition-colors shadow-sm cursor-pointer"
-                                        aria-label="Next testimonial"
+                                        className="w-10 h-10 rounded-full bg-background/50 hover:bg-background border border-white/10 flex items-center justify-center text-foreground transition-colors"
                                     >
                                         <ChevronRight className="w-5 h-5" />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="min-h-[240px] relative flex flex-col justify-between">
+                            <div className="min-h-[180px]">
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={currentIndex}
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        transition={{ duration: 0.4 }}
                                     >
-                                        <p className="text-xl md:text-2xl font-manrope font-medium text-foreground mb-8 leading-relaxed">
-                                            "{testimonials[currentIndex].quote}"
+                                        <p className="text-xl md:text-3xl font-light text-foreground mb-8 leading-relaxed">
+                                            &quot;{testimonials[currentIndex].quote}&quot;
                                         </p>
 
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-foreground to-muted-foreground flex items-center justify-center text-background font-bold text-lg">
+                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
                                                 {testimonials[currentIndex].name.charAt(0)}
                                             </div>
                                             <div>
@@ -346,26 +302,6 @@ export default function WhyContent() {
                                         </div>
                                     </motion.div>
                                 </AnimatePresence>
-                            </div>
-
-                            <div className="mt-10 pt-8 border-t border-border/50 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                                <div className="flex gap-1.5">
-                                    {testimonials.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => setCurrentIndex(i)}
-                                            className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${i === currentIndex
-                                                ? "bg-foreground w-8"
-                                                : "bg-border w-2 hover:bg-foreground/50"
-                                                }`}
-                                            aria-label={`Go to testimonial ${i + 1}`}
-                                        />
-                                    ))}
-                                </div>
-                                <Button className="w-full sm:w-auto px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-xl h-auto gap-2 text-sm bg-foreground text-background hover:bg-foreground/90">
-                                    Start Your Journey
-                                    <ArrowRight className="w-4 h-4" />
-                                </Button>
                             </div>
                         </div>
                     </div>
