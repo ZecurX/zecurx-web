@@ -4,8 +4,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
     GraduationCap, Award, Users,
-    BookOpen, ArrowRight
+    BookOpen, ArrowRight, ShoppingBag, ShoppingCart
 } from 'lucide-react';
+import Link from 'next/link';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
@@ -174,6 +175,31 @@ export default function AcademyPage() {
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
+
+            <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.5 }}
+                className="fixed top-24 left-1/2 -translate-x-1/2 z-40"
+            >
+                <div className="flex items-center bg-foreground/95 backdrop-blur-xl rounded-full p-1.5 shadow-lg shadow-black/10 border border-white/10">
+                    <Link
+                        href="/shop"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-background hover:text-background/80 transition-colors"
+                    >
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>Shop</span>
+                    </Link>
+                    
+                    <Link
+                        href="/cart"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
+                    >
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>Cart</span>
+                    </Link>
+                </div>
+            </motion.div>
 
             {/* HERO SECTION */}
             <section className="relative pt-40 pb-20 overflow-hidden">
