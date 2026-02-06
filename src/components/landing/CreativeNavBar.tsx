@@ -16,12 +16,10 @@ const navData = {
         href: "/services",
         description: "Expert security services",
         items: [
-            { title: "Application Security", href: "/services/application-security", desc: "Web, API & mobile penetration testing" },
-            { title: "Cloud Security", href: "/services/cloud-security", desc: "AWS, GCP & Azure security assessments" },
-            { title: "Secure Code Review", href: "/services/secure-code-review", desc: "Manual review + SAST analysis" },
-            { title: "DevSecOps", href: "/services/devsecops", desc: "CI/CD security & Kubernetes hardening" },
-            { title: "AI Security", href: "/services/ai-security", desc: "LLM threat modeling & abuse testing" },
-            { title: "Secure Development", href: "/services/secure-development", desc: "Build secure MVPs & prototypes" },
+            { title: "Application Security", href: "/services/application-security", desc: "Web, API & source code security testing" },
+            { title: "Cloud & DevSecOps", href: "/services/cloud-devsecops", desc: "Cloud misconfig & CI/CD security audits" },
+            { title: "Secure AI Development", href: "/services/secure-ai-development", desc: "LLM security & AI abuse testing" },
+            { title: "Compliance Readiness", href: "/services/compliance-readiness", desc: "ISO 27001, SOC 2 & DPDP preparation" },
         ]
     },
     resources: {
@@ -231,10 +229,10 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div className="p-4">
-                                    <motion.div 
+<motion.div 
                                         className={cn(
                                             "grid gap-2",
-                                            activeDropdown === "services" ? "grid-cols-3 min-w-[600px]" : "grid-cols-2 min-w-[400px]"
+                                            activeDropdown === "services" ? "grid-cols-2 min-w-[500px]" : "grid-cols-2 min-w-[400px]"
                                         )}
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}

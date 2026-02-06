@@ -11,30 +11,43 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 const services = [
     {
         id: 0,
-        title: 'Enterprise Security',
-        fullTitle: 'Enterprise Cybersecurity Services.',
-        description: 'Threat detection, vulnerability assessment, pentesting, and compliance audits — informed by how attackers think, move, and exploit.',
-        tags: ["Risk Assessments", "Threat Modeling", "Adversary Simulation", "Compliance"],
+        title: 'Application Security',
+        fullTitle: 'Application Security Testing.',
+        description: 'Web, API, and source code security testing. We identify and fix real-world vulnerabilities before attackers exploit them.',
+        tags: ["Web Pentesting", "API Security", "Source Code Review", "Mobile Security"],
         icon: Shield,
-        iconSrc: "/assets/icons/security.svg"
+        iconSrc: "/assets/icons/security.svg",
+        href: "/services/application-security"
     },
     {
         id: 1,
-        title: 'Secure Development',
-        fullTitle: 'Secure Software & Systems.',
-        description: 'Secure SDLC, DevSecOps implementation, and cloud-native security architecture built into systems by design, not added as an afterthought.',
-        tags: ["Secure SDLC", "DevSecOps", "Cloud Security", "Code Review"],
+        title: 'Cloud & DevSecOps',
+        fullTitle: 'Cloud & DevSecOps Security.',
+        description: 'Cloud misconfiguration and CI/CD security audits. Secure your AWS, GCP, or Azure infrastructure with DevSecOps best practices.',
+        tags: ["Cloud Security", "CI/CD Hardening", "Kubernetes", "Infrastructure as Code"],
         icon: Target,
-        iconSrc: "/assets/icons/dev.svg"
+        iconSrc: "/assets/icons/dev.svg",
+        href: "/services/cloud-devsecops"
     },
     {
         id: 2,
-        title: 'AI-Driven Security',
-        fullTitle: 'AI Security Capabilities.',
-        description: 'AI-powered risk identification, automated remediation, and behavioral insights for faster detection, smarter response, and lower operational risk.',
-        tags: ["AI Risk ID", "Auto-Remediation", "Behavioral Insights", "Smarter Response"],
+        title: 'Secure AI Development',
+        fullTitle: 'Secure AI Applications.',
+        description: 'Build secure AI-powered MVPs and systems. LLM integration security, threat modeling, and AI abuse testing.',
+        tags: ["LLM Security", "AI Threat Modeling", "Prompt Injection", "AI Abuse Testing"],
         icon: Search,
-        iconSrc: "/assets/icons/ai.svg"
+        iconSrc: "/assets/icons/ai.svg",
+        href: "/services/secure-ai-development"
+    },
+    {
+        id: 3,
+        title: 'Compliance Readiness',
+        fullTitle: 'Compliance & Certification.',
+        description: 'ISO 27001, SOC 2, and DPDP readiness support. Prepare for compliance without slowing down your development.',
+        tags: ["ISO 27001", "SOC 2", "DPDP", "Security Policies"],
+        icon: Shield,
+        iconSrc: "/assets/icons/security.svg",
+        href: "/services/compliance-readiness"
     }
 ];
 
@@ -177,11 +190,7 @@ export default function WhatWeDoSection() {
                                                 <ArrowRight className="w-4 h-4" />
                                             </Button>
                                             <Button
-                                                onClick={() => {
-                                                    if (activeIndex === 0) router.push('/services');
-                                                    else if (activeIndex === 1) router.push('/services');
-                                                    else if (activeIndex === 2) router.push('/platform');
-                                                }}
+                                                onClick={() => router.push(services[activeIndex].href)}
                                                 variant="ghost"
                                                 className="h-12 px-6 rounded-full flex items-center gap-2 hover:bg-muted font-medium border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground"
                                             >
