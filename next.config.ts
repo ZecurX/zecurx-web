@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'zexc.in-maa-1.linodeobjects.com',
+        hostname: 'zecurx-web.fsn1.your-objectstorage.com',
         port: '',
         pathname: '/**',
       },

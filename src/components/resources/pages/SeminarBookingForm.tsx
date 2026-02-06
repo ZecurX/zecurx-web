@@ -21,7 +21,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-const CDN_BASE = "https://zexc.in-maa-1.linodeobjects.com/partners";
+const CDN_BASE = "https://zecurx-web.fsn1.your-objectstorage.com/partners";
 
 const partnerLogos = [
     { name: "RIBS", light: `${CDN_BASE}/ribs.png`, dark: `${CDN_BASE}/ribs.png` },

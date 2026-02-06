@@ -3,7 +3,7 @@
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import Image from "next/image";
 
-const CDN_BASE = "https://zexc.in-maa-1.linodeobjects.com/partners";
+const CDN_BASE = "https://zecurx-web.fsn1.your-objectstorage.com/partners";
 
 const partners = [
   { name: "MSRIT", light: `${CDN_BASE}/ramaiah-light.png`, dark: `${CDN_BASE}/ramaiah-light.png` },
