@@ -9,10 +9,10 @@ require('dotenv').config({ path: '.env.local' });
 
 const s3Client = new S3Client({
   region: 'us-east-1',
-  endpoint: 'https://in-maa-1.linodeobjects.com',
+  endpoint: 'https://fsn1.your-objectstorage.com',
   credentials: {
-    accessKeyId: process.env.LINODE_S3_ACCESS_KEY?.trim(),
-    secretAccessKey: process.env.LINODE_S3_SECRET_KEY?.trim(),
+    accessKeyId: process.env.HETZNER_S3_ACCESS_KEY?.trim(),
+    secretAccessKey: process.env.HETZNER_S3_SECRET_KEY?.trim(),
   },
   forcePathStyle: true,
 });
@@ -68,7 +68,7 @@ function getAllImages(dir, baseDir = dir) {
 async function migrate() {
   console.log('Starting image migration to Linode Object Storage...\n');
   console.log(`Bucket: ${BUCKET_NAME}`);
-  console.log(`Endpoint: https://in-maa-1.linodeobjects.com\n`);
+  console.log(`Endpoint: https://fsn1.your-objectstorage.com\n`);
   
   const images = getAllImages(PUBLIC_DIR);
   console.log(`Found ${images.length} images to migrate\n`);
@@ -101,7 +101,7 @@ async function migrate() {
   console.log(`   Uploaded: ${uploaded}`);
   console.log(`   Skipped: ${skipped}`);
   console.log(`   Failed: ${failed}`);
-  console.log(`\nBase URL: https://${BUCKET_NAME}.in-maa-1.linodeobjects.com/`);
+  console.log(`\nBase URL: https://${BUCKET_NAME}.fsn1.your-objectstorage.com/`);
 }
 
 migrate().catch(console.error);
