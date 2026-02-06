@@ -134,7 +134,7 @@ export interface SessionInfo {
 }
 
 // Blog types
-export type BlogStatus = 'draft' | 'published';
+export type BlogStatus = 'draft' | 'published' | 'scheduled';
 
 export interface BlogLabel {
   id: string;
@@ -184,6 +184,8 @@ export interface UpdateBlogPostRequest {
   status?: BlogStatus;
   meta_description?: string;
   label_ids?: string[];
+  scheduled_publish_at?: string | null;
+  reading_time_minutes?: number;
 }
 
 export interface CreateBlogLabelRequest {

@@ -1,12 +1,21 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Send, Loader2, AlertCircle, ExternalLink, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, Send, Loader2, AlertCircle, ExternalLink, Trash2, Calendar, Eye, FileText, Clock } from 'lucide-react';
 import Link from 'next/link';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
+import VersionHistoryPanel from '@/components/admin/blog/VersionHistoryPanel';
+import MediaLibrary from '@/components/admin/blog/MediaLibrary';
+import BlogPreview from '@/components/admin/blog/BlogPreview';
+import TemplateSelector from '@/components/admin/blog/TemplateSelector';
+import SchedulePublishDialog from '@/components/admin/blog/SchedulePublishDialog';
+import SocialMediaPreview from '@/components/admin/blog/SocialMediaPreview';
+import KeyboardShortcutsModal from '@/components/admin/blog/KeyboardShortcutsModal';
+import RelatedPostsSelector from '@/components/admin/blog/RelatedPostsSelector';
+import AIContentSuggestions from '@/components/admin/blog/AIContentSuggestions';
 import { BlogLabel, UpdateBlogPostRequest, BlogPost } from '@/types/auth';
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,10 +23,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const router = useRouter();
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  
+
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
@@ -25,8 +33,26 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const [featuredImage, setFeaturedImage] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-  const [status, setStatus] = useState<'draft' | 'published'>('draft');
+  const [labelDetails, setLabelDetails] = useState<BlogLabel[]>([]);
+  const [status, setStatus] = useState<'draft' | 'published' | 'scheduled'>('draft');
   const [originalPost, setOriginalPost] = useState<BlogPost | null>(null);
+  const [scheduledPublishAt, setScheduledPublishAt] = useState<string | null>(null);
+  const [readingTime, setReadingTime] = useState(0);
+  const [relatedPosts, setRelatedPosts] = useState<string[]>([]);
+
+  // Modal states
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+
+  // Calculate reading time when content changes
+  useEffect(() => {
+    const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    const wordCount = text.split(' ').filter(w => w.length > 0).length;
+    setReadingTime(Math.ceil(wordCount / 200));
+  }, [content]);
 
   // Fetch Post Data
   useEffect(() => {
@@ -34,10 +60,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       try {
         const res = await fetch(`/api/admin/blog/${id}`);
         if (!res.ok) throw new Error('Failed to fetch post');
-        
-        const post: BlogPost = await res.json();
+
+        const post = await res.json();
         setOriginalPost(post);
-        
+
         setTitle(post.title);
         setSlug(post.slug);
         setContent(post.content);
@@ -45,7 +71,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         setFeaturedImage(post.featured_image_url || '');
         setMetaDescription(post.meta_description || '');
         setStatus(post.status);
-        setSelectedLabels(post.labels?.map(l => l.id) || []);
+        setSelectedLabels(post.labels?.map((l: BlogLabel) => l.id) || []);
+        setLabelDetails(post.labels || []);
+        setScheduledPublishAt(post.scheduled_publish_at || null);
+        setRelatedPosts(post.related_posts || []);
       } catch (err) {
         console.error('Error loading post:', err);
         setError('Failed to load blog post');
@@ -90,7 +119,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     return await res.json();
   };
 
-  const handleSave = async (newStatus?: 'draft' | 'published', silent: boolean = false) => {
+  const handleSave = async (newStatus?: 'draft' | 'published' | 'scheduled', silent: boolean = false) => {
     if (!title.trim() || !content.trim()) return;
 
     if (!silent) setSaving(true);
@@ -104,7 +133,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
         featured_image_url: featuredImage,
         meta_description: metaDescription,
         status: newStatus || status,
-        label_ids: selectedLabels
+        label_ids: selectedLabels,
+        scheduled_publish_at: scheduledPublishAt,
+        reading_time_minutes: readingTime
       };
 
       const res = await fetch(`/api/admin/blog/${id}`, {
@@ -121,9 +152,6 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       const updatedPost = await res.json();
       if (newStatus) setStatus(newStatus);
       setLastSaved(new Date());
-      
-      // Update original post state to reflect saved changes
-      // This is important for auto-save logic if we were comparing changes
       setOriginalPost(updatedPost);
 
     } catch (err: any) {
@@ -131,6 +159,16 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       if (!silent) setError(err.message || 'Failed to save changes');
     } finally {
       if (!silent) setSaving(false);
+    }
+  };
+
+  const handleSchedule = async (scheduledDate: Date | null) => {
+    if (scheduledDate === null) {
+      setScheduledPublishAt(null);
+      await handleSave('draft');
+    } else {
+      setScheduledPublishAt(scheduledDate.toISOString());
+      await handleSave('scheduled');
     }
   };
 
@@ -157,11 +195,33 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     }
   };
 
+  const handleRestoreVersion = (version: any) => {
+    if (confirm('Restore this version? Current unsaved changes will be lost.')) {
+      setTitle(version.title);
+      setContent(version.content);
+      setExcerpt(version.excerpt || '');
+    }
+  };
+
+  const handlePreviewVersion = (version: any) => {
+    // Open preview with version content
+    setShowPreview(true);
+  };
+
+  const handleApplyTemplate = (templateContent: string) => {
+    if (content && !confirm('Replace current content with template?')) return;
+    setContent(templateContent);
+  };
+
+  const handleMediaSelect = (url: string) => {
+    // Insert at cursor position in editor - for now just set as featured image
+    setFeaturedImage(url);
+    setShowMediaLibrary(false);
+  };
+
   // Auto-save every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      // Check if there are changes to save
-      // For simplicity, we just save if we have data loaded
       if (!initialLoading && title && content) {
         handleSave(undefined, true);
       }
@@ -192,7 +252,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between sticky top-0 z-10 bg-background/95 backdrop-blur py-4 border-b border-border/40">
         <div className="flex items-center gap-4">
@@ -204,15 +264,43 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
           </Link>
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold tracking-tight">Edit Post</h1>
-            {lastSaved && (
-              <span className="text-xs text-muted-foreground">
-                Last saved: {lastSaved.toLocaleTimeString()}
-              </span>
-            )}
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              {lastSaved && (
+                <span>Last saved: {lastSaved.toLocaleTimeString()}</span>
+              )}
+              {readingTime > 0 && (
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {readingTime} min read
+                </span>
+              )}
+              {scheduledPublishAt && (
+                <span className="flex items-center gap-1 text-primary">
+                  <Calendar className="w-3 h-3" />
+                  Scheduled: {new Date(scheduledPublishAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
           </div>
         </div>
-        
-        <div className="flex items-center gap-3">
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPreview(true)}
+            className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
+            title="Preview"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => setShowTemplates(true)}
+            className="flex items-center gap-2 px-3 py-2 text-muted-foreground hover:bg-muted rounded-lg transition-colors"
+            title="Templates"
+          >
+            <FileText className="w-4 h-4" />
+          </button>
+
           {status === 'published' && (
             <Link
               href={`/blog/${slug}`}
@@ -223,7 +311,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
               View Live
             </Link>
           )}
-          
+
           <button
             onClick={() => handleSave(status === 'published' ? 'published' : 'draft')}
             disabled={saving}
@@ -232,15 +320,22 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save'}
           </button>
-          
+
+          <button
+            onClick={() => setShowScheduleDialog(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-600 rounded-lg hover:bg-orange-500/20 transition-colors"
+          >
+            <Calendar className="w-4 h-4" />
+            Schedule
+          </button>
+
           <button
             onClick={() => handleSave(status === 'published' ? 'draft' : 'published')}
             disabled={saving}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
-              status === 'published' 
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${status === 'published'
                 ? 'bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20'
                 : 'bg-primary text-primary-foreground hover:bg-primary/90'
-            }`}
+              }`}
           >
             {status === 'published' ? 'Unpublish' : 'Publish'}
           </button>
@@ -281,11 +376,32 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             content={content}
             onChange={setContent}
             onImageUpload={handleImageUpload}
+            onOpenMediaLibrary={() => setShowMediaLibrary(true)}
+            onOpenKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
           />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* AI Suggestions */}
+          <AIContentSuggestions
+            content={content}
+            currentTitle={title}
+            currentExcerpt={excerpt}
+            currentMetaDescription={metaDescription}
+            onApplyTitle={setTitle}
+            onApplyExcerpt={setExcerpt}
+            onApplyMetaDescription={setMetaDescription}
+          />
+
+          {/* Version History */}
+          <VersionHistoryPanel
+            postId={id}
+            currentContent={content}
+            onRestore={handleRestoreVersion}
+            onPreview={handlePreviewVersion}
+          />
+
           {/* Featured Image */}
           <div className="bg-card/40 border border-border/50 rounded-xl p-4 space-y-4">
             <h3 className="font-semibold text-foreground">Featured Image</h3>
@@ -301,7 +417,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             <h3 className="font-semibold text-foreground">Labels</h3>
             <LabelSelector
               selectedLabels={selectedLabels}
-              onChange={setSelectedLabels}
+              onChange={(labels) => {
+                setSelectedLabels(labels);
+              }}
               onCreateLabel={handleCreateLabel}
             />
           </div>
@@ -318,6 +436,15 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             />
           </div>
 
+          {/* Related Posts */}
+          <div className="bg-card/40 border border-border/50 rounded-xl p-4">
+            <RelatedPostsSelector
+              postId={id}
+              selectedPosts={relatedPosts}
+              onChange={setRelatedPosts}
+            />
+          </div>
+
           {/* SEO */}
           <div className="bg-card/40 border border-border/50 rounded-xl p-4 space-y-4">
             <h3 className="font-semibold text-foreground">SEO Settings</h3>
@@ -330,7 +457,19 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
                 placeholder="Meta description for search engines..."
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"
               />
+              <p className="text-xs text-muted-foreground">
+                {metaDescription.length}/160 characters
+              </p>
             </div>
+          </div>
+
+          {/* Social Media Previews */}
+          <div className="bg-card/40 border border-border/50 rounded-xl p-4">
+            <SocialMediaPreview
+              title={title}
+              description={excerpt || metaDescription}
+              imageUrl={featuredImage}
+            />
           </div>
 
           {/* Delete Button */}
@@ -345,6 +484,42 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <MediaLibrary
+        isOpen={showMediaLibrary}
+        onClose={() => setShowMediaLibrary(false)}
+        onSelect={handleMediaSelect}
+        onUpload={handleImageUpload}
+      />
+
+      <BlogPreview
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        title={title}
+        content={content}
+        excerpt={excerpt}
+        featuredImage={featuredImage}
+        labels={labelDetails}
+      />
+
+      <TemplateSelector
+        isOpen={showTemplates}
+        onClose={() => setShowTemplates(false)}
+        onSelect={handleApplyTemplate}
+      />
+
+      <SchedulePublishDialog
+        isOpen={showScheduleDialog}
+        onClose={() => setShowScheduleDialog(false)}
+        onSchedule={handleSchedule}
+        currentSchedule={scheduledPublishAt}
+      />
+
+      <KeyboardShortcutsModal
+        isOpen={showKeyboardShortcuts}
+        onClose={() => setShowKeyboardShortcuts(false)}
+      />
     </div>
   );
 }

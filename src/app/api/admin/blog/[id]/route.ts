@@ -129,11 +129,21 @@ export async function PUT(
       values.push(body.meta_description || null);
       fieldsUpdated.push('meta_description');
     }
+    if (body.scheduled_publish_at !== undefined) {
+      updates.push(`scheduled_publish_at = $${paramIndex++}`);
+      values.push(body.scheduled_publish_at || null);
+      fieldsUpdated.push('scheduled_publish_at');
+    }
+    if (body.reading_time_minutes !== undefined) {
+      updates.push(`reading_time_minutes = $${paramIndex++}`);
+      values.push(body.reading_time_minutes);
+      fieldsUpdated.push('reading_time_minutes');
+    }
     if (body.status !== undefined) {
       updates.push(`status = $${paramIndex++}`);
       values.push(body.status);
       fieldsUpdated.push('status');
-      
+
       if (body.status === 'published' && !existingPost.published_at) {
         updates.push(`published_at = NOW()`);
       } else if (body.status === 'draft') {
@@ -164,7 +174,7 @@ export async function PUT(
 
     if (body.label_ids !== undefined) {
       await db.query('DELETE FROM blog_post_labels WHERE blog_post_id = $1', [id]);
-      
+
       if (body.label_ids.length > 0) {
         const labelValues = body.label_ids.map((_, i) => `($1, $${i + 2})`).join(', ');
         await db.query(
