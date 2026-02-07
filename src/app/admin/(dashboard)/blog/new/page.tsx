@@ -318,6 +318,7 @@ export default function NewBlogPostPage() {
                       setFeaturedImage(url);
                       return url;
                     }}
+                    onUrlChange={(url) => setFeaturedImage(url)}
                     onRemove={() => setFeaturedImage('')}
                   />
                 </div>

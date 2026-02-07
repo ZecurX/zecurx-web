@@ -25,15 +25,22 @@ const navData = {
     resources: {
         label: "Resources",
         href: "/resources",
-        description: "Learn and explore",
+        description: "Security insights & research",
         items: [
-            { title: "Blog", href: "/blog", desc: "Latest security insights and updates" },
-            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research papers" },
-            { title: "Guides & Checklists", href: "/resources/guides", desc: "Practical security guides" },
-            { title: "Research", href: "/resources/research", desc: "Security research publications" },
-            { title: "Seminar", href: "/resources/seminars", desc: "Live workshops & training events" },
+            { title: "Security Research", href: "/resources/research", desc: "Vulnerability research & advisories" },
+            { title: "Security Blog", href: "/blog", desc: "Latest insights & technical articles" },
+            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research" },
         ]
     },
+    academy: {
+        label: "Academy",
+        href: "/academy",
+        description: "Certified security training",
+        items: [
+            { title: "Training", href: "/academy#courses", desc: "Certified security training programs" },
+            { title: "Seminars", href: "/resources/seminars", desc: "Live workshops & events" },
+        ]
+    }
 };
 
 export default function CreativeNavBar({ forceDark = false, showCart = false }: { forceDark?: boolean, showCart?: boolean }) {
@@ -106,7 +113,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
 
                         {/* Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-2 relative">
-                            {Object.entries(navData).map(([key, data]) => (
+                            {Object.entries(navData).filter(([key]) => key !== 'academy').map(([key, data]) => (
                                     <Link
                                         key={key}
                                         href={data.href}
@@ -163,16 +170,24 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
 
                         {/* Right Actions */}
                         <div className="hidden lg:flex items-center gap-2">
-                            <Link
-                                href="/academy"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
+                            <div 
+                                className="relative"
+                                onMouseEnter={() => handleMouseEnter('academy')}
                             >
-                                Academy
-                            </Link>
-                            
+                                <Link
+                                    href="/academy"
+                                    className={cn(
+                                        "flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                                        activeDropdown === 'academy'
+                                            ? (forceDark ? "text-white" : "text-foreground")
+                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
+                                    )}
+                                >
+                                    Academy
+                                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", activeDropdown === 'academy' && "rotate-180")} />
+                                </Link>
+                            </div>
+
                             <div className="mx-3 flex items-center gap-3">
                                 <ThemeToggle />
                                 {showCart && <CartIcon />}
@@ -216,7 +231,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
 
                     {/* Dropdown */}
                     <AnimatePresence>
-                        {activeDropdown && (
+                        {activeDropdown && activeDropdown in navData && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: "auto" }}
@@ -229,7 +244,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div className="p-4">
-<motion.div 
+                                    <motion.div 
                                         className={cn(
                                             "grid gap-2",
                                             activeDropdown === "services" ? "grid-cols-2 min-w-[500px]" : "grid-cols-2 min-w-[400px]"
@@ -375,14 +390,6 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                         className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
                                     >
                                         How We Work
-                                    </Link>
-
-                                    <Link
-                                        href="/academy"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
-                                    >
-                                        Academy
                                     </Link>
                                 </div>
                             </div>

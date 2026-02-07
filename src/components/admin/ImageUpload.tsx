@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Loader2, Link as LinkIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface ImageUploadProps {
   currentImage?: string | null;
   onUpload: (file: File) => Promise<string>;
+  onUrlChange?: (url: string) => void;
   onRemove?: () => void;
   label?: string;
   maxSizeMB?: number;
@@ -16,15 +17,28 @@ interface ImageUploadProps {
 export default function ImageUpload({ 
   currentImage, 
   onUpload, 
+  onUrlChange,
   onRemove,
   label = 'Featured Image',
-  maxSizeMB = 5 
+  maxSizeMB = 20 
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
+  const [mode, setMode] = useState<'upload' | 'url'>('upload');
+  const [urlInput, setUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUrlSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!urlInput.trim()) return;
+    
+    setPreview(urlInput);
+    if (onUrlChange) {
+      onUrlChange(urlInput);
+    }
+  };
 
   const validateFile = (file: File): string | null => {
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
@@ -101,6 +115,7 @@ export default function ImageUpload({
   const handleRemove = () => {
     setPreview(null);
     setError(null);
+    setUrlInput('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -110,7 +125,36 @@ export default function ImageUpload({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-1 bg-muted/50 rounded-lg w-fit">
+        <button
+          type="button"
+          onClick={() => setMode('upload')}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+            mode === 'upload' 
+              ? "bg-background text-foreground shadow-sm" 
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <Upload className="w-3.5 h-3.5" />
+          Upload
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('url')}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+            mode === 'url' 
+              ? "bg-background text-foreground shadow-sm" 
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <LinkIcon className="w-3.5 h-3.5" />
+          URL
+        </button>
+      </div>
+
       {preview ? (
         <div className="relative group">
           <div className="relative w-full aspect-video bg-muted/50 rounded-xl overflow-hidden border border-border/50">
@@ -139,7 +183,7 @@ export default function ImageUpload({
             </div>
           )}
         </div>
-      ) : (
+      ) : mode === 'upload' ? (
         <div
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
@@ -181,6 +225,32 @@ export default function ImageUpload({
               </div>
             </div>
           )}
+        </div>
+      ) : (
+        <div className="bg-muted/20 border-2 border-dashed border-border/50 rounded-xl p-8">
+          <form onSubmit={handleUrlSubmit} className="space-y-4">
+            <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+              <LinkIcon className="w-8 h-8 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-foreground">Paste image URL</p>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  className="flex-1 px-4 py-2 bg-background border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       )}
 
