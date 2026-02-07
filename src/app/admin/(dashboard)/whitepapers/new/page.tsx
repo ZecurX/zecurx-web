@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { CreateWhitepaperRequest, WhitepaperStatus } from '@/types/auth';
 import Image from 'next/image';
+import { uploadFileToS3 } from '@/lib/upload-utils';
 
 const CATEGORIES = [
   'Zero Trust Security',
@@ -62,22 +63,8 @@ export default function NewWhitepaperPage() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'pdf');
-
-      const res = await fetch('/api/admin/whitepapers/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Failed to upload PDF');
-      }
-
-      const data = await res.json();
-      setPdfUrl(data.url);
+      const url = await uploadFileToS3(file, 'whitepapers');
+      setPdfUrl(url);
       setPdfFilename(file.name);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to upload PDF';
@@ -105,22 +92,8 @@ export default function NewWhitepaperPage() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'image');
-
-      const res = await fetch('/api/admin/whitepapers/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Failed to upload image');
-      }
-
-      const data = await res.json();
-      setCoverImageUrl(data.url);
+      const url = await uploadFileToS3(file, 'whitepapers');
+      setCoverImageUrl(url);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to upload image';
       setError(message);
