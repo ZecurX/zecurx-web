@@ -30,7 +30,6 @@ export async function uploadToS3(
     Body: file,
     ContentType: contentType,
     CacheControl: options?.cacheControl || 'public, max-age=31536000',
-    ACL: 'public-read',
   });
 
   await s3Client.send(command);
@@ -102,7 +101,6 @@ export async function getSignedUploadUrl(
     Key: key,
     ContentType: contentType,
     CacheControl: 'public, max-age=31536000',
-    ACL: 'public-read',
   });
 
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn });
