@@ -22,13 +22,9 @@ async function setCors() {
         AllowedHeaders: ['*'],
         AllowedMethods: ['GET', 'PUT', 'POST', 'DELETE', 'HEAD'],
         AllowedOrigins: [
-          'http://localhost:3000',
-          'https://zecurx.com',
-          'https://www.zecurx.com',
-          'https://zecurx-web.vercel.app',
-          'https://*.vercel.app'
+          '*'
         ],
-        ExposeHeaders: ['ETag'],
+        ExposeHeaders: ['ETag', 'Content-Type', 'Content-Length', 'Access-Control-Allow-Origin'],
         MaxAgeSeconds: 3000
       }
     ]
