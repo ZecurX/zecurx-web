@@ -292,6 +292,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             <ImageUpload
               currentImage={featuredImage}
               onUpload={handleImageUpload}
+              onUrlChange={(url) => setFeaturedImage(url)}
               onRemove={() => setFeaturedImage('')}
             />
           </div>

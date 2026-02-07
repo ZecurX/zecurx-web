@@ -23,7 +23,8 @@ import {
   AlignRight,
   Link as LinkIcon,
   Image as ImageIcon,
-  Code2
+  Code2,
+  Upload
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -42,7 +43,9 @@ export default function RichTextEditor({
   onImageUpload 
 }: RichTextEditorProps) {
   const [showLinkInput, setShowLinkInput] = useState(false);
+  const [showImageInput, setShowImageInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -106,6 +109,14 @@ export default function RichTextEditor({
     };
 
     input.click();
+  };
+
+  const handleAddImageLink = () => {
+    if (imageUrl) {
+      editor.chain().focus().setImage({ src: imageUrl }).run();
+      setImageUrl('');
+      setShowImageInput(false);
+    }
   };
 
   const handleAddLink = () => {
@@ -271,12 +282,24 @@ export default function RichTextEditor({
             <LinkIcon className="w-4 h-4" />
           </ToolbarButton>
           {onImageUpload && (
-            <ToolbarButton
-              onClick={handleImageUpload}
-              title="Insert Image"
-            >
-              <ImageIcon className="w-4 h-4" />
-            </ToolbarButton>
+            <div className="flex gap-0.5">
+              <ToolbarButton
+                onClick={handleImageUpload}
+                title="Upload Image"
+              >
+                <Upload className="w-4 h-4" />
+              </ToolbarButton>
+              <ToolbarButton
+                onClick={() => {
+                  setShowImageInput(!showImageInput);
+                  setShowLinkInput(false);
+                }}
+                active={showImageInput}
+                title="Insert Image URL"
+              >
+                <ImageIcon className="w-4 h-4" />
+              </ToolbarButton>
+            </div>
           )}
         </div>
 
@@ -297,6 +320,38 @@ export default function RichTextEditor({
           </ToolbarButton>
         </div>
       </div>
+
+      {showImageInput && (
+        <div className="border-b border-border/50 bg-muted/30 px-4 py-3 flex gap-3">
+          <input
+            type="url"
+            placeholder="Enter Image URL (https://...)"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddImageLink();
+              }
+            }}
+            className="flex-1 px-4 py-2 bg-background border border-border/50 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            type="button"
+            onClick={handleAddImageLink}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors font-medium"
+          >
+            Insert
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowImageInput(false)}
+            className="px-4 py-2 bg-muted text-foreground rounded-lg text-sm hover:bg-muted/80 transition-colors font-medium"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {showLinkInput && (
         <div className="border-b border-border/50 bg-muted/30 px-4 py-3 flex gap-3">

@@ -4,10 +4,10 @@ require('dotenv').config({ path: '.env.local' });
 async function createBucket() {
   const client = new S3Client({
     region: 'in-maa-1',
-    endpoint: 'https://in-maa-1.linodeobjects.com',
+    endpoint: 'https://fsn1.your-objectstorage.com',
     credentials: {
-      accessKeyId: process.env.LINODE_S3_ACCESS_KEY,
-      secretAccessKey: process.env.LINODE_S3_SECRET_KEY,
+      accessKeyId: process.env.HETZNER_S3_ACCESS_KEY,
+      secretAccessKey: process.env.HETZNER_S3_SECRET_KEY,
     },
     forcePathStyle: false,
   });

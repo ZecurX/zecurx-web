@@ -2,15 +2,15 @@ const { S3Client, CreateBucketCommand, PutObjectCommand, ListBucketsCommand } = 
 require('dotenv').config({ path: '.env.local' });
 
 async function test() {
-  const accessKey = process.env.LINODE_S3_ACCESS_KEY?.trim();
-  const secretKey = process.env.LINODE_S3_SECRET_KEY?.trim();
+  const accessKey = process.env.HETZNER_S3_ACCESS_KEY?.trim();
+  const secretKey = process.env.HETZNER_S3_SECRET_KEY?.trim();
   
   console.log('Access Key length:', accessKey?.length);
   console.log('Secret Key length:', secretKey?.length);
   
   const client = new S3Client({
     region: 'us-east-1',
-    endpoint: 'https://in-maa-1.linodeobjects.com',
+    endpoint: 'https://fsn1.your-objectstorage.com',
     credentials: {
       accessKeyId: accessKey,
       secretAccessKey: secretKey,
@@ -40,7 +40,7 @@ async function test() {
       ACL: 'public-read',
     }));
     console.log('✅ Upload successful!');
-    console.log('URL: https://zecx.in-maa-1.linodeobjects.com/test.txt');
+    console.log('URL: https://zecurx-web.fsn1.your-objectstorage.com/test.txt');
   } catch (error) {
     console.log('Upload error:', error.Code || error.name, '-', error.message);
   }
