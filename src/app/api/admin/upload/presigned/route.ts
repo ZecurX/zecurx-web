@@ -3,6 +3,14 @@ import { getSignedUploadUrl, generateS3Key } from '@/lib/s3';
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.HETZNER_S3_ACCESS_KEY || !process.env.HETZNER_S3_SECRET_KEY) {
+      console.error('S3 Credentials missing in process.env');
+      return NextResponse.json({ 
+        error: 'S3 Configuration Error', 
+        details: 'Server is missing storage credentials' 
+      }, { status: 500 });
+    }
+
     const { filename, contentType, folder } = await req.json();
 
     if (!filename || !contentType) {
@@ -13,8 +21,12 @@ export async function POST(req: NextRequest) {
     const data = await getSignedUploadUrl(key, contentType);
 
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Presigned URL error:', error);
-    return NextResponse.json({ error: 'Failed to generate upload URL' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Failed to generate upload URL',
+      details: error.message,
+      code: error.code || error.name
+    }, { status: 500 });
   }
 }
