@@ -2,6 +2,7 @@ export async function uploadFileToS3(
   file: File,
   folder: string = 'uploads'
 ): Promise<string> {
+  console.log('DEBUG: Requesting presigned URL for:', file.name, file.type, folder);
   // 1. Get presigned URL
   const presignedRes = await fetch('/api/admin/upload/presigned', {
     method: 'POST',
@@ -14,8 +15,9 @@ export async function uploadFileToS3(
   });
 
   if (!presignedRes.ok) {
-    const error = await presignedRes.json();
-    throw new Error(error.error || 'Failed to get upload URL');
+    const errorBody = await presignedRes.json().catch(() => ({}));
+    console.error('DEBUG: Presigned API error response:', errorBody);
+    throw new Error(errorBody.error || `Server responded with ${presignedRes.status}`);
   }
 
   const { uploadUrl, publicUrl } = await presignedRes.json();
