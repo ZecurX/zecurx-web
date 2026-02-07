@@ -11,6 +11,7 @@ import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, CreateBlogPostRequest } from '@/types/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { uploadFileToS3 } from '@/lib/upload-utils';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -40,21 +41,7 @@ export default function NewBlogPostPage() {
   };
 
   const handleImageUpload = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const res = await fetch('/api/admin/blog/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || 'Failed to upload image');
-    }
-
-    const data = await res.json();
-    return data.url;
+    return await uploadFileToS3(file, 'blog');
   };
 
   const handleCreateLabel = async (name: string, color: string): Promise<BlogLabel> => {

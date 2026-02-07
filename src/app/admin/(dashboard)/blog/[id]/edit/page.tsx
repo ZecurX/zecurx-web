@@ -8,6 +8,7 @@ import RichTextEditor from '@/components/admin/RichTextEditor';
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, UpdateBlogPostRequest, BlogPost } from '@/types/auth';
+import { uploadFileToS3 } from '@/lib/upload-utils';
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -58,21 +59,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   }, [id]);
 
   const handleImageUpload = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const res = await fetch('/api/admin/blog/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || 'Failed to upload image');
-    }
-
-    const data = await res.json();
-    return data.url;
+    return await uploadFileToS3(file, 'blog');
   };
 
   const handleCreateLabel = async (name: string, color: string): Promise<BlogLabel> => {
