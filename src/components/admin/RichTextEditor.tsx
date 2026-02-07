@@ -29,6 +29,8 @@ import {
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
+import { uploadFileToS3 } from '@/lib/upload-utils';
+
 interface RichTextEditorProps {
   content: string;
   onChange: (content: string) => void;
@@ -97,14 +99,17 @@ export default function RichTextEditor({
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      if (onImageUpload) {
-        try {
-          const url = await onImageUpload(file);
-          editor.chain().focus().setImage({ src: url }).run();
-        } catch (error) {
-          console.error('Failed to upload image:', error);
-          alert('Failed to upload image. Please try again.');
+      try {
+        let url: string;
+        if (onImageUpload) {
+          url = await onImageUpload(file);
+        } else {
+          url = await uploadFileToS3(file, 'blog');
         }
+        editor.chain().focus().setImage({ src: url }).run();
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+        alert('Failed to upload image. Please try again.');
       }
     };
 
