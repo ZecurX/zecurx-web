@@ -3,7 +3,7 @@ import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { uploadToS3, deleteFromS3, generateS3Key, S3_BASE_URL } from '@/lib/s3';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
 export async function POST(request: NextRequest) {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json({ 
-        error: 'File too large. Maximum size is 5MB' 
+        error: 'File too large. Maximum size is 20MB' 
       }, { status: 400 });
     }
 

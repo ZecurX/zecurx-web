@@ -1,11 +1,11 @@
 /**
  * CDN Helper for ZecurX Assets
  * 
- * Large assets are stored in Linode Object Storage (S3-compatible)
+ * Large assets are stored in Hetzner Object Storage (S3-compatible)
  * This helper provides consistent URL generation for CDN assets
  */
 
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || 'https://zexc.in-maa-1.linodeobjects.com';
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || 'https://zecurx-web.fsn1.your-objectstorage.com';
 
 /**
  * Get CDN URL for an asset

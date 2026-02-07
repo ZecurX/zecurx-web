@@ -1,20 +1,21 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand } from '@aws-sdk/client-s3';
 
+// Hetzner Object Storage (S3-compatible)
 export const s3Client = new S3Client({
-  region: 'us-east-1',
-  endpoint: process.env.LINODE_S3_ENDPOINT || 'https://in-maa-1.linodeobjects.com',
+  region: 'fsn1',
+  endpoint: process.env.HETZNER_S3_ENDPOINT || 'https://fsn1.your-objectstorage.com',
   credentials: {
-    accessKeyId: process.env.LINODE_S3_ACCESS_KEY || '',
-    secretAccessKey: process.env.LINODE_S3_SECRET_KEY || '',
+    accessKeyId: process.env.HETZNER_S3_ACCESS_KEY || '',
+    secretAccessKey: process.env.HETZNER_S3_SECRET_KEY || '',
   },
   forcePathStyle: true,
 });
 
-export const BUCKET_NAME = process.env.LINODE_S3_BUCKET || 'zexc';
-export const S3_BASE_URL = `https://${BUCKET_NAME}.in-maa-1.linodeobjects.com`;
+export const BUCKET_NAME = process.env.HETZNER_S3_BUCKET || 'zecurx-web';
+export const S3_BASE_URL = process.env.NEXT_PUBLIC_CDN_URL || 'https://zecurx-web.fsn1.your-objectstorage.com';
 
 /**
- * Upload a file to Linode Object Storage
+ * Upload a file to Hetzner Object Storage
  */
 export async function uploadToS3(
   file: Buffer,
@@ -40,7 +41,7 @@ export async function uploadToS3(
 }
 
 /**
- * Delete a file from Linode Object Storage
+ * Delete a file from Hetzner Object Storage
  */
 export async function deleteFromS3(key: string): Promise<void> {
   const command = new DeleteObjectCommand({

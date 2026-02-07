@@ -17,7 +17,7 @@ const projectRoot = join(__dirname, "..");
 
 // Configuration
 const S3_CONFIG = {
-  endpoint: "https://in-maa-1.linodeobjects.com",
+  endpoint: "https://fsn1.your-objectstorage.com",
   region: "in-maa-1",
   credentials: {
     accessKeyId: "ZD9TOSVFHQDMDN7BF56B",
@@ -26,7 +26,7 @@ const S3_CONFIG = {
 };
 
 const BUCKET = "zexc";
-const CDN_URL = "https://zexc.in-maa-1.linodeobjects.com";
+const CDN_URL = "https://zecurx-web.fsn1.your-objectstorage.com";
 const MIN_FILE_SIZE = 100 * 1024; // 100KB threshold
 
 // Folders to migrate

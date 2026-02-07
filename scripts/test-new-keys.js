@@ -4,10 +4,10 @@ require('dotenv').config({ path: '.env.local' });
 async function test() {
   const client = new S3Client({
     region: 'us-east-1',
-    endpoint: 'https://in-maa-1.linodeobjects.com',
+    endpoint: 'https://fsn1.your-objectstorage.com',
     credentials: {
-      accessKeyId: process.env.LINODE_S3_ACCESS_KEY?.trim(),
-      secretAccessKey: process.env.LINODE_S3_SECRET_KEY?.trim(),
+      accessKeyId: process.env.HETZNER_S3_ACCESS_KEY?.trim(),
+      secretAccessKey: process.env.HETZNER_S3_SECRET_KEY?.trim(),
     },
     forcePathStyle: true,
   });
@@ -25,7 +25,7 @@ async function test() {
       ContentType: 'text/plain',
     }));
     console.log('✅ Upload works!');
-    console.log('\nBucket URL: https://zexc.in-maa-1.linodeobjects.com/');
+    console.log('\nBucket URL: https://zecurx-web.fsn1.your-objectstorage.com/');
   } catch (e) {
     console.log('❌ Error:', e.Code || e.name, '-', e.message);
   }
