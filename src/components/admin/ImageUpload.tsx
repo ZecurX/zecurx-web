@@ -5,6 +5,8 @@ import { Upload, X, Image as ImageIcon, Loader2, Link as LinkIcon } from 'lucide
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
+import { uploadFileToS3 } from '@/lib/upload-utils';
+
 interface ImageUploadProps {
   currentImage?: string | null;
   onUpload: (file: File) => Promise<string>;
@@ -72,7 +74,13 @@ export default function ImageUpload({
       };
       reader.readAsDataURL(file);
 
-      const url = await onUpload(file);
+      let url: string;
+      if (onUpload) {
+        url = await onUpload(file);
+      } else {
+        url = await uploadFileToS3(file, 'images');
+      }
+      
       setPreview(url);
       setError(null);
     } catch (err) {

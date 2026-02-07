@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Hetzner Object Storage (S3-compatible)
 export const s3Client = new S3Client({
@@ -29,7 +30,6 @@ export async function uploadToS3(
     Body: file,
     ContentType: contentType,
     CacheControl: options?.cacheControl || 'public, max-age=31536000',
-    ACL: 'public-read',
   });
 
   await s3Client.send(command);
@@ -86,6 +86,30 @@ export async function fileExistsInS3(key: string): Promise<boolean> {
  */
 export function getS3Url(key: string): string {
   return `${S3_BASE_URL}/${key}`;
+}
+
+/**
+ * Get a presigned URL for uploading a file directly to S3
+ */
+export async function getSignedUploadUrl(
+  key: string,
+  contentType: string,
+  expiresIn: number = 3600
+): Promise<{ uploadUrl: string; publicUrl: string; key: string }> {
+  const command = new PutObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+    CacheControl: 'public, max-age=31536000',
+  });
+
+  const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn });
+
+  return {
+    uploadUrl,
+    publicUrl: getS3Url(key),
+    key,
+  };
 }
 
 /**
