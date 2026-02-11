@@ -96,7 +96,7 @@ export default function SeminarTestimonials() {
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-6">
                     <div>
                         <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
-                            Academic <span className="text-muted-foreground">Impact</span>
+                            Academic <span className="text-muted-foreground font-medium">Impact</span>
                         </h2>
                         <p className="text-muted-foreground max-w-xl text-base md:text-lg font-light">
                             Trusted by leading institutions to bridge the gap between curriculum and cyber warfare.
