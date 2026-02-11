@@ -110,7 +110,7 @@ export default function SeminarsPage() {
                                             <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
                                                 <span className="text-[10px] uppercase tracking-widest text-primary font-semibold">Upcoming Session</span>
                                             </div>
-                                            <div className="text-lg font-bold text-foreground line-clamp-1">{upcomingSeminar.title}</div>
+                                            <div className="text-lg font-bold text-foreground">{upcomingSeminar.title}</div>
                                             <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">
                                                 <Clock className="w-3 h-3" />
                                                 <span>{formatDate(upcomingSeminar.date).full} &bull; {upcomingSeminar.time}</span>
@@ -203,7 +203,7 @@ export default function SeminarsPage() {
                                                 {seminar.title}
                                             </h3>
 
-                                            <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mb-6 line-clamp-2">
+                                            <p className="text-muted-foreground text-sm leading-relaxed max-w-2xl mb-6 whitespace-pre-line">
                                                 {seminar.description}
                                             </p>
 
