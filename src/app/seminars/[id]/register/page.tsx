@@ -15,6 +15,7 @@ import {
     User,
     Phone,
     GraduationCap,
+    Briefcase,
     MapPin,
     Calendar
 } from "lucide-react";
@@ -55,6 +56,7 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [otpError, setOtpError] = useState<string | null>(null);
+    const [participantType, setParticipantType] = useState<'student' | 'professional'>('student');
 
     const {
         register,
@@ -268,33 +270,97 @@ export default function RegisterPage() {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-3">
-                                        <Label htmlFor="collegeName" className="flex items-center gap-2">
-                                            <GraduationCap className="w-4 h-4" /> College/University
-                                        </Label>
-                                        <Input
-                                            id="collegeName"
-                                            placeholder="Your institution"
-                                            {...register("collegeName")}
-                                            className="h-12"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <Label htmlFor="year">Year</Label>
-                                        <Select onValueChange={(value) => setValue("year", value)}>
-                                            <SelectTrigger className="h-12">
-                                                <SelectValue placeholder="Select..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {YEAR_OPTIONS.map(year => (
-                                                    <SelectItem key={year} value={year}>{year}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                <div className="space-y-4">
+                                    <Label className="flex items-center gap-2 text-sm text-muted-foreground">I am a</Label>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setParticipantType('student');
+                                                setValue('collegeName', '');
+                                                setValue('year', '');
+                                            }}
+                                            className={`flex items-center justify-center gap-2 h-11 rounded-xl border text-sm font-medium transition-all ${
+                                                participantType === 'student'
+                                                    ? 'border-primary bg-primary/10 text-primary'
+                                                    : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                                            }`}
+                                        >
+                                            <GraduationCap className="w-4 h-4" />
+                                            Student
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setParticipantType('professional');
+                                                setValue('collegeName', '');
+                                                setValue('year', '');
+                                            }}
+                                            className={`flex items-center justify-center gap-2 h-11 rounded-xl border text-sm font-medium transition-all ${
+                                                participantType === 'professional'
+                                                    ? 'border-primary bg-primary/10 text-primary'
+                                                    : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                                            }`}
+                                        >
+                                            <Briefcase className="w-4 h-4" />
+                                            Professional
+                                        </button>
                                     </div>
                                 </div>
+
+                                {participantType === 'student' ? (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="collegeName" className="flex items-center gap-2">
+                                                <GraduationCap className="w-4 h-4" /> College/University
+                                            </Label>
+                                            <Input
+                                                id="collegeName"
+                                                placeholder="Your institution"
+                                                {...register("collegeName")}
+                                                className="h-12"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <Label htmlFor="year">Year</Label>
+                                            <Select onValueChange={(value) => setValue("year", value)}>
+                                                <SelectTrigger className="h-12">
+                                                    <SelectValue placeholder="Select..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {YEAR_OPTIONS.map(year => (
+                                                        <SelectItem key={year} value={year}>{year}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-3">
+                                            <Label htmlFor="collegeName" className="flex items-center gap-2">
+                                                <Briefcase className="w-4 h-4" /> Company/Organization
+                                            </Label>
+                                            <Input
+                                                id="collegeName"
+                                                placeholder="Your company"
+                                                {...register("collegeName")}
+                                                className="h-12"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <Label htmlFor="year">Designation</Label>
+                                            <Input
+                                                id="year"
+                                                placeholder="Your role"
+                                                {...register("year")}
+                                                className="h-12"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="space-y-3">
                                     <Label htmlFor="cityState" className="flex items-center gap-2">
