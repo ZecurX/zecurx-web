@@ -269,7 +269,7 @@ export default function FeedbackPage() {
                 throw new Error(result.error || "Submission failed");
             }
 
-            setCertificateId(result.certificateId);
+            setCertificateId(result.certificate?.certificateId);
             setCurrentStep(5);
             setShowSocialModal(true);
         } catch (err) {
