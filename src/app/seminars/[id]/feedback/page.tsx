@@ -54,7 +54,9 @@ const step1Schema = z.object({
     collegeName: z.string().min(2, "College name is required"),
     year: z.string().min(1, "Year is required"),
     cityState: z.string().min(2, "City/State is required"),
-    reminderContact: z.string().min(10, "Phone/WhatsApp number is required"),
+    reminderContact: z
+        .string()
+        .regex(/^[6-9]\d{9}$/, "Please enter a valid 10-digit Indian phone/WhatsApp number"),
 });
 
 const step2Schema = z.object({
@@ -62,18 +64,32 @@ const step2Schema = z.object({
     offensiveSecurityReason: z.string().optional(),
 }).refine((data) => {
     if (data.careerInterest === "Ethical Hacking & Offensive Security") {
-        return data.offensiveSecurityReason && data.offensiveSecurityReason.trim().length > 0;
+        if (!data.offensiveSecurityReason || data.offensiveSecurityReason.trim().length < 10) {
+            return false;
+        }
+        const wordCount = data.offensiveSecurityReason.trim().split(/\s+/).length;
+        return wordCount >= 3;
     }
     return true;
 }, {
-    message: "Please tell us what excites you about offensive security",
+    message: "Please share what excites you about offensive security (at least 3 words)",
     path: ["offensiveSecurityReason"],
 });
 
 const step3Schema = z.object({
     seminarRating: z.number().min(1, "Please rate the seminar").max(5),
-    mostValuablePart: z.string().min(10, "Please share what you found most valuable (minimum 10 characters)"),
-    futureSuggestions: z.string().min(10, "Please suggest topics for future seminars (minimum 10 characters)"),
+    mostValuablePart: z
+        .string()
+        .min(10, "Please share what you found most valuable (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
+    futureSuggestions: z
+        .string()
+        .min(10, "Please suggest topics for future seminars (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
     joinZecurx: z.boolean().optional(),
 });
 
@@ -361,6 +377,7 @@ export default function FeedbackPage() {
                                             placeholder="John Doe"
                                             {...step1Form.register("fullName")}
                                             className={`h-12 ${step1Form.formState.errors.fullName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.fullName}
                                         />
                                         {step1Form.formState.errors.fullName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.fullName.message}</p>
@@ -377,6 +394,7 @@ export default function FeedbackPage() {
                                             placeholder="john@example.com"
                                             {...step1Form.register("email")}
                                             className={`h-12 ${step1Form.formState.errors.email ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.email}
                                         />
                                         {step1Form.formState.errors.email && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.email.message}</p>
@@ -392,6 +410,7 @@ export default function FeedbackPage() {
                                             placeholder="Your institution"
                                             {...step1Form.register("collegeName")}
                                             className={`h-12 ${step1Form.formState.errors.collegeName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.collegeName}
                                         />
                                         {step1Form.formState.errors.collegeName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.collegeName.message}</p>
@@ -427,6 +446,7 @@ export default function FeedbackPage() {
                                                 placeholder="Bangalore, KA"
                                                 {...step1Form.register("cityState")}
                                                 className={`h-12 ${step1Form.formState.errors.cityState ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step1Form.formState.errors.cityState}
                                             />
                                             {step1Form.formState.errors.cityState && (
                                                 <p className="text-xs text-red-500">{step1Form.formState.errors.cityState.message}</p>
@@ -443,6 +463,7 @@ export default function FeedbackPage() {
                                             placeholder="+91 98765 43210"
                                             {...step1Form.register("reminderContact")}
                                             className={`h-12 ${step1Form.formState.errors.reminderContact ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.reminderContact}
                                         />
                                         {step1Form.formState.errors.reminderContact && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.reminderContact.message}</p>
@@ -507,6 +528,7 @@ export default function FeedbackPage() {
                                                 placeholder="Tell us what draws you to this field..."
                                                 {...step2Form.register("offensiveSecurityReason")}
                                                 className={`min-h-[100px] ${step2Form.formState.errors.offensiveSecurityReason ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step2Form.formState.errors.offensiveSecurityReason}
                                             />
                                             {step2Form.formState.errors.offensiveSecurityReason && (
                                                 <p className="text-xs text-red-500">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
@@ -578,6 +600,7 @@ export default function FeedbackPage() {
                                             placeholder="Share what you found most useful..."
                                             {...step3Form.register("mostValuablePart")}
                                             className={`min-h-[80px] ${step3Form.formState.errors.mostValuablePart ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.mostValuablePart}
                                         />
                                         {step3Form.formState.errors.mostValuablePart && (
                                             <p className="text-xs text-red-500">{step3Form.formState.errors.mostValuablePart.message}</p>
@@ -593,6 +616,7 @@ export default function FeedbackPage() {
                                             placeholder="Suggest topics for future sessions..."
                                             {...step3Form.register("futureSuggestions")}
                                             className={`min-h-[80px] ${step3Form.formState.errors.futureSuggestions ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.futureSuggestions}
                                         />
                                         {step3Form.formState.errors.futureSuggestions && (
                                             <p className="text-xs text-red-500">{step3Form.formState.errors.futureSuggestions.message}</p>
@@ -655,6 +679,7 @@ export default function FeedbackPage() {
                                             placeholder="Your full name"
                                             {...step4Form.register("certificateName")}
                                             className={`h-14 text-center text-lg font-medium ${step4Form.formState.errors.certificateName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step4Form.formState.errors.certificateName}
                                         />
                                         {step4Form.formState.errors.certificateName && (
                                             <p className="text-xs text-red-500 text-center">
