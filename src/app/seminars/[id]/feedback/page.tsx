@@ -62,7 +62,18 @@ const step1Schema = z.object({
     cityState: z.string().min(2, "City/State is required"),
     reminderContact: z
         .string()
-        .regex(/^[6-9]\d{9}$/, "Please enter a valid 10-digit Indian phone/WhatsApp number"),
+        .min(10, "Phone/WhatsApp number is required")
+        .transform((val) => val.replace(/\D/g, "")) // Strip non-digits
+        .refine(
+            (val) => {
+                // Handle +91 prefix or standalone 10-digit number
+                if (val.startsWith("91") && val.length === 12) {
+                    return /^91[6-9]\d{9}$/.test(val);
+                }
+                return /^[6-9]\d{9}$/.test(val);
+            },
+            { message: "Please enter a valid 10-digit Indian phone/WhatsApp number" }
+        ),
 });
 
 const step2Schema = z.object({
