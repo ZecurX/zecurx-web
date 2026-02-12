@@ -773,8 +773,10 @@ export default function FeedbackPage() {
                         >
                             <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl relative">
                                 <button
+                                    type="button"
                                     onClick={() => setShowSocialModal(false)}
                                     className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                                    aria-label="Close dialog"
                                 >
                                     <X className="w-5 h-5 text-muted-foreground" />
                                 </button>
