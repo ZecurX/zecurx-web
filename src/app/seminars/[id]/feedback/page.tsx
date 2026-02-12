@@ -54,7 +54,11 @@ const step1Schema = z.object({
     collegeName: z.string().min(2, "College name is required"),
     year: z.string().min(1, "Year is required"),
     cityState: z.string().min(2, "City/State is required"),
-    reminderContact: z.string().min(10, "Phone/WhatsApp number is required"),
+    reminderContact: z
+        .string()
+        .trim()
+        .min(1, "Phone/WhatsApp number is required")
+        .min(10, "Phone/WhatsApp number must be at least 10 characters"),
 });
 
 const step2Schema = z.object({
