@@ -76,8 +76,8 @@ const step2Schema = z.object({
 
 const step3Schema = z.object({
     seminarRating: z.number().min(1, "Please rate the seminar").max(5),
-    mostValuablePart: z.string().min(10, "Please share what you found most valuable (minimum 10 characters)"),
-    futureSuggestions: z.string().min(10, "Please suggest topics for future seminars (minimum 10 characters)"),
+    mostValuablePart: z.string().trim().min(10, "Please share what you found most valuable (minimum 10 characters)"),
+    futureSuggestions: z.string().trim().min(10, "Please suggest topics for future seminars (minimum 10 characters)"),
     joinZecurx: z.boolean().optional(),
 });
 
