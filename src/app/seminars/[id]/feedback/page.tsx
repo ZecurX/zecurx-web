@@ -20,7 +20,6 @@ import {
     Star,
     Award,
     Sparkles,
-    X,
     ExternalLink,
     BookOpen,
     Linkedin,
@@ -41,6 +40,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
 import {
     PublicSeminar,
     YEAR_OPTIONS,
@@ -755,96 +761,71 @@ export default function FeedbackPage() {
             </div>
 
             {/* Social Media Follow Modal */}
-            <AnimatePresence>
-                {showSocialModal && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/60 z-50"
-                            onClick={() => setShowSocialModal(false)}
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            <Dialog open={showSocialModal} onOpenChange={setShowSocialModal}>
+                <DialogContent className="sm:max-w-md p-8">
+                    <DialogHeader className="text-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
+                        <DialogTitle className="text-2xl font-bold">Keep Learning with ZecurX!</DialogTitle>
+                        <DialogDescription>
+                            Continue your cybersecurity journey with our comprehensive courses
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 mt-6">
+                        <Button
+                            asChild
+                            className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
                         >
-                            <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl relative">
-                                <button
-                                    onClick={() => setShowSocialModal(false)}
-                                    className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                            <a 
+                                href="/academy" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={() => setShowSocialModal(false)}
+                            >
+                                <BookOpen className="w-4 h-4 mr-2" />
+                                Explore Our Courses
+                                <ExternalLink className="w-4 h-4 ml-2" />
+                            </a>
+                        </Button>
+
+                        <div className="border-t border-border pt-4">
+                            <p className="text-sm text-muted-foreground mb-3 text-center">
+                                Stay connected for updates & insights
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <a
+                                    href="https://www.linkedin.com/company/zecurx/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
                                 >
-                                    <X className="w-5 h-5 text-muted-foreground" />
-                                </button>
-
-                                <div className="text-center mb-6">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Sparkles className="w-8 h-8 text-primary" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold mb-2">Keep Learning with ZecurX!</h2>
-                                    <p className="text-muted-foreground">
-                                        Continue your cybersecurity journey with our comprehensive courses
-                                    </p>
-                                </div>
-
-                                <div className="space-y-4 mb-6">
-                                    <Button
-                                        asChild
-                                        className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
-                                    >
-                                        <a 
-                                            href="/academy" 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            onClick={() => setShowSocialModal(false)}
-                                        >
-                                            <BookOpen className="w-4 h-4 mr-2" />
-                                            Explore Our Courses
-                                            <ExternalLink className="w-4 h-4 ml-2" />
-                                        </a>
-                                    </Button>
-
-                                    <div className="border-t border-border pt-4">
-                                        <p className="text-sm text-muted-foreground mb-3 text-center">
-                                            Stay connected for updates & insights
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <a
-                                                href="https://www.linkedin.com/company/zecurx/"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
-                                            >
-                                                <Linkedin className="w-5 h-5 text-[#0077B5]" />
-                                                <span className="font-medium text-sm">LinkedIn</span>
-                                            </a>
-                                            <a
-                                                href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
-                                            >
-                                                <Instagram className="w-5 h-5 text-[#E4405F]" />
-                                                <span className="font-medium text-sm">Instagram</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <Button
-                                    variant="ghost"
-                                    className="w-full"
-                                    onClick={() => setShowSocialModal(false)}
+                                    <Linkedin className="w-5 h-5 text-[#0077B5]" />
+                                    <span className="font-medium text-sm">LinkedIn</span>
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
                                 >
-                                    Maybe Later
-                                </Button>
+                                    <Instagram className="w-5 h-5 text-[#E4405F]" />
+                                    <span className="font-medium text-sm">Instagram</span>
+                                </a>
                             </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full mt-4"
+                        onClick={() => setShowSocialModal(false)}
+                    >
+                        Maybe Later
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
