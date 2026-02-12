@@ -786,18 +786,21 @@ export default function FeedbackPage() {
                                 </div>
 
                                 <div className="space-y-4 mb-6">
-                                    <a 
-                                        href="/academy" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        onClick={() => setShowSocialModal(false)}
+                                    <Button
+                                        asChild
+                                        className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
                                     >
-                                        <Button className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90">
+                                        <a 
+                                            href="/academy" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            onClick={() => setShowSocialModal(false)}
+                                        >
                                             <BookOpen className="w-4 h-4 mr-2" />
                                             Explore Our Courses
                                             <ExternalLink className="w-4 h-4 ml-2" />
-                                        </Button>
-                                    </a>
+                                        </a>
+                                    </Button>
 
                                     <div className="border-t border-border pt-4">
                                         <p className="text-sm text-muted-foreground mb-3 text-center">
