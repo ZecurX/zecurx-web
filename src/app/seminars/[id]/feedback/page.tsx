@@ -51,6 +51,7 @@ import {
     PublicSeminar,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
+    OFFENSIVE_SECURITY_INTEREST,
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";
 
@@ -80,7 +81,7 @@ const step2Schema = z.object({
     careerInterest: z.string().min(1, "Please select your career interest"),
     offensiveSecurityReason: z.string().optional(),
 }).refine((data) => {
-    if (data.careerInterest === "Ethical Hacking & Offensive Security") {
+    if (data.careerInterest === OFFENSIVE_SECURITY_INTEREST) {
         if (!data.offensiveSecurityReason || data.offensiveSecurityReason.trim().length < 10) {
             return false;
         }
@@ -89,7 +90,7 @@ const step2Schema = z.object({
     }
     return true;
 }, {
-    message: "Please share what excites you about offensive security (at least 3 words)",
+    message: "Please share what excites you about offensive security (minimum 10 characters and at least 3 words)",
     path: ["offensiveSecurityReason"],
 });
 
@@ -531,7 +532,7 @@ export default function FeedbackPage() {
                                         )}
                                     </div>
 
-                                    {step2Form.watch("careerInterest") === "Ethical Hacking & Offensive Security" && (
+                                    {step2Form.watch("careerInterest") === OFFENSIVE_SECURITY_INTEREST && (
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}

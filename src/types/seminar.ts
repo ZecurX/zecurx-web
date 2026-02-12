@@ -23,6 +23,9 @@ export const CAREER_INTERESTS: CareerInterest[] = [
   'Other'
 ];
 
+// Specific career interest constant for validation
+export const OFFENSIVE_SECURITY_INTEREST: CareerInterest = 'Ethical Hacking & Offensive Security';
+
 export const DURATION_OPTIONS = [
   '60 min',
   '90 min',
