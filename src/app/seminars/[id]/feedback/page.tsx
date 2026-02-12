@@ -19,7 +19,12 @@ import {
     MapPin,
     Star,
     Award,
-    Sparkles
+    Sparkles,
+    X,
+    ExternalLink,
+    BookOpen,
+    Linkedin,
+    Instagram
 } from "lucide-react";
 import Link from "next/link";
 
@@ -49,18 +54,26 @@ const step1Schema = z.object({
     collegeName: z.string().min(2, "College name is required"),
     year: z.string().min(1, "Year is required"),
     cityState: z.string().min(2, "City/State is required"),
-    reminderContact: z.string().optional(),
+    reminderContact: z.string().min(10, "Phone/WhatsApp number is required"),
 });
 
 const step2Schema = z.object({
     careerInterest: z.string().min(1, "Please select your career interest"),
     offensiveSecurityReason: z.string().optional(),
+}).refine((data) => {
+    if (data.careerInterest === "Ethical Hacking & Offensive Security") {
+        return data.offensiveSecurityReason && data.offensiveSecurityReason.trim().length > 0;
+    }
+    return true;
+}, {
+    message: "Please tell us what excites you about offensive security",
+    path: ["offensiveSecurityReason"],
 });
 
 const step3Schema = z.object({
     seminarRating: z.number().min(1, "Please rate the seminar").max(5),
-    mostValuablePart: z.string().optional(),
-    futureSuggestions: z.string().optional(),
+    mostValuablePart: z.string().min(10, "Please share what you found most valuable (minimum 10 characters)"),
+    futureSuggestions: z.string().min(10, "Please suggest topics for future seminars (minimum 10 characters)"),
     joinZecurx: z.boolean().optional(),
 });
 
@@ -94,6 +107,7 @@ export default function FeedbackPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [certificateId, setCertificateId] = useState<string | null>(null);
+    const [showSocialModal, setShowSocialModal] = useState(false);
 
     const [step1Data, setStep1Data] = useState<Step1Values | null>(null);
     const [step2Data, setStep2Data] = useState<Step2Values | null>(null);
@@ -223,6 +237,7 @@ export default function FeedbackPage() {
 
             setCertificateId(result.certificateId);
             setCurrentStep(5);
+            setShowSocialModal(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
@@ -421,14 +436,17 @@ export default function FeedbackPage() {
 
                                     <div className="space-y-3">
                                         <Label htmlFor="reminderContact" className="flex items-center gap-2">
-                                            <Phone className="w-4 h-4" /> WhatsApp/Phone (for reminders)
+                                            <Phone className="w-4 h-4" /> WhatsApp/Phone *
                                         </Label>
                                         <Input
                                             id="reminderContact"
                                             placeholder="+91 98765 43210"
                                             {...step1Form.register("reminderContact")}
-                                            className="h-12"
+                                            className={`h-12 ${step1Form.formState.errors.reminderContact ? "border-red-500" : ""}`}
                                         />
+                                        {step1Form.formState.errors.reminderContact && (
+                                            <p className="text-xs text-red-500">{step1Form.formState.errors.reminderContact.message}</p>
+                                        )}
                                     </div>
 
                                     <Button type="submit" className="w-full h-12 rounded-xl font-semibold">
@@ -482,14 +500,17 @@ export default function FeedbackPage() {
                                             className="space-y-3"
                                         >
                                             <Label htmlFor="offensiveSecurityReason">
-                                                What excites you about offensive security?
+                                                What excites you about offensive security? *
                                             </Label>
                                             <Textarea
                                                 id="offensiveSecurityReason"
                                                 placeholder="Tell us what draws you to this field..."
                                                 {...step2Form.register("offensiveSecurityReason")}
-                                                className="min-h-[100px]"
+                                                className={`min-h-[100px] ${step2Form.formState.errors.offensiveSecurityReason ? "border-red-500" : ""}`}
                                             />
+                                            {step2Form.formState.errors.offensiveSecurityReason && (
+                                                <p className="text-xs text-red-500">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
+                                            )}
                                         </motion.div>
                                     )}
 
@@ -550,26 +571,32 @@ export default function FeedbackPage() {
 
                                     <div className="space-y-3">
                                         <Label htmlFor="mostValuablePart">
-                                            What was the most valuable part of this seminar?
+                                            What was the most valuable part of this seminar? *
                                         </Label>
                                         <Textarea
                                             id="mostValuablePart"
                                             placeholder="Share what you found most useful..."
                                             {...step3Form.register("mostValuablePart")}
-                                            className="min-h-[80px]"
+                                            className={`min-h-[80px] ${step3Form.formState.errors.mostValuablePart ? "border-red-500" : ""}`}
                                         />
+                                        {step3Form.formState.errors.mostValuablePart && (
+                                            <p className="text-xs text-red-500">{step3Form.formState.errors.mostValuablePart.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-3">
                                         <Label htmlFor="futureSuggestions">
-                                            What topics would you like us to cover in future seminars?
+                                            What topics would you like us to cover in future seminars? *
                                         </Label>
                                         <Textarea
                                             id="futureSuggestions"
                                             placeholder="Suggest topics for future sessions..."
                                             {...step3Form.register("futureSuggestions")}
-                                            className="min-h-[80px]"
+                                            className={`min-h-[80px] ${step3Form.formState.errors.futureSuggestions ? "border-red-500" : ""}`}
                                         />
+                                        {step3Form.formState.errors.futureSuggestions && (
+                                            <p className="text-xs text-red-500">{step3Form.formState.errors.futureSuggestions.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="flex items-start space-x-3 p-4 rounded-xl border border-border bg-primary/5">
@@ -722,6 +749,95 @@ export default function FeedbackPage() {
                     </AnimatePresence>
                 </motion.div>
             </div>
+
+            {/* Social Media Follow Modal */}
+            <AnimatePresence>
+                {showSocialModal && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black/60 z-50"
+                            onClick={() => setShowSocialModal(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                        >
+                            <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl relative">
+                                <button
+                                    onClick={() => setShowSocialModal(false)}
+                                    className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                                >
+                                    <X className="w-5 h-5 text-muted-foreground" />
+                                </button>
+
+                                <div className="text-center mb-6">
+                                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <Sparkles className="w-8 h-8 text-primary" />
+                                    </div>
+                                    <h2 className="text-2xl font-bold mb-2">Keep Learning with ZecurX!</h2>
+                                    <p className="text-muted-foreground">
+                                        Continue your cybersecurity journey with our comprehensive courses
+                                    </p>
+                                </div>
+
+                                <div className="space-y-4 mb-6">
+                                    <a 
+                                        href="/academy" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        onClick={() => setShowSocialModal(false)}
+                                    >
+                                        <Button className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90">
+                                            <BookOpen className="w-4 h-4 mr-2" />
+                                            Explore Our Courses
+                                            <ExternalLink className="w-4 h-4 ml-2" />
+                                        </Button>
+                                    </a>
+
+                                    <div className="border-t border-border pt-4">
+                                        <p className="text-sm text-muted-foreground mb-3 text-center">
+                                            Stay connected for updates & insights
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <a
+                                                href="https://www.linkedin.com/company/zecurx/"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                            >
+                                                <Linkedin className="w-5 h-5 text-[#0077B5]" />
+                                                <span className="font-medium text-sm">LinkedIn</span>
+                                            </a>
+                                            <a
+                                                href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                            >
+                                                <Instagram className="w-5 h-5 text-[#E4405F]" />
+                                                <span className="font-medium text-sm">Instagram</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    variant="ghost"
+                                    className="w-full"
+                                    onClick={() => setShowSocialModal(false)}
+                                >
+                                    Maybe Later
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
