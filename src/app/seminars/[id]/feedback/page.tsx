@@ -20,7 +20,6 @@ import {
     Star,
     Award,
     Sparkles,
-    X,
     ExternalLink,
     BookOpen,
     Linkedin,
@@ -42,9 +41,17 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import {
     PublicSeminar,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
+    OFFENSIVE_SECURITY_INTEREST,
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";
 
@@ -56,28 +63,51 @@ const step1Schema = z.object({
     cityState: z.string().min(2, "City/State is required"),
     reminderContact: z
         .string()
-        .trim()
-        .min(1, "Phone/WhatsApp number is required")
-        .min(10, "Phone/WhatsApp number must be at least 10 characters"),
+        .min(10, "Phone/WhatsApp number is required")
+        .transform((val) => val.replace(/\D/g, "")) // Strip non-digits
+        .refine(
+            (val) => {
+                // Handle +91 prefix or standalone 10-digit number
+                if (val.startsWith("91") && val.length === 12) {
+                    return /^91[6-9]\d{9}$/.test(val);
+                }
+                return /^[6-9]\d{9}$/.test(val);
+            },
+            { message: "Please enter a valid 10-digit Indian phone/WhatsApp number" }
+        ),
 });
 
 const step2Schema = z.object({
     careerInterest: z.string().min(1, "Please select your career interest"),
     offensiveSecurityReason: z.string().optional(),
 }).refine((data) => {
-    if (data.careerInterest === "Ethical Hacking & Offensive Security") {
-        return data.offensiveSecurityReason && data.offensiveSecurityReason.trim().length > 0;
+    if (data.careerInterest === OFFENSIVE_SECURITY_INTEREST) {
+        if (!data.offensiveSecurityReason || data.offensiveSecurityReason.trim().length < 10) {
+            return false;
+        }
+        const wordCount = data.offensiveSecurityReason.trim().split(/\s+/).length;
+        return wordCount >= 3;
     }
     return true;
 }, {
-    message: "Please tell us what excites you about offensive security",
+    message: "Please share what excites you about offensive security (minimum 10 characters and at least 3 words)",
     path: ["offensiveSecurityReason"],
 });
 
 const step3Schema = z.object({
     seminarRating: z.number().min(1, "Please rate the seminar").max(5),
-    mostValuablePart: z.string().trim().min(10, "Please share what you found most valuable (minimum 10 characters)"),
-    futureSuggestions: z.string().trim().min(10, "Please suggest topics for future seminars (minimum 10 characters)"),
+    mostValuablePart: z
+        .string()
+        .min(10, "Please share what you found most valuable (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
+    futureSuggestions: z
+        .string()
+        .min(10, "Please suggest topics for future seminars (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
     joinZecurx: z.boolean().optional(),
 });
 
@@ -239,7 +269,7 @@ export default function FeedbackPage() {
                 throw new Error(result.error || "Submission failed");
             }
 
-            setCertificateId(result.certificateId);
+            setCertificateId(result.certificate?.certificateId);
             setCurrentStep(5);
             setShowSocialModal(true);
         } catch (err) {
@@ -365,6 +395,7 @@ export default function FeedbackPage() {
                                             placeholder="John Doe"
                                             {...step1Form.register("fullName")}
                                             className={`h-12 ${step1Form.formState.errors.fullName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.fullName}
                                         />
                                         {step1Form.formState.errors.fullName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.fullName.message}</p>
@@ -381,6 +412,7 @@ export default function FeedbackPage() {
                                             placeholder="john@example.com"
                                             {...step1Form.register("email")}
                                             className={`h-12 ${step1Form.formState.errors.email ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.email}
                                         />
                                         {step1Form.formState.errors.email && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.email.message}</p>
@@ -396,6 +428,7 @@ export default function FeedbackPage() {
                                             placeholder="Your institution"
                                             {...step1Form.register("collegeName")}
                                             className={`h-12 ${step1Form.formState.errors.collegeName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.collegeName}
                                         />
                                         {step1Form.formState.errors.collegeName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.collegeName.message}</p>
@@ -431,6 +464,7 @@ export default function FeedbackPage() {
                                                 placeholder="Bangalore, KA"
                                                 {...step1Form.register("cityState")}
                                                 className={`h-12 ${step1Form.formState.errors.cityState ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step1Form.formState.errors.cityState}
                                             />
                                             {step1Form.formState.errors.cityState && (
                                                 <p className="text-xs text-red-500">{step1Form.formState.errors.cityState.message}</p>
@@ -447,6 +481,7 @@ export default function FeedbackPage() {
                                             placeholder="+91 98765 43210"
                                             {...step1Form.register("reminderContact")}
                                             className={`h-12 ${step1Form.formState.errors.reminderContact ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.reminderContact}
                                         />
                                         {step1Form.formState.errors.reminderContact && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.reminderContact.message}</p>
@@ -497,7 +532,7 @@ export default function FeedbackPage() {
                                         )}
                                     </div>
 
-                                    {step2Form.watch("careerInterest") === "Ethical Hacking & Offensive Security" && (
+                                    {step2Form.watch("careerInterest") === OFFENSIVE_SECURITY_INTEREST && (
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}
@@ -511,6 +546,7 @@ export default function FeedbackPage() {
                                                 placeholder="Tell us what draws you to this field..."
                                                 {...step2Form.register("offensiveSecurityReason")}
                                                 className={`min-h-[100px] ${step2Form.formState.errors.offensiveSecurityReason ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step2Form.formState.errors.offensiveSecurityReason}
                                             />
                                             {step2Form.formState.errors.offensiveSecurityReason && (
                                                 <p className="text-xs text-red-500">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
@@ -582,6 +618,7 @@ export default function FeedbackPage() {
                                             placeholder="Share what you found most useful..."
                                             {...step3Form.register("mostValuablePart")}
                                             className={`min-h-[80px] ${step3Form.formState.errors.mostValuablePart ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.mostValuablePart}
                                         />
                                         {step3Form.formState.errors.mostValuablePart && (
                                             <p className="text-xs text-red-500">{step3Form.formState.errors.mostValuablePart.message}</p>
@@ -597,6 +634,7 @@ export default function FeedbackPage() {
                                             placeholder="Suggest topics for future sessions..."
                                             {...step3Form.register("futureSuggestions")}
                                             className={`min-h-[80px] ${step3Form.formState.errors.futureSuggestions ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.futureSuggestions}
                                         />
                                         {step3Form.formState.errors.futureSuggestions && (
                                             <p className="text-xs text-red-500">{step3Form.formState.errors.futureSuggestions.message}</p>
@@ -659,6 +697,7 @@ export default function FeedbackPage() {
                                             placeholder="Your full name"
                                             {...step4Form.register("certificateName")}
                                             className={`h-14 text-center text-lg font-medium ${step4Form.formState.errors.certificateName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step4Form.formState.errors.certificateName}
                                         />
                                         {step4Form.formState.errors.certificateName && (
                                             <p className="text-xs text-red-500 text-center">
@@ -755,96 +794,71 @@ export default function FeedbackPage() {
             </div>
 
             {/* Social Media Follow Modal */}
-            <AnimatePresence>
-                {showSocialModal && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/60 z-50"
-                            onClick={() => setShowSocialModal(false)}
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            <Dialog open={showSocialModal} onOpenChange={setShowSocialModal}>
+                <DialogContent className="sm:max-w-md p-8">
+                    <DialogHeader className="text-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
+                        <DialogTitle className="text-2xl font-bold">Keep Learning with ZecurX!</DialogTitle>
+                        <DialogDescription>
+                            Continue your cybersecurity journey with our comprehensive courses
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 mt-6">
+                        <Button
+                            asChild
+                            className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
                         >
-                            <div className="bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl relative">
-                                <button
-                                    onClick={() => setShowSocialModal(false)}
-                                    className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted transition-colors"
+                            <a 
+                                href="/academy" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={() => setShowSocialModal(false)}
+                            >
+                                <BookOpen className="w-4 h-4 mr-2" />
+                                Explore Our Courses
+                                <ExternalLink className="w-4 h-4 ml-2" />
+                            </a>
+                        </Button>
+
+                        <div className="border-t border-border pt-4">
+                            <p className="text-sm text-muted-foreground mb-3 text-center">
+                                Stay connected for updates & insights
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <a
+                                    href="https://www.linkedin.com/company/zecurx/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
                                 >
-                                    <X className="w-5 h-5 text-muted-foreground" />
-                                </button>
-
-                                <div className="text-center mb-6">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Sparkles className="w-8 h-8 text-primary" />
-                                    </div>
-                                    <h2 className="text-2xl font-bold mb-2">Keep Learning with ZecurX!</h2>
-                                    <p className="text-muted-foreground">
-                                        Continue your cybersecurity journey with our comprehensive courses
-                                    </p>
-                                </div>
-
-                                <div className="space-y-4 mb-6">
-                                    <Button
-                                        asChild
-                                        className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
-                                    >
-                                        <a 
-                                            href="/academy" 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            onClick={() => setShowSocialModal(false)}
-                                        >
-                                            <BookOpen className="w-4 h-4 mr-2" />
-                                            Explore Our Courses
-                                            <ExternalLink className="w-4 h-4 ml-2" />
-                                        </a>
-                                    </Button>
-
-                                    <div className="border-t border-border pt-4">
-                                        <p className="text-sm text-muted-foreground mb-3 text-center">
-                                            Stay connected for updates & insights
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <a
-                                                href="https://www.linkedin.com/company/zecurx/"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
-                                            >
-                                                <Linkedin className="w-5 h-5 text-[#0077B5]" />
-                                                <span className="font-medium text-sm">LinkedIn</span>
-                                            </a>
-                                            <a
-                                                href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
-                                            >
-                                                <Instagram className="w-5 h-5 text-[#E4405F]" />
-                                                <span className="font-medium text-sm">Instagram</span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <Button
-                                    variant="ghost"
-                                    className="w-full"
-                                    onClick={() => setShowSocialModal(false)}
+                                    <Linkedin className="w-5 h-5 text-[#0077B5]" />
+                                    <span className="font-medium text-sm">LinkedIn</span>
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
                                 >
-                                    Maybe Later
-                                </Button>
+                                    <Instagram className="w-5 h-5 text-[#E4405F]" />
+                                    <span className="font-medium text-sm">Instagram</span>
+                                </a>
                             </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full mt-4"
+                        onClick={() => setShowSocialModal(false)}
+                    >
+                        Maybe Later
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
