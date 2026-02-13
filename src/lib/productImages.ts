@@ -9,11 +9,6 @@ export const PRODUCT_IMAGE_MAP: Record<string, string[]> = {
         "https://shop.hak5.org/cdn/shop/files/mk7-standard-and-pro_2000x.jpg?v=1614343331",
         "https://shop.hak5.org/cdn/shop/files/mk7-banner1_2000x.jpg?v=1614343192"
     ], 
-    "Flipper Zero": [
-        "https://cdn.flipper.net/zero_landing_what-is_flipper.gif",
-        "https://cdn.flipper.net/zero_landing_what-is_inhand.png",
-        "https://cdn.flipper.net/zero-landing-features_1.png"
-    ],
     "USB Rubber Ducky": [
         "https://shop.hak5.org/cdn/shop/products/usb-rubber-ducky_mk2.jpg?v=1659974440&width=1200",
         "https://images.unsplash.com/photo-1597852074816-d933c7d2b988?q=95&w=1200&auto=format&fit=crop",

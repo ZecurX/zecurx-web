@@ -53,7 +53,6 @@ nohup.out
 /public/images/pages/
 /public/images/features/
 /public/images/*_diagram.png
-/public/images/flipper-zero*.png
 /public/images/dashboard-hero*.png
 /public/hero-bg.png
 /public/logo_new.png
