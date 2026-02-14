@@ -128,7 +128,7 @@ export async function sendOtpEmail(
 
     try {
         await resend.emails.send({
-            from: 'ZecurX <official@zecurx.com>',
+            from: 'ZecurX Private Limited <official@zecurx.com>',
             to: email,
             subject,
             html,

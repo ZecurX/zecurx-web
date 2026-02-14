@@ -309,7 +309,7 @@ export async function POST(request: NextRequest) {
         let adminEmailSent = false;
         try {
             await resend.emails.send({
-                from: 'ZecurX Website <official@zecurx.com>',
+                from: 'ZecurX Private Limited <official@zecurx.com>',
                 to: adminEmail,
                 replyTo: email,
                 subject: emailSubject,
@@ -365,7 +365,7 @@ export async function POST(request: NextRequest) {
                 ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${body.courseTitle} brochure is attached to this email.</strong></p>` : ''}
 
                 <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    Best regards,<br>The ZecurX Team
+                    Best regards,<br>ZecurX Private Limited
                 </p>
             </div>
         `;
@@ -379,7 +379,7 @@ export async function POST(request: NextRequest) {
 
                 if ((isDemo || isBrochure) && attachments.length > 0) {
                     await resend.emails.send({
-                        from: 'ZecurX <official@zecurx.com>',
+                        from: 'ZecurX Private Limited <official@zecurx.com>',
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,
@@ -387,7 +387,7 @@ export async function POST(request: NextRequest) {
                     });
                 } else {
                     await resend.emails.send({
-                        from: 'ZecurX <official@zecurx.com>',
+                        from: 'ZecurX Private Limited <official@zecurx.com>',
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,

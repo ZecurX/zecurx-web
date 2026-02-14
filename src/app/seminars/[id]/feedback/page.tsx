@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -23,7 +23,10 @@ import {
     ExternalLink,
     BookOpen,
     Linkedin,
-    Instagram
+    Instagram,
+    Clock,
+    Download,
+    Shield
 } from "lucide-react";
 import Link from "next/link";
 
@@ -49,11 +52,13 @@ import {
 } from "@/components/ui/dialog";
 import {
     PublicSeminar,
+    CertificateVerification,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
     OFFENSIVE_SECURITY_INTEREST,
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";
+import { ShareButton } from "@/app/verify/[certificateId]/ShareButton";
 
 const step1Schema = z.object({
     fullName: z.string().min(2, "Name is required"),
@@ -142,6 +147,27 @@ export default function FeedbackPage() {
     const [error, setError] = useState<string | null>(null);
     const [certificateId, setCertificateId] = useState<string | null>(null);
     const [showSocialModal, setShowSocialModal] = useState(false);
+    const [registeredName, setRegisteredName] = useState<string | null>(null);
+    const [nameChangeReason, setNameChangeReason] = useState('');
+    const [showNameChangeReason, setShowNameChangeReason] = useState(false);
+    const [nameChangeSubmitted, setNameChangeSubmitted] = useState(false);
+    const [certData, setCertData] = useState<CertificateVerification["certificate"]>(null);
+    const [certLoading, setCertLoading] = useState(false);
+
+    const fetchCertificateData = useCallback(async (certId: string) => {
+        setCertLoading(true);
+        try {
+            const response = await fetch(`/api/certificates/${certId}`);
+            const data: CertificateVerification = await response.json();
+            if (data.valid && data.certificate) {
+                setCertData(data.certificate);
+            }
+        } catch {
+            // Non-critical — preview just won't show
+        } finally {
+            setCertLoading(false);
+        }
+    }, []);
 
     const [step1Data, setStep1Data] = useState<Step1Values | null>(null);
     const [step2Data, setStep2Data] = useState<Step2Values | null>(null);
@@ -211,7 +237,21 @@ export default function FeedbackPage() {
         if (prefillEmail && step1Data === null) {
             step1Form.setValue("email", prefillEmail);
         }
+        if (prefillName) {
+            setRegisteredName(prefillName);
+        }
     }, [prefillName, prefillEmail, step1Data, step1Form, step4Form]);
+
+    const watchedCertName = step4Form.watch("certificateName");
+
+    useEffect(() => {
+        if (registeredName && watchedCertName) {
+            const differs = watchedCertName.trim().toLowerCase() !== registeredName.trim().toLowerCase();
+            setShowNameChangeReason(differs);
+        } else {
+            setShowNameChangeReason(false);
+        }
+    }, [watchedCertName, registeredName]);
 
     const handleStep1Submit = (data: Step1Values) => {
         setStep1Data(data);
@@ -231,6 +271,11 @@ export default function FeedbackPage() {
 
     const handleFinalSubmit = async (data: Step4Values) => {
         if (!step1Data || !step2Data || !step3Data) return;
+
+        if (showNameChangeReason && nameChangeReason.trim().length < 10) {
+            setError("Please provide a reason for the name change (minimum 10 characters)");
+            return;
+        }
 
         setIsSubmitting(true);
         setError(null);
@@ -255,6 +300,7 @@ export default function FeedbackPage() {
                 certificateName: data.certificateName,
                 seminarId,
                 registrationId: registrationId || undefined,
+                nameChangeReason: showNameChangeReason ? nameChangeReason.trim() : undefined,
             };
 
             const response = await fetch(`/api/seminars/${seminarId}/feedback`, {
@@ -269,9 +315,18 @@ export default function FeedbackPage() {
                 throw new Error(result.error || "Submission failed");
             }
 
-            setCertificateId(result.certificate?.certificateId);
-            setCurrentStep(5);
-            setShowSocialModal(true);
+            if (result.nameChangeRequested) {
+                setNameChangeSubmitted(true);
+                setCurrentStep(5);
+            } else {
+                const certId = result.certificate?.certificateId;
+                setCertificateId(certId);
+                if (certId) {
+                    fetchCertificateData(certId);
+                }
+                setCurrentStep(5);
+                setShowSocialModal(true);
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
@@ -311,7 +366,7 @@ export default function FeedbackPage() {
 
     return (
         <div className="min-h-screen bg-background pt-24 pb-12">
-            <div className="max-w-2xl mx-auto px-6">
+            <div className={`mx-auto px-6 ${currentStep === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
                 <Link
                     href="/resources/seminars"
                     className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
@@ -706,6 +761,47 @@ export default function FeedbackPage() {
                                         )}
                                     </div>
 
+                                    {showNameChangeReason && registeredName && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            className="space-y-3"
+                                        >
+                                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                                    <div className="space-y-1">
+                                                        <p className="text-sm font-medium text-amber-600">
+                                                            Name differs from registration
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            Your registered name is{" "}
+                                                            <span className="font-semibold text-foreground">{registeredName}</span>.
+                                                            Since the certificate name is different, your request will need admin approval.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="nameChangeReason">
+                                                    Reason for name change *
+                                                </Label>
+                                                <Textarea
+                                                    id="nameChangeReason"
+                                                    placeholder="Please explain why you need a different name on your certificate (minimum 10 characters)..."
+                                                    value={nameChangeReason}
+                                                    onChange={(e) => setNameChangeReason(e.target.value)}
+                                                    className={`min-h-[80px] ${nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 ? "border-red-500" : ""}`}
+                                                />
+                                                {nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 && (
+                                                    <p className="text-xs text-red-500">
+                                                        Please provide at least 10 characters ({nameChangeReason.trim().length}/10)
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
+
                                     <div className="bg-muted/50 rounded-xl p-4 text-sm text-muted-foreground">
                                         <p className="font-medium text-foreground mb-2">Certificate Preview</p>
                                         <p>
@@ -738,7 +834,12 @@ export default function FeedbackPage() {
                                             {isSubmitting ? (
                                                 <>
                                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Generating Certificate...
+                                                    {showNameChangeReason ? "Submitting Request..." : "Generating Certificate..."}
+                                                </>
+                                            ) : showNameChangeReason ? (
+                                                <>
+                                                    <Clock className="w-4 h-4 mr-2" />
+                                                    Submit for Approval
                                                 </>
                                             ) : (
                                                 <>
@@ -759,34 +860,156 @@ export default function FeedbackPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="text-center py-8"
                             >
-                                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <Mail className="w-10 h-10 text-green-500" />
-                                </div>
-                                <h1 className="text-2xl font-bold mb-2">Certificate Sent!</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Your certificate has been sent to your email address. Please check your inbox (and spam folder) for the certificate PDF.
-                                </p>
+                                {nameChangeSubmitted ? (
+                                    <>
+                                        <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Clock className="w-10 h-10 text-amber-500" />
+                                        </div>
+                                        <h1 className="text-2xl font-bold mb-2">Name Change Request Submitted</h1>
+                                        <p className="text-muted-foreground mb-8">
+                                            Your certificate name change request has been submitted for admin review.
+                                            You will receive the certificate via email once your request is approved.
+                                        </p>
 
-                                <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                                    <p className="text-sm text-muted-foreground mb-1">Certificate ID</p>
-                                    <p className="font-mono font-semibold text-foreground">{certificateId}</p>
-                                </div>
+                                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+                                            <p className="text-sm text-amber-600 font-medium">
+                                                An admin will review your request shortly. Please check your email for updates.
+                                            </p>
+                                        </div>
 
-                                <div className="space-y-4">
-                                    <Link href={`/verify/${certificateId}`}>
-                                        <Button variant="outline" className="w-full h-12 rounded-xl">
-                                            <Award className="w-4 h-4 mr-2" />
-                                            Verify Certificate Online
-                                        </Button>
-                                    </Link>
+                                        <Link href="/resources/seminars">
+                                            <Button variant="ghost" className="w-full">
+                                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                                Back to Seminars
+                                            </Button>
+                                        </Link>
+                                    </>
+                                ) : certLoading ? (
+                                    <div className="py-12">
+                                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto" />
+                                    </div>
+                                ) : certData ? (
+                                    <>
+                                        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4 mb-8">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center shrink-0">
+                                                    <Shield className="w-5 h-5 text-green-500" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-green-600 dark:text-green-400">
+                                                        Certificate Sent!
+                                                    </p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Your certificate has been emailed. You can also download it below.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <Link href="/resources/seminars">
-                                        <Button variant="ghost" className="w-full">
-                                            <ArrowLeft className="w-4 h-4 mr-2" />
-                                            Back to Seminars
-                                        </Button>
-                                    </Link>
-                                </div>
+                                        <div className="rounded-2xl border border-border overflow-hidden mb-6">
+                                            <img
+                                                src={`/api/certificates/${certificateId}/preview`}
+                                                alt="Certificate Preview"
+                                                className="w-full h-auto"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                                <div>
+                                                    <p className="text-sm font-medium text-foreground">Certificate ID</p>
+                                                    <p className="text-xs text-muted-foreground font-mono">
+                                                        {certData.certificateId}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                                            <Link
+                                                href={`/api/certificates/${certificateId}/download`}
+                                                className="flex-1"
+                                            >
+                                                <Button className="w-full h-12 rounded-xl font-semibold">
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    Download PDF
+                                                </Button>
+                                            </Link>
+
+                                            <Link href={`/verify/${certificateId}`} className="flex-1">
+                                                <Button variant="outline" className="w-full h-12 rounded-xl font-semibold">
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    Verify Online
+                                                </Button>
+                                            </Link>
+                                        </div>
+
+                                        <ShareButton
+                                            title={`Certificate - ${certData.recipientName}`}
+                                            text={`I just received my certificate of participation from ${certData.seminarTitle} by ZecurX!`}
+                                            certificateId={certificateId || undefined}
+                                        />
+
+                                        <div className="text-center mt-8">
+                                            <Link href="/resources/seminars">
+                                                <Button variant="ghost">
+                                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                                    Back to Seminars
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Mail className="w-10 h-10 text-green-500" />
+                                        </div>
+                                        <h1 className="text-2xl font-bold mb-2">Certificate Sent!</h1>
+                                        <p className="text-muted-foreground mb-8">
+                                            Your certificate has been sent to your email address. Please check your inbox (and spam folder) for the certificate PDF.
+                                        </p>
+
+                                        <div className="bg-muted/50 rounded-xl p-4 mb-6">
+                                            <p className="text-sm text-muted-foreground mb-1">Certificate ID</p>
+                                            <p className="font-mono font-semibold text-foreground">{certificateId}</p>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                                            <Link
+                                                href={`/api/certificates/${certificateId}/download`}
+                                                className="flex-1"
+                                            >
+                                                <Button className="w-full h-12 rounded-xl font-semibold">
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    Download PDF
+                                                </Button>
+                                            </Link>
+
+                                            <Link href={`/verify/${certificateId}`} className="flex-1">
+                                                <Button variant="outline" className="w-full h-12 rounded-xl">
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    Verify Online
+                                                </Button>
+                                            </Link>
+                                        </div>
+
+                                        <ShareButton
+                                            title="Certificate - ZecurX"
+                                            text="I just received my certificate of participation from ZecurX!"
+                                            certificateId={certificateId || undefined}
+                                        />
+
+                                        <div className="text-center mt-6">
+                                            <Link href="/resources/seminars">
+                                                <Button variant="ghost">
+                                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                                    Back to Seminars
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </>
+                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>
