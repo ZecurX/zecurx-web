@@ -26,9 +26,10 @@ import {
   Star,
   Download,
   Send,
-  X
+  X,
+  AlertTriangle
 } from 'lucide-react';
-import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus } from '@/types/seminar';
+import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus, CertificateNameRequest } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,14 +53,18 @@ export default function SeminarDetailPage() {
   const [seminar, setSeminar] = useState<Seminar | null>(null);
   const [registrations, setRegistrations] = useState<SeminarRegistration[]>([]);
   const [feedback, setFeedback] = useState<SeminarFeedback[]>([]);
+  const [nameRequests, setNameRequests] = useState<CertificateNameRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<'details' | 'registrations' | 'feedback'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'registrations' | 'feedback' | 'name-requests'>('details');
   const [showEditSeminar, setShowEditSeminar] = useState(false);
   const [editingRegistration, setEditingRegistration] = useState<SeminarRegistration | null>(null);
   const [registrationEnabled, setRegistrationEnabled] = useState(false);
   const [certificateEnabled, setCertificateEnabled] = useState(false);
+
+  // Alert coordinator state
+  const [alertingCoordinator, setAlertingCoordinator] = useState(false);
 
   // Notify all participants state
   const [showNotifyDialog, setShowNotifyDialog] = useState(false);
@@ -120,11 +125,24 @@ export default function SeminarDetailPage() {
     }
   }, [seminarId]);
 
+  const fetchNameRequests = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}/name-requests`);
+      if (res.ok) {
+        const data = await res.json();
+        setNameRequests(data.nameRequests || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch name requests:', error);
+    }
+  }, [seminarId]);
+
   useEffect(() => {
     fetchSeminar();
     fetchRegistrations();
     fetchFeedback();
-  }, [fetchSeminar, fetchRegistrations, fetchFeedback]);
+    fetchNameRequests();
+  }, [fetchSeminar, fetchRegistrations, fetchFeedback, fetchNameRequests]);
 
   const handleSaveSettings = async () => {
     setSaving(true);
@@ -221,6 +239,30 @@ export default function SeminarDetailPage() {
   const copyCertificateLink = () => {
     const link = `${window.location.origin}/seminars/${seminarId}/certificate`;
     navigator.clipboard.writeText(link);
+  };
+
+  const handleAlertCoordinator = async () => {
+    if (!confirm(`Send certificate alert to ${seminar?.contact_person} (${seminar?.contact_email})?`)) return;
+
+    setAlertingCoordinator(true);
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}/notify-coordinator`, {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message);
+      } else {
+        alert(data.error || 'Failed to send alert');
+      }
+    } catch (error) {
+      console.error('Error alerting coordinator:', error);
+      alert('An error occurred');
+    } finally {
+      setAlertingCoordinator(false);
+    }
   };
 
   const handleNotifyAll = async () => {
@@ -450,6 +492,22 @@ export default function SeminarDetailPage() {
           <span className="px-1.5 py-0.5 text-xs bg-muted rounded-full">
             {feedback.length}
           </span>
+        </button>
+        <button
+          onClick={() => setActiveTab('name-requests')}
+          className={cn(
+            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2",
+            activeTab === 'name-requests'
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Name Requests
+          {nameRequests.filter(r => r.status === 'pending').length > 0 && (
+            <span className="px-1.5 py-0.5 text-xs bg-amber-500/10 text-amber-600 rounded-full font-semibold">
+              {nameRequests.filter(r => r.status === 'pending').length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -697,6 +755,27 @@ export default function SeminarDetailPage() {
                       </>
                     )}
                   </Button>
+
+                  {certificateEnabled && seminar.contact_email && (
+                    <Button
+                      onClick={handleAlertCoordinator}
+                      disabled={alertingCoordinator}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      {alertingCoordinator ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Alert Coordinator
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -898,6 +977,133 @@ export default function SeminarDetailPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {activeTab === 'name-requests' && (
+        <div className="space-y-4">
+          {nameRequests.length === 0 ? (
+            <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
+              <AlertTriangle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground">No name change requests</h3>
+              <p className="text-muted-foreground mt-1">
+                Name change requests will appear here when students request a different certificate name
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {nameRequests.map((req) => {
+                const isPending = req.status === 'pending';
+                const isApproved = req.status === 'approved';
+                const isRejected = req.status === 'rejected';
+
+                return (
+                  <div key={req.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">{req.email}</p>
+                      </div>
+                      <span className={cn(
+                        "px-2.5 py-1 rounded-full text-xs font-semibold border",
+                        isPending && "bg-amber-500/10 text-amber-600 border-amber-500/20",
+                        isApproved && "bg-green-500/10 text-green-600 border-green-500/20",
+                        isRejected && "bg-red-500/10 text-red-600 border-red-500/20"
+                      )}>
+                        {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                      </span>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Registered Name</p>
+                        <p className="text-sm text-foreground">{req.registered_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Requested Name</p>
+                        <p className="text-sm font-semibold text-primary">{req.requested_name}</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Reason</p>
+                      <p className="text-sm text-foreground italic">&ldquo;{req.reason}&rdquo;</p>
+                    </div>
+
+                    {req.admin_notes && (
+                      <div className="mb-4 p-3 bg-red-500/5 rounded-lg border border-red-500/10">
+                        <p className="text-xs font-medium text-red-600 mb-1">Admin Notes</p>
+                        <p className="text-sm text-foreground">{req.admin_notes}</p>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                      <span className="text-[10px] text-muted-foreground">
+                        Submitted {new Date(req.created_at).toLocaleString()}
+                        {req.reviewed_at && ` • Reviewed ${new Date(req.reviewed_at).toLocaleString()}`}
+                      </span>
+
+                      {isPending && canManage && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={async () => {
+                              if (!confirm('Approve this name change? A certificate will be generated and emailed.')) return;
+                              try {
+                                const res = await fetch(`/api/admin/seminars/${seminarId}/name-requests/${req.id}/approve`, {
+                                  method: 'POST',
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                  alert(data.message);
+                                  fetchNameRequests();
+                                } else {
+                                  alert(data.error || 'Failed to approve');
+                                }
+                              } catch (err) {
+                                console.error('Error approving:', err);
+                                alert('An error occurred');
+                              }
+                            }}
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={async () => {
+                              const reason = prompt('Enter rejection reason (optional):');
+                              try {
+                                const res = await fetch(`/api/admin/seminars/${seminarId}/name-requests/${req.id}/reject`, {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ reason }),
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                  alert(data.message);
+                                  fetchNameRequests();
+                                } else {
+                                  alert(data.error || 'Failed to reject');
+                                }
+                              } catch (err) {
+                                console.error('Error rejecting:', err);
+                                alert('An error occurred');
+                              }
+                            }}
+                          >
+                            <XCircle className="w-3.5 h-3.5 mr-1.5" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

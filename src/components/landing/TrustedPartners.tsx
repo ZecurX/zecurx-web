@@ -26,7 +26,6 @@ const partners: Partner[] = [
   { name: "Yenepoya", logo: `${CDN_BASE}/y-school-of-engineering-technology-logo.png`, invertInLight: false },
   { name: "MSRCASC", logo: `${CDN_BASE}/msrcasc-autonomus-logo-black1-1.png`, invertInLight: false },
   { name: "Dhanwantri", logo: `${CDN_BASE}/dhanwantari.png`, invertInLight: false },
-  { name: "Koshys", logo: `${CDN_BASE}/koshys.png`, invertInLight: false },
 ];
 
 export default function TrustedPartners() {

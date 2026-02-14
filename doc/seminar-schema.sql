@@ -162,6 +162,26 @@ CREATE TABLE seminar.otp_verifications (
 );
 
 -- ============================================
+-- 6. CERTIFICATE NAME CHANGE REQUESTS TABLE
+-- When certificate name differs from registered name
+-- ============================================
+CREATE TABLE seminar.certificate_name_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    feedback_id UUID REFERENCES seminar.feedback(id) ON DELETE CASCADE,
+    seminar_id UUID NOT NULL REFERENCES seminar.seminars(id) ON DELETE CASCADE,
+    registration_id UUID REFERENCES seminar.registrations(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    registered_name TEXT NOT NULL,
+    requested_name TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    admin_notes TEXT,
+    reviewed_at TIMESTAMPTZ,
+    reviewed_by UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
 -- INDEXES FOR PERFORMANCE
 -- ============================================
 CREATE INDEX idx_seminars_status ON seminar.seminars(status);
@@ -176,6 +196,9 @@ CREATE INDEX idx_certificates_certificate_id ON seminar.certificates(certificate
 CREATE INDEX idx_certificates_email ON seminar.certificates(recipient_email);
 CREATE INDEX idx_otp_email_purpose ON seminar.otp_verifications(email, purpose);
 CREATE INDEX idx_otp_seminar ON seminar.otp_verifications(seminar_id);
+CREATE INDEX idx_name_requests_seminar ON seminar.certificate_name_requests(seminar_id);
+CREATE INDEX idx_name_requests_status ON seminar.certificate_name_requests(status);
+CREATE INDEX idx_name_requests_email ON seminar.certificate_name_requests(email);
 
 -- ============================================
 -- TRIGGER: Auto-update updated_at

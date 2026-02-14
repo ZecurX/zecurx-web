@@ -5,6 +5,7 @@
 export type SeminarStatus = 'pending' | 'approved' | 'rejected' | 'completed';
 export type LocationType = 'online' | 'onsite';
 export type OtpPurpose = 'registration' | 'certificate';
+export type NameRequestStatus = 'pending' | 'approved' | 'rejected';
 
 export type CareerInterest = 
   | 'Ethical Hacking & Offensive Security'
@@ -178,6 +179,22 @@ export interface OtpVerification {
   created_at: string;
 }
 
+export interface CertificateNameRequest {
+  id: string;
+  feedback_id: string | null;
+  seminar_id: string;
+  registration_id: string | null;
+  email: string;
+  registered_name: string;
+  requested_name: string;
+  reason: string;
+  status: NameRequestStatus;
+  admin_notes: string | null;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  created_at: string;
+}
+
 // ============================================
 // API REQUEST/RESPONSE TYPES
 // ============================================
@@ -280,6 +297,7 @@ export interface FeedbackStep3 {
 
 export interface FeedbackStep4 {
   certificateName: string;
+  nameChangeReason?: string;
 }
 
 export interface FeedbackSubmission {

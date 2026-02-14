@@ -46,8 +46,12 @@ export async function POST(
 
         const seminar = seminarResult.rows[0];
 
-        // Date check removed to allow admin override via registration_enabled flag
-        // if (new Date(seminar.date) < new Date()) { ... }
+        if (new Date(seminar.date) < new Date()) {
+            return NextResponse.json(
+                { error: 'Registration is closed for past seminars' },
+                { status: 400 }
+            );
+        }
 
         const existingReg = await query<SeminarRegistration>(
             `SELECT * FROM seminar.registrations 

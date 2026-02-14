@@ -169,14 +169,14 @@ export async function POST(request: NextRequest) {
                 </div>
 
                 <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    Best regards,<br>The ZecurX Team
+                    Best regards,<br>ZecurX Private Limited
                 </p>
             </div>
         `;
 
         try {
             await resend.emails.send({
-                from: 'ZecurX Website <official@zecurx.com>',
+                from: 'ZecurX Private Limited <official@zecurx.com>',
                 to: 'official@zecurx.com',
                 replyTo: email,
                 subject: `New Seminar Booking: ${title} - ${organization}`,
@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
             });
 
             await resend.emails.send({
-                from: 'ZecurX <official@zecurx.com>',
+                from: 'ZecurX Private Limited <official@zecurx.com>',
                 to: email,
                 subject: `Seminar Booking Request Received - ZecurX`,
                 html: userEmailHtml,
