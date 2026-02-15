@@ -301,107 +301,111 @@ export default function CertificatePage() {
     }
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-12 relative overflow-hidden font-sans">
-            {/* Ambient Background */}
+        <div className="min-h-screen bg-background relative overflow-hidden font-sans">
             <BackgroundOrbs />
             <AnimatedGridPattern />
 
-            <div className={`relative z-10 mx-auto px-6 ${step === "success" ? "max-w-7xl" : "max-w-md"}`}>
-                <Link
-                    href="/resources/seminars"
-                    className="inline-flex items-center text-sm text-muted-foreground mb-8"
-                >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Seminars
-                </Link>
-
-                {seminar && step !== "success" && (
-                    <div className="mb-8 text-center">
-                        <h2 className="text-xl font-manrope font-semibold text-foreground mb-2 tracking-tight">{seminar.title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                            Certificate Portal
-                        </p>
-                    </div>
+            <div className={cn(
+                "relative z-10 mx-auto px-4 sm:px-6",
+                step === "success" ? "max-w-7xl pt-24 pb-12" : "max-w-[420px] flex flex-col items-center justify-center min-h-screen py-12"
+            )}>
+                {step === "success" && (
+                    <Link
+                        href="/resources/seminars"
+                        className="inline-flex items-center text-sm text-muted-foreground mb-8"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                        Seminars
+                    </Link>
                 )}
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    key={step}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     className={cn(
-                        "bg-background/60 backdrop-blur-xl border border-border/30 dark:border-white/5 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.4)] p-6 sm:p-8 md:p-10",
-                        step === "success" ? "rounded-2xl sm:rounded-3xl" : "rounded-2xl sm:rounded-3xl"
+                        step === "success"
+                            ? "bg-background/60 backdrop-blur-xl border border-border/30 dark:border-white/5 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.4)] rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10"
+                            : "w-full"
                     )}
                 >
                     {step === "email" && (
-                        <>
+                        <div className="w-full">
                             <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-primary/20 shadow-[0_0_20px_-5px_rgba(var(--primary),0.3)]">
-                                    <Award className="w-8 h-8 text-primary" />
-                                </div>
-                                <h1 className="text-4xl font-manrope font-bold mb-3 tracking-tighter text-foreground">Get Your Certificate</h1>
-                                <p className="text-muted-foreground leading-relaxed text-lg">
-                                    Enter your registered email address to access your certificate of participation.
+                                {seminar && (
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-6">{seminar.title}</p>
+                                )}
+                                <h1 className="text-2xl font-manrope font-bold tracking-tight text-foreground mb-2">Get your certificate</h1>
+                                <p className="text-sm text-muted-foreground">
+                                    Enter your registered email to continue.
                                 </p>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="space-y-3">
-                                    <Label htmlFor="email" className="ml-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Email Address
+                            <div className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                                        Email
                                     </Label>
                                     <Input
                                         id="email"
                                         type="email"
-                                        placeholder="john@example.com"
+                                        placeholder="you@example.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="h-14 rounded-2xl bg-background/50 border-border/60 focus:ring-primary/20 transition-all text-lg px-4"
+                                        className="h-11 rounded-lg text-sm"
                                         onKeyDown={(e) => e.key === "Enter" && requestOtp()}
                                     />
                                 </div>
 
                                 {error && (
-                                    <div className="bg-destructive/5 border border-destructive/10 rounded-2xl p-4 flex items-center gap-3 text-destructive text-sm font-medium">
-                                        <AlertCircle className="w-5 h-5 shrink-0" />
-                                        <p>{error}</p>
-                                    </div>
+                                    <p className="text-sm text-destructive">{error}</p>
                                 )}
 
                                 <Button
                                     onClick={requestOtp}
-                                    className="w-full h-14 rounded-full font-manrope font-bold text-lg shadow-[0_0_30px_-10px_rgba(var(--primary),0.5)] hover:shadow-[0_0_40px_-10px_rgba(var(--primary),0.6)] transition-all"
+                                    className="w-full h-11 rounded-lg font-medium text-sm"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                            Processing...
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            Sending code...
                                         </>
                                     ) : (
                                         "Continue"
                                     )}
                                 </Button>
                             </div>
-                        </>
+
+                            <div className="mt-6 pt-6 border-t border-border/40">
+                                <Link
+                                    href="/resources/seminars"
+                                    className="flex items-center justify-center text-sm text-muted-foreground"
+                                >
+                                    <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                                    Back to seminars
+                                </Link>
+                            </div>
+                        </div>
                     )}
 
                     {step === "otp" && (
-                        <>
+                        <div className="w-full">
                             <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-blue-500/20 shadow-[0_0_20px_-5px_rgba(59,130,246,0.3)]">
-                                    <Mail className="w-8 h-8 text-blue-500" />
-                                </div>
-                                <h1 className="text-4xl font-manrope font-bold mb-3 tracking-tighter text-foreground">Verify Email</h1>
-                                <p className="text-muted-foreground text-lg">
-                                    We&apos;ve sent a 6-digit code to <span className="text-foreground font-semibold">{email}</span>
+                                {seminar && (
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-6">{seminar.title}</p>
+                                )}
+                                <h1 className="text-2xl font-manrope font-bold tracking-tight text-foreground mb-2">Check your email</h1>
+                                <p className="text-sm text-muted-foreground">
+                                    We sent a code to <span className="text-foreground font-medium">{email}</span>
                                 </p>
                             </div>
 
-                            <div className="space-y-6">
-                                <div className="space-y-3">
-                                    <Label htmlFor="otp" className="text-center block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Enter Verification Code
+                            <div className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <Label htmlFor="otp" className="text-sm font-medium text-foreground text-center block">
+                                        Verification code
                                     </Label>
                                     <Input
                                         id="otp"
@@ -409,109 +413,95 @@ export default function CertificatePage() {
                                         placeholder="000000"
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                                        className="h-20 text-center text-4xl tracking-[0.5em] font-mono font-medium rounded-2xl bg-background/50 border-border/60 focus:ring-primary/20 transition-all"
+                                        className="h-14 text-center text-2xl tracking-[0.35em] font-mono font-medium rounded-lg"
                                         maxLength={6}
                                         onKeyDown={(e) => e.key === "Enter" && otp.length === 6 && verifyOtp()}
                                     />
                                 </div>
 
                                 {error && (
-                                    <div className="bg-destructive/5 border border-destructive/10 rounded-2xl p-4 flex items-center gap-3 text-destructive text-sm font-medium">
-                                        <AlertCircle className="w-5 h-5 shrink-0" />
-                                        <p>{error}</p>
-                                    </div>
+                                    <p className="text-sm text-destructive">{error}</p>
                                 )}
 
                                 <Button
                                     onClick={verifyOtp}
-                                    className="w-full h-14 rounded-full font-manrope font-bold text-lg shadow-[0_0_30px_-10px_rgba(var(--primary),0.5)] hover:shadow-[0_0_40px_-10px_rgba(var(--primary),0.6)] transition-all"
+                                    className="w-full h-11 rounded-lg font-medium text-sm"
                                     disabled={isSubmitting || otp.length !== 6}
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                             Verifying...
                                         </>
                                     ) : (
-                                        "Verify Code"
+                                        "Verify"
                                     )}
                                 </Button>
-
-                                <div className="flex flex-col gap-3 text-center pt-4">
-                                    <button
-                                        type="button"
-                                        onClick={resendOtp}
-                                        className="text-sm text-primary hover:text-primary/80 transition-colors font-semibold"
-                                        disabled={isSubmitting}
-                                    >
-                                        Resend Code
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setStep("email")}
-                                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                                    >
-                                        Change email address
-                                    </button>
-                                </div>
                             </div>
-                        </>
+
+                            <div className="mt-6 pt-6 border-t border-border/40 flex items-center justify-center gap-3 text-sm">
+                                <button
+                                    type="button"
+                                    onClick={resendOtp}
+                                    className="text-muted-foreground font-medium"
+                                    disabled={isSubmitting}
+                                >
+                                    Resend code
+                                </button>
+                                <span className="text-border">&middot;</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setStep("email")}
+                                    className="text-muted-foreground font-medium"
+                                >
+                                    Change email
+                                </button>
+                            </div>
+                        </div>
                     )}
 
                     {step === "status" && status && (
-                        <>
+                        <div className="w-full">
                             <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-amber-500/20 shadow-[0_0_20px_-5px_rgba(245,158,11,0.3)]">
-                                    <FileText className="w-8 h-8 text-amber-500" />
-                                </div>
-                                <h1 className="text-4xl font-manrope font-bold mb-3 tracking-tighter text-foreground">Almost There</h1>
-                                <p className="text-muted-foreground text-lg">
+                                {seminar && (
+                                    <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-6">{seminar.title}</p>
+                                )}
+                                <h1 className="text-2xl font-manrope font-bold tracking-tight text-foreground mb-2">Almost there</h1>
+                                <p className="text-sm text-muted-foreground">
                                     {status.hasRegistration
-                                        ? "Complete the feedback form to unlock your certificate."
-                                        : "Certificate eligibility status."}
+                                        ? "Complete feedback to get your certificate."
+                                        : "We couldn\u2019t find a registration for this email."}
                                 </p>
                             </div>
 
-                            <div className="space-y-4 mb-8">
+                            <div className="space-y-3 mb-6">
                                 <div className={cn(
-                                    "flex items-center gap-4 p-5 rounded-2xl border transition-colors",
-                                    status.hasRegistration ? "bg-emerald-500/5 border-emerald-500/20" : "bg-destructive/5 border-destructive/20"
+                                    "flex items-center gap-3 px-4 py-3 rounded-lg border text-sm",
+                                    status.hasRegistration ? "border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "border-destructive/20 text-destructive"
                                 )}>
                                     {status.hasRegistration ? (
-                                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                                            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                                        </div>
+                                        <CheckCircle2 className="w-4 h-4 shrink-0" />
                                     ) : (
-                                        <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center shrink-0">
-                                            <XCircle className="w-5 h-5 text-destructive" />
-                                        </div>
+                                        <XCircle className="w-4 h-4 shrink-0" />
                                     )}
-                                    <div className="flex-1">
-                                        <p className={cn("font-bold text-base", status.hasRegistration ? "text-emerald-700 dark:text-emerald-300" : "text-destructive")}>
-                                            {status.hasRegistration ? "Registration Verified" : "Registration Not Found"}
-                                        </p>
-                                    </div>
+                                    <span className="font-medium">
+                                        {status.hasRegistration ? "Registration verified" : "Registration not found"}
+                                    </span>
                                 </div>
 
                                 {status.hasRegistration && (
                                     <div className={cn(
-                                        "flex items-center gap-4 p-5 rounded-2xl border transition-colors",
-                                        status.hasFeedback ? "bg-emerald-500/5 border-emerald-500/20" : "bg-amber-500/5 border-amber-500/20"
+                                        "flex items-center gap-3 px-4 py-3 rounded-lg border text-sm",
+                                        status.hasFeedback ? "border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "border-amber-500/20 text-amber-700 dark:text-amber-400"
                                     )}>
                                         {status.hasFeedback ? (
-                                            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
-                                                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                                            </div>
+                                            <CheckCircle2 className="w-4 h-4 shrink-0" />
                                         ) : (
-                                            <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                                                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                                            </div>
+                                            <AlertCircle className="w-4 h-4 shrink-0" />
                                         )}
-                                        <div className="flex-1">
-                                            <p className={cn("font-bold text-base", status.hasFeedback ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300")}>
-                                                {status.hasFeedback ? "Feedback Submitted" : "Feedback Required"}
-                                            </p>
-                                        </div>
+                                        <span className="font-medium">
+                                            {status.hasFeedback ? "Feedback submitted" : "Feedback required"}
+                                        </span>
                                     </div>
                                 )}
                             </div>
@@ -519,20 +509,30 @@ export default function CertificatePage() {
                             {status.hasRegistration ? (
                                 <Button
                                     onClick={goToFeedback}
-                                    className="w-full h-14 rounded-full font-manrope font-bold text-lg shadow-[0_0_30px_-10px_rgba(245,158,11,0.4)] bg-amber-600 text-white border-0"
+                                    className="w-full h-11 rounded-lg font-medium text-sm"
                                 >
-                                    Complete Feedback Form
+                                    Complete Feedback
                                 </Button>
                             ) : (
                                 <Button
                                     onClick={() => setStep("email")}
                                     variant="outline"
-                                    className="w-full h-14 rounded-full border-border/60 font-semibold"
+                                    className="w-full h-11 rounded-lg font-medium text-sm"
                                 >
-                                    Try Different Email
+                                    Try a different email
                                 </Button>
                             )}
-                        </>
+
+                            <div className="mt-6 pt-6 border-t border-border/40">
+                                <Link
+                                    href="/resources/seminars"
+                                    className="flex items-center justify-center text-sm text-muted-foreground"
+                                >
+                                    <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+                                    Back to seminars
+                                </Link>
+                            </div>
+                        </div>
                     )}
 
                     {step === "success" && status?.certificateId && (
