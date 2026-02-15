@@ -65,16 +65,7 @@ export async function POST(
             );
         }
 
-        const OTP_BYPASS_EMAILS = ['spsidharth29@gmail.com'];
         const normalizedEmail = email.trim().toLowerCase();
-
-        if (OTP_BYPASS_EMAILS.includes(normalizedEmail)) {
-            return NextResponse.json({
-                success: true,
-                message: 'OTP sent to your email',
-                bypass: true,
-            });
-        }
 
         const otp = await createOtp(normalizedEmail, 'certificate', seminarId);
 
