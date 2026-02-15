@@ -140,7 +140,7 @@ export async function POST(
             }
         }
         if (!registeredName) {
-            registeredName = fullName;
+            registeredName = String(fullName);
         }
 
         const nameMatches = certificateName.trim().toLowerCase() === registeredName.trim().toLowerCase();
