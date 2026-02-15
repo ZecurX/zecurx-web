@@ -45,10 +45,12 @@ export default function SeminarsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
+        const ist = { timeZone: 'Asia/Kolkata' } as const;
         return {
-            month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
-            day: date.getDate().toString(),
-            full: date.toLocaleDateString('en-US', { dateStyle: 'medium' }),
+            month: date.toLocaleDateString('en-US', { month: 'short', ...ist }).toUpperCase(),
+            day: date.toLocaleDateString('en-US', { day: 'numeric', ...ist }),
+            full: date.toLocaleDateString('en-US', { dateStyle: 'medium', ...ist }),
+            time: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...ist }) + ' IST',
         };
     };
 
@@ -113,7 +115,7 @@ export default function SeminarsPage() {
                                             <div className="text-lg font-bold text-foreground">{upcomingSeminar.title}</div>
                                             <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">
                                                 <Clock className="w-3 h-3" />
-                                                <span>{formatDate(upcomingSeminar.date).full} &bull; {upcomingSeminar.time}</span>
+                                                <span>{formatDate(upcomingSeminar.date).full}</span>
                                             </div>
                                         </div>
 
@@ -161,7 +163,7 @@ export default function SeminarsPage() {
                         <div className="flex flex-col gap-6">
                             {displaySeminars.map((seminar) => {
                                 const dateInfo = formatDate(seminar.date);
-                                const showRegister = seminar.registration_enabled;
+                                const showRegister = seminar.registration_enabled && !isPastSeminar(seminar.date);
                                 const showCertificate = seminar.certificate_enabled;
 
                                 return (
@@ -173,7 +175,6 @@ export default function SeminarsPage() {
                                         <div className="hidden md:flex w-32 shrink-0 flex-col items-center justify-center border-r border-border bg-muted/20 p-6 text-center group-hover:bg-muted/40 transition-colors">
                                             <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{dateInfo.month}</span>
                                             <span className="text-3xl font-bold text-foreground my-1">{dateInfo.day}</span>
-                                            <span className="text-xs text-muted-foreground">{seminar.time}</span>
                                         </div>
 
                                         {/* Mobile date badge */}
@@ -185,7 +186,7 @@ export default function SeminarsPage() {
                                                 </div>
                                             </div>
                                             <div className="flex-1">
-                                                <span className="text-xs text-muted-foreground">{dateInfo.full} • {seminar.time}</span>
+                                                <span className="text-xs text-muted-foreground">{dateInfo.full}</span>
                                             </div>
                                         </div>
 

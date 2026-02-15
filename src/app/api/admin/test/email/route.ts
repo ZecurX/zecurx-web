@@ -16,14 +16,14 @@ export async function POST(request: NextRequest) {
         const resend = new Resend(process.env.RESEND_API_KEY);
 
         const { data, error } = await resend.emails.send({
-            from: 'ZecurX Test <official@zecurx.com>',
+            from: 'ZecurX Private Limited <official@zecurx.com>',
             to: email,
             subject: '🧪 ZecurX System Test - Email Delivery',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
-                        <h1 style="color: #fff; margin: 0; font-size: 24px;">ZECURX</h1>
-                        <p style="color: #888; margin: 8px 0 0 0; font-size: 12px;">System Test</p>
+                        <img src="https://www.zecurx.com/images/zecurx-logo.png" alt="ZecurX" style="height: 36px; display: block; margin: 0 auto;" />
+                        <p style="color: #888; margin: 12px 0 0 0; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;">System Test</p>
                     </div>
                     <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 12px 12px;">
                         <h2 style="color: #1a1a1a; margin: 0 0 15px 0;">✅ Email Test Successful!</h2>

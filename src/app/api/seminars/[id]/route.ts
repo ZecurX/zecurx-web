@@ -28,9 +28,14 @@ export async function GET(
             );
         }
 
+        const seminar = result.rows[0];
+
         return NextResponse.json({
             success: true,
-            seminar: result.rows[0],
+            seminar: {
+                ...seminar,
+                registration_enabled: new Date(seminar.date) < new Date() ? false : seminar.registration_enabled,
+            },
         });
 
     } catch (error) {

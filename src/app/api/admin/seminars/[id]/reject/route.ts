@@ -84,7 +84,7 @@ export async function POST(
 
         try {
             await resend.emails.send({
-                from: 'ZecurX <official@zecurx.com>',
+                from: 'ZecurX Private Limited <official@zecurx.com>',
                 to: seminar.contact_email,
                 subject: `Seminar Request Update: ${seminar.title} - ZecurX`,
                 html: rejectionEmailHtml,
