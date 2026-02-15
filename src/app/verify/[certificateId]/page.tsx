@@ -9,7 +9,9 @@ import {
     User,
     Building2,
     Award,
-    Shield
+    Shield,
+    Share2,
+    ExternalLink
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -22,10 +24,10 @@ interface Props {
 
 async function getCertificate(certificateId: string): Promise<CertificateVerification | null> {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL 
-            ? `https://${process.env.VERCEL_URL}` 
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}`
             : "http://localhost:3000";
-        
+
         const response = await fetch(`${baseUrl}/api/certificates/${certificateId}`, {
             cache: "no-store",
         });
@@ -83,149 +85,115 @@ export default async function CertificateVerifyPage({ params }: Props) {
     });
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="bg-green-500/5 border-b border-green-500/20">
-                <div className="max-w-4xl mx-auto px-6 py-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center">
-                            <Shield className="w-5 h-5 text-green-500" />
-                        </div>
-                        <div>
-                            <p className="font-semibold text-green-600 dark:text-green-400">
-                                Verified Certificate
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                                This certificate has been verified as authentic by ZecurX
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div className="min-h-screen bg-background relative overflow-hidden font-sans selection:bg-primary/30">
+            {/* Background Effects */}
+            <div className="fixed inset-0 pointer-events-none -z-10">
+                <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]" />
+                <div className="absolute bottom-[10%] left-[10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[100px]" />
+                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
             </div>
 
-            <div className="max-w-4xl mx-auto px-6 py-12">
-                <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-xl">
-                    <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-8 sm:p-12 border-b border-border">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="relative w-12 h-12">
-                                <Image
-                                    src="/images/zecurx-logo.png"
-                                    alt="ZecurX"
-                                    fill
-                                    className="object-contain"
+            <div className="container mx-auto px-4 py-12 max-w-5xl">
+                {/* Header */}
+                <div className="flex flex-col items-center justify-center mb-12">
+                    <Link href="/" className="mb-6 relative w-12 h-12">
+                        <Image src="/images/zecurx-logo.png" alt="ZecurX" fill className="object-contain" />
+                    </Link>
+
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full text-green-600 text-sm font-medium mb-4">
+                        <Shield className="w-4 h-4 fill-green-500/20" />
+                        Verified Certificate
+                    </div>
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                    {/* Left Column: Preview */}
+                    <div className="order-2 lg:order-1 perspective-1000 group">
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl border-[8px] border-white dark:border-white/5 bg-background transform transition-all duration-500 hover:rotate-y-1 hover:scale-[1.01]">
+                            <div className="aspect-[1.414/1] bg-muted relative">
+                                {/* Use an iframe or image for preview */}
+                                <img
+                                    src={`/api/certificates/${certificateId}/preview`}
+                                    alt="Certificate Preview"
+                                    className="w-full h-full object-cover"
                                 />
                             </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-foreground">ZecurX</h1>
-                                <p className="text-sm text-muted-foreground">Cybersecurity Education</p>
-                            </div>
                         </div>
-
-                        <div className="text-center mb-8">
-                            <p className="text-sm uppercase tracking-wider text-muted-foreground mb-2">
-                                Certificate of Participation
-                            </p>
-                            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-                                {certificate.recipientName}
-                            </h2>
-                            <p className="text-muted-foreground">
-                                has successfully participated in
-                            </p>
-                        </div>
-
-                        <div className="bg-background/50 rounded-2xl p-6 mb-6">
-                            <h3 className="text-xl sm:text-2xl font-semibold text-foreground text-center">
-                                {certificate.seminarTitle}
-                            </h3>
+                        <div className="mt-6 flex justify-center">
+                            <Link href="/resources/seminars" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+                                <ExternalLink className="w-3 h-3" /> Verify another certificate
+                            </Link>
                         </div>
                     </div>
 
-                    <div className="p-8 sm:p-12">
-                        <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <Calendar className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Seminar Date</p>
-                                    <p className="font-medium text-foreground">{formattedDate}</p>
-                                </div>
-                            </div>
-
-                            {certificate.speakerName && (
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                        <User className="w-5 h-5 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Speaker</p>
-                                        <p className="font-medium text-foreground">{certificate.speakerName}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {certificate.organization && (
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                        <Building2 className="w-5 h-5 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Host Organization</p>
-                                        <p className="font-medium text-foreground">{certificate.organization}</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <Award className="w-5 h-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-muted-foreground">Issued On</p>
-                                    <p className="font-medium text-foreground">{issuedDate}</p>
-                                </div>
-                            </div>
+                    {/* Right Column: Details */}
+                    <div className="order-1 lg:order-2 space-y-8">
+                        <div>
+                            <h1 className="text-4xl font-bold font-space-grotesk mb-2 text-foreground">
+                                {certificate.recipientName}
+                            </h1>
+                            <p className="text-xl text-muted-foreground">
+                                has been awarded this certificate for
+                            </p>
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl mb-8">
-                            <div className="flex items-center gap-3">
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                <div>
-                                    <p className="text-sm font-medium text-foreground">Certificate ID</p>
-                                    <p className="text-xs text-muted-foreground font-mono">
-                                        {certificate.certificateId}
-                                    </p>
+                        <div className="p-6 rounded-3xl bg-card/50 backdrop-blur-xl border border-border/50 shadow-lg">
+                            <h2 className="text-2xl font-bold mb-6 font-space-grotesk">{certificate.seminarTitle}</h2>
+
+                            <div className="grid gap-4">
+                                <div className="flex items-center gap-4 p-3 rounded-xl bg-background/50 border border-border/50">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                        <Calendar className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Date</p>
+                                        <p className="font-medium">{formattedDate}</p>
+                                    </div>
+                                </div>
+
+                                {certificate.speakerName && (
+                                    <div className="flex items-center gap-4 p-3 rounded-xl bg-background/50 border border-border/50">
+                                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                            <User className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs text-muted-foreground uppercase tracking-wider">Speaker</p>
+                                            <p className="font-medium">{certificate.speakerName}</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="flex items-center gap-4 p-3 rounded-xl bg-background/50 border border-border/50">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                        <Award className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Certificate ID</p>
+                                        <code className="font-mono font-medium text-primary">{certificate.certificateId}</code>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link
-                                href={`/api/certificates/${certificateId}/download`}
-                                className="flex-1"
-                            >
-                                <Button className="w-full h-12 rounded-xl font-semibold">
-                                    <Download className="w-4 h-4 mr-2" />
+                            <Button asChild className="flex-1 h-12 rounded-xl font-bold text-base shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                                <Link href={`/api/certificates/${certificateId}/download`}>
+                                    <Download className="w-5 h-5 mr-2" />
                                     Download PDF
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
 
                             <ShareButton
                                 title={`Certificate - ${certificate.recipientName}`}
-                                text={`Check out my certificate from ${certificate.seminarTitle}`}
+                                text={`Check out my certificate for ${certificate.seminarTitle} from ZecurX!`}
+                                className="flex-1 h-12 rounded-xl font-bold text-base border-border bg-background hover:bg-muted"
                             />
                         </div>
                     </div>
-                </div>
-
-                <div className="text-center mt-8">
-                    <Link
-                        href="/resources/seminars"
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        Explore more seminars at ZecurX
-                    </Link>
                 </div>
             </div>
         </div>
     );
 }
+
+

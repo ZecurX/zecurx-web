@@ -31,8 +31,10 @@ export async function POST(
             );
         }
 
+        const normalizedEmail = email.trim().toLowerCase();
+
         const verification = await verifyOtp(
-            email.trim().toLowerCase(),
+            normalizedEmail,
             otp,
             'certificate',
             seminarId
