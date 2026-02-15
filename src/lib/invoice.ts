@@ -338,7 +338,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         color: rgb(0.9, 0.9, 0.9),
     });
     
-    page.drawText('ZecurX Technologies', {
+    page.drawText('ZecurX Private Limited', {
         x: margin,
         y: footerY,
         size: 9,

@@ -81,8 +81,8 @@ async function sendInvoiceEmail(data: {
     const userEmailHtml = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
             <div style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); padding: 40px 30px; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">ZECURX</h1>
-                <p style="color: #a0a0a0; margin: 8px 0 0 0; font-size: 14px;">Cybersecurity Solutions</p>
+                <img src="https://www.zecurx.com/images/zecurx-logo.png" alt="ZecurX" style="height: 40px; display: block; margin: 0 auto;" />
+                <p style="color: #a0a0a0; margin: 15px 0 0 0; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Cybersecurity Solutions</p>
             </div>
             
             <div style="padding: 40px 30px;">
@@ -157,7 +157,7 @@ async function sendInvoiceEmail(data: {
 
             <div style="background: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
                 <p style="color: #888; font-size: 12px; margin: 0;">
-                    © ${new Date().getFullYear()} ZecurX Technologies. All rights reserved.<br>
+                    © ${new Date().getFullYear()} ZecurX Private Limited. All rights reserved.<br>
                     <a href="https://www.zecurx.com" style="color: #2196f3; text-decoration: none;">www.zecurx.com</a>
                 </p>
             </div>
@@ -166,7 +166,7 @@ async function sendInvoiceEmail(data: {
 
     try {
         await resend.emails.send({
-            from: 'ZecurX <official@zecurx.com>',
+            from: 'ZecurX Private Limited <official@zecurx.com>',
             to: data.email,
             subject: emailSubject,
             html: userEmailHtml,
@@ -205,7 +205,7 @@ async function sendInvoiceEmail(data: {
 
     try {
         await resend.emails.send({
-            from: 'ZecurX Website <official@zecurx.com>',
+            from: 'ZecurX Private Limited <official@zecurx.com>',
             to: adminEmail,
             subject: `New ${data.isInternship ? 'Enrollment' : 'Purchase'}: ${data.itemName} - ₹${data.amount}`,
             html: adminEmailHtml,

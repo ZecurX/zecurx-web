@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -19,7 +19,14 @@ import {
     MapPin,
     Star,
     Award,
-    Sparkles
+    Sparkles,
+    ExternalLink,
+    BookOpen,
+    Linkedin,
+    Instagram,
+    Clock,
+    Download,
+    Shield
 } from "lucide-react";
 import Link from "next/link";
 
@@ -37,11 +44,21 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import {
     PublicSeminar,
+    CertificateVerification,
     YEAR_OPTIONS,
     CAREER_INTERESTS,
+    OFFENSIVE_SECURITY_INTEREST,
 } from "@/types/seminar";
 import { cn } from "@/lib/utils";
+import { ShareButton } from "@/app/verify/[certificateId]/ShareButton";
 
 const step1Schema = z.object({
     fullName: z.string().min(2, "Name is required"),
@@ -49,18 +66,53 @@ const step1Schema = z.object({
     collegeName: z.string().min(2, "College name is required"),
     year: z.string().min(1, "Year is required"),
     cityState: z.string().min(2, "City/State is required"),
-    reminderContact: z.string().optional(),
+    reminderContact: z
+        .string()
+        .min(10, "Phone/WhatsApp number is required")
+        .transform((val) => val.replace(/\D/g, "")) // Strip non-digits
+        .refine(
+            (val) => {
+                // Handle +91 prefix or standalone 10-digit number
+                if (val.startsWith("91") && val.length === 12) {
+                    return /^91[6-9]\d{9}$/.test(val);
+                }
+                return /^[6-9]\d{9}$/.test(val);
+            },
+            { message: "Please enter a valid 10-digit Indian phone/WhatsApp number" }
+        ),
 });
 
 const step2Schema = z.object({
     careerInterest: z.string().min(1, "Please select your career interest"),
     offensiveSecurityReason: z.string().optional(),
+}).refine((data) => {
+    if (data.careerInterest === OFFENSIVE_SECURITY_INTEREST) {
+        if (!data.offensiveSecurityReason || data.offensiveSecurityReason.trim().length < 10) {
+            return false;
+        }
+        const wordCount = data.offensiveSecurityReason.trim().split(/\s+/).length;
+        return wordCount >= 3;
+    }
+    return true;
+}, {
+    message: "Please share what excites you about offensive security (minimum 10 characters and at least 3 words)",
+    path: ["offensiveSecurityReason"],
 });
 
 const step3Schema = z.object({
     seminarRating: z.number().min(1, "Please rate the seminar").max(5),
-    mostValuablePart: z.string().optional(),
-    futureSuggestions: z.string().optional(),
+    mostValuablePart: z
+        .string()
+        .min(10, "Please share what you found most valuable (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
+    futureSuggestions: z
+        .string()
+        .min(10, "Please suggest topics for future seminars (minimum 10 characters)")
+        .refine((val) => val.trim().split(/\s+/).length >= 3, {
+            message: "Please provide at least 3 words",
+        }),
     joinZecurx: z.boolean().optional(),
 });
 
@@ -94,6 +146,28 @@ export default function FeedbackPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [certificateId, setCertificateId] = useState<string | null>(null);
+    const [showSocialModal, setShowSocialModal] = useState(false);
+    const [registeredName, setRegisteredName] = useState<string | null>(null);
+    const [nameChangeReason, setNameChangeReason] = useState('');
+    const [showNameChangeReason, setShowNameChangeReason] = useState(false);
+    const [nameChangeSubmitted, setNameChangeSubmitted] = useState(false);
+    const [certData, setCertData] = useState<CertificateVerification["certificate"]>(null);
+    const [certLoading, setCertLoading] = useState(false);
+
+    const fetchCertificateData = useCallback(async (certId: string) => {
+        setCertLoading(true);
+        try {
+            const response = await fetch(`/api/certificates/${certId}`);
+            const data: CertificateVerification = await response.json();
+            if (data.valid && data.certificate) {
+                setCertData(data.certificate);
+            }
+        } catch {
+            // Non-critical — preview just won't show
+        } finally {
+            setCertLoading(false);
+        }
+    }, []);
 
     const [step1Data, setStep1Data] = useState<Step1Values | null>(null);
     const [step2Data, setStep2Data] = useState<Step2Values | null>(null);
@@ -163,7 +237,21 @@ export default function FeedbackPage() {
         if (prefillEmail && step1Data === null) {
             step1Form.setValue("email", prefillEmail);
         }
+        if (prefillName) {
+            setRegisteredName(prefillName);
+        }
     }, [prefillName, prefillEmail, step1Data, step1Form, step4Form]);
+
+    const watchedCertName = step4Form.watch("certificateName");
+
+    useEffect(() => {
+        if (registeredName && watchedCertName) {
+            const differs = watchedCertName.trim().toLowerCase() !== registeredName.trim().toLowerCase();
+            setShowNameChangeReason(differs);
+        } else {
+            setShowNameChangeReason(false);
+        }
+    }, [watchedCertName, registeredName]);
 
     const handleStep1Submit = (data: Step1Values) => {
         setStep1Data(data);
@@ -183,6 +271,11 @@ export default function FeedbackPage() {
 
     const handleFinalSubmit = async (data: Step4Values) => {
         if (!step1Data || !step2Data || !step3Data) return;
+
+        if (showNameChangeReason && nameChangeReason.trim().length < 10) {
+            setError("Please provide a reason for the name change (minimum 10 characters)");
+            return;
+        }
 
         setIsSubmitting(true);
         setError(null);
@@ -207,6 +300,7 @@ export default function FeedbackPage() {
                 certificateName: data.certificateName,
                 seminarId,
                 registrationId: registrationId || undefined,
+                nameChangeReason: showNameChangeReason ? nameChangeReason.trim() : undefined,
             };
 
             const response = await fetch(`/api/seminars/${seminarId}/feedback`, {
@@ -221,8 +315,18 @@ export default function FeedbackPage() {
                 throw new Error(result.error || "Submission failed");
             }
 
-            setCertificateId(result.certificateId);
-            setCurrentStep(5);
+            if (result.nameChangeRequested) {
+                setNameChangeSubmitted(true);
+                setCurrentStep(5);
+            } else {
+                const certId = result.certificate?.certificateId;
+                setCertificateId(certId);
+                if (certId) {
+                    fetchCertificateData(certId);
+                }
+                setCurrentStep(5);
+                setShowSocialModal(true);
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
@@ -262,7 +366,7 @@ export default function FeedbackPage() {
 
     return (
         <div className="min-h-screen bg-background pt-24 pb-12">
-            <div className="max-w-2xl mx-auto px-6">
+            <div className={`mx-auto px-6 ${currentStep === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
                 <Link
                     href="/resources/seminars"
                     className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
@@ -346,6 +450,7 @@ export default function FeedbackPage() {
                                             placeholder="John Doe"
                                             {...step1Form.register("fullName")}
                                             className={`h-12 ${step1Form.formState.errors.fullName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.fullName}
                                         />
                                         {step1Form.formState.errors.fullName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.fullName.message}</p>
@@ -362,6 +467,7 @@ export default function FeedbackPage() {
                                             placeholder="john@example.com"
                                             {...step1Form.register("email")}
                                             className={`h-12 ${step1Form.formState.errors.email ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.email}
                                         />
                                         {step1Form.formState.errors.email && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.email.message}</p>
@@ -377,6 +483,7 @@ export default function FeedbackPage() {
                                             placeholder="Your institution"
                                             {...step1Form.register("collegeName")}
                                             className={`h-12 ${step1Form.formState.errors.collegeName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.collegeName}
                                         />
                                         {step1Form.formState.errors.collegeName && (
                                             <p className="text-xs text-red-500">{step1Form.formState.errors.collegeName.message}</p>
@@ -412,6 +519,7 @@ export default function FeedbackPage() {
                                                 placeholder="Bangalore, KA"
                                                 {...step1Form.register("cityState")}
                                                 className={`h-12 ${step1Form.formState.errors.cityState ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step1Form.formState.errors.cityState}
                                             />
                                             {step1Form.formState.errors.cityState && (
                                                 <p className="text-xs text-red-500">{step1Form.formState.errors.cityState.message}</p>
@@ -421,14 +529,18 @@ export default function FeedbackPage() {
 
                                     <div className="space-y-3">
                                         <Label htmlFor="reminderContact" className="flex items-center gap-2">
-                                            <Phone className="w-4 h-4" /> WhatsApp/Phone (for reminders)
+                                            <Phone className="w-4 h-4" /> WhatsApp/Phone *
                                         </Label>
                                         <Input
                                             id="reminderContact"
                                             placeholder="+91 98765 43210"
                                             {...step1Form.register("reminderContact")}
-                                            className="h-12"
+                                            className={`h-12 ${step1Form.formState.errors.reminderContact ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step1Form.formState.errors.reminderContact}
                                         />
+                                        {step1Form.formState.errors.reminderContact && (
+                                            <p className="text-xs text-red-500">{step1Form.formState.errors.reminderContact.message}</p>
+                                        )}
                                     </div>
 
                                     <Button type="submit" className="w-full h-12 rounded-xl font-semibold">
@@ -475,21 +587,25 @@ export default function FeedbackPage() {
                                         )}
                                     </div>
 
-                                    {step2Form.watch("careerInterest") === "Ethical Hacking & Offensive Security" && (
+                                    {step2Form.watch("careerInterest") === OFFENSIVE_SECURITY_INTEREST && (
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}
                                             className="space-y-3"
                                         >
                                             <Label htmlFor="offensiveSecurityReason">
-                                                What excites you about offensive security?
+                                                What excites you about offensive security? *
                                             </Label>
                                             <Textarea
                                                 id="offensiveSecurityReason"
                                                 placeholder="Tell us what draws you to this field..."
                                                 {...step2Form.register("offensiveSecurityReason")}
-                                                className="min-h-[100px]"
+                                                className={`min-h-[100px] ${step2Form.formState.errors.offensiveSecurityReason ? "border-red-500" : ""}`}
+                                                aria-invalid={!!step2Form.formState.errors.offensiveSecurityReason}
                                             />
+                                            {step2Form.formState.errors.offensiveSecurityReason && (
+                                                <p className="text-xs text-red-500">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
+                                            )}
                                         </motion.div>
                                     )}
 
@@ -550,26 +666,34 @@ export default function FeedbackPage() {
 
                                     <div className="space-y-3">
                                         <Label htmlFor="mostValuablePart">
-                                            What was the most valuable part of this seminar?
+                                            What was the most valuable part of this seminar? *
                                         </Label>
                                         <Textarea
                                             id="mostValuablePart"
                                             placeholder="Share what you found most useful..."
                                             {...step3Form.register("mostValuablePart")}
-                                            className="min-h-[80px]"
+                                            className={`min-h-[80px] ${step3Form.formState.errors.mostValuablePart ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.mostValuablePart}
                                         />
+                                        {step3Form.formState.errors.mostValuablePart && (
+                                            <p className="text-xs text-red-500">{step3Form.formState.errors.mostValuablePart.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-3">
                                         <Label htmlFor="futureSuggestions">
-                                            What topics would you like us to cover in future seminars?
+                                            What topics would you like us to cover in future seminars? *
                                         </Label>
                                         <Textarea
                                             id="futureSuggestions"
                                             placeholder="Suggest topics for future sessions..."
                                             {...step3Form.register("futureSuggestions")}
-                                            className="min-h-[80px]"
+                                            className={`min-h-[80px] ${step3Form.formState.errors.futureSuggestions ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step3Form.formState.errors.futureSuggestions}
                                         />
+                                        {step3Form.formState.errors.futureSuggestions && (
+                                            <p className="text-xs text-red-500">{step3Form.formState.errors.futureSuggestions.message}</p>
+                                        )}
                                     </div>
 
                                     <div className="flex items-start space-x-3 p-4 rounded-xl border border-border bg-primary/5">
@@ -628,6 +752,7 @@ export default function FeedbackPage() {
                                             placeholder="Your full name"
                                             {...step4Form.register("certificateName")}
                                             className={`h-14 text-center text-lg font-medium ${step4Form.formState.errors.certificateName ? "border-red-500" : ""}`}
+                                            aria-invalid={!!step4Form.formState.errors.certificateName}
                                         />
                                         {step4Form.formState.errors.certificateName && (
                                             <p className="text-xs text-red-500 text-center">
@@ -635,6 +760,47 @@ export default function FeedbackPage() {
                                             </p>
                                         )}
                                     </div>
+
+                                    {showNameChangeReason && registeredName && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            className="space-y-3"
+                                        >
+                                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                                                    <div className="space-y-1">
+                                                        <p className="text-sm font-medium text-amber-600">
+                                                            Name differs from registration
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground">
+                                                            Your registered name is{" "}
+                                                            <span className="font-semibold text-foreground">{registeredName}</span>.
+                                                            Since the certificate name is different, your request will need admin approval.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="nameChangeReason">
+                                                    Reason for name change *
+                                                </Label>
+                                                <Textarea
+                                                    id="nameChangeReason"
+                                                    placeholder="Please explain why you need a different name on your certificate (minimum 10 characters)..."
+                                                    value={nameChangeReason}
+                                                    onChange={(e) => setNameChangeReason(e.target.value)}
+                                                    className={`min-h-[80px] ${nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 ? "border-red-500" : ""}`}
+                                                />
+                                                {nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 && (
+                                                    <p className="text-xs text-red-500">
+                                                        Please provide at least 10 characters ({nameChangeReason.trim().length}/10)
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    )}
 
                                     <div className="bg-muted/50 rounded-xl p-4 text-sm text-muted-foreground">
                                         <p className="font-medium text-foreground mb-2">Certificate Preview</p>
@@ -668,7 +834,12 @@ export default function FeedbackPage() {
                                             {isSubmitting ? (
                                                 <>
                                                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Generating Certificate...
+                                                    {showNameChangeReason ? "Submitting Request..." : "Generating Certificate..."}
+                                                </>
+                                            ) : showNameChangeReason ? (
+                                                <>
+                                                    <Clock className="w-4 h-4 mr-2" />
+                                                    Submit for Approval
                                                 </>
                                             ) : (
                                                 <>
@@ -689,39 +860,228 @@ export default function FeedbackPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="text-center py-8"
                             >
-                                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <Mail className="w-10 h-10 text-green-500" />
-                                </div>
-                                <h1 className="text-2xl font-bold mb-2">Certificate Sent!</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Your certificate has been sent to your email address. Please check your inbox (and spam folder) for the certificate PDF.
-                                </p>
+                                {nameChangeSubmitted ? (
+                                    <>
+                                        <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Clock className="w-10 h-10 text-amber-500" />
+                                        </div>
+                                        <h1 className="text-2xl font-bold mb-2">Name Change Request Submitted</h1>
+                                        <p className="text-muted-foreground mb-8">
+                                            Your certificate name change request has been submitted for admin review.
+                                            You will receive the certificate via email once your request is approved.
+                                        </p>
 
-                                <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                                    <p className="text-sm text-muted-foreground mb-1">Certificate ID</p>
-                                    <p className="font-mono font-semibold text-foreground">{certificateId}</p>
-                                </div>
+                                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+                                            <p className="text-sm text-amber-600 font-medium">
+                                                An admin will review your request shortly. Please check your email for updates.
+                                            </p>
+                                        </div>
 
-                                <div className="space-y-4">
-                                    <Link href={`/verify/${certificateId}`}>
-                                        <Button variant="outline" className="w-full h-12 rounded-xl">
-                                            <Award className="w-4 h-4 mr-2" />
-                                            Verify Certificate Online
-                                        </Button>
-                                    </Link>
+                                        <Link href="/resources/seminars">
+                                            <Button variant="ghost" className="w-full">
+                                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                                Back to Seminars
+                                            </Button>
+                                        </Link>
+                                    </>
+                                ) : certLoading ? (
+                                    <div className="py-12">
+                                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto" />
+                                    </div>
+                                ) : certData ? (
+                                    <>
+                                        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4 mb-8">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center shrink-0">
+                                                    <Shield className="w-5 h-5 text-green-500" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-green-600 dark:text-green-400">
+                                                        Certificate Sent!
+                                                    </p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Your certificate has been emailed. You can also download it below.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <Link href="/resources/seminars">
-                                        <Button variant="ghost" className="w-full">
-                                            <ArrowLeft className="w-4 h-4 mr-2" />
-                                            Back to Seminars
-                                        </Button>
-                                    </Link>
-                                </div>
+                                        <div className="rounded-2xl border border-border overflow-hidden mb-6">
+                                            <img
+                                                src={`/api/certificates/${certificateId}/preview`}
+                                                alt="Certificate Preview"
+                                                className="w-full h-auto"
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                                <div>
+                                                    <p className="text-sm font-medium text-foreground">Certificate ID</p>
+                                                    <p className="text-xs text-muted-foreground font-mono">
+                                                        {certData.certificateId}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                                            <Link
+                                                href={`/api/certificates/${certificateId}/download`}
+                                                className="flex-1"
+                                            >
+                                                <Button className="w-full h-12 rounded-xl font-semibold">
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    Download PDF
+                                                </Button>
+                                            </Link>
+
+                                            <Link href={`/verify/${certificateId}`} className="flex-1">
+                                                <Button variant="outline" className="w-full h-12 rounded-xl font-semibold">
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    Verify Online
+                                                </Button>
+                                            </Link>
+                                        </div>
+
+                                        <ShareButton
+                                            title={`Certificate - ${certData.recipientName}`}
+                                            text={`I just received my certificate of participation from ${certData.seminarTitle} by ZecurX!`}
+                                            certificateId={certificateId || undefined}
+                                        />
+
+                                        <div className="text-center mt-8">
+                                            <Link href="/resources/seminars">
+                                                <Button variant="ghost">
+                                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                                    Back to Seminars
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Mail className="w-10 h-10 text-green-500" />
+                                        </div>
+                                        <h1 className="text-2xl font-bold mb-2">Certificate Sent!</h1>
+                                        <p className="text-muted-foreground mb-8">
+                                            Your certificate has been sent to your email address. Please check your inbox (and spam folder) for the certificate PDF.
+                                        </p>
+
+                                        <div className="bg-muted/50 rounded-xl p-4 mb-6">
+                                            <p className="text-sm text-muted-foreground mb-1">Certificate ID</p>
+                                            <p className="font-mono font-semibold text-foreground">{certificateId}</p>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                                            <Link
+                                                href={`/api/certificates/${certificateId}/download`}
+                                                className="flex-1"
+                                            >
+                                                <Button className="w-full h-12 rounded-xl font-semibold">
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    Download PDF
+                                                </Button>
+                                            </Link>
+
+                                            <Link href={`/verify/${certificateId}`} className="flex-1">
+                                                <Button variant="outline" className="w-full h-12 rounded-xl">
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    Verify Online
+                                                </Button>
+                                            </Link>
+                                        </div>
+
+                                        <ShareButton
+                                            title="Certificate - ZecurX"
+                                            text="I just received my certificate of participation from ZecurX!"
+                                            certificateId={certificateId || undefined}
+                                        />
+
+                                        <div className="text-center mt-6">
+                                            <Link href="/resources/seminars">
+                                                <Button variant="ghost">
+                                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                                    Back to Seminars
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </>
+                                )}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </motion.div>
             </div>
+
+            {/* Social Media Follow Modal */}
+            <Dialog open={showSocialModal} onOpenChange={setShowSocialModal}>
+                <DialogContent className="sm:max-w-md p-8">
+                    <DialogHeader className="text-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Sparkles className="w-8 h-8 text-primary" />
+                        </div>
+                        <DialogTitle className="text-2xl font-bold">Keep Learning with ZecurX!</DialogTitle>
+                        <DialogDescription>
+                            Continue your cybersecurity journey with our comprehensive courses
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-4 mt-6">
+                        <Button
+                            asChild
+                            className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
+                        >
+                            <a 
+                                href="/academy" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={() => setShowSocialModal(false)}
+                            >
+                                <BookOpen className="w-4 h-4 mr-2" />
+                                Explore Our Courses
+                                <ExternalLink className="w-4 h-4 ml-2" />
+                            </a>
+                        </Button>
+
+                        <div className="border-t border-border pt-4">
+                            <p className="text-sm text-muted-foreground mb-3 text-center">
+                                Stay connected for updates & insights
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <a
+                                    href="https://www.linkedin.com/company/zecurx/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                >
+                                    <Linkedin className="w-5 h-5 text-[#0077B5]" />
+                                    <span className="font-medium text-sm">LinkedIn</span>
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                >
+                                    <Instagram className="w-5 h-5 text-[#E4405F]" />
+                                    <span className="font-medium text-sm">Instagram</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full mt-4"
+                        onClick={() => setShowSocialModal(false)}
+                    >
+                        Maybe Later
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

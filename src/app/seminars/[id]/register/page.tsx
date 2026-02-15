@@ -188,8 +188,31 @@ export default function RegisterPage() {
         );
     }
 
+    const isPast = seminar ? new Date(seminar.date) < new Date() : false;
+    const registrationClosed = seminar && (isPast || !seminar.registration_enabled);
+
+    if (registrationClosed && step !== 'success') {
+        return (
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+                <AlertCircle className="w-12 h-12 text-muted-foreground mb-4" />
+                <h1 className="text-2xl font-bold mb-2">Registration Closed</h1>
+                <p className="text-muted-foreground mb-6">
+                    {isPast
+                        ? 'This seminar has already taken place. Registration is no longer available.'
+                        : 'Registration is currently closed for this seminar.'}
+                </p>
+                <Link href="/resources/seminars">
+                    <Button variant="outline">
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Back to Seminars
+                    </Button>
+                </Link>
+            </div>
+        );
+    }
+
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-US', { dateStyle: 'full' });
+        return new Date(dateStr).toLocaleDateString('en-US', { dateStyle: 'full', timeZone: 'Asia/Kolkata' });
     };
 
     return (

@@ -37,6 +37,7 @@ export async function POST(
             joinZecurx,
             certificateName,
             registrationId,
+            nameChangeReason,
         } = body;
 
         if (!fullName || !email || !certificateName) {
@@ -128,6 +129,53 @@ export async function POST(
 
         const feedback = feedbackResult.rows[0];
 
+        let registeredName: string | null = null;
+        if (regId) {
+            const regLookup = await query<SeminarRegistration>(
+                `SELECT full_name FROM seminar.registrations WHERE id = $1`,
+                [regId]
+            );
+            if (regLookup.rows.length > 0) {
+                registeredName = regLookup.rows[0].full_name;
+            }
+        }
+        if (!registeredName) {
+            registeredName = fullName;
+        }
+
+        const nameMatches = certificateName.trim().toLowerCase() === registeredName.trim().toLowerCase();
+
+        if (!nameMatches) {
+            if (!nameChangeReason || nameChangeReason.trim().length < 10) {
+                return NextResponse.json(
+                    { error: 'Please provide a reason for the name change (minimum 10 characters)' },
+                    { status: 400 }
+                );
+            }
+
+            await query(
+                `INSERT INTO seminar.certificate_name_requests (
+                    feedback_id, seminar_id, registration_id, email,
+                    registered_name, requested_name, reason
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                [
+                    feedback.id,
+                    seminarId,
+                    regId || null,
+                    email.toLowerCase(),
+                    registeredName,
+                    certificateName,
+                    nameChangeReason.trim(),
+                ]
+            );
+
+            return NextResponse.json({
+                success: true,
+                nameChangeRequested: true,
+                message: 'Your name change request has been submitted for admin approval. You will receive the certificate via email once approved.',
+            });
+        }
+
         const certificate = await createCertificate({
             recipientName: certificateName,
             recipientEmail: email.toLowerCase(),
@@ -140,7 +188,6 @@ export async function POST(
             feedbackId: feedback.id,
         });
 
-        // Send certificate via email
         const emailSent = await sendCertificateEmail(certificate, email.toLowerCase());
 
         return NextResponse.json({

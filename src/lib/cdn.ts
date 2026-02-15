@@ -77,6 +77,10 @@ export const CDN_ASSETS = {
     readyDark: getCdnUrl('assets/ready-bg-dark.png'),
     readyLight: getCdnUrl('assets/ready-bg-light.png'),
   },
+  certificates: {
+    background: getCdnUrl('images/certificate-bg.png'),
+    signature: getCdnUrl('images/signature-harsh-priyam.png'),
+  },
 } as const;
 
 /**

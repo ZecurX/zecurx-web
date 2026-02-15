@@ -2,6 +2,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { query } from '@/lib/db';
 import { Certificate } from '@/types/seminar';
 import { Resend } from 'resend';
+import { CDN_ASSETS } from '@/lib/cdn';
 
 interface CertificateData {
     recipientName: string;
@@ -16,131 +17,127 @@ interface CertificateData {
 }
 
 export function generateCertificateId(): string {
-    const year = new Date().getFullYear();
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let random = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         random += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return `ZX-SEM-${year}-${random}`;
+    return `ZX-${random}`;
 }
 
 export async function generateCertificatePDF(data: CertificateData & { certificateId: string }): Promise<Buffer> {
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([842, 595]); // A4 Landscape
+    const page = pdfDoc.addPage([842, 595]);
 
     const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const timesRoman = await pdfDoc.embedFont(StandardFonts.TimesRoman);
     const timesItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
+    const timesBold = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+    const timesBoldItalic = await pdfDoc.embedFont(StandardFonts.TimesRomanBoldItalic);
 
     const { width, height } = page.getSize();
 
-    const darkColor = rgb(0.1, 0.1, 0.15);
-    const goldColor = rgb(0.85, 0.65, 0.13);
-    const grayColor = rgb(0.4, 0.4, 0.4);
+    const [bgResponse, sigResponse] = await Promise.all([
+        fetch(CDN_ASSETS.certificates.background),
+        fetch(CDN_ASSETS.certificates.signature),
+    ]);
+    if (!bgResponse.ok) throw new Error('Failed to fetch certificate background from CDN');
+    if (!sigResponse.ok) throw new Error('Failed to fetch signature from CDN');
 
-    page.drawRectangle({
-        x: 0,
-        y: 0,
-        width: width,
-        height: height,
-        color: rgb(0.98, 0.98, 0.98),
-    });
+    const [bgBytes, sigBytes] = await Promise.all([
+        bgResponse.arrayBuffer().then(b => new Uint8Array(b)),
+        sigResponse.arrayBuffer().then(b => new Uint8Array(b)),
+    ]);
 
-    const borderWidth = 8;
-    page.drawRectangle({
-        x: 20,
-        y: 20,
-        width: width - 40,
-        height: height - 40,
-        borderColor: darkColor,
-        borderWidth: borderWidth,
-    });
+    const bgImage = await pdfDoc.embedPng(bgBytes);
+    const sigImage = await pdfDoc.embedPng(sigBytes);
 
-    page.drawRectangle({
-        x: 30,
-        y: 30,
-        width: width - 60,
-        height: height - 60,
-        borderColor: goldColor,
-        borderWidth: 2,
-    });
+    page.drawImage(bgImage, { x: 0, y: 0, width, height });
 
-    let y = height - 80;
+    const white = rgb(1, 1, 1);
+    const lightWhite = rgb(0.85, 0.88, 0.92);
+    const darkNavy = rgb(0.04, 0.08, 0.15);
+    const blue = rgb(0.13, 0.59, 0.95);
+    const darkGray = rgb(0.3, 0.32, 0.36);
+    const medGray = rgb(0.45, 0.47, 0.5);
+    const lightGray = rgb(0.6, 0.62, 0.65);
 
-    page.drawText('ZECURX', {
-        x: width / 2 - 60,
-        y,
-        size: 28,
+    const cx = width / 2;
+
+    const headerTitle = 'CERTIFICATE OF PARTICIPATION';
+    const headerTitleW = helveticaBold.widthOfTextAtSize(headerTitle, 16);
+    page.drawText(headerTitle, {
+        x: cx - headerTitleW / 2,
+        y: height - 88,
+        size: 16,
         font: helveticaBold,
-        color: darkColor,
+        color: white,
     });
 
-    y -= 25;
-    page.drawText('Cybersecurity Excellence', {
-        x: width / 2 - 72,
-        y,
-        size: 12,
+    const headerSub = 'ZecurX Private Limited';
+    const headerSubW = helvetica.widthOfTextAtSize(headerSub, 9);
+    page.drawText(headerSub, {
+        x: cx - headerSubW / 2,
+        y: height - 103,
+        size: 9,
         font: helvetica,
-        color: grayColor,
+        color: lightWhite,
     });
 
-    y -= 50;
-    page.drawText('CERTIFICATE OF PARTICIPATION', {
-        x: width / 2 - 165,
-        y,
-        size: 24,
-        font: helveticaBold,
-        color: goldColor,
-    });
+    let y = height - 160;
 
-    y -= 40;
-    page.drawText('This is to certify that', {
-        x: width / 2 - 65,
+    const certifyText = 'This is to certify that';
+    const certifyWidth = timesItalic.widthOfTextAtSize(certifyText, 14);
+    page.drawText(certifyText, {
+        x: cx - certifyWidth / 2,
         y,
         size: 14,
         font: timesItalic,
-        color: grayColor,
+        color: medGray,
     });
 
-    y -= 50;
-    const nameWidth = timesRoman.widthOfTextAtSize(data.recipientName, 36);
+    y -= 55;
+    const nameSize = data.recipientName.length > 25 ? 30 : 36;
+    const nameWidth = timesBoldItalic.widthOfTextAtSize(data.recipientName, nameSize);
     page.drawText(data.recipientName, {
-        x: (width - nameWidth) / 2,
+        x: cx - nameWidth / 2,
         y,
-        size: 36,
-        font: timesRoman,
-        color: darkColor,
+        size: nameSize,
+        font: timesBoldItalic,
+        color: darkNavy,
     });
 
-    y -= 8;
+    y -= 14;
+    const nameLineW = Math.min(nameWidth + 50, 400);
     page.drawLine({
-        start: { x: width / 2 - 150, y },
-        end: { x: width / 2 + 150, y },
+        start: { x: cx - nameLineW / 2, y },
+        end: { x: cx + nameLineW / 2, y },
         thickness: 1,
-        color: goldColor,
+        color: blue,
     });
 
-    y -= 35;
-    page.drawText('has successfully participated in the seminar', {
-        x: width / 2 - 130,
+    y -= 38;
+    const partText = 'has successfully participated in the seminar';
+    const partWidth = timesItalic.widthOfTextAtSize(partText, 13);
+    page.drawText(partText, {
+        x: cx - partWidth / 2,
         y,
-        size: 14,
+        size: 13,
         font: timesItalic,
-        color: grayColor,
+        color: medGray,
     });
 
-    y -= 40;
-    const titleLines = splitTextToLines(data.seminarTitle, 60);
+    y -= 42;
+    const titleLines = splitTextToLines(data.seminarTitle, 55);
     for (const line of titleLines) {
-        const lineWidth = helveticaBold.widthOfTextAtSize(line, 20);
+        const lineWidth = timesBold.widthOfTextAtSize(line, 19);
         page.drawText(line, {
-            x: (width - lineWidth) / 2,
+            x: cx - lineWidth / 2,
             y,
-            size: 20,
-            font: helveticaBold,
-            color: darkColor,
+            size: 19,
+            font: timesBold,
+            color: darkNavy,
         });
         y -= 28;
     }
@@ -149,95 +146,123 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const dateStr = data.seminarDate.toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
     });
-    const dateText = `held on ${dateStr}`;
-    const dateWidth = timesRoman.widthOfTextAtSize(dateText, 14);
-    page.drawText(dateText, {
-        x: (width - dateWidth) / 2,
-        y,
-        size: 14,
-        font: timesRoman,
-        color: grayColor,
-    });
-
+    const dateParts: { text: string; font: typeof timesRoman }[] = [
+        { text: 'held on ', font: timesRoman },
+        { text: dateStr, font: timesBold },
+    ];
     if (data.speakerName) {
-        y -= 25;
-        const speakerText = `conducted by ${data.speakerName}`;
-        const speakerWidth = timesItalic.widthOfTextAtSize(speakerText, 12);
-        page.drawText(speakerText, {
-            x: (width - speakerWidth) / 2,
-            y,
-            size: 12,
-            font: timesItalic,
-            color: grayColor,
-        });
+        dateParts.push({ text: '  |  conducted by ', font: timesRoman });
+        dateParts.push({ text: data.speakerName, font: timesBold });
+    }
+    let dateLineWidth = 0;
+    for (const p of dateParts) dateLineWidth += p.font.widthOfTextAtSize(p.text, 11);
+    let dx = cx - dateLineWidth / 2;
+    for (const p of dateParts) {
+        const w = p.font.widthOfTextAtSize(p.text, 11);
+        page.drawText(p.text, { x: dx, y, size: 11, font: p.font, color: darkGray });
+        dx += w;
     }
 
     if (data.organization) {
-        y -= 20;
+        y -= 18;
         const orgText = `at ${data.organization}`;
-        const orgWidth = timesRoman.widthOfTextAtSize(orgText, 12);
+        const orgWidth = timesItalic.widthOfTextAtSize(orgText, 11);
         page.drawText(orgText, {
-            x: (width - orgWidth) / 2,
+            x: cx - orgWidth / 2,
             y,
-            size: 12,
-            font: timesRoman,
-            color: grayColor,
+            size: 11,
+            font: timesItalic,
+            color: lightGray,
         });
     }
 
-    const footerY = 60;
+    const footerY = 58;
 
-    page.drawText('_______________________', {
-        x: 120,
-        y: footerY + 30,
-        size: 12,
-        font: helvetica,
-        color: grayColor,
+    const sigW = 140;
+    const sigH = sigW * (sigImage.height / sigImage.width);
+    page.drawImage(sigImage, {
+        x: 130,
+        y: footerY + 40,
+        width: sigW,
+        height: sigH,
     });
-    page.drawText('Authorized Signature', {
-        x: 145,
-        y: footerY + 10,
-        size: 10,
-        font: helvetica,
-        color: grayColor,
+    page.drawLine({
+        start: { x: 120, y: footerY + 37 },
+        end: { x: 280, y: footerY + 37 },
+        thickness: 0.5,
+        color: blue,
     });
-    page.drawText('ZecurX Team', {
-        x: 165,
-        y: footerY - 5,
+    const sigLabel = 'Authorized Signature';
+    const sigLabelW = helvetica.widthOfTextAtSize(sigLabel, 8);
+    page.drawText(sigLabel, {
+        x: 200 - sigLabelW / 2,
+        y: footerY + 24,
+        size: 8,
+        font: helvetica,
+        color: lightGray,
+    });
+    const sigName = 'Harsh Priyam';
+    const sigNameW = helveticaBold.widthOfTextAtSize(sigName, 9);
+    page.drawText(sigName, {
+        x: 200 - sigNameW / 2,
+        y: footerY + 12,
         size: 9,
+        font: helveticaBold,
+        color: darkNavy,
+    });
+    const sigOrg = 'ZecurX Private Limited';
+    const sigOrgW = helvetica.widthOfTextAtSize(sigOrg, 7);
+    page.drawText(sigOrg, {
+        x: 200 - sigOrgW / 2,
+        y: footerY + 2,
+        size: 7,
         font: helvetica,
-        color: grayColor,
+        color: lightGray,
     });
 
     const issuedDate = new Date().toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'long',
-        year: 'numeric'
+        year: 'numeric',
     });
-    page.drawText(`Issued: ${issuedDate}`, {
-        x: width / 2 - 40,
-        y: footerY + 10,
-        size: 9,
+    const issuedLabel = 'Date of Issue';
+    const issuedLabelW = helvetica.widthOfTextAtSize(issuedLabel, 8);
+    page.drawText(issuedLabel, {
+        x: cx - issuedLabelW / 2,
+        y: footerY + 24,
+        size: 8,
         font: helvetica,
-        color: grayColor,
+        color: lightGray,
     });
-
-    page.drawText(`Certificate ID: ${data.certificateId}`, {
-        x: width - 220,
-        y: footerY + 30,
-        size: 10,
+    const issuedDateW = helveticaBold.widthOfTextAtSize(issuedDate, 9);
+    page.drawText(issuedDate, {
+        x: cx - issuedDateW / 2,
+        y: footerY + 12,
+        size: 9,
         font: helveticaBold,
-        color: darkColor,
+        color: darkNavy,
     });
 
-    page.drawText(`Verify at: zecurx.com/verify/${data.certificateId}`, {
-        x: width - 235,
-        y: footerY + 10,
-        size: 9,
+    const certIdLabel = 'Certificate ID';
+    const certIdLabelW = helvetica.widthOfTextAtSize(certIdLabel, 8);
+    const rightColX = width - 140;
+    page.drawText(certIdLabel, {
+        x: rightColX - certIdLabelW / 2,
+        y: footerY + 24,
+        size: 8,
         font: helvetica,
-        color: grayColor,
+        color: lightGray,
+    });
+    const certIdVal = data.certificateId;
+    const certIdValW = helveticaBold.widthOfTextAtSize(certIdVal, 11);
+    page.drawText(certIdVal, {
+        x: rightColX - certIdValW / 2,
+        y: footerY + 12,
+        size: 11,
+        font: helveticaBold,
+        color: darkNavy,
     });
 
     const pdfBytes = await pdfDoc.save();
@@ -346,62 +371,99 @@ export async function sendCertificateEmail(
     });
 
     const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #1a1a1a; margin: 0; font-size: 28px;">ZecurX</h1>
-                <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Cybersecurity Excellence</p>
-            </div>
-            
-            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 16px; padding: 40px; text-align: center;">
-                <div style="width: 80px; height: 80px; background: #d4af37; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 40px;">🏆</span>
-                </div>
-                
-                <h2 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 24px;">
-                    Congratulations, ${certificate.recipient_name}!
-                </h2>
-                
-                <p style="color: #666; margin: 0 0 25px 0; font-size: 16px; line-height: 1.6;">
-                    Your certificate of participation has been generated for the seminar:
-                </p>
-                
-                <div style="background: #ffffff; border-radius: 12px; padding: 20px; margin-bottom: 25px; border: 1px solid #e0e0e0;">
-                    <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 18px;">
-                        ${certificate.seminar_title}
-                    </h3>
-                    <p style="color: #888; margin: 0; font-size: 14px;">
-                        ${formattedDate}${certificate.speaker_name ? ` • ${certificate.speaker_name}` : ''}
-                    </p>
-                </div>
-                
-                <p style="color: #666; font-size: 14px; margin: 0 0 20px 0;">
-                    Your certificate is attached to this email as a PDF file.
-                </p>
-            </div>
-            
-            <div style="margin-top: 30px; text-align: center;">
-                <p style="color: #666; font-size: 14px; margin: 0 0 15px 0;">
-                    <strong>Certificate ID:</strong> ${certificate.certificate_id}
-                </p>
-                <a href="${verifyUrl}" style="display: inline-block; background: #1a1a1a; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; font-size: 14px;">
-                    Verify Certificate Online
-                </a>
-            </div>
-            
-            <div style="margin-top: 40px; padding: 20px; border-top: 1px solid #eee; text-align: center;">
-                <p style="color: #999; font-size: 12px; margin: 0;">
-                    This certificate can be verified at <a href="${verifyUrl}" style="color: #666;">${verifyUrl}</a>
-                </p>
-                <p style="color: #999; font-size: 12px; margin: 10px 0 0 0;">
-                    Thank you for participating in our seminar. We hope to see you again!
-                </p>
-            </div>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Certificate of Participation</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f4;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4;">
+                <tr>
+                    <td align="center" style="padding: 20px 0;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); padding: 40px 30px; text-align: center;">
+                                    <img src="https://www.zecurx.com/images/zecurx-logo.png" alt="ZecurX" style="height: 40px; display: block; margin: 0 auto;" />
+                                    <p style="color: #a0a0a0; margin: 15px 0 0 0; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Cybersecurity Solutions</p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Gold Accent -->
+                            <tr>
+                                <td style="background-color: #d4af37; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                            </tr>
+        
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px 30px; text-align: center;">
+                                    <h1 style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 24px; font-weight: bold;">
+                                        Congratulations, ${certificate.recipient_name}!
+                                    </h1>
+                                    <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                                        Your certificate of participation has been generated for the seminar:
+                                    </p>
+        
+                                    <!-- Seminar Details Box -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 30px;">
+                                        <tr>
+                                            <td style="padding: 25px; text-align: center;">
+                                                <h2 style="color: #333333; margin: 0 0 10px 0; font-size: 20px;">
+                                                    ${certificate.seminar_title}
+                                                </h2>
+                                                <p style="color: #888888; margin: 0; font-size: 14px;">
+                                                    ${formattedDate}${certificate.speaker_name ? ` • ${certificate.speaker_name}` : ''}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+        
+                                    <p style="color: #666666; font-size: 14px; margin: 0 0 30px 0;">
+                                        Your certificate is attached to this email as a PDF file.
+                                    </p>
+        
+                                    <!-- Button -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td align="center">
+                                                <a href="${verifyUrl}" style="display: inline-block; background: #0a0a0f; color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Verify Certificate Online
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <p style="color: #999999; font-size: 12px; margin: 30px 0 0 0;">
+                                        Certificate ID: <strong style="color: #666666;">${certificate.certificate_id}</strong>
+                                    </p>
+                                </td>
+                            </tr>
+        
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #f4f4f4; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+                                    <p style="color: #999999; font-size: 12px; margin: 0 0 10px 0; line-height: 1.5;">
+                                        This certificate can be verified at:<br>
+                                        <a href="${verifyUrl}" style="color: #666666; text-decoration: underline;">${verifyUrl}</a>
+                                    </p>
+                                    <p style="color: #999999; font-size: 12px; margin: 20px 0 0 0;">
+                                        &copy; ${new Date().getFullYear()} ZecurX Private Limited. All rights reserved.<br>
+                                        <a href="https://www.zecurx.com" style="color: #999999; text-decoration: none;">www.zecurx.com</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
     `;
 
     try {
         await resend.emails.send({
-            from: 'ZecurX Certificates <official@zecurx.com>',
+            from: 'ZecurX Private Limited <official@zecurx.com>',
             to: recipientEmail,
             subject: `Your Certificate of Participation - ${certificate.seminar_title}`,
             html,
@@ -415,6 +477,120 @@ export async function sendCertificateEmail(
         return true;
     } catch (error) {
         console.error('Failed to send certificate email:', error);
+        return false;
+    }
+}
+
+export async function sendCoordinatorCertificateAlert(params: {
+    coordinatorName: string;
+    coordinatorEmail: string;
+    seminarTitle: string;
+    seminarId: string;
+    certificatePageUrl: string;
+}): Promise<boolean> {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Certificates Ready</title>
+        </head>
+        <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f4;">
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f4f4;">
+                <tr>
+                    <td align="center" style="padding: 20px 0;">
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); padding: 40px 30px; text-align: center;">
+                                    <img src="https://www.zecurx.com/images/zecurx-logo.png" alt="ZecurX" style="height: 40px; display: block; margin: 0 auto;" />
+                                    <p style="color: #a0a0a0; margin: 15px 0 0 0; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Cybersecurity Solutions</p>
+                                </td>
+                            </tr>
+
+                            <!-- Green Accent -->
+                            <tr>
+                                <td style="background-color: #4caf50; height: 4px; font-size: 0; line-height: 0;">&nbsp;</td>
+                            </tr>
+
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px 30px;">
+                                    <p style="color: #333333; font-size: 16px; margin: 0 0 20px 0;">
+                                        Hi ${params.coordinatorName},
+                                    </p>
+                                    <p style="color: #666666; font-size: 15px; line-height: 1.6; margin: 0 0 25px 0;">
+                                        Certificates of participation are now available for download for your seminar. Please share the link below with your participants so they can claim their certificates.
+                                    </p>
+
+                                    <!-- Seminar Details -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; margin-bottom: 30px;">
+                                        <tr>
+                                            <td style="padding: 25px;">
+                                                <p style="margin: 0 0 8px 0; color: #888888; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Seminar</p>
+                                                <p style="margin: 0; color: #333333; font-size: 18px; font-weight: bold;">${params.seminarTitle}</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Instructions -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 8px; margin-bottom: 30px;">
+                                        <tr>
+                                            <td style="padding: 20px 25px;">
+                                                <p style="margin: 0 0 12px 0; color: #2e7d32; font-size: 14px; font-weight: bold;">How it works:</p>
+                                                <p style="margin: 0 0 8px 0; color: #555555; font-size: 14px; line-height: 1.6;">1. Share the certificate link below with your participants</p>
+                                                <p style="margin: 0 0 8px 0; color: #555555; font-size: 14px; line-height: 1.6;">2. Participants verify their email and submit feedback</p>
+                                                <p style="margin: 0; color: #555555; font-size: 14px; line-height: 1.6;">3. Their certificate is generated and emailed to them</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- Button -->
+                                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td align="center">
+                                                <a href="${params.certificatePageUrl}" style="display: inline-block; background: #0a0a0f; color: #ffffff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Certificate Page
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <p style="color: #999999; font-size: 12px; margin: 25px 0 0 0; text-align: center; word-break: break-all;">
+                                        <a href="${params.certificatePageUrl}" style="color: #666666; text-decoration: underline;">${params.certificatePageUrl}</a>
+                                    </p>
+                                </td>
+                            </tr>
+
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #f4f4f4; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+                                    <p style="color: #999999; font-size: 12px; margin: 0;">
+                                        &copy; ${new Date().getFullYear()} ZecurX Private Limited. All rights reserved.<br>
+                                        <a href="https://www.zecurx.com" style="color: #999999; text-decoration: none;">www.zecurx.com</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+    `;
+
+    try {
+        await resend.emails.send({
+            from: 'ZecurX Private Limited <official@zecurx.com>',
+            to: params.coordinatorEmail,
+            subject: `Certificates Ready: ${params.seminarTitle} - ZecurX`,
+            html,
+        });
+        return true;
+    } catch (error) {
+        console.error('Failed to send coordinator certificate alert:', error);
         return false;
     }
 }

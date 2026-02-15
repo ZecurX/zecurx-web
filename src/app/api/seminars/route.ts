@@ -31,9 +31,12 @@ export async function GET(request: NextRequest) {
 
         const result = await query<PublicSeminar & { registration_count: string }>(sql);
 
+        const now = new Date();
         const seminars = result.rows.map(row => ({
             ...row,
             registration_count: parseInt(row.registration_count) || 0,
+            // Auto-close registration for past seminars
+            registration_enabled: new Date(row.date) < now ? false : row.registration_enabled,
         }));
 
         return NextResponse.json({
