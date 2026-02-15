@@ -23,7 +23,7 @@ export async function GET(
             headers: {
                 'Content-Type': 'image/png',
                 'Content-Length': pngBuffer.length.toString(),
-                'Cache-Control': 'public, max-age=3600',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
             },
         });
 

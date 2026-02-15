@@ -10,6 +10,7 @@ interface ShareButtonProps {
     url?: string;
     certificateId?: string;
     compact?: boolean;
+    className?: string;
 }
 
 function XIcon({ className }: { className?: string }) {
@@ -20,7 +21,7 @@ function XIcon({ className }: { className?: string }) {
     );
 }
 
-export function ShareButton({ title, text, url: propUrl, certificateId, compact }: ShareButtonProps) {
+export function ShareButton({ title, text, url: propUrl, certificateId, compact, className }: ShareButtonProps) {
     const [copied, setCopied] = useState(false);
 
     const getUrl = () => {
@@ -71,7 +72,7 @@ export function ShareButton({ title, text, url: propUrl, certificateId, compact 
 
     if (compact) {
         return (
-            <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-2 ${className || ""}`}>
                 <Button
                     variant="outline"
                     size="icon"
@@ -122,7 +123,7 @@ export function ShareButton({ title, text, url: propUrl, certificateId, compact 
     }
 
     return (
-        <div className="space-y-3">
+        <div className={`space-y-3 ${className || ""}`}>
             <p className="text-sm text-muted-foreground text-center">Share your achievement</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
                 <Button
