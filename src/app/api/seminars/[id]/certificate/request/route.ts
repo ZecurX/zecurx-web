@@ -65,7 +65,9 @@ export async function POST(
             );
         }
 
-        const otp = await createOtp(email.trim().toLowerCase(), 'certificate', seminarId);
+        const normalizedEmail = email.trim().toLowerCase();
+
+        const otp = await createOtp(normalizedEmail, 'certificate', seminarId);
 
         const emailSent = await sendOtpEmail(
             email.trim(),
