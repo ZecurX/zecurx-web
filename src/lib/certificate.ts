@@ -39,20 +39,11 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
 
     const { width, height } = page.getSize();
 
-    const [bgResponse, sigResponse] = await Promise.all([
-        fetch(CDN_ASSETS.certificates.background),
-        fetch(CDN_ASSETS.certificates.signature),
-    ]);
+    const bgResponse = await fetch(CDN_ASSETS.certificates.background);
     if (!bgResponse.ok) throw new Error('Failed to fetch certificate background from CDN');
-    if (!sigResponse.ok) throw new Error('Failed to fetch signature from CDN');
 
-    const [bgBytes, sigBytes] = await Promise.all([
-        bgResponse.arrayBuffer().then(b => new Uint8Array(b)),
-        sigResponse.arrayBuffer().then(b => new Uint8Array(b)),
-    ]);
-
+    const bgBytes = new Uint8Array(await bgResponse.arrayBuffer());
     const bgImage = await pdfDoc.embedPng(bgBytes);
-    const sigImage = await pdfDoc.embedPng(sigBytes);
 
     page.drawImage(bgImage, { x: 0, y: 0, width, height });
 
@@ -70,7 +61,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const headerTitleW = helveticaBold.widthOfTextAtSize(headerTitle, 16);
     page.drawText(headerTitle, {
         x: cx - headerTitleW / 2,
-        y: height - 88,
+        y: height - 60,
         size: 16,
         font: helveticaBold,
         color: white,
@@ -80,13 +71,13 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const headerSubW = helvetica.widthOfTextAtSize(headerSub, 9);
     page.drawText(headerSub, {
         x: cx - headerSubW / 2,
-        y: height - 103,
+        y: height - 74,
         size: 9,
         font: helvetica,
         color: lightWhite,
     });
 
-    let y = height - 160;
+    let y = height - 155;
 
     const certifyText = 'This is to certify that';
     const certifyWidth = timesItalic.widthOfTextAtSize(certifyText, 14);
@@ -98,7 +89,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
         color: medGray,
     });
 
-    y -= 55;
+    y -= 50;
     const nameSize = data.recipientName.length > 25 ? 30 : 36;
     const nameWidth = timesBoldItalic.widthOfTextAtSize(data.recipientName, nameSize);
     page.drawText(data.recipientName, {
@@ -118,7 +109,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
         color: blue,
     });
 
-    y -= 38;
+    y -= 35;
     const partText = 'has successfully participated in the seminar';
     const partWidth = timesItalic.widthOfTextAtSize(partText, 13);
     page.drawText(partText, {
@@ -129,7 +120,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
         color: medGray,
     });
 
-    y -= 42;
+    y -= 40;
     const titleLines = splitTextToLines(data.seminarTitle, 55);
     for (const line of titleLines) {
         const lineWidth = timesBold.widthOfTextAtSize(line, 19);
@@ -140,10 +131,10 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
             font: timesBold,
             color: darkNavy,
         });
-        y -= 28;
+        y -= 26;
     }
 
-    y -= 10;
+    y -= 8;
     const dateStr = data.seminarDate.toLocaleDateString('en-US', {
         day: 'numeric',
         month: 'long',
@@ -167,7 +158,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     }
 
     if (data.organization) {
-        y -= 18;
+        y -= 16;
         const orgText = `at ${data.organization}`;
         const orgWidth = timesItalic.widthOfTextAtSize(orgText, 11);
         page.drawText(orgText, {
@@ -179,48 +170,16 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
         });
     }
 
-    const footerY = 58;
+    const footerY = 80;
 
-    const sigW = 140;
-    const sigH = sigW * (sigImage.height / sigImage.width);
-    page.drawImage(sigImage, {
-        x: 130,
-        y: footerY + 40,
-        width: sigW,
-        height: sigH,
-    });
-    page.drawLine({
-        start: { x: 120, y: footerY + 37 },
-        end: { x: 280, y: footerY + 37 },
-        thickness: 0.5,
-        color: blue,
-    });
-    const sigLabel = 'Authorized Signature';
-    const sigLabelW = helvetica.widthOfTextAtSize(sigLabel, 8);
-    page.drawText(sigLabel, {
-        x: 200 - sigLabelW / 2,
-        y: footerY + 24,
-        size: 8,
-        font: helvetica,
-        color: lightGray,
-    });
-    const sigName = 'Harsh Priyam';
-    const sigNameW = helveticaBold.widthOfTextAtSize(sigName, 9);
-    page.drawText(sigName, {
-        x: 200 - sigNameW / 2,
-        y: footerY + 12,
+    const dsLabel = 'Digitally Signed';
+    const dsLabelW = helveticaBold.widthOfTextAtSize(dsLabel, 9);
+    page.drawText(dsLabel, {
+        x: 200 - dsLabelW / 2,
+        y: footerY,
         size: 9,
         font: helveticaBold,
         color: darkNavy,
-    });
-    const sigOrg = 'ZecurX Private Limited';
-    const sigOrgW = helvetica.widthOfTextAtSize(sigOrg, 7);
-    page.drawText(sigOrg, {
-        x: 200 - sigOrgW / 2,
-        y: footerY + 2,
-        size: 7,
-        font: helvetica,
-        color: lightGray,
     });
 
     const issuedDate = new Date().toLocaleDateString('en-US', {
@@ -232,7 +191,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const issuedLabelW = helvetica.widthOfTextAtSize(issuedLabel, 8);
     page.drawText(issuedLabel, {
         x: cx - issuedLabelW / 2,
-        y: footerY + 24,
+        y: footerY + 12,
         size: 8,
         font: helvetica,
         color: lightGray,
@@ -240,7 +199,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const issuedDateW = helveticaBold.widthOfTextAtSize(issuedDate, 9);
     page.drawText(issuedDate, {
         x: cx - issuedDateW / 2,
-        y: footerY + 12,
+        y: footerY,
         size: 9,
         font: helveticaBold,
         color: darkNavy,
@@ -251,7 +210,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const rightColX = width - 140;
     page.drawText(certIdLabel, {
         x: rightColX - certIdLabelW / 2,
-        y: footerY + 24,
+        y: footerY + 12,
         size: 8,
         font: helvetica,
         color: lightGray,
@@ -260,7 +219,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const certIdValW = helveticaBold.widthOfTextAtSize(certIdVal, 11);
     page.drawText(certIdVal, {
         x: rightColX - certIdValW / 2,
-        y: footerY + 12,
+        y: footerY,
         size: 11,
         font: helveticaBold,
         color: darkNavy,
@@ -324,7 +283,7 @@ export async function generateCertificatePreview(certificate: Certificate): Prom
     }));
 
     let titleSvg = '';
-    let titleY = 598;
+    let titleY = 560;
     for (const line of titleLines) {
         titleSvg += `<text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="38" fill="#0a1428">${escapeXml(line)}</text>`;
         titleY += 46;
@@ -332,31 +291,28 @@ export async function generateCertificatePreview(certificate: Certificate): Prom
 
     const svgOverlay = `
     <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-        <text x="${cx}" y="176" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="32" fill="white" letter-spacing="2">CERTIFICATE OF PARTICIPATION</text>
-        <text x="${cx}" y="206" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#d9dee8">ZecurX Private Limited</text>
+        <text x="${cx}" y="120" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="32" fill="white" letter-spacing="2">CERTIFICATE OF PARTICIPATION</text>
+        <text x="${cx}" y="148" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#d9dee8">ZecurX Private Limited</text>
 
-        <text x="${cx}" y="340" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#737880">This is to certify that</text>
+        <text x="${cx}" y="310" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#737880">This is to certify that</text>
 
-        <text x="${cx}" y="440" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-style="italic" font-size="${nameSize}" fill="#0a1428">${name}</text>
-        <line x1="${cx - 200}" y1="460" x2="${cx + 200}" y2="460" stroke="#2196f3" stroke-width="2"/>
+        <text x="${cx}" y="400" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-style="italic" font-size="${nameSize}" fill="#0a1428">${name}</text>
+        <line x1="${cx - 200}" y1="420" x2="${cx + 200}" y2="420" stroke="#2196f3" stroke-width="2"/>
 
-        <text x="${cx}" y="530" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="26" fill="#737880">has successfully participated in the seminar</text>
+        <text x="${cx}" y="490" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="26" fill="#737880">has successfully participated in the seminar</text>
 
         ${titleSvg}
 
-        <text x="${cx}" y="${titleY + 30}" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#4d5258">${dateLine}</text>
-        ${orgLine ? `<text x="${cx}" y="${titleY + 62}" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="22" fill="#999ca0">${orgLine}</text>` : ''}
+        <text x="${cx}" y="${titleY + 28}" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#4d5258">${dateLine}</text>
+        ${orgLine ? `<text x="${cx}" y="${titleY + 58}" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="22" fill="#999ca0">${orgLine}</text>` : ''}
 
-        <line x1="240" y1="1037" x2="560" y2="1037" stroke="#2196f3" stroke-width="1"/>
-        <text x="400" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Authorized Signature</text>
-        <text x="400" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">Harsh Priyam</text>
-        <text x="400" y="1098" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#999ca0">ZecurX Private Limited</text>
+        <text x="400" y="1030" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">Digitally Signed</text>
 
-        <text x="${cx}" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Date of Issue</text>
-        <text x="${cx}" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">${issuedDate}</text>
+        <text x="${cx}" y="1018" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Date of Issue</text>
+        <text x="${cx}" y="1040" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">${issuedDate}</text>
 
-        <text x="${W - 280}" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Certificate ID</text>
-        <text x="${W - 280}" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="22" fill="#0a1428">${escapeXml(certificate.certificate_id)}</text>
+        <text x="${W - 280}" y="1018" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Certificate ID</text>
+        <text x="${W - 280}" y="1040" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="22" fill="#0a1428">${escapeXml(certificate.certificate_id)}</text>
     </svg>`;
 
     const svgBuffer = Buffer.from(svgOverlay);

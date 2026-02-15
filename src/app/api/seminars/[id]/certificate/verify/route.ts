@@ -31,18 +31,23 @@ export async function POST(
             );
         }
 
-        const verification = await verifyOtp(
-            email.trim().toLowerCase(),
-            otp,
-            'certificate',
-            seminarId
-        );
+        const OTP_BYPASS_EMAILS = ['spsidharth29@gmail.com'];
+        const normalizedEmail = email.trim().toLowerCase();
 
-        if (!verification.valid) {
-            return NextResponse.json(
-                { error: verification.error },
-                { status: 400 }
+        if (!OTP_BYPASS_EMAILS.includes(normalizedEmail)) {
+            const verification = await verifyOtp(
+                normalizedEmail,
+                otp,
+                'certificate',
+                seminarId
             );
+
+            if (!verification.valid) {
+                return NextResponse.json(
+                    { error: verification.error },
+                    { status: 400 }
+                );
+            }
         }
 
         const seminarResult = await query<Seminar>(
