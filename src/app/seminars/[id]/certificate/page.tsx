@@ -458,75 +458,103 @@ export default function CertificatePage() {
 
                     {step === "success" && status?.certificateId && (
                         certLoading ? (
-                            <div className="text-center py-12">
-                                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto" />
+                            <div className="flex flex-col items-center justify-center py-20">
+                                <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
+                                <p className="text-muted-foreground animate-pulse">Retrieving your certificate...</p>
                             </div>
                         ) : certData ? (
-                            <div>
-                                <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-4 mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center shrink-0">
-                                            <Shield className="w-5 h-5 text-green-500" />
+                            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                {/* Success Banner */}
+                                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-500/20 p-8 text-center mb-8">
+                                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
+                                    
+                                    <div className="relative z-10 flex flex-col items-center">
+                                        <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/20 mb-4 ring-4 ring-card">
+                                            <CheckCircle2 className="w-8 h-8 text-white" />
                                         </div>
-                                        <div>
-                                            <p className="font-semibold text-green-600 dark:text-green-400">
-                                                Certificate Sent!
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                Your certificate has been emailed. You can also download it below.
-                                            </p>
+                                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
+                                            Congratulations!
+                                        </h2>
+                                        <p className="text-muted-foreground max-w-md mx-auto">
+                                            Your certificate for <span className="text-foreground font-semibold">{seminar?.title}</span> has been issued.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Certificate Preview Card */}
+                                <div className="relative group perspective-1000 mb-8">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+                                    <div className="relative rounded-xl overflow-hidden bg-card border border-border shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+                                        <img
+                                            src={`/api/certificates/${status.certificateId}/preview`}
+                                            alt="Certificate Preview"
+                                            className="w-full h-auto block"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Certificate Details */}
+                                <div className="grid gap-6 md:grid-cols-2 mb-8">
+                                    <div className="bg-muted/30 rounded-xl p-4 border border-border/50 flex flex-col justify-center">
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Recipient</p>
+                                        <p className="font-semibold text-foreground truncate" title={certData.recipientName}>
+                                            {certData.recipientName}
+                                        </p>
+                                    </div>
+                                    <div className="bg-muted/30 rounded-xl p-4 border border-border/50 flex flex-col justify-center">
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Certificate ID</p>
+                                        <div className="flex items-center gap-2">
+                                            <code className="font-mono text-sm text-primary">{certData.certificateId}</code>
+                                            <CheckCircle2 className="w-3 h-3 text-green-500" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="rounded-2xl border border-border overflow-hidden mb-6">
-                                    <img
-                                        src={`/api/certificates/${status.certificateId}/preview`}
-                                        alt="Certificate Preview"
-                                        className="w-full h-auto"
+                                {/* Actions */}
+                                <div className="flex flex-col sm:flex-row gap-4 mb-10">
+                                    <Button 
+                                        asChild 
+                                        className="flex-1 h-12 text-base font-semibold shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white border-0"
+                                    >
+                                        <Link href={`/api/certificates/${status.certificateId}/download`}>
+                                            <Download className="w-5 h-5 mr-2" />
+                                            Download PDF
+                                        </Link>
+                                    </Button>
+
+                                    <Button 
+                                        asChild 
+                                        variant="outline" 
+                                        className="flex-1 h-12 text-base font-semibold border-border hover:bg-muted/50"
+                                    >
+                                        <Link href={`/verify/${status.certificateId}`}>
+                                            <ExternalLink className="w-5 h-5 mr-2" />
+                                            Verify Online
+                                        </Link>
+                                    </Button>
+                                </div>
+
+                                {/* Share Section */}
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t border-border" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-card px-2 text-muted-foreground">Share Achievement</span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-6">
+                                    <ShareButton
+                                        title={`Certificate - ${certData.recipientName}`}
+                                        text={`I just received my certificate of participation from ${certData.seminarTitle} by ZecurX!`}
+                                        certificateId={status.certificateId}
                                     />
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                        <div>
-                                            <p className="text-sm font-medium text-foreground">Certificate ID</p>
-                                            <p className="text-xs text-muted-foreground font-mono">
-                                                {certData.certificateId}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                                    <Link
-                                        href={`/api/certificates/${status.certificateId}/download`}
-                                        className="flex-1"
-                                    >
-                                        <Button className="w-full h-12 rounded-xl font-semibold">
-                                            <Download className="w-4 h-4 mr-2" />
-                                            Download PDF
-                                        </Button>
-                                    </Link>
-
-                                    <Link href={`/verify/${status.certificateId}`} className="flex-1">
-                                        <Button variant="outline" className="w-full h-12 rounded-xl font-semibold">
-                                            <ExternalLink className="w-4 h-4 mr-2" />
-                                            Verify Online
-                                        </Button>
-                                    </Link>
-                                </div>
-
-                                <ShareButton
-                                    title={`Certificate - ${certData.recipientName}`}
-                                    text={`I just received my certificate of participation from ${certData.seminarTitle} by ZecurX!`}
-                                    certificateId={status.certificateId}
-                                />
-
-                                <div className="text-center mt-8">
+                                <div className="text-center mt-10">
                                     <Link href="/resources/seminars">
-                                        <Button variant="ghost">
+                                        <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                                             <ArrowLeft className="w-4 h-4 mr-2" />
                                             Back to Seminars
                                         </Button>
@@ -534,48 +562,48 @@ export default function CertificatePage() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="text-center py-4">
-                                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 text-center">
+                                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-green-500/5">
                                     <Mail className="w-10 h-10 text-green-500" />
                                 </div>
-                                <h1 className="text-2xl font-bold mb-2">Certificate Sent!</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Your certificate has been sent to your email address.
+                                
+                                <h2 className="text-2xl font-bold text-foreground mb-2">Certificate Sent!</h2>
+                                <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
+                                    We've sent your certificate to your email. You can also download it directly below.
                                 </p>
 
-                                <div className="bg-muted/50 rounded-xl p-4 mb-6">
-                                    <p className="text-sm text-muted-foreground mb-1">Certificate ID</p>
-                                    <p className="font-mono font-semibold text-foreground">{status.certificateId}</p>
+                                <div className="bg-muted/30 rounded-xl p-4 mb-8 inline-block w-full max-w-sm border border-border/50">
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Certificate ID</p>
+                                    <code className="font-mono font-semibold text-primary">{status.certificateId}</code>
                                 </div>
 
-                                <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                                    <Link
-                                        href={`/api/certificates/${status.certificateId}/download`}
-                                        className="flex-1"
-                                    >
-                                        <Button className="w-full h-12 rounded-xl font-semibold">
+                                <div className="flex flex-col gap-3 mb-8 max-w-sm mx-auto">
+                                    <Button asChild className="w-full h-12 font-semibold bg-blue-600 hover:bg-blue-700 text-white">
+                                        <Link href={`/api/certificates/${status.certificateId}/download`}>
                                             <Download className="w-4 h-4 mr-2" />
                                             Download PDF
-                                        </Button>
-                                    </Link>
-
-                                    <Link href={`/verify/${status.certificateId}`} className="flex-1">
-                                        <Button variant="outline" className="w-full h-12 rounded-xl">
+                                        </Link>
+                                    </Button>
+                                    
+                                    <Button asChild variant="outline" className="w-full h-12 font-semibold">
+                                        <Link href={`/verify/${status.certificateId}`}>
                                             <ExternalLink className="w-4 h-4 mr-2" />
                                             Verify Online
-                                        </Button>
-                                    </Link>
+                                        </Link>
+                                    </Button>
                                 </div>
 
-                                <ShareButton
-                                    title={`Certificate - ZecurX`}
-                                    text="I just received my certificate of participation from ZecurX!"
-                                    certificateId={status.certificateId}
-                                />
+                                <div className="max-w-sm mx-auto">
+                                    <ShareButton
+                                        title="Certificate - ZecurX"
+                                        text="I just received my certificate of participation from ZecurX!"
+                                        certificateId={status.certificateId}
+                                    />
+                                </div>
 
-                                <div className="mt-6">
+                                <div className="mt-8">
                                     <Link href="/resources/seminars">
-                                        <Button variant="ghost">
+                                        <Button variant="ghost" size="sm" className="text-muted-foreground">
                                             <ArrowLeft className="w-4 h-4 mr-2" />
                                             Back to Seminars
                                         </Button>

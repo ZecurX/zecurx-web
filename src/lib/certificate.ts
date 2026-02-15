@@ -1,4 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import sharp from 'sharp';
 import { query } from '@/lib/db';
 import { Certificate } from '@/types/seminar';
 import { Resend } from 'resend';
@@ -287,6 +288,85 @@ function splitTextToLines(text: string, maxChars: number): string[] {
     if (currentLine) lines.push(currentLine);
 
     return lines;
+}
+
+function escapeXml(text: string): string {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+export async function generateCertificatePreview(certificate: Certificate): Promise<Buffer> {
+    const W = 1684;
+    const H = 1190;
+    const cx = W / 2;
+
+    const bgResponse = await fetch(CDN_ASSETS.certificates.background);
+    if (!bgResponse.ok) throw new Error('Failed to fetch certificate background');
+    const bgBuffer = Buffer.from(await bgResponse.arrayBuffer());
+
+    const name = escapeXml(certificate.recipient_name);
+    const nameSize = certificate.recipient_name.length > 25 ? 60 : 72;
+
+    const seminarTitle = escapeXml(certificate.seminar_title);
+    const titleLines = splitTextToLines(certificate.seminar_title, 55);
+
+    const dateStr = new Date(certificate.seminar_date).toLocaleDateString('en-US', {
+        day: 'numeric', month: 'long', year: 'numeric',
+    });
+
+    let dateLine = `held on ${escapeXml(dateStr)}`;
+    if (certificate.speaker_name) {
+        dateLine += `  |  conducted by ${escapeXml(certificate.speaker_name)}`;
+    }
+
+    const orgLine = certificate.organization ? `at ${escapeXml(certificate.organization)}` : '';
+    const issuedDate = escapeXml(new Date().toLocaleDateString('en-US', {
+        day: 'numeric', month: 'long', year: 'numeric',
+    }));
+
+    let titleSvg = '';
+    let titleY = 598;
+    for (const line of titleLines) {
+        titleSvg += `<text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-size="38" fill="#0a1428">${escapeXml(line)}</text>`;
+        titleY += 46;
+    }
+
+    const svgOverlay = `
+    <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+        <text x="${cx}" y="176" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="32" fill="white" letter-spacing="2">CERTIFICATE OF PARTICIPATION</text>
+        <text x="${cx}" y="206" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#d9dee8">ZecurX Private Limited</text>
+
+        <text x="${cx}" y="340" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#737880">This is to certify that</text>
+
+        <text x="${cx}" y="440" text-anchor="middle" font-family="Georgia, serif" font-weight="bold" font-style="italic" font-size="${nameSize}" fill="#0a1428">${name}</text>
+        <line x1="${cx - 200}" y1="460" x2="${cx + 200}" y2="460" stroke="#2196f3" stroke-width="2"/>
+
+        <text x="${cx}" y="530" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="26" fill="#737880">has successfully participated in the seminar</text>
+
+        ${titleSvg}
+
+        <text x="${cx}" y="${titleY + 30}" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#4d5258">${dateLine}</text>
+        ${orgLine ? `<text x="${cx}" y="${titleY + 62}" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="22" fill="#999ca0">${orgLine}</text>` : ''}
+
+        <line x1="240" y1="1037" x2="560" y2="1037" stroke="#2196f3" stroke-width="1"/>
+        <text x="400" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Authorized Signature</text>
+        <text x="400" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">Harsh Priyam</text>
+        <text x="400" y="1098" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#999ca0">ZecurX Private Limited</text>
+
+        <text x="${cx}" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Date of Issue</text>
+        <text x="${cx}" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="18" fill="#0a1428">${issuedDate}</text>
+
+        <text x="${W - 280}" y="1058" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#999ca0">Certificate ID</text>
+        <text x="${W - 280}" y="1080" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="22" fill="#0a1428">${escapeXml(certificate.certificate_id)}</text>
+    </svg>`;
+
+    const svgBuffer = Buffer.from(svgOverlay);
+
+    const result = await sharp(bgBuffer)
+        .composite([{ input: svgBuffer, top: 0, left: 0 }])
+        .png()
+        .toBuffer();
+
+    return result;
 }
 
 export async function createCertificate(data: CertificateData): Promise<Certificate> {

@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCertificateById, regenerateCertificatePDF } from '@/lib/certificate';
-import { execSync } from 'child_process';
-import { writeFileSync, readFileSync, unlinkSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { randomUUID } from 'crypto';
+import { getCertificateById, generateCertificatePreview } from '@/lib/certificate';
 
 export async function GET(
     request: NextRequest,
@@ -22,21 +17,9 @@ export async function GET(
             );
         }
 
-        const pdfBuffer = await regenerateCertificatePDF(certificate);
+        const pngBuffer = await generateCertificatePreview(certificate);
 
-        const id = randomUUID();
-        const pdfPath = join(tmpdir(), `cert-${id}.pdf`);
-        const pngBase = join(tmpdir(), `cert-${id}`);
-        const pngPath = `${pngBase}.png`;
-
-        writeFileSync(pdfPath, pdfBuffer);
-        execSync(`pdftoppm -png -r 200 -singlefile "${pdfPath}" "${pngBase}"`);
-        const pngBuffer = readFileSync(pngPath);
-
-        try { unlinkSync(pdfPath); } catch {}
-        try { unlinkSync(pngPath); } catch {}
-
-        return new NextResponse(pngBuffer, {
+        return new NextResponse(new Uint8Array(pngBuffer), {
             headers: {
                 'Content-Type': 'image/png',
                 'Content-Length': pngBuffer.length.toString(),
