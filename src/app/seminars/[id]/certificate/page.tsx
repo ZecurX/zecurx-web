@@ -135,42 +135,11 @@ export default function CertificatePage() {
                 throw new Error(result.error || "Failed to send OTP");
             }
 
-            if (result.bypass) {
-                await verifyBypass();
-            } else {
-                setStep("otp");
-            }
+            setStep("otp");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
             setIsSubmitting(false);
-        }
-    };
-
-    const verifyBypass = async () => {
-        try {
-            const response = await fetch(`/api/seminars/${seminarId}/certificate/verify`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, otp: "000000" }),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || "Verification failed");
-            }
-
-            setStatus(result);
-
-            if (result.hasCertificate && result.certificateId) {
-                fetchCertificateData(result.certificateId);
-                setStep("success");
-            } else {
-                setStep("status");
-            }
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Verification failed");
         }
     };
 

@@ -31,23 +31,20 @@ export async function POST(
             );
         }
 
-        const OTP_BYPASS_EMAILS = ['spsidharth29@gmail.com'];
         const normalizedEmail = email.trim().toLowerCase();
 
-        if (!OTP_BYPASS_EMAILS.includes(normalizedEmail)) {
-            const verification = await verifyOtp(
-                normalizedEmail,
-                otp,
-                'certificate',
-                seminarId
-            );
+        const verification = await verifyOtp(
+            normalizedEmail,
+            otp,
+            'certificate',
+            seminarId
+        );
 
-            if (!verification.valid) {
-                return NextResponse.json(
-                    { error: verification.error },
-                    { status: 400 }
-                );
-            }
+        if (!verification.valid) {
+            return NextResponse.json(
+                { error: verification.error },
+                { status: 400 }
+            );
         }
 
         const seminarResult = await query<Seminar>(
