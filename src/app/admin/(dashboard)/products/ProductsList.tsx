@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MoreVertical, Pencil, Trash2, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -129,8 +130,8 @@ export default function ProductsList() {
                                 className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-muted/20 transition-colors"
                             >
                                 <div className="col-span-4 flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0">
-                                        <img src={product.image} alt="" className="w-full h-full object-cover" />
+                                    <div className="w-10 h-10 rounded-lg bg-muted overflow-hidden shrink-0 relative">
+                                        <Image src={product.image} alt="" fill className="object-cover" />
                                     </div>
                                     <div>
                                         <div className="font-medium text-foreground">{product.name}</div>

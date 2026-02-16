@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -21,10 +22,11 @@ export function IconImage({ src, alt, fallback: Fallback, className, iconClassNa
     }
 
     return (
-        <img
+        <Image
             src={src}
             alt={alt}
-            className={cn("w-full h-full object-contain", className)}
+            fill
+            className={cn("object-contain", className)}
             onError={() => setImageError(true)}
         />
     );
