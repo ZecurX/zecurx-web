@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
@@ -740,8 +741,8 @@ function CheckoutContent() {
                                 <div className="space-y-4 pb-6 border-b border-border/50 mb-6 max-h-64 overflow-y-auto">
                                     {items.map((item) => (
                                         <div key={item.id} className="flex gap-4">
-                                            <div className="w-16 h-16 rounded-lg bg-muted/50 overflow-hidden shrink-0">
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />
+                                            <div className="w-16 h-16 rounded-lg bg-muted/50 overflow-hidden shrink-0 relative">
+                                                <Image src={item.image} alt={item.name} fill className="object-contain p-1" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="font-medium text-sm truncate">{item.name}</p>
