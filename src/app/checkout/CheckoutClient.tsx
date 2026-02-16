@@ -95,19 +95,19 @@ function CheckoutContent() {
     useEffect(() => {
         const fetchItemPrice = async () => {
             if (isCartCheckout || !itemId) return;
-            
+
             setIsLoadingItem(true);
             setItemFetchError('');
-            
+
             try {
                 const res = await fetch(`/api/checkout/item-price?itemId=${encodeURIComponent(itemId)}&type=${encodeURIComponent(itemType)}`);
                 const data = await res.json();
-                
+
                 if (!res.ok || data.error) {
                     setItemFetchError(data.error || 'Failed to load item');
                     return;
                 }
-                
+
                 setFetchedItem({
                     id: data.id,
                     name: data.name,
@@ -120,7 +120,7 @@ function CheckoutContent() {
                 setIsLoadingItem(false);
             }
         };
-        
+
         fetchItemPrice();
     }, [itemId, itemType, isCartCheckout]);
 
@@ -281,7 +281,7 @@ function CheckoutContent() {
         const isCollegeValid = singleItem?.type === 'internship' ? formData.college.length > 2 : true;
 
         const isPromoPriceValid = (urlPromoPrice || urlPromoCode) ? promoPriceValid === true : true;
-        
+
         const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
         setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid && isItemReady);
@@ -517,7 +517,7 @@ function CheckoutContent() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Your cart is empty</h1>
+                    <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
                     <button onClick={() => router.push('/shop')} className="text-primary hover:underline">
                         Continue Shopping
                     </button>
@@ -541,7 +541,7 @@ function CheckoutContent() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Unable to Load Item</h1>
+                    <h2 className="text-2xl font-bold mb-4">Unable to Load Item</h2>
                     <p className="text-muted-foreground mb-4">{itemFetchError}</p>
                     <button onClick={() => router.back()} className="text-primary hover:underline">
                         Go Back
@@ -555,7 +555,7 @@ function CheckoutContent() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Invalid Checkout Session</h1>
+                    <h2 className="text-2xl font-bold mb-4">Invalid Checkout Session</h2>
                     <button onClick={() => router.back()} className="text-primary hover:underline">
                         Go Back
                     </button>
@@ -575,7 +575,7 @@ function CheckoutContent() {
                     <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle2 className="w-10 h-10 text-green-500" />
                     </div>
-                    <h1 className="text-3xl font-bold mb-4">Order Placed!</h1>
+                    <h2 className="text-3xl font-bold mb-4">Order Placed!</h2>
                     <p className="text-muted-foreground mb-8">
                         Thank you for your order! A confirmation email has been sent to {formData.email}.
                         {isCartCheckout && " We'll ship your items within the estimated delivery time."}

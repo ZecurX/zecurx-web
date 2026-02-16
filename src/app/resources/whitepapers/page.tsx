@@ -5,9 +5,18 @@ import Footer from "@/components/landing/Footer";
 import WhitepapersPage from "@/components/resources/pages/WhitepapersPage";
 
 export const metadata: Metadata = {
-    title: "Whitepapers | ZecurX - Technical Security Reports",
-    description: "Deep-dive technical documents and strategic reports that provide comprehensive insights into complex security challenges, architecture best practices, and industry compliance.",
+    title: "Whitepapers - Technical Security Reports",
+    description: "Deep-dive technical documents on complex security challenges, architecture best practices, and compliance.",
     keywords: "cybersecurity whitepapers, security reports, technical documentation, zero trust, cloud compliance, ZecurX",
+    openGraph: {
+        title: "Whitepapers - Technical Security Reports | ZecurX",
+        description: "Deep-dive technical documents on complex security challenges and architecture best practices.",
+        type: "website",
+        url: "https://zecurx.com/resources/whitepapers",
+    },
+    alternates: {
+        canonical: "https://zecurx.com/resources/whitepapers",
+    },
 };
 
 export default function ResourcesWhitepapersPage() {

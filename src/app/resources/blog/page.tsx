@@ -5,9 +5,18 @@ import Footer from "@/components/landing/Footer";
 import BlogPage from "@/components/resources/pages/BlogPage";
 
 export const metadata: Metadata = {
-    title: "Blog | ZecurX - Cybersecurity Insights",
-    description: "Stay ahead of the curve with expert analysis on the latest cybersecurity trends, emerging threat vectors, and practical defense strategies written by our security engineers.",
+    title: "Blog - Cybersecurity Insights",
+    description: "Expert analysis on cybersecurity trends, emerging threats, and practical defense strategies from ZecurX security engineers.",
     keywords: "cybersecurity blog, security insights, threat intelligence, cyber trends, ZecurX blog",
+    openGraph: {
+        title: "Blog - Cybersecurity Insights | ZecurX",
+        description: "Expert analysis on cybersecurity trends, emerging threats, and practical defense strategies.",
+        type: "website",
+        url: "https://zecurx.com/resources/blog",
+    },
+    alternates: {
+        canonical: "https://zecurx.com/resources/blog",
+    },
 };
 
 export default function ResourcesBlogPage() {
