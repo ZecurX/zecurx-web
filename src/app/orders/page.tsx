@@ -51,14 +51,15 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
     const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
     const [email, setEmail] = useState('');
+    const [orderId, setOrderId] = useState('');
     const [emailSubmitted, setEmailSubmitted] = useState(false);
 
-    const fetchOrders = async (customerEmail: string) => {
+    const fetchOrders = async (customerEmail: string, customerOrderId: string) => {
         try {
             setLoading(true);
-            const res = await fetch(`/api/orders?email=${encodeURIComponent(customerEmail)}`);
+            const res = await fetch(`/api/orders?email=${encodeURIComponent(customerEmail)}&orderId=${encodeURIComponent(customerOrderId)}`);
             const data = await res.json();
-            
+
             if (res.ok) {
                 setOrders(data.orders || []);
                 setEmailSubmitted(true);
@@ -74,8 +75,8 @@ export default function OrdersPage() {
 
     const handleEmailSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (email.trim()) {
-            fetchOrders(email.trim());
+        if (email.trim() && orderId.trim()) {
+            fetchOrders(email.trim(), orderId.trim());
         }
     };
 
@@ -111,9 +112,9 @@ export default function OrdersPage() {
                     <div className="bg-muted/10 border border-border/50 rounded-3xl p-8 backdrop-blur-md">
                         <div className="text-center mb-8">
                             <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-primary" />
-                            <h1 className="text-3xl font-bold mb-2">View Your Orders</h1>
+                            <h1 className="text-3xl font-bold mb-2">View Your Order</h1>
                             <p className="text-muted-foreground">
-                                Enter your email address to view your order history
+                                Enter your email and order ID to view your order details
                             </p>
                         </div>
 
@@ -125,6 +126,18 @@ export default function OrdersPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="you@example.com"
+                                    required
+                                    className="w-full bg-muted/30 border border-border rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium ml-1 block mb-2">Order ID</label>
+                                <input
+                                    type="text"
+                                    value={orderId}
+                                    onChange={(e) => setOrderId(e.target.value)}
+                                    placeholder="order_xxxxxxxxxxxx"
                                     required
                                     className="w-full bg-muted/30 border border-border rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
                                 />
@@ -162,7 +175,7 @@ export default function OrdersPage() {
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
-            
+
             <div className="pt-32 pb-20 max-w-5xl mx-auto px-6">
                 <button
                     onClick={() => router.back()}
