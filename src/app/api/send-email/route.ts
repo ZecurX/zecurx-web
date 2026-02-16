@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { appendToSheet } from '@/lib/google-sheets';
 import { fetchFromCdn } from '@/lib/cdn';
 import { query } from '@/lib/db';
+import { checkEmailRateLimit, getClientIp } from '@/lib/rate-limit';
 
 async function saveStudentLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
     try {
@@ -33,7 +34,6 @@ async function saveStudentLead(body: Record<string, unknown>, request: NextReque
                 user_agent,
             ]
         );
-        console.log('Student lead saved successfully');
     } catch (error) {
         console.error('Failed to save student lead:', error);
     }
@@ -52,8 +52,8 @@ async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRe
             'purchase': 'Purchase Inquiry',
         };
 
-        const serviceType = formType === 'seminar_booking' 
-            ? 'Security Training' 
+        const serviceType = formType === 'seminar_booking'
+            ? 'Security Training'
             : (body.service as string || 'General Inquiry');
 
         await query(
@@ -75,7 +75,7 @@ async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRe
                 'Website Form',
                 referer,
                 enquiryTypeMap[formType] || 'General Inquiry',
-                formType === 'seminar_booking' 
+                formType === 'seminar_booking'
                     ? `Topic: ${body.topic || 'Not specified'}, Type: ${body.seminarType || 'Not specified'}, Attendees: ${body.attendees || 'Not specified'}, Date: ${body.preferredDate || 'Not specified'}. ${body.message || ''}`
                     : (body.message as string || null),
                 'NEW',
@@ -86,13 +86,21 @@ async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRe
                 body.preferredDate as string || null,
             ]
         );
-        console.log('Enterprise lead saved successfully');
     } catch (error) {
         console.error('Failed to save enterprise lead:', error);
     }
 }
 
 export async function POST(request: NextRequest) {
+    const ip = getClientIp(request);
+    const rateLimitResult = await checkEmailRateLimit(ip);
+    if (!rateLimitResult.success) {
+        return NextResponse.json(
+            { error: 'Too many requests. Please try again later.' },
+            { status: 429 }
+        );
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY);
     try {
         const body = await request.json();
@@ -276,7 +284,6 @@ export async function POST(request: NextRequest) {
             const fileContent = await fetchFromCdn(selectedPdf.cdnPath);
             if (fileContent) {
                 attachments = [{ filename: selectedPdf.filename, content: fileContent }];
-                console.log(`Selected PDF for service "${body.service}": ${selectedPdf.filename}`);
             } else {
                 console.warn(`Failed to fetch brochure from CDN: ${selectedPdf.cdnPath}`);
             }
@@ -289,12 +296,11 @@ export async function POST(request: NextRequest) {
             } else if (cdnPath.startsWith('/')) {
                 cdnPath = cdnPath.slice(1);
             }
-            
+
             const fileContent = await fetchFromCdn(cdnPath);
             if (fileContent) {
                 const filename = `ZecurX_${body.courseTitle?.replace(/\s+/g, '_') || 'Course'}_Brochure.pdf`;
                 attachments = [{ filename, content: fileContent }];
-                console.log(`Attaching course brochure: ${filename}`);
             } else {
                 console.warn(`Course brochure not found at CDN: ${cdnPath}`);
             }
@@ -316,7 +322,7 @@ export async function POST(request: NextRequest) {
                 html: htmlContent,
             });
             adminEmailSent = true;
-            console.log(`Admin email sent successfully to: ${adminEmail}`);
+
         } catch (adminError) {
             console.error('Failed to send admin email:', adminError);
         }
@@ -375,7 +381,7 @@ export async function POST(request: NextRequest) {
         let userEmailSent = false;
         if (!isPurchase) {
             try {
-                console.log('Attempting to send user email to:', email);
+
 
                 if ((isDemo || isBrochure) && attachments.length > 0) {
                     await resend.emails.send({
@@ -394,13 +400,13 @@ export async function POST(request: NextRequest) {
                     });
                 }
                 userEmailSent = true;
-                console.log('User confirmation email sent successfully to:', email);
+
             } catch (userError) {
                 console.error('Failed to send user confirmation email:', userError);
             }
         } else {
             userEmailSent = true;
-            console.log('Skipping user email for purchase - webhook handles it with invoice');
+
         }
 
         // Return response
@@ -425,11 +431,9 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('Email API error:', error);
-
-        return NextResponse.json({
-            success: true,
-            message: 'Request received',
-            debugError: error instanceof Error ? error.message : 'Unknown error'
-        });
+        return NextResponse.json(
+            { success: false, error: 'Failed to process request' },
+            { status: 500 }
+        );
     }
 }

@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadToS3, generateS3Key } from '@/lib/s3';
+import { verifySessionFromRequest } from '@/lib/auth';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await verifySessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const folder = (formData.get('folder') as string) || 'images';
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const key = generateS3Key(file.name, folder);
-    
+
     const result = await uploadToS3(buffer, key, file.type);
 
     return NextResponse.json({
