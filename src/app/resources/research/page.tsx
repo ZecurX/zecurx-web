@@ -6,14 +6,23 @@ import ResearchPage from "@/components/resources/pages/ResearchPage";
 import { getTopSecurityStories } from "@/lib/hacker-news";
 
 export const metadata: Metadata = {
-    title: "Research & Insights | ZecurX - Threat Intelligence",
+    title: "Research & Insights - Threat Intelligence",
     description: "Real-time threat intelligence and vulnerability analysis curated from global sources.",
     keywords: "cybersecurity research, threat intelligence, security reports, vulnerability research, ZecurX research, hacker news",
+    openGraph: {
+        title: "Research & Insights - Threat Intelligence | ZecurX",
+        description: "Real-time threat intelligence and vulnerability analysis curated from global sources.",
+        type: "website",
+        url: "https://zecurx.com/resources/research",
+    },
+    alternates: {
+        canonical: "https://zecurx.com/resources/research",
+    },
 };
 
 export default async function ResourcesResearchPage() {
     const stories = await getTopSecurityStories(100);
-    
+
     return (
         <main className="bg-background min-h-screen selection:bg-foreground/80/30">
             <CreativeNavBar />

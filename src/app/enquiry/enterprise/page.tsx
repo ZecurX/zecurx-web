@@ -4,8 +4,17 @@ import { EnterpriseEnquiryForm } from '@/components/forms/EnterpriseEnquiryForm'
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-    title: 'Enterprise Solutions | Zecurx',
-    description: 'Secure your organization with Zecurx enterprise cybersecurity solutions. Request a consultation for penetration testing, security assessments, and training.',
+    title: 'Enterprise Solutions',
+    description: 'Secure your organization with ZecurX enterprise cybersecurity solutions. Request a consultation for penetration testing and security assessments.',
+    openGraph: {
+        title: 'Enterprise Solutions | ZecurX',
+        description: 'Secure your organization with ZecurX enterprise cybersecurity solutions. Request a consultation.',
+        type: 'website',
+        url: 'https://zecurx.com/enquiry/enterprise',
+    },
+    alternates: {
+        canonical: 'https://zecurx.com/enquiry/enterprise',
+    },
 };
 
 const cardClass = cn(

@@ -54,12 +54,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     return {
-        title: `Certificate - ${data.certificate.recipientName} | ZecurX`,
+        title: `Certificate - ${data.certificate.recipientName}`,
         description: `Certificate of participation for ${data.certificate.recipientName} in ${data.certificate.seminarTitle}`,
         openGraph: {
             title: `Certificate of Participation - ${data.certificate.recipientName}`,
             description: `Verified certificate for ${data.certificate.seminarTitle}`,
             type: "website",
+        },
+        alternates: {
+            canonical: `https://zecurx.com/verify/${certificateId}`,
         },
     };
 }
@@ -112,10 +115,12 @@ export default async function CertificateVerifyPage({ params }: Props) {
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border-[8px] border-white dark:border-white/5 bg-background transform transition-all duration-500 hover:rotate-y-1 hover:scale-[1.01]">
                             <div className="aspect-[1.414/1] bg-muted relative">
                                 {/* Use an iframe or image for preview */}
-                                <img
+                                <Image
                                     src={`/api/certificates/${certificateId}/preview`}
-                                    alt="Certificate Preview"
-                                    className="w-full h-full object-cover"
+                                    alt={`Certificate preview for ${certificate.recipientName}`}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
                                 />
                             </div>
                         </div>
