@@ -13,7 +13,7 @@ const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 function AnimatedGridPattern({ className }: { className?: string }) {
   return (
     <div className={cn("absolute inset-0 overflow-hidden", className)}>
-      <div 
+      <div
         className="absolute inset-0 h-full w-full bg-[linear-gradient(to_right,rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem]"
         style={{
           maskImage: "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
@@ -50,7 +50,7 @@ export function BlogPageClient({
           <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] opacity-20" />
           <AnimatedGridPattern className="opacity-50" />
         </div>
-        
+
         <ScrollAnimation direction="up">
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-6">
@@ -71,15 +71,15 @@ export function BlogPageClient({
           <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] opacity-20" />
           <AnimatedGridPattern className="opacity-50" />
         </div>
-        
+
         <ScrollAnimation direction="up">
           <div className="relative z-10 text-center p-8 lg:p-12 bg-card/40 border border-border/50 rounded-3xl max-w-lg mx-auto backdrop-blur-xl">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-6">
               <TrendingUp className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold font-manrope mb-4 text-foreground">
+            <h2 className="text-3xl lg:text-4xl font-bold font-manrope mb-4 text-foreground">
               Temporarily Unavailable
-            </h1>
+            </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
               We're currently unable to load the blog posts. Please try again later.
             </p>
@@ -110,14 +110,14 @@ export function BlogPageClient({
               Latest Security Research & Insights
             </span>
           </motion.div>
-          
+
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-manrope tracking-tighter leading-tight mb-6">
             <span className="block text-foreground">Security</span>
             <span className="block bg-gradient-to-r from-foreground via-foreground/80 to-foreground/50 bg-clip-text text-transparent">
               Intelligence Hub
             </span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Expert analysis, threat intelligence, and industry insights from the ZecurX security team.
           </p>
@@ -134,8 +134,8 @@ export function BlogPageClient({
                   href="/blog"
                   className={cn(
                     "px-4 lg:px-5 py-2 lg:py-2.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap",
-                    !labelSlug 
-                      ? 'bg-foreground text-background shadow-lg' 
+                    !labelSlug
+                      ? 'bg-foreground text-background shadow-lg'
                       : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/50'
                   )}
                 >
@@ -176,7 +176,7 @@ export function BlogPageClient({
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {posts.map((post, index) => (
             <ScrollAnimation key={post.id} direction="up" delay={0.05 * index}>
-              <Link 
+              <Link
                 href={`/blog/${post.slug}`}
                 className="group h-full flex flex-col bg-card/40 border border-border/50 rounded-3xl overflow-hidden hover:border-foreground/20 hover:bg-card/60 transition-all duration-500 backdrop-blur-sm hover:shadow-2xl hover:shadow-primary/5"
               >
@@ -194,9 +194,9 @@ export function BlogPageClient({
                       <TrendingUp className="w-16 h-16 text-primary/20" />
                     </div>
                   )}
-                  
+
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+
                   {post.labels.length > 0 && (
                     <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                       {post.labels.slice(0, 2).map((l: any) => (

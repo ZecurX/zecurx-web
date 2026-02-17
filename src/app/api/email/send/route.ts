@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        console.log('[EMAIL] Would send email:', { to, subject, leadType });
-
         if (leadId && leadType) {
             const emailTable = leadType === 'STUDENT'
                 ? 'student_lead_emails'
@@ -75,8 +73,7 @@ export async function POST(request: NextRequest) {
             success: true,
             message: 'Email logged (SMTP configuration pending)'
         });
-    } catch (error) {
-        console.error('Error processing email:', error);
+    } catch {
         return NextResponse.json(
             { error: 'Failed to process email' },
             { status: 500 }

@@ -25,7 +25,6 @@ async function isLmsResetLinkEnabled(): Promise<boolean> {
 
 function verifyWebhookSignature(body: string, signature: string): boolean {
     if (!WEBHOOK_SECRET) {
-        console.error('RAZORPAY_WEBHOOK_SECRET not configured');
         return false;
     }
     
@@ -175,9 +174,7 @@ async function sendInvoiceEmail(data: {
                 content: invoicePdf,
             }],
         });
-        console.log(`Invoice email sent to: ${data.email}`);
-    } catch (emailError) {
-        console.error('Failed to send invoice email:', emailError);
+    } catch {
     }
 
     const adminEmailHtml = `
@@ -214,9 +211,7 @@ async function sendInvoiceEmail(data: {
                 content: invoicePdf,
             }],
         });
-        console.log(`Admin notification sent to: ${adminEmail}`);
-    } catch (adminError) {
-        console.error('Failed to send admin notification:', adminError);
+    } catch {
     }
 }
 
@@ -226,19 +221,15 @@ export async function POST(request: NextRequest) {
         const signature = request.headers.get('x-razorpay-signature');
 
         if (!signature) {
-            console.error('Webhook: Missing signature header');
             return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
         }
 
         if (!verifyWebhookSignature(rawBody, signature)) {
-            console.error('Webhook: Invalid signature');
             return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
         }
 
         const event = JSON.parse(rawBody);
         const eventType = event.event;
-
-        console.log(`Webhook received: ${eventType}`);
 
         if (eventType === 'payment.captured') {
             const payment = event.payload.payment.entity;
@@ -246,8 +237,6 @@ export async function POST(request: NextRequest) {
             const paymentId = payment.id;
             const amount = payment.amount / 100;
             const notes = payment.notes || {};
-
-            console.log(`Payment captured: ${paymentId}, Amount: ₹${amount}`);
 
             // OPTIMIZATION: Single query to get plan details (eliminates N+1 pattern)
             let planData: { id: string; price: number; name: string } | null = null;
@@ -263,7 +252,6 @@ export async function POST(request: NextRequest) {
                     
                     // SECURITY: Verify payment amount matches database price
                     if (Math.abs(expectedPrice - amount) > 0.01) {
-                        console.error(`SECURITY ALERT: Payment amount mismatch! Expected ₹${expectedPrice} for "${notes.itemName}", got ₹${amount}. Payment ID: ${paymentId}`);
                         return NextResponse.json({ 
                             received: true, 
                             warning: 'Amount mismatch - invoice not sent',
@@ -311,7 +299,6 @@ export async function POST(request: NextRequest) {
                                 notes.partnerReferralCode
                             );
                             if (incremented) {
-                                console.log(`Webhook: Incremented usage for code: ${notes.referralCode || notes.partnerReferralCode}`);
                             }
                         }
                         
@@ -332,14 +319,10 @@ export async function POST(request: NextRequest) {
                                         AND (plan_id = $2 OR ($3 ILIKE plan_name_pattern AND plan_name_pattern IS NOT NULL))
                                     `, [parseFloat(notes.promoPrice), notes.itemId, notes.itemName]);
                                 }
-                                console.log(`Webhook: Incremented promo usage for ${notes.promoCode || notes.promoPrice}`);
-                            } catch (promoErr) {
-                                console.error('Webhook: Failed to increment promo usage (non-blocking):', promoErr);
+                            } catch {
                             }
                         }
-                    } catch (txError: unknown) {
-                        const errorMessage = txError instanceof Error ? txError.message : 'Unknown error';
-                        console.error('Webhook: Transaction DB Error:', errorMessage);
+                    } catch {
                         return NextResponse.json(
                             { error: 'Database transaction failed' },
                             { status: 500 }
@@ -362,12 +345,9 @@ export async function POST(request: NextRequest) {
                     });
                     
                     if (lmsResult.success && lmsResult.isNewUser) {
-                        console.log(`Webhook: LMS user created for ${notes.email}, reset URL generated`);
                     } else if (lmsResult.success) {
-                        console.log(`Webhook: LMS enrollment processed for existing user ${notes.email}`);
                     }
-                } catch (lmsError) {
-                    console.error('Webhook: LMS Integration Error (non-blocking):', lmsError);
+                } catch {
                 }
 
                 // OPTIMIZATION: Run Google Sheets and email in parallel, non-blocking
@@ -413,32 +393,15 @@ export async function POST(request: NextRequest) {
                 );
                 
                 // Run all background tasks in parallel (non-blocking - don't fail webhook)
-                const results = await Promise.allSettled(backgroundTasks);
-                
-                // Log results but don't return errors (payment was already processed)
-                for (const result of results) {
-                    if (result.status === 'fulfilled') {
-                        const { type, success, error } = result.value;
-                        if (success) {
-                            console.log(`Webhook: ${type === 'sheets' ? 'Google Sheets sync' : 'Invoice email'} completed successfully`);
-                        } else {
-                            console.error(`Webhook: ${type === 'sheets' ? 'Google Sheets' : 'Invoice email'} failed (non-blocking):`, error);
-                        }
-                    }
-                }
-                
-                console.log(`Webhook: Payment processing completed (LMS reset link: ${lmsResetLinkEnabled ? 'included' : 'excluded'})`);
+                await Promise.allSettled(backgroundTasks);
             }
         }
 
         if (eventType === 'payment.failed') {
-            const payment = event.payload.payment.entity;
-            console.log(`Payment failed: ${payment.id}, Reason: ${payment.error_description}`);
         }
 
         if (eventType === 'refund.created') {
             const refund = event.payload.refund.entity;
-            console.log(`Refund created: ${refund.id}, Amount: ₹${refund.amount / 100}`);
             
             await query(
                 'UPDATE transactions SET status = $1 WHERE payment_id = $2',
@@ -448,8 +411,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ received: true, event: eventType });
 
-    } catch (error) {
-        console.error('Webhook processing error:', error);
+    } catch {
         return NextResponse.json(
             { error: 'Webhook processing failed' },
             { status: 500 }
