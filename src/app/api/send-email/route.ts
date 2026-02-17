@@ -34,8 +34,7 @@ async function saveStudentLead(body: Record<string, unknown>, request: NextReque
                 user_agent,
             ]
         );
-    } catch (error) {
-        console.error('Failed to save student lead:', error);
+    } catch {
     }
 }
 
@@ -86,8 +85,7 @@ async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRe
                 body.preferredDate as string || null,
             ]
         );
-    } catch (error) {
-        console.error('Failed to save enterprise lead:', error);
+    } catch {
     }
 }
 
@@ -156,8 +154,7 @@ export async function POST(request: NextRequest) {
                     paymentId: body.paymentId || '',
                     date: new Date().toISOString()
                 });
-            } catch (sheetError) {
-                console.error('Failed to save to Google Sheets:', sheetError);
+            } catch {
             }
         }
 
@@ -285,7 +282,6 @@ export async function POST(request: NextRequest) {
             if (fileContent) {
                 attachments = [{ filename: selectedPdf.filename, content: fileContent }];
             } else {
-                console.warn(`Failed to fetch brochure from CDN: ${selectedPdf.cdnPath}`);
             }
         }
 
@@ -302,7 +298,6 @@ export async function POST(request: NextRequest) {
                 const filename = `ZecurX_${body.courseTitle?.replace(/\s+/g, '_') || 'Course'}_Brochure.pdf`;
                 attachments = [{ filename, content: fileContent }];
             } else {
-                console.warn(`Course brochure not found at CDN: ${cdnPath}`);
             }
         }
 
@@ -323,8 +318,7 @@ export async function POST(request: NextRequest) {
             });
             adminEmailSent = true;
 
-        } catch (adminError) {
-            console.error('Failed to send admin email:', adminError);
+        } catch {
         }
 
         // Prepare user confirmation email
@@ -401,8 +395,7 @@ export async function POST(request: NextRequest) {
                 }
                 userEmailSent = true;
 
-            } catch (userError) {
-                console.error('Failed to send user confirmation email:', userError);
+            } catch {
             }
         } else {
             userEmailSent = true;
@@ -429,8 +422,7 @@ export async function POST(request: NextRequest) {
             });
         }
 
-    } catch (error) {
-        console.error('Email API error:', error);
+    } catch {
         return NextResponse.json(
             { success: false, error: 'Failed to process request' },
             { status: 500 }

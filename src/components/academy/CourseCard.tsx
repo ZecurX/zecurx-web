@@ -39,10 +39,9 @@ export default function CourseCard({
     const [error, setError] = useState<string | null>(null);
     const [isBrochureOpen, setIsBrochureOpen] = useState(false);
 
-    const handleSuccess = (paymentId: string) => {
+    const handleSuccess = (_paymentId: string) => {
         setIsPurchased(true);
         setError(null);
-        console.log('Payment successful:', paymentId);
     };
 
     const handleFailure = (errorMessage: string) => {
