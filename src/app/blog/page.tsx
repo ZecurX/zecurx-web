@@ -2,8 +2,17 @@ import { query } from '@/lib/db';
 import { BlogPageClient } from './BlogPageClient';
 
 export const metadata = {
-  title: 'Security Intelligence Hub - ZecurX Blog',
+  title: 'Security Intelligence Hub',
   description: 'Expert analysis, threat intelligence, and industry insights from the ZecurX security team.',
+  openGraph: {
+    title: 'Security Intelligence Hub | ZecurX Blog',
+    description: 'Expert analysis, threat intelligence, and industry insights from the ZecurX security team.',
+    type: 'website' as const,
+    url: 'https://zecurx.com/blog',
+  },
+  alternates: {
+    canonical: 'https://zecurx.com/blog',
+  },
 };
 
 export default async function BlogPage({
@@ -70,7 +79,7 @@ export default async function BlogPage({
     if (posts.length > 0) {
       const postIds = posts.map(p => p.id);
       const placeholders = postIds.map((_, i) => `$${i + 1}`).join(',');
-      
+
       const labelsRes = await query(`
         SELECT bpl.blog_post_id, bl.*
         FROM blog_post_labels bpl
@@ -93,7 +102,7 @@ export default async function BlogPage({
     }
 
     return (
-      <BlogPageClient 
+      <BlogPageClient
         posts={posts}
         allLabels={allLabels}
         page={page}

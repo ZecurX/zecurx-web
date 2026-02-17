@@ -44,7 +44,6 @@ export async function createLmsUser(
     
     const roleId = await getRoleId(roleType);
     if (!roleId) {
-        console.error(`LMS Integration: Role ${roleType} not found`);
         return null;
     }
     
@@ -168,7 +167,6 @@ export async function processLmsEnrollment(data: {
         const mapping = await getCourseMapping(data.planName);
         
         if (!mapping) {
-            console.log(`LMS Integration: No mapping found for plan "${data.planName}"`);
             return { success: true };
         }
         
@@ -222,7 +220,6 @@ export async function processLmsEnrollment(data: {
         };
         
     } catch (error) {
-        console.error('LMS Integration Error:', error);
         return { 
             success: false, 
             error: error instanceof Error ? error.message : 'Unknown error' 
