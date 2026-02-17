@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle, Eye, EyeOff, Clock, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { generateSlug, calculateReadingTime, stripHtml } from '@/lib/blog-utils';
-import RichTextEditor from '@/components/admin/RichTextEditor';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
+const RichTextEditor = dynamic(
+  () => import('@/components/admin/RichTextEditor'),
+  { ssr: false, loading: () => <div>Loading editor...</div> }
+);
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, CreateBlogPostRequest } from '@/types/auth';
@@ -253,7 +259,7 @@ export default function NewBlogPostPage() {
             >
               <article className="prose prose-lg dark:prose-invert max-w-none">
                 {featuredImage && (
-                  <img src={featuredImage} alt={title} className="w-full rounded-2xl mb-8" />
+                  <Image src={featuredImage} alt={title} width={800} height={400} className="w-full rounded-2xl mb-8" />
                 )}
                 <h1>{title || 'Untitled Post'}</h1>
                 {excerpt && <p className="lead">{excerpt}</p>}

@@ -1,4 +1,9 @@
-import HeroSectionV3 from "@/components/landing/HeroSectionV3";
+import dynamic from "next/dynamic";
+
+const HeroSectionV3 = dynamic(
+  () => import("@/components/landing/HeroSectionV3"),
+  { loading: () => <div className="min-h-screen" /> }
+);
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import WhatWeDoSection from "@/components/landing/WhatWeDoSection";
 import WhyZecurXSection from "@/components/landing/WhyZecurXSection";

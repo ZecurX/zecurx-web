@@ -1,5 +1,3 @@
-"use client";
-
 import { Role } from "@/types/auth";
 import { ROLE_DISPLAY_NAMES } from "@/lib/permissions";
 import { cn } from "@/lib/utils";

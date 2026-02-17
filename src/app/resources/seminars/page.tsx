@@ -5,9 +5,18 @@ import Footer from "@/components/landing/Footer";
 import SeminarsPage from "@/components/resources/pages/SeminarsPage";
 
 export const metadata: Metadata = {
-    title: "Seminars | ZecurX - Expert Sessions",
-    description: "On-demand and live sessions featuring industry veterans discussing real-world case studies, regulatory updates, and demonstrations of next-gen security technologies.",
+    title: "Seminars - Expert Sessions",
+    description: "Live and on-demand sessions featuring industry veterans on real-world case studies and security technologies.",
     keywords: "cybersecurity seminars, security training, expert sessions, live events, ZecurX seminars",
+    openGraph: {
+        title: "Seminars - Expert Sessions | ZecurX",
+        description: "Live and on-demand sessions featuring industry veterans on real-world case studies.",
+        type: "website",
+        url: "https://zecurx.com/resources/seminars",
+    },
+    alternates: {
+        canonical: "https://zecurx.com/resources/seminars",
+    },
 };
 
 export default function ResourcesSeminarsPage() {
