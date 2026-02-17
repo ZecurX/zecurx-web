@@ -207,7 +207,7 @@ export default function SeminarsPage() {
             {/* ════════════════════════════════════════════════════════ */}
             {/* HERO                                                    */}
             {/* ════════════════════════════════════════════════════════ */}
-            <section className="relative w-full py-32 lg:py-40 bg-background text-foreground overflow-hidden">
+            <section className="relative w-full pt-32 pb-16 lg:pt-40 lg:pb-20 bg-background text-foreground overflow-hidden">
                 {/* Background ambience — matching WhyZecurXSection */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-[10%] left-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] dark:bg-primary/15" />
