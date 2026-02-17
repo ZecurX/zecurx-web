@@ -1,5 +1,12 @@
+import { Metadata } from 'next';
 import { query } from '@/lib/db';
 import InternshipsClient from './InternshipsClient';
+
+export const metadata: Metadata = {
+    title: 'Internships | ZecurX',
+    description: 'Explore cybersecurity internship opportunities at ZecurX. Gain hands-on experience in security research, penetration testing, and more.',
+    keywords: ['internships', 'cybersecurity internship', 'security training', 'ZecurX'],
+};
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
