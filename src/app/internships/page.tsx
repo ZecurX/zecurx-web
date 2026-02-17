@@ -3,9 +3,18 @@ import { query } from '@/lib/db';
 import InternshipsClient from './InternshipsClient';
 
 export const metadata: Metadata = {
-    title: 'Internships | ZecurX',
-    description: 'Explore cybersecurity internship opportunities at ZecurX. Gain hands-on experience in security research, penetration testing, and more.',
+    title: 'Internships',
+    description: 'Explore cybersecurity internship opportunities at ZecurX. Gain hands-on experience in security research and penetration testing.',
     keywords: ['internships', 'cybersecurity internship', 'security training', 'ZecurX'],
+    openGraph: {
+        title: 'Internships | ZecurX',
+        description: 'Explore cybersecurity internship opportunities at ZecurX. Gain hands-on experience in security research.',
+        type: 'website',
+        url: 'https://zecurx.com/internships',
+    },
+    alternates: {
+        canonical: 'https://zecurx.com/internships',
+    },
 };
 
 export const dynamic = 'force-dynamic';
