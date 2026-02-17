@@ -30,10 +30,10 @@ const partners: Partner[] = [
 
 export default function TrustedPartners() {
   return (
-    <section className="py-24 bg-background border-t border-border/40 overflow-hidden">
+    <section className="pt-12 pb-16 bg-background border-t border-border/40 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 text-center">
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/70 mb-8">Empowering Security Across Institutions</p>
-        <h2 className="text-3xl md:text-5xl font-bold mb-16 text-foreground tracking-tight">
+        <h2 className="text-3xl md:text-5xl font-bold mb-10 text-foreground tracking-tight">
           Trusted <span className="text-muted-foreground font-medium">Partners</span>
         </h2>
 
@@ -56,7 +56,7 @@ export default function TrustedPartners() {
                   className={cn(
                     "max-h-16 w-auto object-contain transition-all duration-500 relative z-10",
                     "opacity-80 grayscale",
-                    
+
                     partner.invertInLight ? "invert dark:invert-0" : "dark:invert",
                     partner.className
                   )}
