@@ -6,11 +6,11 @@ const pool = new Pool({
     max: 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 3000,
-    statement_timeout: 10000,
 });
 
 pool.on('connect', (client) => {
     client.query('SET search_path TO zecurx_admin, seminar, public');
+    client.query('SET statement_timeout = 10000');
 });
 
 pool.on('error', (err) => {
