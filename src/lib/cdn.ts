@@ -80,6 +80,10 @@ export const CDN_ASSETS = {
   certificates: {
     background: getCdnUrl('images/certificate-bg.png'),
     signature: getCdnUrl('images/signature-harsh-priyam.png'),
+    emailLogo: getCdnUrl('images/zecurx-email-logo.png'),
+  },
+  brand: {
+    logo: getCdnUrl('images/zecurx-logo.png'),
   },
 } as const;
 
@@ -88,13 +92,13 @@ export const CDN_ASSETS = {
  * Small files like icons, SVGs stay local for performance
  */
 export function getAssetUrl(path: string): string {
-  const localPatterns = ['/icons/', '.svg', '.ico', 'zecurx-logo.png'];
+  const localPatterns = ['/icons/', '.svg', '.ico'];
   const isLocal = localPatterns.some(pattern => path.includes(pattern));
-  
+
   if (isLocal) {
     return path;
   }
-  
+
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
   return getCdnUrl(cleanPath);
 }
