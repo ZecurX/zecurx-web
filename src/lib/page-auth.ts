@@ -23,8 +23,8 @@ export async function requirePagePermission(resource: Resource, action: Action) 
       const roleRedirects: Record<string, string> = {
         media: '/admin/blog',
         marketing: '/admin/plans',
-        sales: '/admin',
-        admin: '/admin',
+        sales: '/admin/customers', // Restricted
+        admin: '/admin/customers', // Restricted
         super_admin: '/admin',
       };
 
