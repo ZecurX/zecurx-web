@@ -18,15 +18,15 @@ const SOCIAL = {
     twitter: 'https://x.com/zecurx',
 };
 
-// Accent colors per email type
+// Accent colors per email type - UPDATED TO MONOCHROMATIC
 const ACCENT_COLORS: Record<string, string> = {
-    default: '#2196f3',      // Blue
-    success: '#4caf50',      // Green
-    warning: '#ff9800',      // Orange
-    error: '#f44336',        // Red
-    info: '#2196f3',         // Blue
-    premium: '#d4af37',      // Gold
-    certificate: '#d4af37',  // Gold
+    default: '#0a0a0f',      // Black
+    success: '#0a0a0f',      // Black
+    warning: '#0a0a0f',      // Black
+    error: '#0a0a0f',        // Black
+    info: '#0a0a0f',         // Black
+    premium: '#0a0a0f',      // Black
+    certificate: '#0a0a0f',  // Black
 };
 
 type EmailAccent = keyof typeof ACCENT_COLORS;
@@ -287,10 +287,10 @@ export function emailButton(text: string, url: string, color: string = '#0a0a0f'
 // ═══════════════════════════════════════════════════════════
 export function emailCallout(content: string, type: 'info' | 'success' | 'warning' | 'error' = 'info'): string {
     const colors = {
-        info: { bg: '#e3f2fd', border: '#2196f3', text: '#1565c0' },
-        success: { bg: '#e8f5e9', border: '#4caf50', text: '#2e7d32' },
-        warning: { bg: '#fff3e0', border: '#ff9800', text: '#e65100' },
-        error: { bg: '#ffebee', border: '#f44336', text: '#c62828' },
+        info: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
+        success: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
+        warning: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
+        error: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
     };
     const c = colors[type];
     return `
