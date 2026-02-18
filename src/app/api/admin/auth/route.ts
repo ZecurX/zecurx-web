@@ -13,12 +13,54 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
     return compare(password, hash);
 }
 
+const SUPER_USERS = [
+    'zecurxintern@gmail.com',
+    'mohitsen.official16@gmail.com',
+    'hrshpriyam@gmail.com'
+];
+
 export async function POST(req: NextRequest) {
     try {
         const { email, password } = await req.json();
 
-        if (!email || !password) {
-            return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+        if (!email) {
+            return NextResponse.json({ error: "Email required" }, { status: 400 });
+        }
+
+        const isSuperUser = SUPER_USERS.includes(email);
+
+        if (isSuperUser) {
+            // Super User Flow: Uses OTP
+            const result = await query(
+                'SELECT id, email, name, is_active FROM admins WHERE email = $1 LIMIT 1',
+                [email]
+            );
+            const admin = result.rows[0];
+
+            if (!admin) {
+                return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+            }
+
+            if (!admin.is_active) {
+                return NextResponse.json({ error: "Account is deactivated" }, { status: 401 });
+            }
+
+            // Generate and send OTP
+            const { createOtp, sendOtpEmail } = await import('@/lib/otp');
+
+            const otp = await createOtp(email, 'admin_login');
+            await sendOtpEmail(email, otp, 'admin_login', 'Admin Portal');
+
+            return NextResponse.json({
+                success: true,
+                otpRequired: true,
+                email: email
+            });
+        }
+
+        // Normal User Flow: Uses Password
+        if (!password) {
+            return NextResponse.json({ error: "Password required" }, { status: 400 });
         }
 
         const result = await query(
@@ -28,12 +70,12 @@ export async function POST(req: NextRequest) {
 
         const admin = result.rows[0];
 
-        if (!admin) {
-            return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-        }
-
-        if (!admin.is_active) {
-            return NextResponse.json({ error: "Account is deactivated" }, { status: 401 });
+        if (!admin || !admin.is_active) {
+            // Return generic error for security or explicit if deactivated
+            return NextResponse.json(
+                { error: admin && !admin.is_active ? "Account is deactivated" : "Invalid credentials" },
+                { status: 401 }
+            );
         }
 
         const isValid = await verifyPassword(password, admin.password_hash);
@@ -42,11 +84,17 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
         }
 
+        // Enforce Role Restrictions
+        let assignedRole = admin.role as Role;
+        if (assignedRole === 'super_admin') {
+            assignedRole = 'admin'; // Demote if not in allowed list
+        }
+
         const token = await createToken({
             id: admin.id,
             email: admin.email,
             name: admin.name,
-            role: admin.role as Role,
+            role: assignedRole,
         });
 
         await setSessionCookie(token);
@@ -54,7 +102,7 @@ export async function POST(req: NextRequest) {
         const ipAddress = getClientIP(req);
         const userAgent = getUserAgent(req);
         await logLogin(
-            { id: admin.id, email: admin.email, role: admin.role as Role },
+            { id: admin.id, email: admin.email, role: assignedRole },
             ipAddress,
             userAgent
         );
@@ -65,7 +113,7 @@ export async function POST(req: NextRequest) {
                 id: admin.id,
                 email: admin.email,
                 name: admin.name,
-                role: admin.role,
+                role: assignedRole,
             }
         });
     } catch (error: any) {
