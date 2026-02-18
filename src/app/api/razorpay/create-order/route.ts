@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
     try {
         const clientIp = getClientIp(request);
         const rateLimitResult = await checkPaymentRateLimit(clientIp);
-        
+
         if (!rateLimitResult.success) {
             return NextResponse.json(
                 { error: 'Too many requests. Please try again later.' },
-                { 
+                {
                     status: 429,
                     headers: {
                         'X-RateLimit-Limit': rateLimitResult.limit.toString(),
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             // Use transaction with row locks to prevent race conditions
             const client = await getClient();
             let shouldRelease = true;
-            
+
             try {
                 await client.query('BEGIN');
 
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
                         client.release();
                         shouldRelease = false;
                         return NextResponse.json(
-                            { 
+                            {
                                 error: 'Price mismatch detected. Please refresh your cart.',
                                 details: `${item.name}: Expected ₹${actualPrice}, got ₹${item.price}`
                             },
@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
                     client.release();
                     shouldRelease = false;
                     return NextResponse.json(
-                        { 
+                        {
                             error: 'Insufficient stock',
-                            unavailableItems 
+                            unavailableItems
                         },
                         { status: 409 }
                     );
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
                     client.release();
                     shouldRelease = false;
                     return NextResponse.json(
-                        { 
+                        {
                             error: 'Total amount mismatch. Please refresh your cart.',
                             details: `Expected ₹${expectedAmount}, got ₹${amount}`
                         },
@@ -220,14 +220,14 @@ export async function POST(request: NextRequest) {
                     'SELECT id, name, price FROM zecurx_admin.plans WHERE id::text = $1',
                     [itemId]
                 );
-                
+
                 if (planResult.rows.length > 0) {
                     const plan = planResult.rows[0];
                     const planPrice = parseFloat(plan.price);
-                    
+
                     if ((metadata?.promoPrice || metadata?.promoCode) && (!metadata?.promoPrice || Math.abs(metadata.promoPrice - planPrice) > 0.01)) {
                         let promoCheckResult;
-                        
+
                         if (metadata?.promoCode) {
                             promoCheckResult = await query(`
                                 SELECT pp.* FROM zecurx_admin.promo_prices pp
@@ -271,6 +271,7 @@ export async function POST(request: NextRequest) {
                             );
                         }
                     } else if (discountAmount > 0) {
+                        console.log(`Discount validation: planPrice=${planPrice}, discountAmount=${discountAmount}, referralCode=${metadata?.referralCode}, partnerCode=${metadata?.partnerReferralCode}`);
                         const discountResult = await validateDiscount(
                             planPrice,
                             discountAmount,
@@ -284,16 +285,16 @@ export async function POST(request: NextRequest) {
                                 { status: 400 }
                             );
                         }
-                        
+
                         const expectedAmount = planPrice - discountResult.verifiedDiscount;
-                        if (Math.abs(expectedAmount - amount) > 0.01) {
+                        if (Math.abs(expectedAmount - amount) > 1.0) {
                             console.error(`Price tampering: Plan ${plan.name} expected ₹${expectedAmount}, got ₹${amount}`);
                             return NextResponse.json(
                                 { error: 'Invalid amount. Please refresh the page.' },
                                 { status: 400 }
                             );
                         }
-                        
+
                         finalAmount = expectedAmount;
                         verifiedFromDb = true;
                     } else {
