@@ -117,9 +117,9 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                     
                     <!-- ═══════════ HEADER ═══════════ -->
                     <tr>
-                        <td style="background-color: #000000; padding: 40px 30px; text-align: center;">
-                            <img src="${LOGO_URL}" alt="ZecurX" width="140" height="auto" style="display: block; margin: 0 auto; max-width: 140px;" />
-                            <p style="color: #ffffff; margin: 16px 0 0; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600;">ZecurX Private Limited</p>
+                        <td style="background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%); padding: 48px 30px; text-align: center;">
+                            <img src="${LOGO_URL}" alt="ZecurX" width="145" height="auto" style="display: block; margin: 0 auto; max-width: 145px;" />
+                            <p style="color: #ffffff; margin: 20px 0 0; font-size: 15px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">ZecurX Private Limited</p>
                         </td>
                     </tr>
 
@@ -139,12 +139,12 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                     <!-- ═══════════ CTA SECTION ═══════════ -->
                     <tr>
                         <td style="padding: 0 32px 32px;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #000000; border-radius: 12px; overflow: hidden;">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%); border-radius: 14px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
                                 <tr>
-                                    <td style="padding: 36px 30px; text-align: center;">
-                                        <h3 style="color: #ffffff; margin: 0 0 10px; font-size: 19px; font-weight: 600;">${cta.title}</h3>
-                                        <p style="color: #cccccc; margin: 0 0 24px; font-size: 14px; line-height: 1.6;">${cta.description}</p>
-                                        <a href="${cta.buttonUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: 700; font-size: 14px; letter-spacing: 0.5px;">${cta.buttonText}</a>
+                                    <td style="padding: 44px 32px; text-align: center;">
+                                        <h3 style="color: #ffffff; margin: 0 0 12px; font-size: 21px; font-weight: 700; letter-spacing: -0.5px;">${cta.title}</h3>
+                                        <p style="color: #b0b0b0; margin: 0 0 28px; font-size: 15px; line-height: 1.6;">${cta.description}</p>
+                                        <a href="${cta.buttonUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; text-decoration: none; padding: 16px 36px; border-radius: 8px; font-weight: 800; font-size: 14px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255,255,255,0.25); text-transform: uppercase;">${cta.buttonText}</a>
                                     </td>
                                 </tr>
                             </table>
