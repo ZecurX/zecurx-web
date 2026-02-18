@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
@@ -137,7 +137,7 @@ function CheckoutContent() {
         : (singleItem?.name || '');
 
     // Validate referral code - checks both regular and partner referral codes
-    const validateCode = async (codeToValidate: string) => {
+    const validateCode = useCallback(async (codeToValidate: string) => {
         if (!codeToValidate.trim()) return;
 
         setValidatingCode(true);
@@ -213,7 +213,7 @@ function CheckoutContent() {
         } finally {
             setValidatingCode(false);
         }
-    };
+    }, [checkoutAmount, formData.email, referralCode]);
 
     const handleApplyReferralCode = () => {
         validateCode(referralCode);
@@ -224,7 +224,7 @@ function CheckoutContent() {
         if (codeFromUrl && !appliedCode) {
             validateCode(codeFromUrl);
         }
-    }, [searchParams]);
+    }, [searchParams, validateCode, appliedCode]);
 
     useEffect(() => {
         const validatePromoPrice = async () => {
@@ -296,7 +296,7 @@ function CheckoutContent() {
         const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
         setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid && isItemReady);
-    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
+    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, urlPromoCode, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -454,7 +454,14 @@ function CheckoutContent() {
                                     ...formData,
                                     items: isCartCheckout ? items : [singleItem],
                                     totalAmount: checkoutAmount,
-                                    type: isCartCheckout ? 'shop_order' : singleItem?.type
+                                    finalAmount,
+                                    referralCode: appliedCode && !appliedCode.isPartnerReferral ? appliedCode.code : null,
+                                    partnerReferralCode: appliedCode?.isPartnerReferral ? appliedCode.code : null,
+                                    discountAmount: appliedCode?.discount_amount || 0,
+                                    type: isCartCheckout ? 'shop_order' : singleItem?.type,
+                                    promoPrice: promoPriceValid ? promoPrice : null,
+                                    promoCode: resolvedPromoCode,
+                                    originalPlanPrice: originalPlanPrice
                                 }
                             }),
                         });
