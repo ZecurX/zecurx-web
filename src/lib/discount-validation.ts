@@ -35,7 +35,7 @@ export async function validateDiscount(
     if (referralCode) {
         const codeResult = await executor.query(`
             SELECT discount_type, discount_value, max_discount, min_order_amount
-            FROM referral_codes
+            FROM public.referral_codes
             WHERE code = $1 AND is_active = true
             AND (valid_until IS NULL OR valid_until > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
@@ -58,7 +58,7 @@ export async function validateDiscount(
     } else if (partnerReferralCode) {
         const codeResult = await executor.query(`
             SELECT user_discount_type, user_discount_value, max_user_discount, min_order_amount
-            FROM partner_referrals
+            FROM public.partner_referrals
             WHERE code = $1 AND is_active = true
             AND (valid_until IS NULL OR valid_until > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
@@ -104,9 +104,9 @@ export async function incrementReferralCodeUsage(
 
     if (referralCode) {
         const result = await executor.query(`
-            UPDATE referral_codes 
+            UPDATE public.referral_codes
             SET current_uses = current_uses + 1, updated_at = NOW()
-            WHERE code = $1 
+            WHERE code = $1
             AND is_active = true
             AND (valid_until IS NULL OR valid_until > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
@@ -118,9 +118,9 @@ export async function incrementReferralCodeUsage(
 
     if (partnerReferralCode) {
         const result = await executor.query(`
-            UPDATE partner_referrals 
+            UPDATE public.partner_referrals
             SET current_uses = current_uses + 1, updated_at = NOW()
-            WHERE code = $1 
+            WHERE code = $1
             AND is_active = true
             AND (valid_until IS NULL OR valid_until > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
