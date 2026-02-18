@@ -146,6 +146,7 @@ function ServiceBlock({
     const blockScale = useTransform(globalProgress, [start, peak, end], [0.98, 1, 0.98]);
     const lineProgress = useTransform(globalProgress, [start, peak], [0, 1]);
     const glowOpacity = useTransform(globalProgress, [start, peak, end], [0, 1, 0.4]);
+    const tagDotOpacity = useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]);
 
     // Stationary horizontal stagger (No Y translation to avoid scrolling out of view)
     const offsets = [
@@ -262,7 +263,7 @@ function ServiceBlock({
                             <div key={i} className="flex items-center gap-2">
                                 <motion.div
                                     className="w-1 h-1 rounded-full bg-blue-500"
-                                    style={{ opacity: useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]) }}
+                                    style={{ opacity: tagDotOpacity }}
                                 />
                                 <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">{tag}</span>
                             </div>
