@@ -54,12 +54,15 @@ export async function POST(request: NextRequest) {
             error: 'Invalid referral code'
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error validating referral code:', error);
+        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
         return NextResponse.json<ValidateReferralCodeResponse>({
             valid: false,
-            error: 'Failed to validate referral code'
-        });
+            error: isConnectionError
+                ? 'Service temporarily unavailable. Please try again later.'
+                : 'Failed to validate referral code'
+        }, { status: isConnectionError ? 503 : 500 });
     }
 }
 
