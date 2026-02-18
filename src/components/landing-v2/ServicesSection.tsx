@@ -147,13 +147,20 @@ function ServiceBlock({
     const lineProgress = useTransform(globalProgress, [start, peak], [0, 1]);
     const glowOpacity = useTransform(globalProgress, [start, peak, end], [0, 1, 0.4]);
 
-    // Stationary horizontal stagger (No Y translation to avoid scrolling out of view)
     const offsets = [
         "lg:-translate-x-40",
         "lg:translate-x-48",
         "lg:-translate-x-56",
         "lg:translate-x-40",
     ];
+
+    // Move all transforms top-level to follow Rule of Hooks
+    const pathOpacity = useTransform(glowOpacity, [0, 1], [0, 0.6]);
+    const circleCx = useTransform(lineProgress, [0, 1], [500, isEven ? 220 : 780]);
+    const innerGlowOpacity = useTransform(glowOpacity, [0, 1], [0, 0.2]);
+    const cornerNodeScale = useTransform(glowOpacity, [0, 1], [0.5, 1.2]);
+    const titleColor = useTransform(glowOpacity, [0, 1], ["rgba(255,255,255,0.7)", "rgba(255,255,255,1)"]);
+    const tagDotOpacity = useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]);
 
     return (
         <motion.div
@@ -188,7 +195,7 @@ function ServiceBlock({
                             strokeWidth="4"
                             fill="transparent"
                             filter="url(#glow)"
-                            style={{ pathLength: lineProgress, opacity: useTransform(glowOpacity, [0, 1], [0, 0.6]) }}
+                            style={{ pathLength: lineProgress, opacity: pathOpacity }}
                         />
                         <motion.path
                             d={isEven ? "M 500 150 L 220 150" : "M 500 150 L 780 150"}
@@ -199,7 +206,7 @@ function ServiceBlock({
                         />
                         {/* Data Head Pulse */}
                         <motion.circle
-                            cx={useTransform(lineProgress, [0, 1], [500, isEven ? 220 : 780])}
+                            cx={circleCx}
                             cy="150"
                             r="2.5"
                             fill="#fff"
@@ -219,7 +226,7 @@ function ServiceBlock({
                     {/* Inner Glow Layer */}
                     <motion.div
                         className="absolute inset-0 bg-blue-500/10 pointer-events-none"
-                        style={{ opacity: useTransform(glowOpacity, [0, 1], [0, 0.2]) }}
+                        style={{ opacity: innerGlowOpacity }}
                     />
 
                     {/* Tactical Texture */}
@@ -229,11 +236,11 @@ function ServiceBlock({
                     {/* Corner Nodes */}
                     <motion.div
                         className="absolute -top-[3px] -left-[3px] w-[8px] h-[8px] bg-blue-500 rounded-full blur-[2px]"
-                        style={{ opacity: glowOpacity, scale: useTransform(glowOpacity, [0, 1], [0.5, 1.2]) }}
+                        style={{ opacity: glowOpacity, scale: cornerNodeScale }}
                     />
                     <motion.div
                         className="absolute -bottom-[3px] -right-[3px] w-[8px] h-[8px] bg-blue-500 rounded-full blur-[2px]"
-                        style={{ opacity: glowOpacity, scale: useTransform(glowOpacity, [0, 1], [0.5, 1.2]) }}
+                        style={{ opacity: glowOpacity, scale: cornerNodeScale }}
                     />
 
                     <div className="relative mb-6">
@@ -247,7 +254,7 @@ function ServiceBlock({
                         </div>
                         <motion.h3
                             className="text-2xl md:text-3xl font-manrope font-semibold text-white tracking-tight leading-none"
-                            style={{ color: useTransform(glowOpacity, [0, 1], ["rgba(255,255,255,0.7)", "rgba(255,255,255,1)"]) }}
+                            style={{ color: titleColor }}
                         >
                             {service.title}
                         </motion.h3>
@@ -262,7 +269,7 @@ function ServiceBlock({
                             <div key={i} className="flex items-center gap-2">
                                 <motion.div
                                     className="w-1 h-1 rounded-full bg-blue-500"
-                                    style={{ opacity: useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]) }}
+                                    style={{ opacity: tagDotOpacity }}
                                 />
                                 <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">{tag}</span>
                             </div>

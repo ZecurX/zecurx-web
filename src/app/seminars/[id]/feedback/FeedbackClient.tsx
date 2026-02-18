@@ -20,13 +20,15 @@ import {
     Star,
     Award,
     Sparkles,
+    Briefcase,
     ExternalLink,
     BookOpen,
     Linkedin,
     Instagram,
     Clock,
     Download,
-    Shield
+    Shield,
+    Check
 } from "lucide-react";
 import Link from "next/link";
 
@@ -60,6 +62,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ShareButton } from "@/app/verify/[certificateId]/ShareButton";
 
+// --- Form Schemas ---
 const step1Schema = z.object({
     fullName: z.string().min(2, "Name is required"),
     email: z.string().email("Valid email required"),
@@ -72,7 +75,6 @@ const step1Schema = z.object({
         .transform((val) => val.replace(/\D/g, "")) // Strip non-digits
         .refine(
             (val) => {
-                // Handle +91 prefix or standalone 10-digit number
                 if (val.startsWith("91") && val.length === 12) {
                     return /^91[6-9]\d{9}$/.test(val);
                 }
@@ -95,7 +97,7 @@ const step2Schema = z.object({
     }
     return true;
 }, {
-    message: "Please share what excites you about offensive security (minimum 10 characters and at least 3 words)",
+    message: "Please share what excites you about offensive security (minimum 10 characters and 3 words)",
     path: ["offensiveSecurityReason"],
 });
 
@@ -126,11 +128,21 @@ type Step3Values = z.infer<typeof step3Schema>;
 type Step4Values = z.infer<typeof step4Schema>;
 
 const STEPS = [
-    { id: 1, title: "Your Info" },
-    { id: 2, title: "Career Interest" },
-    { id: 3, title: "Feedback" },
-    { id: 4, title: "Certificate" },
+    { id: 1, title: "Identity", icon: User },
+    { id: 2, title: "Interests", icon: Briefcase },
+    { id: 3, title: "Insights", icon: Sparkles },
+    { id: 4, title: "Certification", icon: Award },
 ];
+
+function PageBackground() {
+    return (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden bg-background">
+            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] bg-[url('/grid-pattern.svg')] bg-[size:60px_60px]"
+                style={{ backgroundImage: "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)" }} />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] bg-gradient-to-b from-primary/5 to-transparent blur-3xl" />
+        </div>
+    );
+}
 
 export default function FeedbackPage() {
     const params = useParams();
@@ -153,21 +165,6 @@ export default function FeedbackPage() {
     const [nameChangeSubmitted, setNameChangeSubmitted] = useState(false);
     const [certData, setCertData] = useState<CertificateVerification["certificate"]>(null);
     const [certLoading, setCertLoading] = useState(false);
-
-    const fetchCertificateData = useCallback(async (certId: string) => {
-        setCertLoading(true);
-        try {
-            const response = await fetch(`/api/certificates/${certId}`);
-            const data: CertificateVerification = await response.json();
-            if (data.valid && data.certificate) {
-                setCertData(data.certificate);
-            }
-        } catch {
-            // Non-critical — preview just won't show
-        } finally {
-            setCertLoading(false);
-        }
-    }, []);
 
     const [step1Data, setStep1Data] = useState<Step1Values | null>(null);
     const [step2Data, setStep2Data] = useState<Step2Values | null>(null);
@@ -209,6 +206,21 @@ export default function FeedbackPage() {
             certificateName: prefillName || "",
         },
     });
+
+    const fetchCertificateData = useCallback(async (certId: string) => {
+        setCertLoading(true);
+        try {
+            const response = await fetch(`/api/certificates/${certId}`);
+            const data: CertificateVerification = await response.json();
+            if (data.valid && data.certificate) {
+                setCertData(data.certificate);
+            }
+        } catch {
+            // Preview failure is non-critical
+        } finally {
+            setCertLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         async function fetchSeminar() {
@@ -257,16 +269,19 @@ export default function FeedbackPage() {
         setStep1Data(data);
         step4Form.setValue("certificateName", data.fullName);
         setCurrentStep(2);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleStep2Submit = (data: Step2Values) => {
         setStep2Data(data);
         setCurrentStep(3);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleStep3Submit = (data: Step3Values) => {
         setStep3Data(data);
         setCurrentStep(4);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleFinalSubmit = async (data: Step4Values) => {
@@ -288,15 +303,12 @@ export default function FeedbackPage() {
                 year: step1Data.year,
                 cityState: step1Data.cityState,
                 reminderContact: step1Data.reminderContact || "",
-                
                 careerInterest: step2Data.careerInterest,
                 offensiveSecurityReason: step2Data.offensiveSecurityReason || "",
-                
                 seminarRating: step3Data.seminarRating,
                 mostValuablePart: step3Data.mostValuablePart || "",
                 futureSuggestions: step3Data.futureSuggestions || "",
                 joinZecurx: step3Data.joinZecurx || false,
-                
                 certificateName: data.certificateName,
                 seminarId,
                 registrationId: registrationId || undefined,
@@ -337,85 +349,85 @@ export default function FeedbackPage() {
     const goBack = () => {
         if (currentStep > 1) {
             setCurrentStep(currentStep - 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-background flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            </div>
-        );
-    }
-
-    if (error && !seminar) {
-        return (
-            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-                <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-                <h1 className="text-2xl font-bold mb-2">Seminar Not Found</h1>
-                <p className="text-muted-foreground mb-6">{error}</p>
-                <Link href="/resources/seminars">
-                    <Button variant="outline">
-                        <ArrowLeft className="w-4 h-4 mr-2" />
-                        Back to Seminars
-                    </Button>
-                </Link>
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-4">
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Syncing Feedback Data...</span>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-12">
-            <div className={`mx-auto px-6 ${currentStep === 5 ? "max-w-4xl" : "max-w-2xl"}`}>
-                <Link
-                    href="/resources/seminars"
-                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
-                >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Seminars
-                </Link>
+        <main className="min-h-screen bg-background pt-32 pb-24 relative overflow-hidden font-inter text-foreground">
+            <PageBackground />
 
-                {seminar && currentStep < 5 && (
-                    <div className="bg-muted/30 rounded-2xl p-6 mb-8 border border-border">
-                        <h2 className="text-xl font-bold text-foreground mb-2">{seminar.title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                            Complete this form to receive your certificate of participation
+            <div className="max-w-4xl mx-auto px-6 relative z-10">
+                <div className="flex flex-col items-center text-center space-y-6 mb-16">
+                    <Link
+                        href="/resources/seminars"
+                        className="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors group"
+                    >
+                        <ArrowLeft className="w-3 h-3 mr-2 group-hover:-translate-x-1 transition-transform" />
+                        Back to Seminars
+                    </Link>
+
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-5xl md:text-7xl font-manrope font-bold tracking-tight text-foreground leading-[0.9]"
+                    >
+                        Session <br />
+                        <span className="opacity-40 italic font-medium">Briefing.</span>
+                    </motion.h1>
+
+                    {seminar && currentStep < 5 && (
+                        <p className="max-w-md text-muted-foreground text-sm font-medium">
+                            Briefing completed for &ldquo;{seminar.title}&rdquo;. <br />
+                            Provide final insights to unlock your Certification.
                         </p>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {currentStep < 5 && (
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between max-w-xl mx-auto mb-16 px-4">
                         {STEPS.map((step, index) => (
                             <React.Fragment key={step.id}>
-                                <div className="flex flex-col items-center">
+                                <div className="flex flex-col items-center group relative">
                                     <div
                                         className={cn(
-                                            "w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-colors",
+                                            "w-12 h-12 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 relative z-10",
                                             currentStep === step.id
-                                                ? "bg-primary text-primary-foreground"
+                                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-110 ring-4 ring-primary/10"
                                                 : currentStep > step.id
-                                                    ? "bg-green-500 text-white"
-                                                    : "bg-muted text-muted-foreground"
+                                                    ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                                                    : "bg-muted text-muted-foreground border border-border"
                                         )}
                                     >
                                         {currentStep > step.id ? (
-                                            <CheckCircle2 className="w-5 h-5" />
+                                            <Check className="w-6 h-6" />
                                         ) : (
-                                            step.id
+                                            <step.icon className="w-5 h-5 opacity-60" />
                                         )}
                                     </div>
-                                    <span className="text-xs text-muted-foreground mt-2 hidden sm:block">
+                                    <span className={cn(
+                                        "absolute -bottom-8 text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
+                                        currentStep === step.id ? "text-foreground opacity-100" : "text-muted-foreground opacity-40"
+                                    )}>
                                         {step.title}
                                     </span>
                                 </div>
                                 {index < STEPS.length - 1 && (
-                                    <div
-                                        className={cn(
-                                            "flex-1 h-0.5 mx-2",
-                                            currentStep > step.id ? "bg-green-500" : "bg-muted"
-                                        )}
-                                    />
+                                    <div className="flex-1 px-4 relative -top-4">
+                                        <div className={cn(
+                                            "h-0.5 w-full rounded-full transition-all duration-500",
+                                            currentStep > step.id ? "bg-emerald-500" : "bg-border"
+                                        )} />
+                                    </div>
                                 )}
                             </React.Fragment>
                         ))}
@@ -425,7 +437,11 @@ export default function FeedbackPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-card border border-border rounded-2xl p-8 shadow-lg"
+                    key={currentStep}
+                    className={cn(
+                        "bg-card border border-border overflow-hidden shadow-2xl backdrop-blur-sm",
+                        currentStep === 5 ? "rounded-[3rem] p-12" : "rounded-[2.5rem] p-8 md:p-12"
+                    )}
                 >
                     <AnimatePresence mode="wait">
                         {currentStep === 1 && (
@@ -434,118 +450,94 @@ export default function FeedbackPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
+                                className="space-y-10"
                             >
-                                <h1 className="text-2xl font-bold mb-2">Your Information</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Please provide your details for the certificate
-                                </p>
+                                <div className="space-y-2 border-b border-border/50 pb-6">
+                                    <h3 className="text-2xl font-manrope font-bold tracking-tight">Identity Confirmation</h3>
+                                    <p className="text-muted-foreground text-sm">Verify your institutional credentials.</p>
+                                </div>
 
-                                <form onSubmit={step1Form.handleSubmit(handleStep1Submit)} className="space-y-6">
-                                    <div className="space-y-3">
-                                        <Label htmlFor="fullName" className="flex items-center gap-2">
-                                            <User className="w-4 h-4" /> Full Name *
-                                        </Label>
-                                        <Input
-                                            id="fullName"
-                                            placeholder="John Doe"
-                                            {...step1Form.register("fullName")}
-                                            className={`h-12 ${step1Form.formState.errors.fullName ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step1Form.formState.errors.fullName}
-                                        />
-                                        {step1Form.formState.errors.fullName && (
-                                            <p className="text-xs text-red-500">{step1Form.formState.errors.fullName.message}</p>
-                                        )}
+                                <form onSubmit={step1Form.handleSubmit(handleStep1Submit)} className="space-y-8">
+                                    <div className="grid sm:grid-cols-2 gap-8">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="fullName" className="text-sm font-semibold ml-1">Full Name *</Label>
+                                            <Input
+                                                id="fullName"
+                                                placeholder="Dr. John Doe"
+                                                {...step1Form.register("fullName")}
+                                                className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.fullName && "border-red-500/50")}
+                                            />
+                                            {step1Form.formState.errors.fullName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.fullName.message}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email" className="text-sm font-semibold ml-1">Work/Institutional Email *</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                placeholder="john@example.edu"
+                                                {...step1Form.register("email")}
+                                                className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.email && "border-red-500/50")}
+                                            />
+                                            {step1Form.formState.errors.email && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.email.message}</p>}
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <Label htmlFor="email" className="flex items-center gap-2">
-                                            <Mail className="w-4 h-4" /> Email Address *
-                                        </Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            placeholder="john@example.com"
-                                            {...step1Form.register("email")}
-                                            className={`h-12 ${step1Form.formState.errors.email ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step1Form.formState.errors.email}
-                                        />
-                                        {step1Form.formState.errors.email && (
-                                            <p className="text-xs text-red-500">{step1Form.formState.errors.email.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <Label htmlFor="collegeName" className="flex items-center gap-2">
-                                            <GraduationCap className="w-4 h-4" /> College/University *
-                                        </Label>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="collegeName" className="text-sm font-semibold ml-1">Current Institution / Organization *</Label>
                                         <Input
                                             id="collegeName"
-                                            placeholder="Your institution"
+                                            placeholder="University or Entity Name"
                                             {...step1Form.register("collegeName")}
-                                            className={`h-12 ${step1Form.formState.errors.collegeName ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step1Form.formState.errors.collegeName}
+                                            className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.collegeName && "border-red-500/50")}
                                         />
-                                        {step1Form.formState.errors.collegeName && (
-                                            <p className="text-xs text-red-500">{step1Form.formState.errors.collegeName.message}</p>
-                                        )}
+                                        {step1Form.formState.errors.collegeName && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.collegeName.message}</p>}
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-3">
-                                            <Label htmlFor="year">Year *</Label>
-                                            <Select onValueChange={(value) => step1Form.setValue("year", value)}>
-                                                <SelectTrigger className={`h-12 ${step1Form.formState.errors.year ? "border-red-500" : ""}`}>
-                                                    <SelectValue placeholder="Select..." />
+                                    <div className="grid grid-cols-2 gap-8">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="year" className="text-sm font-semibold ml-1">Status / Year *</Label>
+                                            <Select onValueChange={(value) => step1Form.setValue("year", value)} defaultValue={step1Form.getValues("year")}>
+                                                <SelectTrigger className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.year && "border-red-500/50")}>
+                                                    <SelectValue placeholder="Select Cycle" />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="rounded-xl bg-card border-border">
                                                     {YEAR_OPTIONS.map((year) => (
-                                                        <SelectItem key={year} value={year}>
-                                                            {year}
-                                                        </SelectItem>
+                                                        <SelectItem key={year} value={year}>{year}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            {step1Form.formState.errors.year && (
-                                                <p className="text-xs text-red-500">{step1Form.formState.errors.year.message}</p>
-                                            )}
+                                            {step1Form.formState.errors.year && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.year.message}</p>}
                                         </div>
 
-                                        <div className="space-y-3">
-                                            <Label htmlFor="cityState" className="flex items-center gap-2">
-                                                <MapPin className="w-4 h-4" /> City/State *
-                                            </Label>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="cityState" className="text-sm font-semibold ml-1">Regional Scope *</Label>
                                             <Input
                                                 id="cityState"
-                                                placeholder="Bangalore, KA"
+                                                placeholder="City, State"
                                                 {...step1Form.register("cityState")}
-                                                className={`h-12 ${step1Form.formState.errors.cityState ? "border-red-500" : ""}`}
-                                                aria-invalid={!!step1Form.formState.errors.cityState}
+                                                className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.cityState && "border-red-500/50")}
                                             />
-                                            {step1Form.formState.errors.cityState && (
-                                                <p className="text-xs text-red-500">{step1Form.formState.errors.cityState.message}</p>
-                                            )}
+                                            {step1Form.formState.errors.cityState && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.cityState.message}</p>}
                                         </div>
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <Label htmlFor="reminderContact" className="flex items-center gap-2">
-                                            <Phone className="w-4 h-4" /> WhatsApp/Phone *
-                                        </Label>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="reminderContact" className="text-sm font-semibold ml-1">Communication Channel (WhatsApp/Phone) *</Label>
                                         <Input
                                             id="reminderContact"
-                                            placeholder="+91 98765 43210"
+                                            placeholder="+91 00000 00000"
                                             {...step1Form.register("reminderContact")}
-                                            className={`h-12 ${step1Form.formState.errors.reminderContact ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step1Form.formState.errors.reminderContact}
+                                            className={cn("h-12 bg-muted/30 border-border rounded-xl", step1Form.formState.errors.reminderContact && "border-red-500/50")}
                                         />
-                                        {step1Form.formState.errors.reminderContact && (
-                                            <p className="text-xs text-red-500">{step1Form.formState.errors.reminderContact.message}</p>
-                                        )}
+                                        {step1Form.formState.errors.reminderContact && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step1Form.formState.errors.reminderContact.message}</p>}
                                     </div>
 
-                                    <Button type="submit" className="w-full h-12 rounded-xl font-semibold">
-                                        Continue
-                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                    <Button type="submit" className="w-full h-16 rounded-full bg-primary text-primary-foreground font-bold tracking-widest uppercase text-base shadow-xl shadow-primary/20 hover:opacity-95 transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <span>CONTINUE BRIEFING</span>
+                                            <ArrowRight className="w-5 h-5" />
+                                        </div>
                                     </Button>
                                 </form>
                             </motion.div>
@@ -557,33 +549,47 @@ export default function FeedbackPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
+                                className="space-y-10"
                             >
-                                <h1 className="text-2xl font-bold mb-2">Career Interests</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Help us understand your career path preferences
-                                </p>
+                                <div className="space-y-2 border-b border-border/50 pb-6">
+                                    <h3 className="text-2xl font-manrope font-bold tracking-tight">Career Alignment</h3>
+                                    <p className="text-muted-foreground text-sm">Define your trajectory in the security offensive.</p>
+                                </div>
 
-                                <form onSubmit={step2Form.handleSubmit(handleStep2Submit)} className="space-y-6">
-                                    <div className="space-y-4">
-                                        <Label>Which career path interests you the most? *</Label>
+                                <form onSubmit={step2Form.handleSubmit(handleStep2Submit)} className="space-y-10">
+                                    <div className="space-y-6">
+                                        <Label className="text-sm font-semibold ml-1">Primary Domain of Interest *</Label>
                                         <RadioGroup
                                             onValueChange={(value: string) => step2Form.setValue("careerInterest", value)}
-                                            className="space-y-3"
+                                            className="grid gap-4"
+                                            defaultValue={step2Data?.careerInterest}
                                         >
                                             {CAREER_INTERESTS.map((interest) => (
-                                                <div
+                                                <label
                                                     key={interest}
-                                                    className="flex items-center space-x-3 p-4 rounded-xl border border-border hover:bg-muted/50 transition-colors cursor-pointer"
+                                                    htmlFor={interest}
+                                                    className={cn(
+                                                        "group flex items-center justify-between p-5 rounded-[1.5rem] border transition-all cursor-pointer",
+                                                        step2Form.watch("careerInterest") === interest
+                                                            ? "bg-primary/5 border-primary shadow-sm ring-1 ring-primary/20"
+                                                            : "bg-muted/10 border-border hover:bg-muted/30"
+                                                    )}
                                                 >
-                                                    <RadioGroupItem value={interest} id={interest} />
-                                                    <Label htmlFor={interest} className="cursor-pointer flex-1">
-                                                        {interest}
-                                                    </Label>
-                                                </div>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className={cn(
+                                                            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                                                            step2Form.watch("careerInterest") === interest ? "border-primary bg-primary" : "border-border"
+                                                        )}>
+                                                            {step2Form.watch("careerInterest") === interest && <div className="w-2 h-2 rounded-full bg-white" />}
+                                                        </div>
+                                                        <span className={cn("text-sm font-bold transition-colors", step2Form.watch("careerInterest") === interest ? "text-primary" : "text-foreground/70 group-hover:text-foreground")}>{interest}</span>
+                                                    </div>
+                                                    <RadioGroupItem value={interest} id={interest} className="sr-only" />
+                                                </label>
                                             ))}
                                         </RadioGroup>
                                         {step2Form.formState.errors.careerInterest && (
-                                            <p className="text-xs text-red-500">{step2Form.formState.errors.careerInterest.message}</p>
+                                            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step2Form.formState.errors.careerInterest.message}</p>
                                         )}
                                     </div>
 
@@ -591,32 +597,33 @@ export default function FeedbackPage() {
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}
-                                            className="space-y-3"
+                                            className="space-y-4"
                                         >
-                                            <Label htmlFor="offensiveSecurityReason">
-                                                What excites you about offensive security? *
+                                            <Label htmlFor="offensiveSecurityReason" className="text-sm font-semibold ml-1 text-primary">
+                                                Strategic Motivation *
                                             </Label>
                                             <Textarea
                                                 id="offensiveSecurityReason"
-                                                placeholder="Tell us what draws you to this field..."
+                                                placeholder="Define what drives your pursuit of offensive system analysis..."
                                                 {...step2Form.register("offensiveSecurityReason")}
-                                                className={`min-h-[100px] ${step2Form.formState.errors.offensiveSecurityReason ? "border-red-500" : ""}`}
-                                                aria-invalid={!!step2Form.formState.errors.offensiveSecurityReason}
+                                                className={cn("min-h-[140px] bg-muted/30 border-border rounded-2xl p-5 text-sm resize-none", step2Form.formState.errors.offensiveSecurityReason && "border-red-500/50")}
                                             />
                                             {step2Form.formState.errors.offensiveSecurityReason && (
-                                                <p className="text-xs text-red-500">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
+                                                <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step2Form.formState.errors.offensiveSecurityReason.message}</p>
                                             )}
                                         </motion.div>
                                     )}
 
-                                    <div className="flex gap-4">
-                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-12 rounded-xl">
+                                    <div className="flex gap-4 pt-4">
+                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-16 rounded-full border-border font-extrabold uppercase tracking-widest text-xs hover:bg-muted transition-all">
                                             <ArrowLeft className="w-4 h-4 mr-2" />
-                                            Back
+                                            PREVIOUS
                                         </Button>
-                                        <Button type="submit" className="flex-1 h-12 rounded-xl font-semibold">
-                                            Continue
-                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        <Button type="submit" className="flex-[2] h-16 rounded-full bg-primary text-primary-foreground font-bold tracking-widest text-base shadow-xl shadow-primary/20 hover:opacity-95 transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <span>PROCEED TO INSIGHTS</span>
+                                                <ArrowRight className="w-5 h-5" />
+                                            </div>
                                         </Button>
                                     </div>
                                 </form>
@@ -629,98 +636,97 @@ export default function FeedbackPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
+                                className="space-y-10"
                             >
-                                <h1 className="text-2xl font-bold mb-2">Seminar Feedback</h1>
-                                <p className="text-muted-foreground mb-8">
-                                    Your feedback helps us improve future seminars
-                                </p>
+                                <div className="space-y-2 border-b border-border/50 pb-6">
+                                    <h3 className="text-2xl font-manrope font-bold tracking-tight">Performance Review</h3>
+                                    <p className="text-muted-foreground text-sm">Synchronize your experience with our training vectors.</p>
+                                </div>
 
-                                <form onSubmit={step3Form.handleSubmit(handleStep3Submit)} className="space-y-6">
-                                    <div className="space-y-4">
-                                        <Label>How would you rate this seminar? *</Label>
-                                        <div className="flex gap-2 justify-center">
+                                <form onSubmit={step3Form.handleSubmit(handleStep3Submit)} className="space-y-12">
+                                    <div className="space-y-6 text-center">
+                                        <Label className="text-sm font-black uppercase tracking-[0.2em] opacity-40">Session Rating Index</Label>
+                                        <div className="flex gap-4 justify-center">
                                             {[1, 2, 3, 4, 5].map((rating) => (
                                                 <button
                                                     key={rating}
                                                     type="button"
                                                     onClick={() => step3Form.setValue("seminarRating", rating)}
-                                                    className="p-2 transition-transform hover:scale-110"
+                                                    className="group transition-all duration-300 transform active:scale-90"
                                                 >
                                                     <Star
                                                         className={cn(
-                                                            "w-10 h-10 transition-colors",
+                                                            "w-12 h-12 transition-all drop-shadow-sm",
                                                             step3Form.watch("seminarRating") >= rating
-                                                                ? "fill-yellow-400 text-yellow-400"
-                                                                : "text-muted-foreground"
+                                                                ? "fill-primary text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                                                                : "text-muted-foreground/30 hover:text-muted-foreground/60"
                                                         )}
                                                     />
                                                 </button>
                                             ))}
                                         </div>
                                         {step3Form.formState.errors.seminarRating && (
-                                            <p className="text-xs text-red-500 text-center">
-                                                {step3Form.formState.errors.seminarRating.message}
-                                            </p>
+                                            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider">{step3Form.formState.errors.seminarRating.message}</p>
                                         )}
                                     </div>
 
-                                    <div className="space-y-3">
-                                        <Label htmlFor="mostValuablePart">
-                                            What was the most valuable part of this seminar? *
-                                        </Label>
-                                        <Textarea
-                                            id="mostValuablePart"
-                                            placeholder="Share what you found most useful..."
-                                            {...step3Form.register("mostValuablePart")}
-                                            className={`min-h-[80px] ${step3Form.formState.errors.mostValuablePart ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step3Form.formState.errors.mostValuablePart}
-                                        />
-                                        {step3Form.formState.errors.mostValuablePart && (
-                                            <p className="text-xs text-red-500">{step3Form.formState.errors.mostValuablePart.message}</p>
-                                        )}
-                                    </div>
+                                    <div className="space-y-8">
+                                        <div className="space-y-4">
+                                            <Label htmlFor="mostValuablePart" className="text-sm font-semibold ml-1">Most Valuable Theoretical Vector *</Label>
+                                            <Textarea
+                                                id="mostValuablePart"
+                                                placeholder="Define your core learnings from this session..."
+                                                {...step3Form.register("mostValuablePart")}
+                                                className={cn("min-h-[120px] bg-muted/30 border-border rounded-2xl p-5 text-sm resize-none", step3Form.formState.errors.mostValuablePart && "border-red-500/50")}
+                                            />
+                                            {step3Form.formState.errors.mostValuablePart && (
+                                                <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step3Form.formState.errors.mostValuablePart.message}</p>
+                                            )}
+                                        </div>
 
-                                    <div className="space-y-3">
-                                        <Label htmlFor="futureSuggestions">
-                                            What topics would you like us to cover in future seminars? *
-                                        </Label>
-                                        <Textarea
-                                            id="futureSuggestions"
-                                            placeholder="Suggest topics for future sessions..."
-                                            {...step3Form.register("futureSuggestions")}
-                                            className={`min-h-[80px] ${step3Form.formState.errors.futureSuggestions ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step3Form.formState.errors.futureSuggestions}
-                                        />
-                                        {step3Form.formState.errors.futureSuggestions && (
-                                            <p className="text-xs text-red-500">{step3Form.formState.errors.futureSuggestions.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="flex items-start space-x-3 p-4 rounded-xl border border-border bg-primary/5">
-                                        <Checkbox
-                                            id="joinZecurx"
-                                            onCheckedChange={(checked: boolean | "indeterminate") =>
-                                                step3Form.setValue("joinZecurx", checked === true)
-                                            }
-                                        />
-                                        <div className="space-y-1">
-                                            <Label htmlFor="joinZecurx" className="cursor-pointer font-medium">
-                                                I&apos;m interested in joining ZecurX
-                                            </Label>
-                                            <p className="text-xs text-muted-foreground">
-                                                Get updates about courses, workshops, and career opportunities
-                                            </p>
+                                        <div className="space-y-4">
+                                            <Label htmlFor="futureSuggestions" className="text-sm font-semibold ml-1">Future Research Topics *</Label>
+                                            <Textarea
+                                                id="futureSuggestions"
+                                                placeholder="What should we target in the next deployment?"
+                                                {...step3Form.register("futureSuggestions")}
+                                                className={cn("min-h-[120px] bg-muted/30 border-border rounded-2xl p-5 text-sm resize-none", step3Form.formState.errors.futureSuggestions && "border-red-500/50")}
+                                            />
+                                            {step3Form.formState.errors.futureSuggestions && (
+                                                <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider pl-1">{step3Form.formState.errors.futureSuggestions.message}</p>
+                                            )}
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-4">
-                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-12 rounded-xl">
+                                    <div
+                                        onClick={() => step3Form.setValue("joinZecurx", !step3Form.watch("joinZecurx"))}
+                                        className={cn(
+                                            "flex items-start gap-5 p-6 rounded-[1.5rem] border transition-all cursor-pointer",
+                                            step3Form.watch("joinZecurx") ? "bg-primary/5 border-primary ring-1 ring-primary/20" : "bg-muted/10 border-border hover:bg-muted/30"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all mt-1 shadow-sm",
+                                            step3Form.watch("joinZecurx") ? "bg-primary border-primary" : "border-border"
+                                        )}>
+                                            {step3Form.watch("joinZecurx") && <Check className="w-4 h-4 text-white" />}
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className={cn("text-base font-bold transition-colors", step3Form.watch("joinZecurx") ? "text-primary" : "text-foreground")}>Join the ZecurX Intelligence Network</p>
+                                            <p className="text-xs text-muted-foreground">Receive prioritized updates on courses, red-team briefings, and career pipelines.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4 pt-4">
+                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-16 rounded-full border-border font-extrabold uppercase tracking-widest text-xs hover:bg-muted transition-all">
                                             <ArrowLeft className="w-4 h-4 mr-2" />
-                                            Back
+                                            PREVIOUS
                                         </Button>
-                                        <Button type="submit" className="flex-1 h-12 rounded-xl font-semibold">
-                                            Continue
-                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                        <Button type="submit" className="flex-[2] h-16 rounded-full bg-primary text-primary-foreground font-bold tracking-widest text-base shadow-xl shadow-primary/20 hover:opacity-95 transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <span>FINALIZE DOSSIER</span>
+                                                <ArrowRight className="w-5 h-5" />
+                                            </div>
                                         </Button>
                                     </div>
                                 </form>
@@ -733,119 +739,97 @@ export default function FeedbackPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
+                                className="space-y-12"
                             >
-                                <div className="text-center mb-8">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Award className="w-8 h-8 text-primary" />
+                                <div className="text-center space-y-6">
+                                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+                                        <Award className="w-10 h-10 text-primary" />
                                     </div>
-                                    <h1 className="text-2xl font-bold mb-2">Confirm Certificate Name</h1>
-                                    <p className="text-muted-foreground">
-                                        This name will appear on your certificate exactly as entered
-                                    </p>
+                                    <div className="space-y-2">
+                                        <h1 className="text-4xl font-manrope font-bold">Credentialing</h1>
+                                        <p className="text-muted-foreground text-lg">Confirm identity for official certificate issuance.</p>
+                                    </div>
                                 </div>
 
-                                <form onSubmit={step4Form.handleSubmit(handleFinalSubmit)} className="space-y-6">
-                                    <div className="space-y-3">
-                                        <Label htmlFor="certificateName">Name on Certificate *</Label>
+                                <form onSubmit={step4Form.handleSubmit(handleFinalSubmit)} className="space-y-10">
+                                    <div className="space-y-4">
+                                        <Label htmlFor="certificateName" className="text-sm font-black uppercase tracking-[0.2em] opacity-40 block text-center">Name on Certificate</Label>
                                         <Input
                                             id="certificateName"
-                                            placeholder="Your full name"
+                                            placeholder="Your Full Legal Name"
                                             {...step4Form.register("certificateName")}
-                                            className={`h-14 text-center text-lg font-medium ${step4Form.formState.errors.certificateName ? "border-red-500" : ""}`}
-                                            aria-invalid={!!step4Form.formState.errors.certificateName}
+                                            className={cn("h-20 text-center text-3xl font-manrope font-extrabold rounded-2xl bg-muted/40 border-border focus:ring-primary/20 transition-all", step4Form.formState.errors.certificateName && "border-red-500/50")}
                                         />
                                         {step4Form.formState.errors.certificateName && (
-                                            <p className="text-xs text-red-500 text-center">
-                                                {step4Form.formState.errors.certificateName.message}
-                                            </p>
+                                            <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider text-center">{step4Form.formState.errors.certificateName.message}</p>
                                         )}
+                                    </div>
+
+                                    <div className="bg-muted/30 border border-border p-8 rounded-[1.5rem] relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                                            <Award className="w-16 h-16" />
+                                        </div>
+                                        <div className="space-y-2 relative z-10">
+                                            <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Preview Rendering</p>
+                                            <div className="h-0.5 bg-primary/20 w-12 rounded-full mb-4" />
+                                            <p className="text-muted-foreground text-sm font-medium">
+                                                This is to certify that <span className="text-foreground font-black border-b-2 border-primary/20 px-1">{step4Form.watch("certificateName") || "Recpient Name"}</span> has participated in the session briefing &ldquo;<span className="font-bold text-foreground/80">{seminar?.title}</span>&rdquo;.
+                                            </p>
+                                        </div>
                                     </div>
 
                                     {showNameChangeReason && registeredName && (
                                         <motion.div
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}
-                                            className="space-y-3"
+                                            className="space-y-6"
                                         >
-                                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
-                                                <div className="flex items-start gap-3">
-                                                    <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                                                    <div className="space-y-1">
-                                                        <p className="text-sm font-medium text-amber-600">
-                                                            Name differs from registration
-                                                        </p>
-                                                        <p className="text-xs text-muted-foreground">
-                                                            Your registered name is{" "}
-                                                            <span className="font-semibold text-foreground">{registeredName}</span>.
-                                                            Since the certificate name is different, your request will need admin approval.
-                                                        </p>
-                                                    </div>
+                                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6 flex items-start gap-4">
+                                                <AlertCircle className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+                                                <div className="space-y-1">
+                                                    <p className="text-sm font-bold text-amber-600 uppercase tracking-widest">Mismatch Detected</p>
+                                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                                        Your name differs from the registration record (<span className="text-foreground/80 font-bold">{registeredName}</span>). Certification issuance will require administrative validation.
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="nameChangeReason">
-                                                    Reason for name change *
-                                                </Label>
+                                            <div className="space-y-3">
+                                                <Label htmlFor="nameChangeReason" className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Validation Briefing *</Label>
                                                 <Textarea
                                                     id="nameChangeReason"
-                                                    placeholder="Please explain why you need a different name on your certificate (minimum 10 characters)..."
+                                                    placeholder="Provide justification for current name mismatch (minimum 10 characters)..."
                                                     value={nameChangeReason}
                                                     onChange={(e) => setNameChangeReason(e.target.value)}
-                                                    className={`min-h-[80px] ${nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 ? "border-red-500" : ""}`}
+                                                    className={cn("min-h-[100px] bg-muted/30 border-border rounded-2xl p-5 text-sm resize-none", nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 && "border-red-500/50")}
                                                 />
-                                                {nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 && (
-                                                    <p className="text-xs text-red-500">
-                                                        Please provide at least 10 characters ({nameChangeReason.trim().length}/10)
-                                                    </p>
-                                                )}
                                             </div>
                                         </motion.div>
                                     )}
 
-                                    <div className="bg-muted/50 rounded-xl p-4 text-sm text-muted-foreground">
-                                        <p className="font-medium text-foreground mb-2">Certificate Preview</p>
-                                        <p>
-                                            This is to certify that{" "}
-                                            <span className="font-semibold text-foreground">
-                                                {step4Form.watch("certificateName") || "Your Name"}
-                                            </span>{" "}
-                                            has successfully participated in{" "}
-                                            <span className="font-semibold text-foreground">{seminar?.title}</span>
-                                        </p>
-                                    </div>
-
                                     {error && (
-                                        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-500">
-                                            <AlertCircle className="w-5 h-5 shrink-0" />
-                                            <p className="text-sm">{error}</p>
+                                        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center justify-center gap-3 text-red-500">
+                                            <AlertCircle className="w-4 h-4 shrink-0" />
+                                            <p className="text-[10px] font-black uppercase tracking-widest">{error}</p>
                                         </div>
                                     )}
 
                                     <div className="flex gap-4">
-                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-12 rounded-xl">
+                                        <Button type="button" variant="outline" onClick={goBack} className="flex-1 h-16 rounded-full border-border font-extrabold uppercase tracking-widest text-xs hover:bg-muted transition-all">
                                             <ArrowLeft className="w-4 h-4 mr-2" />
-                                            Back
+                                            PREVIOUS
                                         </Button>
                                         <Button
                                             type="submit"
-                                            className="flex-1 h-12 rounded-xl font-semibold"
+                                            className="flex-[2] h-16 rounded-full bg-primary text-primary-foreground font-bold tracking-widest text-base shadow-xl shadow-primary/20 hover:opacity-95 transition-all"
                                             disabled={isSubmitting}
                                         >
                                             {isSubmitting ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    {showNameChangeReason ? "Submitting Request..." : "Generating Certificate..."}
-                                                </>
-                                            ) : showNameChangeReason ? (
-                                                <>
-                                                    <Clock className="w-4 h-4 mr-2" />
-                                                    Submit for Approval
-                                                </>
+                                                <Loader2 className="w-6 h-6 animate-spin" />
                                             ) : (
-                                                <>
-                                                    <Sparkles className="w-4 h-4 mr-2" />
-                                                    Generate Certificate
-                                                </>
+                                                <div className="flex items-center gap-3">
+                                                    <Sparkles className="w-5 h-5" />
+                                                    <span>{showNameChangeReason ? "REQUEST APPROVAL" : "GENERATE CERTIFICATE"}</span>
+                                                </div>
                                             )}
                                         </Button>
                                     </div>
@@ -858,176 +842,165 @@ export default function FeedbackPage() {
                                 key="success"
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                className="w-full"
+                                className="w-full space-y-12"
                             >
                                 {nameChangeSubmitted ? (
-                                    <>
-                                        <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <Clock className="w-10 h-10 text-amber-500" />
-                                        </div>
-                                        <h1 className="text-2xl font-bold mb-2 text-center">Name Change Request Submitted</h1>
-                                        <p className="text-muted-foreground mb-8 text-center">
-                                            Your certificate name change request has been submitted for admin review.
-                                            You will receive the certificate via email once your request is approved.
-                                        </p>
-
-                                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
-                                            <p className="text-sm text-amber-600 font-medium text-center">
-                                                An admin will review your request shortly. Please check your email for updates.
-                                            </p>
-                                        </div>
-
-                                        <Link href="/resources/seminars">
-                                            <Button variant="ghost" className="w-full">
-                                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                                Back to Seminars
-                                            </Button>
-                                        </Link>
-                                    </>
-                                ) : certLoading ? (
-                                    <div className="flex flex-col items-center justify-center py-20">
-                                        <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
-                                        <p className="text-muted-foreground animate-pulse">Retrieving your certificate...</p>
-                                    </div>
-                                ) : certData ? (
-                                    <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-500/20 p-8 text-center mb-8">
-                                            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
-                                            
-                                            <div className="relative z-10 flex flex-col items-center">
-                                                <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/20 mb-4 ring-4 ring-card">
-                                                    <CheckCircle2 className="w-8 h-8 text-white" />
-                                                </div>
-                                                <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">
-                                                    Congratulations!
-                                                </h2>
-                                                <p className="text-muted-foreground max-w-md mx-auto">
-                                                    Your certificate for <span className="text-foreground font-semibold">{seminar?.title}</span> has been issued.
+                                    <div className="text-center space-y-12 py-8">
+                                        <div className="space-y-6">
+                                            <div className="w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-amber-500/5">
+                                                <Clock className="w-12 h-12 text-amber-500" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <h1 className="text-4xl font-manrope font-bold">Request Pending.</h1>
+                                                <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                                                    Your name change request has been logged. Admin review is required before certification dispatch.
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div className="relative group perspective-1000 mb-8">
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-                                            <div className="relative rounded-xl overflow-hidden bg-card border border-border shadow-2xl transition-transform duration-500 hover:scale-[1.01]">
+                                        <div className="p-8 rounded-[2rem] bg-amber-500/10 border border-amber-500/20 inline-block max-w-md">
+                                            <p className="text-sm text-amber-600 font-bold leading-relaxed uppercase tracking-wide">
+                                                A briefing notification will be dispatched to your email once validated.
+                                            </p>
+                                        </div>
+
+                                        <div className="pt-8 border-t border-border/50">
+                                            <Button asChild className="rounded-full px-12 h-16 bg-foreground text-background font-black tracking-[0.2em] text-xs hover:opacity-90">
+                                                <Link href="/resources/seminars">
+                                                    <div className="flex items-center gap-3">
+                                                        <ArrowLeft className="w-4 h-4" />
+                                                        <span>BACK TO LIST</span>
+                                                    </div>
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : certLoading ? (
+                                    <div className="flex flex-col items-center justify-center py-24 space-y-6">
+                                        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                                        <span className="text-xs font-black uppercase tracking-[0.4em] opacity-40">Compiling Certification PDF...</span>
+                                    </div>
+                                ) : certData ? (
+                                    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        <div className="text-center space-y-6">
+                                            <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-500/5">
+                                                <Check className="w-12 h-12 text-emerald-500" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h1 className="text-5xl font-manrope font-bold">Congratulations.</h1>
+                                                <p className="text-muted-foreground text-lg">
+                                                    Achievement unlocked for <span className="text-foreground font-black">{seminar?.title}</span>.
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="relative group max-w-3xl mx-auto">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 to-blue-500/30 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                                            <div className="relative rounded-[1.5rem] overflow-hidden bg-muted/30 border border-border shadow-2xl transition-all hover:scale-[1.01]">
                                                 <img
                                                     src={`/api/certificates/${certificateId}/preview`}
-                                                    alt="Certificate Preview"
+                                                    alt="Certification Render"
                                                     className="w-full h-auto block"
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="grid gap-6 md:grid-cols-2 mb-8">
-                                            <div className="bg-muted/30 rounded-xl p-4 border border-border/50 flex flex-col justify-center">
-                                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Recipient</p>
-                                                <p className="font-semibold text-foreground truncate" title={certData.recipientName}>
-                                                    {certData.recipientName}
-                                                </p>
+                                        <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                                            <div className="bg-muted/30 rounded-2xl p-6 border border-border/50 space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Recipient Entity</p>
+                                                <p className="font-bold text-lg text-foreground truncate">{certData.recipientName}</p>
                                             </div>
-                                            <div className="bg-muted/30 rounded-xl p-4 border border-border/50 flex flex-col justify-center">
-                                                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Certificate ID</p>
+                                            <div className="bg-muted/30 rounded-2xl p-6 border border-border/50 space-y-1">
+                                                <p className="text-[10px] font-black uppercase tracking-widest opacity-40">Certification ID</p>
                                                 <div className="flex items-center gap-2">
-                                                    <code className="font-mono text-sm text-primary">{certData.certificateId}</code>
-                                                    <CheckCircle2 className="w-3 h-3 text-green-500" />
+                                                    <code className="font-mono text-sm font-black text-primary uppercase">{certData.certificateId}</code>
+                                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex flex-col sm:flex-row gap-4 mb-10">
-                                            <Button 
-                                                asChild 
-                                                className="flex-1 h-12 text-base font-semibold shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white border-0"
-                                            >
+                                        <div className="flex flex-col sm:flex-row gap-6 max-w-2xl mx-auto pb-8 border-b border-border">
+                                            <Button asChild className="flex-1 h-16 rounded-full bg-primary text-primary-foreground font-black tracking-[0.2em] text-xs shadow-xl shadow-primary/20">
                                                 <Link href={`/api/certificates/${certificateId}/download`}>
-                                                    <Download className="w-5 h-5 mr-2" />
-                                                    Download PDF
+                                                    <Download className="w-4 h-4 mr-2" />
+                                                    DOWNLOAD PDF
                                                 </Link>
                                             </Button>
-
-                                            <Button 
-                                                asChild 
-                                                variant="outline" 
-                                                className="flex-1 h-12 text-base font-semibold border-border hover:bg-muted/50"
-                                            >
+                                            <Button asChild variant="outline" className="flex-1 h-16 rounded-full border-border font-black tracking-[0.2em] text-xs hover:bg-muted">
                                                 <Link href={`/verify/${certificateId}`}>
-                                                    <ExternalLink className="w-5 h-5 mr-2" />
-                                                    Verify Online
+                                                    <ExternalLink className="w-4 h-4 mr-2" />
+                                                    VERIFY LIVE
                                                 </Link>
                                             </Button>
                                         </div>
 
-                                        <div className="relative">
-                                            <div className="absolute inset-0 flex items-center">
-                                                <span className="w-full border-t border-border" />
-                                            </div>
-                                            <div className="relative flex justify-center text-xs uppercase">
-                                                <span className="bg-card px-2 text-muted-foreground">Share Achievement</span>
+                                        <div className="space-y-8">
+                                            <p className="text-center text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Share Achievement</p>
+                                            <div className="max-w-md mx-auto">
+                                                <ShareButton
+                                                    title={`Certification - ${certData.recipientName}`}
+                                                    text={`Official accomplishment logged. I just received my certificate from ${certData.seminarTitle} by ZecurX.`}
+                                                    certificateId={certData.certificateId}
+                                                />
                                             </div>
                                         </div>
 
-                                        <div className="mt-6">
-                                            <ShareButton
-                                                title={`Certificate - ${certData.recipientName}`}
-                                                text={`I just received my certificate of participation from ${certData.seminarTitle} by ZecurX!`}
-                                                certificateId={certData.certificateId}
-                                            />
-                                        </div>
-
-                                        <div className="text-center mt-10">
+                                        <div className="text-center pt-8">
                                             <Link href="/resources/seminars">
-                                                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                                    Back to Seminars
+                                                <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                                                    <ArrowLeft className="w-3 h-3 mr-2" />
+                                                    Return to Seminar List
                                                 </Button>
                                             </Link>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 text-center">
-                                        <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-green-500/5">
-                                            <Mail className="w-10 h-10 text-green-500" />
-                                        </div>
-                                        
-                                        <h2 className="text-2xl font-bold text-foreground mb-2">Certificate Sent!</h2>
-                                        <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-                                            We've sent your certificate to your email. You can also download it directly below.
-                                        </p>
-
-                                        <div className="bg-muted/30 rounded-xl p-4 mb-8 inline-block w-full max-w-sm border border-border/50">
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Certificate ID</p>
-                                            <code className="font-mono font-semibold text-primary">{certificateId}</code>
+                                    <div className="text-center py-16 space-y-12">
+                                        <div className="space-y-6">
+                                            <div className="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-500/5">
+                                                <Mail className="w-12 h-12 text-emerald-500" />
+                                            </div>
+                                            <div className="space-y-3">
+                                                <h1 className="text-4xl font-manrope font-bold">Dossier Dispatched.</h1>
+                                                <p className="text-muted-foreground text-lg max-w-sm mx-auto">
+                                                    Your certification has been sent to your email. Access records maintained securely.
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-3 mb-8 max-w-sm mx-auto">
-                                            <Button asChild className="w-full h-12 font-semibold bg-blue-600 hover:bg-blue-700 text-white">
+                                        <div className="bg-muted/30 rounded-2xl p-6 border border-border/50 inline-block max-w-md w-full">
+                                            <p className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-2">Certification Reference</p>
+                                            <code className="font-mono font-black text-primary uppercase text-lg">{certificateId}</code>
+                                        </div>
+
+                                        <div className="flex flex-col gap-4 max-w-sm mx-auto">
+                                            <Button asChild className="h-16 rounded-full bg-primary font-black tracking-[0.2em] text-xs">
                                                 <Link href={`/api/certificates/${certificateId}/download`}>
                                                     <Download className="w-4 h-4 mr-2" />
-                                                    Download PDF
+                                                    DOWNLOAD PDF
                                                 </Link>
                                             </Button>
-                                            
-                                            <Button asChild variant="outline" className="w-full h-12 font-semibold">
+                                            <Button asChild variant="outline" className="h-16 rounded-full border-border font-black tracking-[0.2em] text-xs">
                                                 <Link href={`/verify/${certificateId}`}>
                                                     <ExternalLink className="w-4 h-4 mr-2" />
-                                                    Verify Online
+                                                    VERIFY LIVE
                                                 </Link>
                                             </Button>
                                         </div>
 
-                                        <div className="max-w-sm mx-auto">
+                                        <div className="max-w-sm mx-auto pt-4">
                                             <ShareButton
-                                                title="Certificate - ZecurX"
-                                                text="I just received my certificate of participation from ZecurX!"
+                                                title="Certification Logged"
+                                                text="Official accomplishment secured via ZecurX."
                                                 certificateId={certificateId || ""}
                                             />
                                         </div>
 
-                                        <div className="mt-8">
+                                        <div className="pt-8 border-t border-border/50">
                                             <Link href="/resources/seminars">
-                                                <Button variant="ghost" size="sm" className="text-muted-foreground">
-                                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                                    Back to Seminars
+                                                <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground">
+                                                    <ArrowLeft className="w-3 h-3 mr-2" />
+                                                    Back to Resources
                                                 </Button>
                                             </Link>
                                         </div>
@@ -1041,56 +1014,53 @@ export default function FeedbackPage() {
 
             {/* Social Media Follow Modal */}
             <Dialog open={showSocialModal} onOpenChange={setShowSocialModal}>
-                <DialogContent className="sm:max-w-md p-8">
-                    <DialogHeader className="text-center">
-                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Sparkles className="w-8 h-8 text-primary" />
+                <DialogContent className="sm:max-w-md p-10 rounded-[2.5rem] border-border bg-card shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+                    <DialogHeader className="text-center space-y-6">
+                        <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+                            <Sparkles className="w-10 h-10 text-primary" />
                         </div>
-                        <DialogTitle className="text-2xl font-bold">Keep Learning with ZecurX!</DialogTitle>
-                        <DialogDescription>
-                            Continue your cybersecurity journey with our comprehensive courses
-                        </DialogDescription>
+                        <div className="space-y-2">
+                            <DialogTitle className="text-3xl font-manrope font-bold">The Journey Continues.</DialogTitle>
+                            <DialogDescription className="text-muted-foreground text-sm">
+                                Elevate your offensive tactical capabilities with our advanced training modules.
+                            </DialogDescription>
+                        </div>
                     </DialogHeader>
 
-                    <div className="space-y-4 mt-6">
+                    <div className="space-y-8 mt-10">
                         <Button
                             asChild
-                            className="w-full h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90"
+                            className="w-full h-16 rounded-full font-black tracking-[0.2em] text-xs bg-primary hover:opacity-90 shadow-xl shadow-primary/20"
                         >
-                            <a 
-                                href="/academy" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={() => setShowSocialModal(false)}
-                            >
-                                <BookOpen className="w-4 h-4 mr-2" />
-                                Explore Our Courses
-                                <ExternalLink className="w-4 h-4 ml-2" />
+                            <a href="/academy" target="_blank" rel="noopener noreferrer" onClick={() => setShowSocialModal(false)}>
+                                <div className="flex items-center gap-3">
+                                    <BookOpen className="w-4 h-4" />
+                                    <span>EXPLORE ACADEMY</span>
+                                    <ExternalLink className="w-4 h-4" />
+                                </div>
                             </a>
                         </Button>
 
-                        <div className="border-t border-border pt-4">
-                            <p className="text-sm text-muted-foreground mb-3 text-center">
-                                Stay connected for updates & insights
-                            </p>
-                            <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-6 pt-4 border-t border-border/50">
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 text-center">Intelligence Channels</p>
+                            <div className="grid grid-cols-2 gap-4">
                                 <a
                                     href="https://www.linkedin.com/company/zecurx/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                    className="flex items-center justify-center gap-3 h-14 rounded-2xl border border-border bg-muted/20 hover:bg-muted/40 transition-all font-bold text-xs"
                                 >
                                     <Linkedin className="w-5 h-5 text-[#0077B5]" />
-                                    <span className="font-medium text-sm">LinkedIn</span>
+                                    LINKEDIN
                                 </a>
                                 <a
                                     href="https://www.instagram.com/zecurx?igsh=YWF3c3V5NHUxNGhu"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 h-11 rounded-xl border border-border hover:bg-muted transition-colors"
+                                    className="flex items-center justify-center gap-3 h-14 rounded-2xl border border-border bg-muted/20 hover:bg-muted/40 transition-all font-bold text-xs"
                                 >
                                     <Instagram className="w-5 h-5 text-[#E4405F]" />
-                                    <span className="font-medium text-sm">Instagram</span>
+                                    INSTAGRAM
                                 </a>
                             </div>
                         </div>
@@ -1098,13 +1068,13 @@ export default function FeedbackPage() {
 
                     <Button
                         variant="ghost"
-                        className="w-full mt-4"
+                        className="w-full mt-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground"
                         onClick={() => setShowSocialModal(false)}
                     >
-                        Maybe Later
+                        CLOSE BRIEFING
                     </Button>
                 </DialogContent>
             </Dialog>
-        </div>
+        </main>
     );
 }
