@@ -4,8 +4,17 @@ import { StudentEnquiryForm } from '@/components/forms/StudentEnquiryForm';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-    title: 'Student Enquiry | Zecurx',
-    description: 'Start your cybersecurity journey with Zecurx. Fill out our enquiry form and our team will guide you through our internship and training programs.',
+    title: 'Student Enquiry',
+    description: 'Start your cybersecurity journey with ZecurX. Fill out our enquiry form for internship and training programs.',
+    openGraph: {
+        title: 'Student Enquiry | ZecurX',
+        description: 'Start your cybersecurity journey with ZecurX. Fill out our enquiry form for internship and training programs.',
+        type: 'website',
+        url: 'https://zecurx.com/enquiry/student',
+    },
+    alternates: {
+        canonical: 'https://zecurx.com/enquiry/student',
+    },
 };
 
 const cardClass = cn(

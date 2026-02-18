@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkToolsRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const API_URL = process.env.ZECURX_API_URL || 'https://zecurx-tool-backend.onrender.com';
 const API_KEY = process.env.ZECURX_API_KEY;
 
 export async function POST(request: NextRequest) {
     try {
+        const ip = getClientIp(request);
+        const rateLimitResult = await checkToolsRateLimit(ip);
+        if (!rateLimitResult.success) {
+            return NextResponse.json(
+                { error: 'Too many requests. Please try again later.' },
+                { status: 429 }
+            );
+        }
+
         const body = await request.json();
         const { tool, ...params } = body;
 

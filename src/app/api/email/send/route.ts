@@ -1,8 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifySessionFromRequest } from '@/lib/auth';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
+        const session = await verifySessionFromRequest(request);
+        if (!session) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
+
+
         const body = await request.json();
 
         const {
@@ -22,8 +32,6 @@ export async function POST(request: Request) {
                 { status: 400 }
             );
         }
-
-        console.log('[EMAIL] Would send email:', { to, subject, leadType });
 
         if (leadId && leadType) {
             const emailTable = leadType === 'STUDENT'
@@ -65,8 +73,7 @@ export async function POST(request: Request) {
             success: true,
             message: 'Email logged (SMTP configuration pending)'
         });
-    } catch (error) {
-        console.error('Error processing email:', error);
+    } catch {
         return NextResponse.json(
             { error: 'Failed to process email' },
             { status: 500 }
