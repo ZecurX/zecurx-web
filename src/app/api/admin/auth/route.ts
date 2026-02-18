@@ -112,10 +112,16 @@ export async function POST(req: NextRequest) {
                 role: assignedRole,
             }
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Auth Error:", error);
+        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
+        if (isConnectionError) {
+            return NextResponse.json({
+                error: "Service temporarily unavailable. Database connection failed — please try again later."
+            }, { status: 503 });
+        }
         return NextResponse.json({
-            error: error instanceof Error ? error.message : "Internal Error",
+            error: "Internal Error"
         }, { status: 500 });
     }
 }
