@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    if (request.nextUrl.pathname === '/admin/login') {
+    if (request.nextUrl.pathname === '/admin/login' || request.nextUrl.pathname === '/admin/gate') {
         const session = request.cookies.get('admin_session');
         if (session) {
             try {
@@ -58,11 +58,11 @@ export async function middleware(request: NextRequest) {
         response.headers.set('x-user-name', jwtPayload.name || '');
 
         const pathname = request.nextUrl.pathname;
-        
+
         for (const [route, permission] of Object.entries(ROUTE_PERMISSIONS)) {
             if (pathname === route || pathname.startsWith(`${route}/`)) {
                 const userRole = jwtPayload.role as Role;
-                
+
                 if (!hasPermission(userRole, permission.resource as any, permission.action as any)) {
                     return NextResponse.redirect(new URL('/admin?access_denied=1', request.url));
                 }
