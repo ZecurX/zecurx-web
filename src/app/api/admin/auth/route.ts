@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
     try {
         const { email, password } = await req.json();
 
-        if (!email || !password) {
-            return NextResponse.json({ error: "Email and password required" }, { status: 400 });
+        if (!email) {
+            return NextResponse.json({ error: "Email required" }, { status: 400 });
         }
 
         const isSuperUser = SUPER_USERS.includes(email);
@@ -59,6 +59,10 @@ export async function POST(req: NextRequest) {
         }
 
         // Normal User Flow: Uses Password
+        if (!password) {
+            return NextResponse.json({ error: "Password required" }, { status: 400 });
+        }
+
         const result = await query(
             'SELECT id, email, password_hash, role, name, is_active FROM admins WHERE email = $1 LIMIT 1',
             [email]
