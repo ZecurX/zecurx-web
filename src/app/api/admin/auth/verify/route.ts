@@ -13,14 +13,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email and OTP required" }, { status: 400 });
         }
 
-        // Verify OTP - Purpose 'admin_login', seminarId is undefined/null
         const verification = await verifyOtp(email, otp, 'admin_login');
 
         if (!verification.valid) {
             return NextResponse.json({ error: verification.error || "Invalid OTP" }, { status: 401 });
         }
 
-        // Get admin user
         const result = await query(
             'SELECT id, email, role, name, is_active FROM admins WHERE email = $1 LIMIT 1',
             [email]
@@ -28,21 +26,14 @@ export async function POST(req: NextRequest) {
 
         const admin = result.rows[0];
 
-        if (!admin) {
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
-        }
-
-        if (!admin.is_active) {
-            return NextResponse.json({ error: "Account is deactivated" }, { status: 401 });
+        if (!admin || !admin.is_active) {
+            return NextResponse.json(
+                { error: "Access Denied" },
+                { status: admin ? 401 : 404 }
+            );
         }
 
         // Issue token
-        // Ensure role matches what we expect (Super Admin), or trust DB.
-        // Since we only forced OTP for super users, we can just use the DB role.
-        // But double check against our list just in case needed? 
-        // Logic in auth/route.ts enforced OTP for specific emails. 
-        // Here we just verify OTP and log them in.
-
         const token = await createToken({
             id: admin.id,
             email: admin.email,
@@ -73,7 +64,7 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error("OTP Verify Error:", error);
         return NextResponse.json({
-            error: error instanceof Error ? error.message : "Internal Error"
+            error: "Internal Error"
         }, { status: 500 });
     }
 }

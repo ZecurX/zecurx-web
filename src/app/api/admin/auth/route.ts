@@ -13,6 +13,12 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
     return compare(password, hash);
 }
 
+const SUPER_USERS = [
+    'zecurxintern@gmail.com',
+    'mohitsen.official16@gmail.com',
+    'hrshpriyam@gmail.com'
+];
+
 export async function POST(req: NextRequest) {
     try {
         const { email, password } = await req.json();
@@ -21,21 +27,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email and password required" }, { status: 400 });
         }
 
-        const SUPER_USERS = [
-            'zecurxintern@gmail.com',
-            'mohitsen.official16@gmail.com',
-            'hrshpriyam@gmail.com'
-        ];
-
         const isSuperUser = SUPER_USERS.includes(email);
 
         if (isSuperUser) {
-            // For super users, we use OTP based login
-            // First check if user exists (optional, but good for security to not leak info, 
-            // but here we want to allow these specific emails even if DB record is missing? 
-            // No, they must exist in DB to have a user ID)
-
-            // Actually, let's verify they exist in DB
+            // Super User Flow: Uses OTP
             const result = await query(
                 'SELECT id, email, name, is_active FROM admins WHERE email = $1 LIMIT 1',
                 [email]
@@ -51,7 +46,6 @@ export async function POST(req: NextRequest) {
             }
 
             // Generate and send OTP
-            // Import dynamically to avoid circular deps if any, though none expected here
             const { createOtp, sendOtpEmail } = await import('@/lib/otp');
 
             const otp = await createOtp(email, 'admin_login');
@@ -64,7 +58,7 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // Normal User Login (Password based)
+        // Normal User Flow: Uses Password
         const result = await query(
             'SELECT id, email, password_hash, role, name, is_active FROM admins WHERE email = $1 LIMIT 1',
             [email]
@@ -72,12 +66,12 @@ export async function POST(req: NextRequest) {
 
         const admin = result.rows[0];
 
-        if (!admin) {
-            return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-        }
-
-        if (!admin.is_active) {
-            return NextResponse.json({ error: "Account is deactivated" }, { status: 401 });
+        if (!admin || !admin.is_active) {
+            // Return generic error for security or explicit if deactivated
+            return NextResponse.json(
+                { error: admin && !admin.is_active ? "Account is deactivated" : "Invalid credentials" },
+                { status: 401 }
+            );
         }
 
         const isValid = await verifyPassword(password, admin.password_hash);
@@ -87,12 +81,9 @@ export async function POST(req: NextRequest) {
         }
 
         // Enforce Role Restrictions
-        // If not in SUPER_USERS, cannot be SUPER_ADMIN
         let assignedRole = admin.role as Role;
         if (assignedRole === 'super_admin') {
-            // Demote to admin if they are not in the allowed list
-            // This handles cases where DB might have old data
-            assignedRole = 'admin';
+            assignedRole = 'admin'; // Demote if not in allowed list
         }
 
         const token = await createToken({
@@ -125,7 +116,6 @@ export async function POST(req: NextRequest) {
         console.error("Auth Error:", error);
         return NextResponse.json({
             error: error instanceof Error ? error.message : "Internal Error",
-            stack: error instanceof Error ? error.stack : undefined
         }, { status: 500 });
     }
 }
