@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { getCourseById } from '@/lib/courses';
 
 interface ItemPriceResponse {
     id: string;
@@ -23,21 +24,38 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const planResult = await query(
-            'SELECT id, name, price, description, type FROM plans WHERE id::text = $1 AND active = true',
-            [itemId]
-        );
-        
-        if (planResult.rows.length > 0) {
-            const plan = planResult.rows[0];
-            const itemType = plan.type === 'internship' ? 'internship' : (type as 'internship' | 'course');
-            
+        // Try database lookup first (for internships, products, etc.)
+        try {
+            const planResult = await query(
+                'SELECT id, name, price, description, type FROM plans WHERE id::text = $1 AND active = true',
+                [itemId]
+            );
+
+            if (planResult.rows.length > 0) {
+                const plan = planResult.rows[0];
+                const itemType = plan.type === 'internship' ? 'internship' : (type as 'internship' | 'course');
+
+                return NextResponse.json<ItemPriceResponse>({
+                    id: plan.id.toString(),
+                    name: plan.name,
+                    price: parseFloat(plan.price),
+                    type: itemType,
+                    description: plan.description || undefined
+                });
+            }
+        } catch (dbError) {
+            console.warn('DB lookup failed, falling back to course data:', dbError instanceof Error ? dbError.message : dbError);
+        }
+
+        // Fallback: check hardcoded course data
+        const course = getCourseById(itemId);
+        if (course && typeof course.price === 'number') {
             return NextResponse.json<ItemPriceResponse>({
-                id: plan.id.toString(),
-                name: plan.name,
-                price: parseFloat(plan.price),
-                type: itemType,
-                description: plan.description || undefined
+                id: course.id,
+                name: course.title,
+                price: course.price,
+                type: 'course',
+                description: course.description
             });
         }
 
