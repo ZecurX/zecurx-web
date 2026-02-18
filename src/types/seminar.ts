@@ -4,10 +4,10 @@
 
 export type SeminarStatus = 'pending' | 'approved' | 'rejected' | 'completed';
 export type LocationType = 'online' | 'onsite';
-export type OtpPurpose = 'registration' | 'certificate';
+export type OtpPurpose = 'registration' | 'certificate' | 'admin_login';
 export type NameRequestStatus = 'pending' | 'approved' | 'rejected';
 
-export type CareerInterest = 
+export type CareerInterest =
   | 'Ethical Hacking & Offensive Security'
   | 'Software Development'
   | 'AI & Machine Learning'
@@ -76,26 +76,26 @@ export interface Seminar {
   image_url: string | null;
   brochure_url: string | null;
   max_attendees: number | null;
-  
+
   // College info
   organization_name: string;
   contact_person: string;
   contact_email: string;
   contact_phone: string | null;
   additional_notes: string | null;
-  
+
   // Admin controls
   status: SeminarStatus;
   registration_enabled: boolean;
   certificate_enabled: boolean;
   rejection_reason: string | null;
-  
+
   // Metadata
   created_at: string;
   updated_at: string;
   approved_at: string | null;
   approved_by: string | null;
-  
+
   // Computed (from joins)
   registration_count?: number;
   attended_count?: number;
@@ -115,7 +115,7 @@ export interface SeminarRegistration {
   is_retroactive: boolean;
   registered_at: string;
   verified_at: string | null;
-  
+
   // Joined data
   seminar?: Seminar;
 }
@@ -124,7 +124,7 @@ export interface SeminarFeedback {
   id: string;
   registration_id: string | null;
   seminar_id: string;
-  
+
   // Step 1
   full_name: string;
   email: string;
@@ -132,20 +132,20 @@ export interface SeminarFeedback {
   year: string | null;
   city_state: string | null;
   reminder_contact: string | null;
-  
+
   // Step 2
   career_interest: string | null;
   offensive_security_reason: string | null;
-  
+
   // Step 3
   seminar_rating: number | null;
   most_valuable_part: string | null;
   future_suggestions: string | null;
   join_zecurx: boolean | null;
-  
+
   // Step 4
   certificate_name: string;
-  
+
   submitted_at: string;
 }
 
@@ -228,7 +228,7 @@ export interface SeminarBookingRequest {
   email: string;
   phone?: string;
   organization: string;
-  
+
   // Seminar details
   title: string;
   description: string;
@@ -241,7 +241,7 @@ export interface SeminarBookingRequest {
   venueAddress?: string;
   attendees: number;
   preferredDate: string;
-  
+
   // Optional
   brochureUrl?: string;
   message?: string;

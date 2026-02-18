@@ -1,6 +1,7 @@
 import { query } from '@/lib/db';
 import { Resend } from 'resend';
 import { OtpPurpose, OtpVerification } from '@/types/seminar';
+import { brandedEmailTemplate } from '@/lib/email-template';
 
 const OTP_EXPIRY_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
@@ -12,22 +13,22 @@ export function generateOtp(): string {
 export async function createOtp(
     email: string,
     purpose: OtpPurpose,
-    seminarId: string
+    seminarId?: string
 ): Promise<string> {
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
     await query(
         `DELETE FROM seminar.otp_verifications 
-         WHERE email = $1 AND purpose = $2 AND seminar_id = $3`,
-        [email, purpose, seminarId]
+         WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL))`,
+        [email, purpose, seminarId || null]
     );
 
     await query(
         `INSERT INTO seminar.otp_verifications 
          (email, otp_code, purpose, seminar_id, expires_at)
          VALUES ($1, $2, $3, $4, $5)`,
-        [email, otp, purpose, seminarId, expiresAt.toISOString()]
+        [email, otp, purpose, seminarId || null, expiresAt.toISOString()]
     );
 
     return otp;
@@ -37,13 +38,17 @@ export async function verifyOtp(
     email: string,
     otp: string,
     purpose: OtpPurpose,
-    seminarId: string
+    seminarId?: string
 ): Promise<{ valid: boolean; error?: string }> {
+    // Only check seminar_id if it's provided or if purpose requires it (registration/certificate)
+    // For admin_login, seminar_id is null
+
+    // Construct query based on seminarId presence
     const result = await query<OtpVerification>(
         `SELECT * FROM seminar.otp_verifications 
-         WHERE email = $1 AND purpose = $2 AND seminar_id = $3 AND verified = false
+         WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL)) AND verified = false
          ORDER BY created_at DESC LIMIT 1`,
-        [email, purpose, seminarId]
+        [email, purpose, seminarId || null]
     );
 
     const record = result.rows[0];
@@ -84,47 +89,51 @@ export async function sendOtpEmail(
 ): Promise<boolean> {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const purposeText = purpose === 'registration' 
-        ? 'complete your registration' 
-        : 'access your certificate';
+    const purposeText = purpose === 'registration'
+        ? 'complete your registration'
+        : purpose === 'admin_login'
+            ? 'access the admin dashboard'
+            : 'access your certificate';
 
     const subject = purpose === 'registration'
         ? `Your Registration OTP for ${seminarTitle} - ZecurX`
-        : `Your Certificate Access OTP - ZecurX`;
+        : purpose === 'admin_login'
+            ? `Admin Login Verification - ZecurX`
+            : `Your Certificate Access OTP - ZecurX`;
 
-    const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #1a1a1a; margin: 0;">ZecurX</h1>
-                <p style="color: #666; margin: 5px 0 0 0;">Cybersecurity Excellence</p>
-            </div>
+    const bodyContent = `
+        <div style="text-align: center;">
+            <h1 style="color: #1a1a1a; margin: 0 0 8px; font-size: 24px; font-weight: 700;">Verification Code</h1>
+            <p style="color: #666; margin: 0 0 8px; font-size: 15px; line-height: 1.5;">
+                Use this code to ${purposeText} for:
+            </p>
+            <p style="font-weight: 600; color: #1a1a1a; margin: 0 0 28px; font-size: 16px;">
+                ${seminarTitle}
+            </p>
             
-            <div style="background: #f8f9fa; border-radius: 12px; padding: 30px; text-align: center;">
-                <h2 style="color: #1a1a1a; margin: 0 0 10px 0;">Your Verification Code</h2>
-                <p style="color: #666; margin: 0 0 25px 0;">
-                    Use this code to ${purposeText} for:
-                </p>
-                <p style="font-weight: bold; color: #1a1a1a; margin: 0 0 25px 0;">
-                    ${seminarTitle}
-                </p>
-                
-                <div style="background: #1a1a1a; color: #ffffff; font-size: 32px; font-weight: bold; letter-spacing: 8px; padding: 20px 40px; border-radius: 8px; display: inline-block;">
-                    ${otp}
-                </div>
-                
-                <p style="color: #999; font-size: 14px; margin: 25px 0 0 0;">
-                    This code expires in ${OTP_EXPIRY_MINUTES} minutes.
-                </p>
-            </div>
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td align="center">
+                        <div style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 10px; padding: 22px 44px; border-radius: 10px; display: inline-block; font-family: 'Courier New', monospace;">
+                            ${otp}
+                        </div>
+                    </td>
+                </tr>
+            </table>
             
-            <div style="margin-top: 30px; padding: 20px; border-top: 1px solid #eee;">
-                <p style="color: #999; font-size: 12px; margin: 0; text-align: center;">
-                    If you didn't request this code, please ignore this email.<br>
-                    This is an automated message from ZecurX.
-                </p>
-            </div>
+            <p style="color: #999; font-size: 13px; margin: 24px 0 0;">
+                This code expires in <strong>${OTP_EXPIRY_MINUTES} minutes</strong>. Do not share it with anyone.
+            </p>
         </div>
     `;
+
+    const html = brandedEmailTemplate({
+        accent: 'info',
+        body: bodyContent,
+        previewText: `Your ZecurX verification code: ${otp}`,
+        includeMarketing: false,
+        showSocials: true,
+    });
 
     try {
         await resend.emails.send({

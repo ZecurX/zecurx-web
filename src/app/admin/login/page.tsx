@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Shield } from "lucide-react";
+import { Loader2, Shield, KeyRound, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -11,6 +11,9 @@ export default function AdminLoginPage() {
         email: "",
         password: ""
     });
+    const [otp, setOtp] = useState("");
+    const [otpSent, setOtpSent] = useState(false);
+
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -27,29 +30,66 @@ export default function AdminLoginPage() {
                 body: JSON.stringify(formData),
             });
 
+            const data = await res.json();
+
             if (res.ok) {
-                const data = await res.json();
-                router.refresh();
-                
-                const role = data.user?.role;
-                const redirectMap: Record<string, string> = {
-                    media: '/admin/blog',
-                    marketing: '/admin/plans',
-                    sales: '/admin',
-                    admin: '/admin',
-                    super_admin: '/admin',
-                };
-                
-                router.push(redirectMap[role] || '/admin');
+                if (data.otpRequired) {
+                    setOtpSent(true);
+                    setLoading(false);
+                    return;
+                }
+
+                handleRedirect(data.user?.role);
             } else {
-                const data = await res.json();
                 setError(data.error || "Invalid credentials");
+                setLoading(false);
             }
         } catch {
             setError("Something went wrong");
-        } finally {
             setLoading(false);
         }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+
+        try {
+            const res = await fetch("/api/admin/auth/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: formData.email,
+                    otp
+                }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                handleRedirect(data.user?.role);
+            } else {
+                setError(data.error || "Invalid OTP");
+                setLoading(false);
+            }
+        } catch {
+            setError("Something went wrong");
+            setLoading(false);
+        }
+    };
+
+    const handleRedirect = (role: string) => {
+        router.refresh();
+        const redirectMap: Record<string, string> = {
+            media: '/admin/blog',
+            marketing: '/admin/plans',
+            sales: '/admin/customers', // Restricted
+            admin: '/admin/customers', // Restricted
+            super_admin: '/admin',
+        };
+
+        router.push(redirectMap[role] || '/admin');
     };
 
     return (
@@ -82,82 +122,158 @@ export default function AdminLoginPage() {
                         </div>
                         <div>
                             <h1 className="text-2xl font-manrope font-bold tracking-tight text-foreground">
-                                Admin Portal
+                                {otpSent ? "Enter OTP" : "Admin Portal"}
                             </h1>
                             <p className="text-sm text-muted-foreground mt-1">
-                                Sign in to access the dashboard
+                                {otpSent
+                                    ? `We sent a code to ${formData.email}`
+                                    : "Sign in to access the dashboard"
+                                }
                             </p>
                         </div>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label htmlFor="email" className="text-sm font-medium text-foreground">
-                                    Email
-                                </label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    placeholder="name@zecurx.com"
-                                    className={cn(
-                                        "flex h-11 w-full rounded-xl px-4 py-2 text-sm",
-                                        "bg-white/[0.03] border border-white/[0.08]",
-                                        "placeholder:text-muted-foreground/50",
-                                        "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30",
-                                        "transition-all duration-200"
-                                    )}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label htmlFor="password" className="text-sm font-medium text-foreground">
-                                    Password
-                                </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    placeholder="••••••••"
-                                    className={cn(
-                                        "flex h-11 w-full rounded-xl px-4 py-2 text-sm",
-                                        "bg-white/[0.03] border border-white/[0.08]",
-                                        "placeholder:text-muted-foreground/50",
-                                        "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30",
-                                        "transition-all duration-200"
-                                    )}
-                                    required
-                                />
-                            </div>
-
-                            {error && (
-                                <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
-                                    <Shield className="w-4 h-4 shrink-0" />
-                                    {error}
+                    {!otpSent ? (
+                        <form onSubmit={handleLogin} className="space-y-5">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label htmlFor="email" className="text-sm font-medium text-foreground">
+                                        Email
+                                    </label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        placeholder="name@zecurx.com"
+                                        className={cn(
+                                            "flex h-11 w-full rounded-xl px-4 py-2 text-sm",
+                                            "bg-white/[0.03] border border-white/[0.08]",
+                                            "placeholder:text-muted-foreground/50",
+                                            "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30",
+                                            "transition-all duration-200"
+                                        )}
+                                        required
+                                        disabled={loading}
+                                    />
                                 </div>
-                            )}
-                        </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="password" className="text-sm font-medium text-foreground">
+                                        Password
+                                    </label>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        placeholder="••••••••"
+                                        className={cn(
+                                            "flex h-11 w-full rounded-xl px-4 py-2 text-sm",
+                                            "bg-white/[0.03] border border-white/[0.08]",
+                                            "placeholder:text-muted-foreground/50",
+                                            "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30",
+                                            "transition-all duration-200"
+                                        )}
+                                        required
+                                        disabled={loading}
+                                    />
+                                </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={cn(
-                                "w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-200",
-                                "bg-foreground text-background",
-                                "hover:opacity-90 active:scale-[0.98]",
-                                "disabled:opacity-50 disabled:cursor-not-allowed"
-                            )}
-                        >
-                            {loading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                "Sign In"
-                            )}
-                        </button>
-                    </form>
+                                {error && (
+                                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                                        <Shield className="w-4 h-4 shrink-0" />
+                                        {error}
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className={cn(
+                                    "w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-200",
+                                    "bg-foreground text-background",
+                                    "hover:opacity-90 active:scale-[0.98]",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                                )}
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    "Sign In"
+                                )}
+                            </button>
+                        </form>
+                    ) : (
+                        <form onSubmit={handleVerifyOtp} className="space-y-5">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label htmlFor="otp" className="text-sm font-medium text-foreground">
+                                        One-Time Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            id="otp"
+                                            type="text"
+                                            value={otp}
+                                            onChange={(e) => setOtp(e.target.value)}
+                                            placeholder="123456"
+                                            className={cn(
+                                                "flex h-11 w-full rounded-xl px-4 py-2 text-sm pl-10",
+                                                "bg-white/[0.03] border border-white/[0.08]",
+                                                "placeholder:text-muted-foreground/50",
+                                                "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30",
+                                                "transition-all duration-200",
+                                                "tracking-widest font-mono"
+                                            )}
+                                            required
+                                            autoFocus
+                                            disabled={loading}
+                                            maxLength={6}
+                                        />
+                                        <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                    </div>
+                                </div>
+
+                                {error && (
+                                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                                        <Shield className="w-4 h-4 shrink-0" />
+                                        {error}
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className={cn(
+                                    "w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-200",
+                                    "bg-white text-black dark:bg-white dark:text-black",
+                                    "hover:opacity-90 active:scale-[0.98]",
+                                    "disabled:opacity-50 disabled:cursor-not-allowed"
+                                )}
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    "Verify & Login"
+                                )}
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setOtpSent(false);
+                                    setError("");
+                                }}
+                                disabled={loading}
+                                className="w-full h-10 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                Back to Login
+                            </button>
+                        </form>
+                    )}
 
                     <p className="text-xs text-center text-muted-foreground/50">
                         Protected area. Authorized personnel only.
