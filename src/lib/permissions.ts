@@ -30,28 +30,25 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
 // Permissions for each role
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
-  
+
   [ROLES.ADMIN]: [
-    'dashboard:*',
+    // Restricted Access for normal admins
     'customers:*',
-    'sales:*',
-    'plans:*',
-    'products:*',
+    'products:*', // Courses map to products
     'leads:*',
     'referral_codes:*',
     'blog:read',
     'whitepapers:*',
     'seminars:*',
-    'settings:*',
+    // NO Dashboard, Sales, Audit, Settings
   ],
 
   [ROLES.SALES]: [
-    'dashboard:*',
     'customers:*',
-    'sales:*',
     'products:*',
     'leads:*',
     'referral_codes:*',
+    // NO dashboard, NO sales
     // NO blog access
   ],
 
@@ -60,7 +57,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'leads:read',
     'whitepapers:*',
   ],
-  
+
   [ROLES.MEDIA]: [
     'blog:*', // Full blog management
     'whitepapers:*',
@@ -155,7 +152,7 @@ export function getAssignableRoles(role: Role): Role[] {
   if (role !== ROLES.SUPER_ADMIN) {
     return [];
   }
-  
+
   // Super admin can assign all roles except super_admin
   return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING, ROLES.MEDIA];
 }
