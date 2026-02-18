@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     try {
         const clientIp = getClientIp(request);
         const rateLimitResult = await checkValidateRateLimit(clientIp);
-        
+
         if (!rateLimitResult.success) {
             return NextResponse.json<ValidatePartnerReferralResponse>({
                 valid: false,
@@ -116,12 +116,15 @@ export async function POST(request: NextRequest) {
             partner_name: partnerReferral.partner_name
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error validating partner referral code:', error);
+        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
         return NextResponse.json<ValidatePartnerReferralResponse>({
             valid: false,
             is_partner_referral: false,
-            error: 'Failed to validate referral code'
-        });
+            error: isConnectionError
+                ? 'Service temporarily unavailable. Please try again later.'
+                : 'Failed to validate referral code'
+        }, { status: isConnectionError ? 503 : 500 });
     }
 }

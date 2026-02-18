@@ -4,7 +4,12 @@ import { useState, useEffect, useCallback, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import RichTextEditor from '@/components/admin/RichTextEditor';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(
+  () => import('@/components/admin/RichTextEditor'),
+  { ssr: false, loading: () => <div>Loading editor...</div> }
+);
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, UpdateBlogPostRequest, BlogPost } from '@/types/auth';

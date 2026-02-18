@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,7 +181,7 @@ export default function ProductDialog({ product, trigger, onSuccess }: ProductDi
                         <div className="flex items-center gap-4">
                             {formData.image && (
                                 <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border/50">
-                                    <img src={formData.image} alt="Main" className="w-full h-full object-cover" />
+                                    <Image src={formData.image} alt="Main" fill className="object-cover" />
                                     <button
                                         type="button"
                                         onClick={() => setFormData({ ...formData, image: "" })}
@@ -233,7 +234,7 @@ export default function ProductDialog({ product, trigger, onSuccess }: ProductDi
                         <div className="flex flex-wrap gap-4 mb-2">
                             {formData.images.split(",").map((img, index) => img.trim() && (
                                 <div key={index} className="relative w-20 h-20 rounded-lg overflow-hidden border border-border/50">
-                                    <img src={img.trim()} alt={`Additional ${index}`} className="w-full h-full object-cover" />
+                                    <Image src={img.trim()} alt={`Additional ${index}`} fill className="object-cover" />
                                     <button
                                         type="button"
                                         onClick={() => {

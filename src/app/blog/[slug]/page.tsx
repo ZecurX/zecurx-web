@@ -13,7 +13,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  
+
   try {
     const result = await query(
       'SELECT title, excerpt, featured_image_url, meta_description FROM blog_posts WHERE slug = $1 LIMIT 1',
@@ -42,6 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: post.meta_description || post.excerpt || undefined,
         images: post.featured_image_url ? [post.featured_image_url] : [],
       },
+      alternates: {
+        canonical: `https://zecurx.com/blog/${slug}`,
+      },
     };
   } catch (error) {
     console.error('Failed to fetch blog post metadata:', error);
@@ -54,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  
+
   try {
     const postResult = await query(`
       SELECT bp.*, a.name as author_name, a.email as author_email
@@ -75,14 +78,14 @@ export default async function BlogPostPage({ params }: Props) {
       JOIN blog_post_labels bpl ON bl.id = bpl.label_id
       WHERE bpl.blog_post_id = $1
     `, [post.id]);
-    
+
     post.labels = labelsResult.rows.map((l: any) => ({ blog_labels: l }));
     post.author = { name: post.author_name, email: post.author_email };
 
     let relatedPosts: any[] = [];
     if (post.labels && post.labels.length > 0) {
       const labelIds = post.labels.map((l: any) => l.blog_labels.id);
-      
+
       const relatedResult = await query(`
         SELECT DISTINCT bp.id, bp.title, bp.slug, bp.excerpt, bp.featured_image_url, bp.published_at
         FROM blog_posts bp
@@ -91,9 +94,9 @@ export default async function BlogPostPage({ params }: Props) {
         ORDER BY bp.published_at DESC
         LIMIT 3
       `, [labelIds, post.id]);
-      
+
       relatedPosts = relatedResult.rows;
-      
+
       for (const rp of relatedPosts) {
         const rpLabels = await query(`
           SELECT bl.* FROM blog_labels bl
@@ -109,8 +112,8 @@ export default async function BlogPostPage({ params }: Props) {
         <ViewIncrement slug={slug} />
 
         {/* Back Link */}
-        <Link 
-          href="/blog" 
+        <Link
+          href="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -146,25 +149,25 @@ export default async function BlogPostPage({ params }: Props) {
                 <span>Author</span>
               </div>
             </div>
-            
+
             <div className="w-px h-8 bg-border/50 hidden sm:block" />
-            
+
             <div className="flex flex-col">
-               <div className="flex items-center gap-1.5">
-                 <Calendar className="w-4 h-4" />
-                 <span>Published</span>
-               </div>
-               <span>{formatBlogDate(post.published_at || post.created_at)}</span>
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4" />
+                <span>Published</span>
+              </div>
+              <span>{formatBlogDate(post.published_at || post.created_at)}</span>
             </div>
 
             <div className="w-px h-8 bg-border/50 hidden sm:block" />
 
             <div className="flex flex-col">
-               <div className="flex items-center gap-1.5">
-                 <Clock className="w-4 h-4" />
-                 <span>Read Time</span>
-               </div>
-               <span>{calculateReadingTime(post.content)} min read</span>
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                <span>Read Time</span>
+              </div>
+              <span>{calculateReadingTime(post.content)} min read</span>
             </div>
           </div>
         </div>
@@ -191,34 +194,34 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Tags & Share */}
         <div className="pt-8 border-t border-border/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-             <Tag className="w-4 h-4 text-muted-foreground" />
-             <span className="text-sm font-medium text-muted-foreground">Tags:</span>
-             <div className="flex flex-wrap gap-2">
-                {post.labels.map((l: any) => (
-                  <span key={l.blog_labels.id} className="text-sm text-foreground bg-muted px-2 py-1 rounded-md">
-                     {l.blog_labels.name}
-                  </span>
-                ))}
-             </div>
+            <Tag className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium text-muted-foreground">Tags:</span>
+            <div className="flex flex-wrap gap-2">
+              {post.labels.map((l: any) => (
+                <span key={l.blog_labels.id} className="text-sm text-foreground bg-muted px-2 py-1 rounded-md">
+                  {l.blog_labels.name}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Share Buttons (Placeholder logic) */}
           <div className="flex items-center gap-3">
-             <span className="text-sm font-medium text-muted-foreground">Share:</span>
-             <div className="flex gap-2">
-                <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Twitter">
-                   <Twitter className="w-4 h-4" />
-                </button>
-                <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on LinkedIn">
-                   <Linkedin className="w-4 h-4" />
-                </button>
-                <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Facebook">
-                   <Facebook className="w-4 h-4" />
-                </button>
-                <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Copy Link">
-                   <Copy className="w-4 h-4" />
-                </button>
-             </div>
+            <span className="text-sm font-medium text-muted-foreground">Share:</span>
+            <div className="flex gap-2">
+              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Twitter">
+                <Twitter className="w-4 h-4" />
+              </button>
+              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on LinkedIn">
+                <Linkedin className="w-4 h-4" />
+              </button>
+              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Facebook">
+                <Facebook className="w-4 h-4" />
+              </button>
+              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Copy Link">
+                <Copy className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -228,8 +231,8 @@ export default async function BlogPostPage({ params }: Props) {
             <h2 className="text-2xl font-bold tracking-tight">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((rp) => (
-                <Link 
-                  key={rp.id} 
+                <Link
+                  key={rp.id}
                   href={`/blog/${rp.slug}`}
                   className="group flex flex-col bg-card border border-border/50 rounded-xl overflow-hidden hover:shadow-md transition-all"
                 >
@@ -244,17 +247,17 @@ export default async function BlogPostPage({ params }: Props) {
                       />
                     ) : (
                       <div className="w-full h-full bg-muted flex items-center justify-center">
-                         <span className="text-2xl">📄</span>
+                        <span className="text-2xl">📄</span>
                       </div>
                     )}
                   </div>
                   <div className="p-4 space-y-2">
-                     <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
-                       {rp.title}
-                     </h3>
-                     <span className="text-xs text-muted-foreground">
-                       {formatBlogDate(rp.published_at)}
-                     </span>
+                    <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                      {rp.title}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">
+                      {formatBlogDate(rp.published_at)}
+                    </span>
                   </div>
                 </Link>
               ))}

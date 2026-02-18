@@ -5,9 +5,18 @@ import Footer from "@/components/landing/Footer";
 import GuidesPage from "@/components/resources/pages/GuidesPage";
 
 export const metadata: Metadata = {
-    title: "Security Guides | ZecurX - Best Practices",
-    description: "Practical, step-by-step playbooks designed to help IT teams and security leaders implement best practices, harden systems, and prepare for incident response.",
+    title: "Security Guides - Best Practices",
+    description: "Step-by-step playbooks for IT teams and security leaders to implement best practices, harden systems, and prepare for incidents.",
     keywords: "security guides, best practices, system hardening, incident response, secure coding, ZecurX guides",
+    openGraph: {
+        title: "Security Guides - Best Practices | ZecurX",
+        description: "Step-by-step playbooks for IT teams and security leaders to implement best practices.",
+        type: "website",
+        url: "https://zecurx.com/resources/guides",
+    },
+    alternates: {
+        canonical: "https://zecurx.com/resources/guides",
+    },
 };
 
 export default function ResourcesGuidesPage() {
