@@ -32,15 +32,19 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
 
   [ROLES.ADMIN]: [
-    // Restricted Access for normal admins
     'customers:*',
-    'products:*', // Courses map to products
+    'products:*',
     'leads:*',
     'referral_codes:*',
-    'blog:read',
+    'blog:*',
     'whitepapers:*',
     'seminars:*',
-    // NO Dashboard, Sales, Audit, Settings
+    'plans:*',
+    'audit:*',
+    'system_test:*',
+    'users:*',
+    'settings:*',
+    // NO Dashboard, NO Sales
   ],
 
   [ROLES.SALES]: [
@@ -48,18 +52,20 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:*',
     'leads:*',
     'referral_codes:*',
-    // NO dashboard, NO sales
-    // NO blog access
+    'sales:*',
+    'plans:*',
   ],
 
   [ROLES.MARKETING]: [
     'plans:*',
-    'leads:read',
+    'leads:*',
     'whitepapers:*',
+    'referral_codes:*',
+    'blog:*',
   ],
 
   [ROLES.MEDIA]: [
-    'blog:*', // Full blog management
+    'blog:*',
     'whitepapers:*',
   ],
 };
