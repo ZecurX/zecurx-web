@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
-  Eye, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Eye,
   Calendar,
   FileText,
   Download,
@@ -110,7 +110,7 @@ export default function WhitepapersListPage() {
     }
   };
 
-  const canManageWhitepapers = user?.role === 'media' || user?.role === 'super_admin';
+  const canManageWhitepapers = ['super_admin', 'admin', 'media', 'marketing'].includes(user?.role || '');
 
   return (
     <div className="space-y-6">
@@ -119,7 +119,7 @@ export default function WhitepapersListPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Whitepapers</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage technical whitepapers and research documents</p>
         </div>
-        
+
         {canManageWhitepapers && (
           <Link
             href="/admin/whitepapers/new"
@@ -142,7 +142,7 @@ export default function WhitepapersListPage() {
             className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <select
             value={statusFilter}
@@ -176,15 +176,15 @@ export default function WhitepapersListPage() {
           <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground">No whitepapers found</h3>
           <p className="text-muted-foreground mt-1">
-            {search || statusFilter !== 'all' || categoryFilter !== 'all' 
-              ? 'Try adjusting your filters' 
+            {search || statusFilter !== 'all' || categoryFilter !== 'all'
+              ? 'Try adjusting your filters'
               : 'Get started by uploading your first whitepaper'}
           </p>
         </div>
       ) : (
         <div className="grid gap-4">
           {whitepapers.map((paper) => (
-            <div 
+            <div
               key={paper.id}
               className="group flex flex-col sm:flex-row gap-4 p-4 bg-card/40 border border-border/50 rounded-xl hover:bg-card/60 transition-colors"
             >
@@ -211,11 +211,10 @@ export default function WhitepapersListPage() {
                       {paper.title}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
-                        paper.status === 'published' 
-                          ? 'bg-green-500/10 text-green-600 border-green-500/20' 
-                          : 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20'
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${paper.status === 'published'
+                        ? 'bg-green-500/10 text-green-600 border-green-500/20'
+                        : 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20'
+                        }`}>
                         {paper.status === 'published' ? 'Published' : 'Draft'}
                       </span>
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground border border-border">
@@ -278,8 +277,8 @@ export default function WhitepapersListPage() {
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     <span>
-                      {paper.published_at 
-                        ? new Date(paper.published_at).toLocaleDateString() 
+                      {paper.published_at
+                        ? new Date(paper.published_at).toLocaleDateString()
                         : `Created ${new Date(paper.created_at).toLocaleDateString()}`}
                     </span>
                   </div>
