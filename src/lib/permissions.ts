@@ -111,6 +111,11 @@ export function canManageRole(managerRole: Role, targetRole: Role): boolean {
     return true;
   }
 
+  // Admin can manage all roles except super_admin
+  if (managerRole === ROLES.ADMIN) {
+    return targetRole !== ROLES.SUPER_ADMIN;
+  }
+
   // Others cannot manage any roles
   return false;
 }
@@ -155,11 +160,11 @@ export function getExpandedPermissions(role: Role): string[] {
  * Get roles that a given role can assign to new users
  */
 export function getAssignableRoles(role: Role): Role[] {
-  if (role !== ROLES.SUPER_ADMIN) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.ADMIN) {
     return [];
   }
 
-  // Super admin can assign all roles except super_admin
+  // Super admin and Admin can assign all roles except super_admin
   return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING, ROLES.MEDIA];
 }
 

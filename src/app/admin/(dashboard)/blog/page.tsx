@@ -122,13 +122,8 @@ export default function BlogListPage() {
     }
   };
 
-  const canEdit = user?.role === 'marketing' || user?.role === 'super_admin'; // Super admin usually can do everything, but per requirements marketing is the main editor. Logic says marketing has update permission. Admin has read.
-  // Actually per requirements:
-  // marketing: create, update, delete
-  // admin: read only
-  // super_admin: full access (implied)
-  // Let's rely on the API for enforcement, but UI should hide buttons.
-  const canManageBlog = user?.role === 'media' || user?.role === 'admin' || user?.role === 'marketing' || user?.role === 'super_admin';
+  const canManageBlog = ['super_admin', 'admin', 'marketing', 'media'].includes(user?.role || '');
+  const canEdit = canManageBlog;
 
   return (
     <div className="space-y-6">
@@ -289,15 +284,7 @@ export default function BlogListPage() {
                         <Eye className="w-4 h-4" />
                       </Link>
                     )}
-                    {!canManageBlog && (
-                      <Link
-                        href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
-                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                        title="View Details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
-                    )}
+
                   </div>
                 </div>
 
