@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import ExcelJS from 'exceljs';
+import { requirePermission } from '@/lib/auth';
+import { RESOURCES, ACTIONS } from '@/types/auth';
 
 interface ExportRow {
     name: string;
@@ -37,6 +39,11 @@ function extractDomain(planName: string): string {
 }
 
 export async function GET(request: NextRequest) {
+    const authResult = await requirePermission(RESOURCES.CUSTOMERS, ACTIONS.READ, request);
+    if (!authResult.authorized) {
+        return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    }
+
     try {
         const { searchParams } = new URL(request.url);
         const format = searchParams.get('format') || 'xlsx';
