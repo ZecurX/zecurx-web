@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
-import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
+import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
-import { ROLES, Role, CreateUserRequest, AdminPublic } from "@/types/auth";
+import { ROLES, Role, CreateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.READ, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -28,10 +28,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.CREATE, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {

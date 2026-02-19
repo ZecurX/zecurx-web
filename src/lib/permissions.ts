@@ -32,15 +32,19 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
 
   [ROLES.ADMIN]: [
-    // Restricted Access for normal admins
     'customers:*',
-    'products:*', // Courses map to products
+    'products:*',
     'leads:*',
     'referral_codes:*',
-    'blog:read',
+    'blog:*',
     'whitepapers:*',
     'seminars:*',
-    // NO Dashboard, Sales, Audit, Settings
+    'plans:*',
+    'audit:*',
+    'system_test:*',
+    'users:*',
+    'settings:*',
+    // NO Dashboard, NO Sales
   ],
 
   [ROLES.SALES]: [
@@ -48,18 +52,20 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:*',
     'leads:*',
     'referral_codes:*',
-    // NO dashboard, NO sales
-    // NO blog access
+    'sales:*',
+    'plans:*',
   ],
 
   [ROLES.MARKETING]: [
     'plans:*',
-    'leads:read',
+    'leads:*',
     'whitepapers:*',
+    'referral_codes:*',
+    'blog:*',
   ],
 
   [ROLES.MEDIA]: [
-    'blog:*', // Full blog management
+    'blog:*',
     'whitepapers:*',
   ],
 };
@@ -103,6 +109,11 @@ export function canManageRole(managerRole: Role, targetRole: Role): boolean {
   // Super admin can manage all roles
   if (managerRole === ROLES.SUPER_ADMIN) {
     return true;
+  }
+
+  // Admin can manage all roles except super_admin
+  if (managerRole === ROLES.ADMIN) {
+    return targetRole !== ROLES.SUPER_ADMIN;
   }
 
   // Others cannot manage any roles
@@ -149,11 +160,11 @@ export function getExpandedPermissions(role: Role): string[] {
  * Get roles that a given role can assign to new users
  */
 export function getAssignableRoles(role: Role): Role[] {
-  if (role !== ROLES.SUPER_ADMIN) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.ADMIN) {
     return [];
   }
 
-  // Super admin can assign all roles except super_admin
+  // Super admin and Admin can assign all roles except super_admin
   return [ROLES.ADMIN, ROLES.SALES, ROLES.MARKETING, ROLES.MEDIA];
 }
 

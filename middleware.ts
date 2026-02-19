@@ -13,6 +13,11 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/audit': { resource: RESOURCES.AUDIT, action: ACTIONS.READ },
     '/admin/blog': { resource: RESOURCES.BLOG, action: ACTIONS.READ },
     '/admin/leads': { resource: RESOURCES.LEADS, action: ACTIONS.READ },
+    '/admin/whitepapers': { resource: RESOURCES.WHITEPAPERS, action: ACTIONS.READ },
+    '/admin/seminars': { resource: RESOURCES.SEMINARS, action: ACTIONS.READ },
+    '/admin/referral-codes': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
+    '/admin/partner-referrals': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
+    '/admin/system-test': { resource: RESOURCES.SYSTEM_TEST, action: ACTIONS.READ },
 };
 
 function getJwtSecret(): Uint8Array {
