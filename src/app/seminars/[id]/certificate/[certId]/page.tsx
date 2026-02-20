@@ -23,9 +23,8 @@ interface Props {
 
 async function getCertificate(certId: string): Promise<CertificateVerification | null> {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}`
-            : "http://localhost:3000";
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+            ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
         const response = await fetch(`${baseUrl}/api/certificates/${certId}`, {
             cache: "no-store",
@@ -82,23 +81,23 @@ export default async function CertificatePage({ params }: Props) {
     });
 
     return (
-        <div className="min-h-screen bg-[#f8f9fa] flex flex-col font-sans selection:bg-zinc-900/10 relative overflow-hidden">
+        <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-zinc-900/10 relative overflow-hidden">
             <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-            <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
+            <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary opacity-20 blur-[100px]"></div>
             <div className="absolute right-0 bottom-0 -z-10 h-[310px] w-[310px] rounded-full bg-zinc-400 opacity-20 blur-[100px]"></div>
 
-            <header className="sticky top-0 z-50 w-full border-b border-gray-200/50 bg-white/80 backdrop-blur-md">
+            <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="relative w-8 h-8">
                             <Image src="/images/zecurx-logo.png" alt="ZecurX" fill className="object-contain" />
                         </div>
-                        <span className="font-bold text-lg tracking-tight text-zinc-900">ZecurX</span>
+                        <span className="font-bold text-lg tracking-tight text-foreground">ZecurX</span>
                     </Link>
 
                     <Link 
                         href="/resources/seminars" 
-                        className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-2"
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back to Seminars
@@ -109,15 +108,15 @@ export default async function CertificatePage({ params }: Props) {
             <main className="flex-1 container mx-auto px-4 py-8 lg:py-12 flex flex-col items-center justify-center relative z-10">
                 
                 <div className="w-full max-w-7xl">
-                    <h1 className="text-3xl font-bold text-zinc-900 mb-8 text-center tracking-tight">Your Certificate</h1>
+                    <h1 className="text-3xl font-bold text-foreground mb-8 text-center tracking-tight">Your Certificate</h1>
 
-                    <div className="bg-white rounded-3xl shadow-2xl shadow-zinc-200/50 border border-gray-100 overflow-hidden">
+                    <div className="bg-card rounded-3xl shadow-2xl shadow-border/50 border border-border overflow-hidden">
                         
                         <div className="p-8 lg:p-12 pb-8 lg:pb-0">
                             <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
                                 
                                 <div className="w-full lg:w-[55%] relative group perspective-1000">
-                                    <div className="relative w-full rounded-xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-500 hover:scale-[1.01] hover:shadow-xl">
+                                    <div className="relative w-full rounded-xl overflow-hidden shadow-lg border border-border transform transition-all duration-500 hover:scale-[1.01] hover:shadow-xl">
                                         <Image
                                             src={`/api/certificates/${certId}/preview`}
                                             alt={`Certificate for ${certificate.recipientName}`}
@@ -135,7 +134,7 @@ export default async function CertificatePage({ params }: Props) {
                                             rel="noopener noreferrer"
                                             className="absolute inset-0 z-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                         >
-                                            <div className="bg-white/90 backdrop-blur-sm px-5 py-2.5 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 text-zinc-900 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                                            <div className="bg-background/90 backdrop-blur-sm px-5 py-2.5 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 text-foreground transform translate-y-2 group-hover:translate-y-0 transition-transform">
                                                 <ExternalLink className="w-4 h-4" />
                                                 View Full Size
                                             </div>
@@ -146,46 +145,46 @@ export default async function CertificatePage({ params }: Props) {
                                 <div className="flex-1 flex flex-col justify-between min-w-0 py-2 h-full">
                                     <div className="space-y-6">
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-zinc-400 tracking-wide uppercase">Presented to</p>
-                                            <h2 className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight leading-tight">
+                                            <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Presented to</p>
+                                            <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight leading-tight">
                                                 {certificate.recipientName}
                                             </h2>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <p className="text-sm font-medium text-zinc-400 tracking-wide uppercase">For completing the course</p>
-                                            <h3 className="text-2xl font-bold text-zinc-700 leading-tight">
+                                            <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">For completing the course</p>
+                                            <h3 className="text-2xl font-bold text-foreground leading-tight">
                                                 {certificate.seminarTitle}
                                             </h3>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-8 pt-4">
                                             <div>
-                                                <p className="text-[10px] uppercase tracking-wider font-bold text-zinc-400 mb-1.5">Issue Date</p>
+                                                <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Issue Date</p>
                                                 <div className="flex items-center gap-2.5">
-                                                    <Calendar className="w-4 h-4 text-zinc-400" />
-                                                    <span className="text-base font-semibold text-zinc-700">{formattedDate}</span>
+                                                    <Calendar className="w-4 h-4 text-muted-foreground" />
+                                                    <span className="text-base font-semibold text-foreground">{formattedDate}</span>
                                                 </div>
                                             </div>
                                             <div>
-                                                <p className="text-[10px] uppercase tracking-wider font-bold text-zinc-400 mb-1.5">Certificate ID</p>
+                                                <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground mb-1.5">Certificate ID</p>
                                                 <div className="flex items-center gap-2.5">
-                                                    <Award className="w-4 h-4 text-zinc-400" />
-                                                    <span className="text-base font-mono font-medium text-zinc-700">{certificate.certificateId}</span>
+                                                    <Award className="w-4 h-4 text-muted-foreground" />
+                                                    <span className="text-base font-mono font-medium text-foreground">{certificate.certificateId}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-700 shadow-sm">
-                                            <CheckCircle2 className="w-5 h-5 fill-emerald-600 text-white" />
+                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border text-foreground shadow-sm">
+                                            <CheckCircle2 className="w-5 h-5 text-primary" />
                                             <span className="text-xs font-bold uppercase tracking-wide">Certificate Issued</span>
                                         </div>
                                     </div>
 
-                                    <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col gap-6 pb-4">
+                                    <div className="mt-6 pt-6 border-t border-border flex flex-col gap-6 pb-4">
                                         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                                             <div className="w-full sm:w-auto">
-                                                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3 text-center sm:text-left">Share Achievement</p>
+                                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 text-center sm:text-left">Share Achievement</p>
                                                 <ShareButton 
                                                     title={`Certificate - ${certificate.recipientName}`}
                                                     text={`I've completed ${certificate.seminarTitle} with ZecurX!`}
@@ -195,7 +194,7 @@ export default async function CertificatePage({ params }: Props) {
                                             </div>
                                             <Button 
                                                 asChild
-                                                className="w-full sm:w-auto h-12 px-8 bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-bold text-sm"
+                                                className="w-full sm:w-auto h-12 px-8 bg-foreground hover:bg-foreground/90 text-background rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 font-bold text-sm"
                                             >
                                                 <a href={`/api/certificates/${certId}/download`}>
                                                     <Download className="w-4 h-4 mr-2" />
@@ -208,13 +207,13 @@ export default async function CertificatePage({ params }: Props) {
                             </div>
                         </div>
 
-                        <div className="w-full border-t border-gray-100/50">
+                        <div className="w-full border-t border-border/50">
                             <CoursePromoCard className="rounded-none border-0 shadow-none" />
                         </div>
 
                     </div>
                     
-                    <div className="mt-8 text-center text-xs text-zinc-400 font-medium">
+                    <div className="mt-8 text-center text-xs text-muted-foreground font-medium">
                         <p>&copy; {new Date().getFullYear()} ZecurX Academy. All rights reserved.</p>
                     </div>
                 </div>
