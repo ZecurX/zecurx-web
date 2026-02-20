@@ -16,10 +16,6 @@ export async function GET(
             );
         }
 
-        if (certificate.pdf_url) {
-            return NextResponse.redirect(certificate.pdf_url);
-        }
-
         const pdfBuffer = await regenerateCertificatePDF(certificate);
 
         return new NextResponse(new Uint8Array(pdfBuffer), {
