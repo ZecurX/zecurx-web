@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCertificateById, regenerateCertificatePDF, incrementDownloadCount } from '@/lib/certificate';
+import { getCertificateById, regenerateCertificatePDF } from '@/lib/certificate';
 
 export async function GET(
     request: NextRequest,
@@ -9,7 +9,6 @@ export async function GET(
         const { certificateId } = await params;
 
         const certificate = await getCertificateById(certificateId);
-
         if (!certificate) {
             return NextResponse.json(
                 { error: 'Certificate not found' },
@@ -19,21 +18,18 @@ export async function GET(
 
         const pdfBuffer = await regenerateCertificatePDF(certificate);
 
-        await incrementDownloadCount(certificateId);
-
         return new NextResponse(new Uint8Array(pdfBuffer), {
             headers: {
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="ZecurX_Certificate_${certificateId}.pdf"`,
-                'Content-Length': pdfBuffer.length.toString(),
+                'Content-Disposition': `inline; filename="${certificateId}.pdf"`,
+                'Cache-Control': 'public, max-age=3600',
             },
         });
-
     } catch (error) {
-        console.error('Certificate download error:', error);
+        console.error('Error serving certificate:', error);
         return NextResponse.json(
-            { error: 'Failed to download certificate' },
-            { status: 500 }
+            { error: 'Certificate not found' },
+            { status: 404 }
         );
     }
 }

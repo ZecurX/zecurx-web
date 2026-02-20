@@ -18,7 +18,20 @@ interface TransformedProduct {
     tags: string[];
 }
 
-function transformProduct(dbProduct: any): TransformedProduct {
+interface DbProduct {
+    id: string;
+    name: string;
+    price: number | string;
+    description: string;
+    image: string;
+    images?: string[];
+    stock: number;
+    delivery_days?: number;
+    features?: string[];
+    tags?: string[];
+}
+
+function transformProduct(dbProduct: DbProduct): TransformedProduct {
     return {
         id: dbProduct.id,
         name: dbProduct.name,
@@ -61,7 +74,7 @@ function matchesCategory(tags: string[], category: string): boolean {
     }
 }
 
-export default function ProductGrid({ initialProducts }: { initialProducts: any[] }) {
+export default function ProductGrid({ initialProducts }: { initialProducts: DbProduct[] }) {
     const products = useMemo(() => initialProducts.map(transformProduct), [initialProducts]);
     
     const [activeCategory, setActiveCategory] = useState("All");

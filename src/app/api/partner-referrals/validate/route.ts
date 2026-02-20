@@ -116,9 +116,10 @@ export async function POST(request: NextRequest) {
             partner_name: partnerReferral.partner_name
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error validating partner referral code:', error);
-        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
+        const errMsg = error instanceof Error ? error.message : '';
+        const isConnectionError = errMsg.includes('timeout') || errMsg.includes('ETIMEDOUT') || errMsg.includes('Connection terminated');
         return NextResponse.json<ValidatePartnerReferralResponse>({
             valid: false,
             is_partner_referral: false,

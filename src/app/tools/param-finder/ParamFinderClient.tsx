@@ -35,7 +35,7 @@ export default function ParamFinderPage() {
             }
 
             const params = data.parameters || data.params || data.results || data.data || [];
-            setResults(params.map((item: any) =>
+            setResults(params.map((item: string | Record<string, string>) =>
                 typeof item === 'string'
                     ? { param: item, type: 'Unknown' }
                     : { param: item.param || item.name || item.parameter, type: item.type || 'Unknown' }

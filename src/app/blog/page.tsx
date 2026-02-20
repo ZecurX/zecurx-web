@@ -1,6 +1,27 @@
 import { query } from '@/lib/db';
 import { BlogPageClient } from './BlogPageClient';
 
+interface BlogLabel {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
+
+interface BlogPostRow {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featured_image_url: string;
+  published_at: string;
+  author_name: string;
+  author_email: string;
+  labels: Array<{ blog_labels: BlogLabel }>;
+  author: { name: string; email: string };
+}
+
 export const metadata = {
   title: 'Security Intelligence Hub',
   description: 'Expert analysis, threat intelligence, and industry insights from the ZecurX security team.',
@@ -35,7 +56,7 @@ export default async function BlogPage({
     LEFT JOIN admins a ON bp.author_id = a.id
     WHERE bp.status = 'published'
   `;
-  const params: any[] = [];
+  const params: unknown[] = [];
   let paramIndex = 1;
 
   if (search) {
@@ -66,13 +87,13 @@ export default async function BlogPage({
 
   try {
     const [countResult, postsResult, labelsResult] = await Promise.all([
-      query(countQuery, countParams),
+      query<{ total: string }>(countQuery, countParams),
       query(postsQuery, params),
-      query('SELECT * FROM blog_labels ORDER BY name')
+      query<BlogLabel>('SELECT * FROM blog_labels ORDER BY name')
     ]);
 
     const count = parseInt(countResult.rows[0]?.total || '0');
-    const posts = postsResult.rows;
+    const posts: BlogPostRow[] = postsResult.rows as BlogPostRow[];
     const allLabels = labelsResult.rows;
     const totalPages = Math.ceil(count / limit);
 
@@ -87,16 +108,17 @@ export default async function BlogPage({
         WHERE bpl.blog_post_id IN (${placeholders})
       `, postIds);
 
-      const labelsMap: Record<string, any[]> = {};
-      labelsRes.rows.forEach((row: any) => {
-        if (!labelsMap[row.blog_post_id]) {
-          labelsMap[row.blog_post_id] = [];
+      const labelsMap: Record<string, Array<{ blog_labels: BlogLabel }>> = {};
+      labelsRes.rows.forEach((row: Record<string, unknown>) => {
+        const postId = String(row.blog_post_id);
+        if (!labelsMap[postId]) {
+          labelsMap[postId] = [];
         }
-        labelsMap[row.blog_post_id].push({ blog_labels: row });
+        labelsMap[postId].push({ blog_labels: row as unknown as BlogLabel });
       });
 
-      posts.forEach((post: any) => {
-        post.labels = labelsMap[post.id] || [];
+      posts.forEach((post) => {
+        post.labels = labelsMap[String(post.id)] || [];
         post.author = { name: post.author_name, email: post.author_email };
       });
     }

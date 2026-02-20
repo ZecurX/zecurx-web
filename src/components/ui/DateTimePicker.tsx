@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface DateTimePickerProps {
@@ -9,6 +10,7 @@ interface DateTimePickerProps {
     onChange?: (date: Date | null) => void;
     required?: boolean;
     minDate?: Date;
+    className?: string;
 }
 
 const MONTHS = [
@@ -31,12 +33,12 @@ const TIME_SLOTS = Array.from({ length: 19 }, (_, i) => {
     };
 });
 
-export default function DateTimePicker({ name, onChange, required, minDate }: DateTimePickerProps) {
+export default function DateTimePicker({ name, onChange, required, minDate, className }: DateTimePickerProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
-    
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Close on click outside
@@ -56,7 +58,7 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
         const month = date.getMonth();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const firstDayOfMonth = new Date(year, month, 1).getDay();
-        
+
         const days = [];
         // Empty slots for previous month
         for (let i = 0; i < firstDayOfMonth; i++) {
@@ -111,18 +113,18 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
     // Format display value
     const getDisplayValue = () => {
         if (!selectedDate) return "";
-        const dateStr = selectedDate.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
+        const dateStr = selectedDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
         });
         const timeStr = selectedTime ? TIME_SLOTS.find(t => t.value === selectedTime)?.label : '';
         return timeStr ? `${dateStr}, ${timeStr}` : dateStr;
     };
 
     // Hidden input value for form submission (ISO string)
-    const hiddenValue = selectedDate && selectedTime 
-        ? selectedDate.toISOString() 
+    const hiddenValue = selectedDate && selectedTime
+        ? selectedDate.toISOString()
         : '';
 
     return (
@@ -131,9 +133,13 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
             <input type="hidden" name={name} value={hiddenValue} required={required} />
 
             {/* Trigger Button */}
-            <div 
+            <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full bg-muted/20 border ${isOpen ? 'border-blue-500/50 bg-muted/30' : 'border-border'} rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all hover:bg-muted/30 group`}
+                className={cn(
+                    "w-full rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all hover:bg-muted/30 group",
+                    isOpen ? 'border-blue-500/50 bg-muted/30' : 'bg-muted/20 border border-border',
+                    className
+                )}
             >
                 <div className="flex items-center gap-3 overflow-hidden">
                     <CalendarIcon className={`w-5 h-5 ${selectedDate ? 'text-blue-400' : 'text-muted-foreground'}`} />
@@ -142,7 +148,7 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                     </span>
                 </div>
                 {selectedDate ? (
-                    <div 
+                    <div
                         onClick={(e) => {
                             e.stopPropagation();
                             setSelectedDate(null);
@@ -172,9 +178,9 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                         <div className="p-4 sm:flex-1 border-b sm:border-b-0 sm:border-r border-border min-w-[280px] sm:h-full flex flex-col">
                             {/* Header */}
                             <div className="flex items-center justify-between mb-4 shrink-0">
-                                <button 
-                                    type="button" 
-                                    onClick={prevMonth} 
+                                <button
+                                    type="button"
+                                    onClick={prevMonth}
                                     disabled={minDate && new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1) <= new Date(minDate.getFullYear(), minDate.getMonth(), 1)}
                                     className="p-1 hover:bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
                                 >
@@ -199,19 +205,19 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                             <div className="grid grid-cols-7 gap-1 overflow-y-auto">
                                 {getDaysInMonth(currentMonth).map((date, i) => {
                                     if (!date) return <div key={`empty-${i}`} />;
-                                    
-                                    const isSelected = selectedDate && 
+
+                                    const isSelected = selectedDate &&
                                         date.getDate() === selectedDate.getDate() &&
                                         date.getMonth() === selectedDate.getMonth() &&
                                         date.getFullYear() === selectedDate.getFullYear();
-                                    
+
                                     const isToday = new Date().toDateString() === date.toDateString();
 
                                     // Check if date is disabled (before minDate)
                                     // Set time to 00:00:00 for accurate date comparison
-                                    const isBeforeMinDate = minDate ? 
-                                        new Date(date.getFullYear(), date.getMonth(), date.getDate()) < 
-                                        new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate()) 
+                                    const isBeforeMinDate = minDate ?
+                                        new Date(date.getFullYear(), date.getMonth(), date.getDate()) <
+                                        new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())
                                         : false;
 
                                     return (
@@ -222,8 +228,8 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                                             disabled={isBeforeMinDate}
                                             className={`
                                                 text-sm p-2 rounded-lg transition-all relative
-                                                ${isSelected 
-                                                    ? 'bg-primary text-primary-foreground font-medium shadow-md' 
+                                                ${isSelected
+                                                    ? 'bg-primary text-primary-foreground font-medium shadow-md'
                                                     : isBeforeMinDate
                                                         ? 'text-muted-foreground/30 cursor-not-allowed'
                                                         : 'text-foreground hover:bg-muted hover:text-primary'
@@ -247,7 +253,7 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                                 <Clock className="w-4 h-4" />
                                 <span>Time</span>
                             </div>
-                            <div 
+                            <div
                                 className="overflow-y-auto flex-1 p-2 space-y-1 overscroll-contain"
                                 data-lenis-prevent
                                 onWheel={(e) => e.stopPropagation()}
@@ -259,8 +265,8 @@ export default function DateTimePicker({ name, onChange, required, minDate }: Da
                                         onClick={() => handleTimeSelect(slot.value)}
                                         className={`
                                             w-full text-left px-3 py-2 text-xs rounded-lg transition-colors shrink-0
-                                            ${selectedTime === slot.value 
-                                                ? 'bg-primary text-primary-foreground shadow-sm' 
+                                            ${selectedTime === slot.value
+                                                ? 'bg-primary text-primary-foreground shadow-sm'
                                                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                             }
                                         `}

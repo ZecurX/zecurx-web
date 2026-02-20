@@ -152,9 +152,9 @@ export default function NewBlogPostPage() {
 
       localStorage.removeItem('blog_draft_new');
       router.push('/admin/blog');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error creating post:', err);
-      setError(err.message || 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }

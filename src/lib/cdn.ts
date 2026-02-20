@@ -79,11 +79,26 @@ export const CDN_ASSETS = {
   },
   certificates: {
     background: getCdnUrl('images/certificate-bg.png'),
+    templatePdf: getCdnUrl('templates/certificate-template.pdf'),
+    templateBg: getCdnUrl('templates/certificate-template-bg.png'),
     signature: getCdnUrl('images/signature-harsh-priyam.png'),
     emailLogo: getCdnUrl('images/zecurx-email-logo.png'),
   },
   brand: {
     logo: getCdnUrl('images/zecurx-logo.png'),
+  },
+  courses: {
+    'bundle-ai': getCdnUrl('images/courses/bundle-ai.png'),
+    'cpeh': getCdnUrl('images/courses/cpeh.png'),
+    'cppt': getCdnUrl('images/courses/cppt.png'),
+    'gaip': getCdnUrl('images/courses/gaip.png'),
+    'zxCCP': getCdnUrl('images/courses/zxCCP.png'),
+    'zxCCE': getCdnUrl('images/courses/zxCCE.png'),
+    'zxCCF': getCdnUrl('images/courses/zxCCF.png'),
+    'zxCFD': getCdnUrl('images/courses/zxCFD.png'),
+    'zxCPEH': getCdnUrl('images/courses/zxCPEH.png'),
+    'zxCPPT': getCdnUrl('images/courses/zxCPPT.png'),
+    'zxGAIP': getCdnUrl('images/courses/zxGAIP.png'),
   },
 } as const;
 
