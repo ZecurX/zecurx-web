@@ -191,10 +191,13 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Sales', href: '/admin/sales', icon: 'CreditCard', resource: RESOURCES.SALES },
     { name: 'Plans', href: '/admin/plans', icon: 'Package', resource: RESOURCES.PLANS },
     { name: 'Products', href: '/admin/products', icon: 'ShoppingBag', resource: RESOURCES.PRODUCTS },
+    { name: 'Referral Codes', href: '/admin/referral-codes', icon: 'Ticket', resource: RESOURCES.REFERRAL_CODES },
+    { name: 'Partner Referrals', href: '/admin/partner-referrals', icon: 'Users', resource: RESOURCES.REFERRAL_CODES },
     { name: 'Seminars', href: '/admin/seminars', icon: 'CalendarDays', resource: RESOURCES.SEMINARS },
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
     { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
     { name: 'Audit Logs', href: '/admin/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
+    { name: 'System Test', href: '/admin/system-test', icon: 'FlaskConical', resource: RESOURCES.SYSTEM_TEST },
   ];
 
   return allItems.filter(item => hasPermission(role, item.resource, ACTIONS.READ));

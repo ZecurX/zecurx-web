@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Quote, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
-import Image from "next/image";
+import { ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+
+const AUTOPLAY_INTERVAL = 5000;
 
 const testimonials = [
     {
@@ -11,7 +12,6 @@ const testimonials = [
         name: "Dr. Rajesh Kumar",
         role: "HOD, Computer Science",
         org: "MSRIT",
-        image: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     },
     {
@@ -19,7 +19,6 @@ const testimonials = [
         name: "Prof. Vikram Singh",
         role: "Dean of Technology",
         org: "Presidency University",
-        image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     },
     {
@@ -27,7 +26,6 @@ const testimonials = [
         name: "Fr. Thomas",
         role: "Principal",
         org: "St. Paul's College",
-        image: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?q=80&w=1000&auto=format&fit=crop",
         location: "Bengaluru"
     },
     {
@@ -35,7 +33,6 @@ const testimonials = [
         name: "Dr. Anjali Menon",
         role: "Director",
         org: "RIBS",
-        image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     },
     {
@@ -43,7 +40,6 @@ const testimonials = [
         name: "Prof. Suresh Gowda",
         role: "Placement Officer",
         org: "MSRCASC",
-        image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     },
     {
@@ -51,7 +47,6 @@ const testimonials = [
         name: "Dr. Farhan Ahmed",
         role: "HOD, IT",
         org: "Yenepoya University",
-        image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1000&auto=format&fit=crop",
         location: "Bengaluru"
     },
     {
@@ -59,7 +54,6 @@ const testimonials = [
         name: "Prof. Lakshmi Narayan",
         role: "Principal",
         org: "Nagarjuna Degree College",
-        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     },
     {
@@ -67,7 +61,6 @@ const testimonials = [
         name: "Dr. R. K. Mishra",
         role: "Director",
         org: "IIBS",
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop",
         location: "Bangalore"
     }
 ];
@@ -75,120 +68,172 @@ const testimonials = [
 export default function SeminarTestimonials() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const progressRef = useRef<number | null>(null);
+    const lastTickRef = useRef<number>(0);
 
     const nextTestimonial = useCallback(() => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        setProgress(0);
     }, []);
 
     const prevTestimonial = useCallback(() => {
         setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+        setProgress(0);
     }, []);
 
     useEffect(() => {
-        if (isPaused) return;
-        const interval = setInterval(nextTestimonial, 3000);
-        return () => clearInterval(interval);
-    }, [isPaused, nextTestimonial]);
+        if (isPaused) {
+            if (progressRef.current) cancelAnimationFrame(progressRef.current);
+            return;
+        }
+
+        lastTickRef.current = performance.now();
+
+        const tick = (now: number) => {
+            const delta = now - lastTickRef.current;
+            lastTickRef.current = now;
+
+            setProgress((prev) => {
+                const next = prev + (delta / AUTOPLAY_INTERVAL) * 100;
+                if (next >= 100) {
+                    // Schedule advance on next frame to avoid state update during render
+                    requestAnimationFrame(() => nextTestimonial());
+                    return 0;
+                }
+                return next;
+            });
+
+            progressRef.current = requestAnimationFrame(tick);
+        };
+
+        progressRef.current = requestAnimationFrame(tick);
+        return () => {
+            if (progressRef.current) cancelAnimationFrame(progressRef.current);
+        };
+    }, [isPaused, currentIndex, nextTestimonial]);
+
+    const current = testimonials[currentIndex];
+    const initials = current.name
+        .split(" ")
+        .map((w) => w[0])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
 
     return (
-        <section className="py-16 md:py-32 bg-background border-t border-border/40">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-6">
-                    <div>
-                        <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
-                            Academic <span className="text-muted-foreground font-medium">Impact</span>
-                        </h2>
-                        <p className="text-muted-foreground max-w-xl text-base md:text-lg font-light">
-                            Trusted by leading institutions to bridge the gap between curriculum and cyber warfare.
-                        </p>
+        <section className="relative py-20 md:py-32 bg-background overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/[0.03] rounded-full blur-[120px]" />
+            </div>
+
+            <div className="relative z-10 max-w-5xl mx-auto px-6">
+                {/* Section Header */}
+                <div className="text-center mb-16 md:mb-20">
+                    <div className="flex items-center justify-center gap-2.5 mb-5">
+                        <GraduationCap className="w-4 h-4 text-primary" />
+                        <span className="text-primary font-manrope font-semibold tracking-widest text-xs uppercase">
+                            Testimonials
+                        </span>
                     </div>
-                    
-                    <div className="flex gap-2">
-                        <button
-                            onClick={prevTestimonial}
-                            className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors text-foreground"
-                            aria-label="Previous testimonial"
-                        >
-                            <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
-                        <button
-                            onClick={nextTestimonial}
-                            className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors text-foreground"
-                            aria-label="Next testimonial"
-                        >
-                            <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-                        </button>
-                    </div>
+                    <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-4 tracking-tight text-foreground">
+                        Academic{" "}
+                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-muted-foreground">
+                            Impact
+                        </span>
+                    </h2>
+                    <p className="text-muted-foreground max-w-lg mx-auto text-base md:text-lg font-manrope font-light leading-relaxed">
+                        Trusted by leading institutions to bridge the gap between curriculum and cyber warfare.
+                    </p>
                 </div>
 
+                {/* Testimonial */}
                 <div
-                    className="relative w-full h-auto min-h-[450px] md:min-h-[320px] lg:min-h-[380px] md:aspect-[2.2/1] lg:aspect-[2.5/1] overflow-hidden rounded-2xl md:rounded-[2rem] border border-border bg-card flex flex-col md:block shadow-sm"
+                    className="relative"
                     onMouseEnter={() => setIsPaused(true)}
                     onMouseLeave={() => setIsPaused(false)}
                 >
+                    {/* Progress bar */}
+                    <div className="max-w-xs mx-auto h-[2px] bg-border/30 rounded-full mb-12 overflow-hidden">
+                        <div
+                            className="h-full bg-primary/50 rounded-full transition-none"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentIndex}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="md:absolute inset-0 flex flex-col md:flex-row h-full"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-center"
                         >
-                            {/* Image Side */}
-                            <div className="relative w-full md:w-[40%] h-56 md:h-full shrink-0 overflow-hidden">
-                                <Image
-                                    src={testimonials[currentIndex].image}
-                                    alt={testimonials[currentIndex].org}
-                                    fill
-                                    className="object-cover transition-all duration-700"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-card" />
-                                <div className="absolute bottom-4 left-4 text-white md:hidden">
-                                    <div className="font-bold text-base">{testimonials[currentIndex].org}</div>
-                                    <div className="text-xs opacity-80 flex items-center gap-1">
-                                        <MapPin className="w-3 h-3" /> {testimonials[currentIndex].location}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Content Side */}
-                            <div className="relative w-full md:w-[60%] h-full p-6 md:p-8 lg:p-10 flex flex-col justify-center bg-card">
-                                <Quote className="w-8 h-8 text-primary/20 mb-4" />
-                                
-                                <p className="text-base md:text-lg lg:text-xl font-medium leading-relaxed text-foreground">
-                                    "{testimonials[currentIndex].quote}"
+                            <blockquote className="max-w-4xl mx-auto mb-10">
+                                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-manrope font-light text-foreground/90 leading-[1.35] tracking-[-0.01em]">
+                                    &ldquo;{current.quote}&rdquo;
                                 </p>
+                            </blockquote>
 
-                                <div className="mt-6 pt-4 border-t border-border/50 flex justify-between items-end">
-                                    <div>
-                                        <div className="font-bold text-foreground text-sm md:text-base">{testimonials[currentIndex].name}</div>
-                                        <div className="text-xs md:text-sm text-muted-foreground">{testimonials[currentIndex].role}</div>
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                    <span className="text-sm font-manrope font-semibold text-primary">
+                                        {initials}
+                                    </span>
+                                </div>
+                                <div>
+                                    <div className="font-manrope font-semibold text-foreground text-base">
+                                        {current.name}
                                     </div>
-                                    <div className="hidden md:block text-right">
-                                        <div className="font-bold text-foreground text-sm md:text-base">{testimonials[currentIndex].org}</div>
-                                        <div className="text-xs text-muted-foreground flex items-center justify-end gap-1 mt-0.5">
-                                            <MapPin className="w-3 h-3" /> {testimonials[currentIndex].location}
-                                        </div>
+                                    <div className="text-sm text-muted-foreground font-manrope">
+                                        {current.role}, {current.org}
+                                    </div>
+                                    <div className="text-xs text-muted-foreground/60 font-manrope mt-0.5">
+                                        {current.location}
                                     </div>
                                 </div>
                             </div>
                         </motion.div>
                     </AnimatePresence>
-                </div>
-                
-                {/* Progress Indicators */}
-                <div className="flex justify-center gap-2 mt-8">
-                    {testimonials.map((_, i) => (
+
+                    {/* Navigation */}
+                    <div className="flex items-center justify-center gap-4 mt-12">
                         <button
-                            key={i}
-                            onClick={() => setCurrentIndex(i)}
-                            className={`h-1 transition-all duration-300 rounded-full ${
-                                i === currentIndex ? "w-8 bg-foreground" : "w-4 bg-border hover:bg-muted-foreground"
-                            }`}
-                            aria-label={`Go to slide ${i + 1}`}
-                        />
-                    ))}
+                            onClick={prevTestimonial}
+                            className="group w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200 text-foreground"
+                            aria-label="Previous testimonial"
+                        >
+                            <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+                        </button>
+
+                        <div className="flex items-center gap-2">
+                            {testimonials.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => {
+                                        setCurrentIndex(i);
+                                        setProgress(0);
+                                    }}
+                                    className={`h-[3px] transition-all duration-300 rounded-full ${
+                                        i === currentIndex
+                                            ? "w-8 bg-primary"
+                                            : "w-3 bg-border hover:bg-muted-foreground"
+                                    }`}
+                                    aria-label={`Go to slide ${i + 1}`}
+                                />
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={nextTestimonial}
+                            className="group w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-200 text-foreground"
+                            aria-label="Next testimonial"
+                        >
+                            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { query } from '@/lib/db';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar } from '@/types/seminar';
+import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
 
 export async function POST(request: NextRequest) {
     const clientIp = getClientIp(request);
@@ -92,91 +93,105 @@ export async function POST(request: NextRequest) {
 
         const seminar = result.rows[0];
 
-        const adminEmailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
-                    New Seminar Booking Request
-                </h2>
-                
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #333;">Seminar Details</h3>
-                    <p><strong>Title:</strong> ${title}</p>
-                    <p><strong>Type:</strong> ${seminarType}</p>
-                    <p><strong>Topic:</strong> ${topic}</p>
-                    <p><strong>Duration:</strong> ${duration}</p>
-                    <p><strong>Date:</strong> ${date.toLocaleDateString('en-US', { dateStyle: 'full' })} at ${timeStr}</p>
-                    <p><strong>Location:</strong> ${locationType === 'online' ? 'Online' : venueAddress}</p>
-                    <p><strong>Expected Attendees:</strong> ${attendees}</p>
-                </div>
+        const adminBodyContent = `
+            <p style="color: #333; font-size: 16px; margin: 0 0 20px 0;">
+                <strong>New Seminar Booking Request Received</strong>
+            </p>
 
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #333;">Speaker</h3>
-                    <p><strong>Name:</strong> ${speakerName}</p>
-                    ${speakerTitle ? `<p><strong>Title:</strong> ${speakerTitle}</p>` : ''}
-                </div>
+            ${emailSection('Seminar Details', `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Title:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${title}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Type:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${seminarType}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Topic:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${topic}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Duration:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${duration}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Date:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${date.toLocaleDateString('en-US', { dateStyle: 'full' })} at ${timeStr}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Location:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${locationType === 'online' ? 'Online' : venueAddress}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Expected Attendees:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${attendees}</td></tr>
+                </table>
+            `)}
 
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #333;">Contact Person</h3>
-                    <p><strong>Name:</strong> ${name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ''}
-                    <p><strong>Organization:</strong> ${organization}</p>
-                </div>
+            ${emailSection('Speaker', `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Name:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${speakerName}</td></tr>
+                    ${speakerTitle ? `<tr><td style="padding: 6px 0; color: #666;"><strong>Title:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${speakerTitle}</td></tr>` : ''}
+                </table>
+            `)}
 
-                ${message ? `
-                <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #333;">Additional Notes</h3>
-                    <p style="color: #555;">${message.replace(/\n/g, '<br>')}</p>
-                </div>` : ''}
+            ${emailSection('Contact Person', `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Name:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${name}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Email:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${email}</td></tr>
+                    ${phone ? `<tr><td style="padding: 6px 0; color: #666;"><strong>Phone:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${phone}</td></tr>` : ''}
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Organization:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${organization}</td></tr>
+                </table>
+            `)}
 
-                <div style="margin-top: 30px; padding: 20px; background: #1a1a1a; border-radius: 8px; text-align: center;">
-                    <p style="color: #fff; margin: 0 0 15px 0;"><strong>Action Required</strong></p>
-                    <p style="color: #ccc; font-size: 14px; margin: 0;">
-                        Review this booking request in the admin panel and approve or reject it.
-                    </p>
-                </div>
+            ${message ? emailSection('Additional Notes', `<p style="color: #555; margin: 0; white-space: pre-wrap;">${message}</p>`) : ''}
 
-                <p style="color: #888; font-size: 12px; margin-top: 20px;">
-                    Seminar ID: ${seminar.id}
-                </p>
-            </div>
+            <p style="color: #999; font-size: 12px; margin: 20px 0 0 0; text-align: center;">
+                Seminar ID: ${seminar.id}
+            </p>
         `;
 
-        const userEmailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                <h2 style="color: #1a1a1a;">Thank you, ${name}!</h2>
-                <p style="color: #555;">
-                    Your seminar booking request has been submitted successfully and is currently under review.
-                </p>
-                
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #333;">Booking Summary</h3>
-                    <p><strong>Seminar:</strong> ${title}</p>
-                    <p><strong>Date:</strong> ${date.toLocaleDateString('en-US', { dateStyle: 'full' })}</p>
-                    <p><strong>Duration:</strong> ${duration}</p>
-                    <p><strong>Location:</strong> ${locationType === 'online' ? 'Online' : venueAddress}</p>
-                    <p><strong>Expected Attendees:</strong> ${attendees}</p>
-                </div>
+        const adminEmailHtml = brandedEmailTemplate({
+            accent: 'info',
+            body: adminBodyContent,
+            previewText: `New Seminar Booking: ${title}`,
+            cta: {
+                title: 'Review Booking',
+                description: 'Review and approve or reject this booking request in the admin panel',
+                buttonText: 'GO TO ADMIN PANEL',
+                buttonUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'https://zecurx.com'}/admin/seminars/${seminar.id}`
+            },
+            includeMarketing: false,
+            showSocials: false,
+        });
 
-                <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="margin-top: 0; color: #2e7d32;">What happens next?</h3>
-                    <ol style="color: #555; padding-left: 20px;">
-                        <li>Our team will review your request within 24-48 hours</li>
-                        <li>Once approved, you'll receive a confirmation email</li>
-                        <li>You'll get a unique registration link to share with your students</li>
-                        <li>Students can register and receive their certificates after the seminar</li>
-                    </ol>
-                </div>
+        const userBodyContent = `
+            <h2 style="color: #1a1a1a; margin: 0 0 16px 0; font-size: 22px;">
+                Thank you, ${name}!
+            </h2>
+            <p style="color: #555; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0;">
+                Your seminar booking request has been submitted successfully and is currently under review.
+            </p>
+            
+            ${emailSection('Booking Summary', `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Seminar:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${title}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Date:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${date.toLocaleDateString('en-US', { dateStyle: 'full' })}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Duration:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${duration}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Location:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${locationType === 'online' ? 'Online' : venueAddress}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Expected Attendees:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${attendees}</td></tr>
+                </table>
+            `)}
 
-                <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    Best regards,<br>ZecurX Private Limited
-                </p>
-            </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                <strong>What happens next:</strong>
+            </p>
+            <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+                <li>Our team will review your request within 24-48 hours</li>
+                <li>Once approved, you'll receive a confirmation email</li>
+                <li>You'll get a unique registration link to share with your students</li>
+                <li>Students can register and receive their certificates after the seminar</li>
+            </ol>
+
+            <p style="color: #888; font-size: 13px; margin: 20px 0; text-align: center;">
+                Best regards,<br><strong>ZecurX Team</strong>
+            </p>
         `;
+
+        const userEmailHtml = brandedEmailTemplate({
+            accent: 'default',
+            body: userBodyContent,
+            previewText: 'Seminar Booking Request Received',
+            includeMarketing: true,
+            marketingType: 'corporate',
+            showSocials: true,
+        });
 
         try {
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: 'official@zecurx.com',
                 replyTo: email,
                 subject: `New Seminar Booking: ${title} - ${organization}`,
@@ -184,7 +199,7 @@ export async function POST(request: NextRequest) {
             });
 
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: email,
                 subject: `Seminar Booking Request Received - ZecurX`,
                 html: userEmailHtml,

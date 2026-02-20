@@ -27,7 +27,8 @@ import {
   Download,
   Send,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from 'lucide-react';
 import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus, CertificateNameRequest } from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -71,6 +72,7 @@ export default function SeminarDetailPage() {
   const [notifySubject, setNotifySubject] = useState('');
   const [notifyMessage, setNotifyMessage] = useState('');
   const [sendingNotification, setSendingNotification] = useState(false);
+  const [cleaningUp, setCleaningUp] = useState(false);
 
   useEffect(() => {
     if (showEditSeminar || editingRegistration || showNotifyDialog) {
@@ -300,7 +302,34 @@ export default function SeminarDetailPage() {
     }
   };
 
-  const downloadCSV = (data: any[], filename: string, headers: string[], mapping: (item: any) => string[]) => {
+  const handleCleanupOldData = async () => {
+    if (!confirm('Delete all certificate data older than 30 days? This includes certificates, feedback, name requests, promo codes, and PDF files from CDN. This action cannot be undone.')) return;
+
+    setCleaningUp(true);
+    try {
+      const res = await fetch(`/api/admin/seminars/cleanup`, {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`${data.message}\n\nDeleted:\n• ${data.deleted.certificates} certificate(s)\n• ${data.deleted.feedback} feedback record(s)\n• ${data.deleted.nameRequests} name request(s)\n• ${data.deleted.promoCodes} promo code(s)\n• ${data.deleted.s3Files} PDF file(s) from CDN`);
+        fetchSeminar();
+        fetchFeedback();
+        fetchNameRequests();
+      } else {
+        alert(data.error || 'Cleanup failed');
+      }
+    } catch (error) {
+      console.error('Cleanup error:', error);
+      alert('An error occurred during cleanup');
+    } finally {
+      setCleaningUp(false);
+    }
+  };
+
+  const downloadCSV = <T,>(data: T[], filename: string, headers: string[], mapping: (item: T) => string[]) => {
     const csvRows = [
       headers.join(','),
       ...data.map(item => mapping(item).map(val =>
@@ -776,6 +805,30 @@ export default function SeminarDetailPage() {
                       )}
                     </Button>
                   )}
+
+                  <div className="pt-3 mt-3 border-t border-border">
+                    <Button
+                      onClick={handleCleanupOldData}
+                      disabled={cleaningUp}
+                      variant="outline"
+                      className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                    >
+                      {cleaningUp ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Cleaning up...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Cleanup Old Data (30d)
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
+                      Deletes certificates, feedback &amp; promo codes older than 30 days
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

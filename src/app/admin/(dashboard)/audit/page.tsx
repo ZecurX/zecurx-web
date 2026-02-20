@@ -61,8 +61,8 @@ export default function AuditLogsPage() {
       setSuccess(`Deleted ${data.deleted_count} old logs`);
       setShowDeleteDialog(false);
       fetchLogs();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 

@@ -23,16 +23,30 @@ export const metadata: Metadata = {
     },
 };
 
+interface ShopProduct {
+    id: string;
+    name: string;
+    price: number | string;
+    description: string;
+    image: string;
+    images?: string[];
+    stock: number;
+    delivery_days?: number;
+    features?: string[];
+    tags?: string[];
+    created_at: string;
+}
+
 async function getProducts() {
     try {
-        const result = await query(`
+        const result = await query<ShopProduct>(`
             SELECT * FROM products 
             ORDER BY created_at DESC
         `);
         return result.rows;
     } catch (error) {
         console.error('Error fetching products:', error);
-        return [];
+        return [] as ShopProduct[];
     }
 }
 

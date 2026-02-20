@@ -8,6 +8,16 @@ import ViewIncrement from '@/components/blog/ViewIncrement';
 import ShareButtons from '@/components/blog/ShareButtons';
 import { Metadata } from 'next';
 
+interface RelatedPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  featured_image_url: string | null;
+  published_at: string;
+  labels?: Record<string, unknown>[];
+}
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
@@ -80,14 +90,14 @@ export default async function BlogPostPage({ params }: Props) {
       WHERE bpl.blog_post_id = $1
     `, [post.id]);
 
-    post.labels = labelsResult.rows.map((l: any) => ({ blog_labels: l }));
+    post.labels = labelsResult.rows.map((l: Record<string, unknown>) => ({ blog_labels: l }));
     post.author = { name: post.author_name, email: post.author_email };
 
-    let relatedPosts: any[] = [];
+    let relatedPosts: RelatedPost[] = [];
     if (post.labels && post.labels.length > 0) {
-      const labelIds = post.labels.map((l: any) => l.blog_labels.id);
+      const labelIds = post.labels.map((l: Record<string, unknown>) => (l.blog_labels as Record<string, unknown>).id);
 
-      const relatedResult = await query(`
+      const relatedResult = await query<RelatedPost>(`
         SELECT DISTINCT bp.id, bp.title, bp.slug, bp.excerpt, bp.featured_image_url, bp.published_at
         FROM blog_posts bp
         JOIN blog_post_labels bpl ON bp.id = bpl.blog_post_id
@@ -104,7 +114,7 @@ export default async function BlogPostPage({ params }: Props) {
           JOIN blog_post_labels bpl ON bl.id = bpl.label_id
           WHERE bpl.blog_post_id = $1
         `, [rp.id]);
-        rp.labels = rpLabels.rows.map((l: any) => ({ blog_labels: l }));
+        rp.labels = rpLabels.rows.map((l: Record<string, unknown>) => ({ blog_labels: l }));
       }
     }
 
@@ -124,16 +134,19 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Header */}
         <div className="space-y-6">
           <div className="flex flex-wrap gap-2">
-            {post.labels.map((l: any) => (
+            {post.labels.map((l: Record<string, unknown>) => {
+              const bl = l.blog_labels as Record<string, unknown>;
+              return (
               <Link
-                key={l.blog_labels.id}
-                href={`/blog?label=${l.blog_labels.slug}`}
+                key={String(bl.id)}
+                href={`/blog?label=${String(bl.slug)}`}
                 className="px-3 py-1 text-sm font-semibold text-white rounded-full transition-opacity hover:opacity-90"
-                style={{ backgroundColor: l.blog_labels.color }}
+                style={{ backgroundColor: String(bl.color) }}
               >
-                {l.blog_labels.name}
+                {String(bl.name)}
               </Link>
-            ))}
+              );
+            })}
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
@@ -186,11 +199,14 @@ export default async function BlogPostPage({ params }: Props) {
             <Tag className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium text-muted-foreground">Tags:</span>
             <div className="flex flex-wrap gap-2">
-              {post.labels.map((l: any) => (
-                <span key={l.blog_labels.id} className="text-sm text-foreground bg-muted px-2 py-1 rounded-md">
-                  {l.blog_labels.name}
+              {post.labels.map((l: Record<string, unknown>) => {
+                const bl = l.blog_labels as Record<string, unknown>;
+                return (
+                <span key={String(bl.id)} className="text-sm text-foreground bg-muted px-2 py-1 rounded-md">
+                  {String(bl.name)}
                 </span>
-              ))}
+                );
+              })}
             </div>
           </div>
 

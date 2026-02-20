@@ -16,7 +16,7 @@ import {
     ChevronRight,
     List,
     LayoutGrid,
-    ChevronLeft
+    ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

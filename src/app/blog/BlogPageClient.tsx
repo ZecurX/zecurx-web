@@ -24,9 +24,33 @@ function AnimatedGridPattern({ className }: { className?: string }) {
   );
 }
 
+interface BlogLabel {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
+
+interface BlogAuthor {
+  name: string;
+  email: string;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  featured_image_url?: string;
+  published_at?: string;
+  labels: Array<{ blog_labels: BlogLabel }>;
+  author?: BlogAuthor;
+}
+
 interface BlogPageClientProps {
-  posts?: any[];
-  allLabels?: any[];
+  posts?: BlogPost[];
+  allLabels?: BlogLabel[];
   page?: number;
   totalPages?: number;
   search?: string;
@@ -199,7 +223,7 @@ export function BlogPageClient({
 
                   {post.labels.length > 0 && (
                     <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                      {post.labels.slice(0, 2).map((l: any) => (
+                      {post.labels.slice(0, 2).map((l) => (
                         <span
                           key={l.blog_labels.id}
                           className="px-3 py-1 text-xs font-semibold text-white rounded-full shadow-lg backdrop-blur-sm"

@@ -5,6 +5,7 @@ export default async function ProductsPage() {
     await requirePagePermission(RESOURCES.PRODUCTS, ACTIONS.READ);
 
     // Import dynamically to avoid SSR hydration issues with Radix UI
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ProductsList = require("./ProductsList").default;
 
     return (
