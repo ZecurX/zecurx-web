@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Loader2, Plus, Trash2, Upload, X, FileText, Image as ImageIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 type Plan = {
@@ -44,6 +44,10 @@ export default function EditPlanDialog({ plan, open, onOpenChange, onUpdate }: {
         pricing_type: 'fixed'
     });
     const [newFeature, setNewFeature] = useState('');
+    const [logoUploading, setLogoUploading] = useState(false);
+    const [brochureUploading, setBrochureUploading] = useState(false);
+    const logoInputRef = useRef<HTMLInputElement>(null);
+    const brochureInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (plan) {
@@ -80,6 +84,48 @@ export default function EditPlanDialog({ plan, open, onOpenChange, onUpdate }: {
         const newFeatures = [...formData.features];
         newFeatures.splice(index, 1);
         setFormData({ ...formData, features: newFeatures });
+    };
+
+    const handleLogoUpload = async (file: File) => {
+        setLogoUploading(true);
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('type', 'logo');
+            const res = await fetch('/api/admin/plans/upload', { method: 'POST', body: fd });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Upload failed');
+            }
+            const data = await res.json();
+            setFormData(prev => ({ ...prev, logo: data.url }));
+        } catch (err) {
+            alert(err instanceof Error ? err.message : 'Logo upload failed');
+        } finally {
+            setLogoUploading(false);
+            if (logoInputRef.current) logoInputRef.current.value = '';
+        }
+    };
+
+    const handleBrochureUpload = async (file: File) => {
+        setBrochureUploading(true);
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('type', 'brochure');
+            const res = await fetch('/api/admin/plans/upload', { method: 'POST', body: fd });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Upload failed');
+            }
+            const data = await res.json();
+            setFormData(prev => ({ ...prev, brochure_link: data.url }));
+        } catch (err) {
+            alert(err instanceof Error ? err.message : 'Brochure upload failed');
+        } finally {
+            setBrochureUploading(false);
+            if (brochureInputRef.current) brochureInputRef.current.value = '';
+        }
     };
 
     const handleSave = async () => {
@@ -258,23 +304,89 @@ export default function EditPlanDialog({ plan, open, onOpenChange, onUpdate }: {
                         <h3 className="text-sm font-semibold text-foreground border-b border-border pb-2">Media</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Logo Path</label>
+                                <label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Course Logo</label>
+                                {formData.logo && (
+                                    <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border bg-secondary">
+                                        <img src={formData.logo} alt="Logo preview" className="w-full h-full object-contain" />
+                                        <button
+                                            onClick={() => setFormData(prev => ({ ...prev, logo: '' }))}
+                                            className="absolute top-1 right-1 p-0.5 bg-background/80 rounded-full text-muted-foreground hover:text-red-400 transition-colors"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                )}
+                                <input
+                                    ref={logoInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleLogoUpload(file);
+                                    }}
+                                />
+                                <button
+                                    onClick={() => logoInputRef.current?.click()}
+                                    disabled={logoUploading}
+                                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground bg-secondary border border-border rounded-lg hover:border-primary/50 hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {logoUploading
+                                        ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading…</>
+                                        : <><ImageIcon className="w-3.5 h-3.5" /> {formData.logo ? 'Replace Logo' : 'Upload Logo'}</>
+                                    }
+                                </button>
                                 <input
                                     type="text"
-                                    placeholder="/images/courses/xxx.png"
+                                    placeholder="Or paste URL manually…"
                                     value={formData.logo}
                                     onChange={(e) => setFormData({ ...formData, logo: e.target.value })}
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary/50 transition-colors placeholder:text-muted-foreground/50"
+                                    className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary/50 transition-colors placeholder:text-muted-foreground/40"
                                 />
                             </div>
+
                             <div className="space-y-2">
-                                <label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Brochure Link</label>
+                                <label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Brochure (PDF)</label>
+                                {formData.brochure_link && (
+                                    <div className="flex items-center gap-2 px-3 py-2 bg-secondary border border-border rounded-lg">
+                                        <FileText className="w-4 h-4 text-primary shrink-0" />
+                                        <span className="text-xs text-foreground truncate flex-1">
+                                            {formData.brochure_link.split('/').pop() || 'brochure.pdf'}
+                                        </span>
+                                        <button
+                                            onClick={() => setFormData(prev => ({ ...prev, brochure_link: '' }))}
+                                            className="text-muted-foreground hover:text-red-400 transition-colors shrink-0"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                )}
+                                <input
+                                    ref={brochureInputRef}
+                                    type="file"
+                                    accept="application/pdf"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleBrochureUpload(file);
+                                    }}
+                                />
+                                <button
+                                    onClick={() => brochureInputRef.current?.click()}
+                                    disabled={brochureUploading}
+                                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground bg-secondary border border-border rounded-lg hover:border-primary/50 hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {brochureUploading
+                                        ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading…</>
+                                        : <><Upload className="w-3.5 h-3.5" /> {formData.brochure_link ? 'Replace PDF' : 'Upload PDF'}</>
+                                    }
+                                </button>
                                 <input
                                     type="text"
-                                    placeholder="https://..."
+                                    placeholder="Or paste URL manually…"
                                     value={formData.brochure_link}
                                     onChange={(e) => setFormData({ ...formData, brochure_link: e.target.value })}
-                                    className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary/50 transition-colors placeholder:text-muted-foreground/50"
+                                    className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary/50 transition-colors placeholder:text-muted-foreground/40"
                                 />
                             </div>
                         </div>
