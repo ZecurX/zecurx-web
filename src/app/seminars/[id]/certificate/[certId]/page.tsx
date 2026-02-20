@@ -23,9 +23,8 @@ interface Props {
 
 async function getCertificate(certId: string): Promise<CertificateVerification | null> {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}`
-            : "http://localhost:3000";
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+            ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
         const response = await fetch(`${baseUrl}/api/certificates/${certId}`, {
             cache: "no-store",
@@ -84,7 +83,7 @@ export default async function CertificatePage({ params }: Props) {
     return (
         <div className="min-h-screen bg-background flex flex-col font-sans selection:bg-zinc-900/10 relative overflow-hidden">
             <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-            <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-emerald-400 opacity-20 blur-[100px]"></div>
+            <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary opacity-20 blur-[100px]"></div>
             <div className="absolute right-0 bottom-0 -z-10 h-[310px] w-[310px] rounded-full bg-zinc-400 opacity-20 blur-[100px]"></div>
 
             <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
@@ -176,8 +175,8 @@ export default async function CertificatePage({ params }: Props) {
                                             </div>
                                         </div>
 
-                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100/50 text-emerald-700 shadow-sm">
-                                            <CheckCircle2 className="w-5 h-5 fill-emerald-600 text-white" />
+                                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted border border-border text-foreground shadow-sm">
+                                            <CheckCircle2 className="w-5 h-5 text-primary" />
                                             <span className="text-xs font-bold uppercase tracking-wide">Certificate Issued</span>
                                         </div>
                                     </div>
