@@ -8,10 +8,7 @@ import {
     CheckCircle2,
     AlertCircle,
     ArrowLeft,
-    Mail,
-    FileText,
-    XCircle,
-    Award
+    XCircle
 } from "lucide-react";
 import Link from "next/link";
 

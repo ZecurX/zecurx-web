@@ -9,7 +9,6 @@ import {
     Code,
     AlertTriangle,
     CheckCircle,
-    ChevronRight,
     BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

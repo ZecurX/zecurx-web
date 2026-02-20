@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/auth";
 import { getAuditLogs, cleanupOldAuditLogs } from "@/lib/audit";
-import { ROLES, AuditAction, RESOURCES, ACTIONS } from "@/types/auth";
+import { AuditAction, RESOURCES, ACTIONS } from "@/types/auth";
 
 // GET - Fetch audit logs with filtering (super_admin only)
 export async function GET(req: NextRequest) {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Lock, Loader2, CheckCircle2, XCircle, AlertTriangle, Shield } from 'lucide-react';
+import { Lock, Loader2, CheckCircle2, XCircle, Shield } from 'lucide-react';
 import ToolPageLayout from '@/components/tools/ToolPageLayout';
 import { Button } from '@/components/ui/button';
 
