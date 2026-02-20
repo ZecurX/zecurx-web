@@ -91,7 +91,7 @@ export function ShareButton({ title, text, url: propUrl, compact, className }: S
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-full bg-black/5 text-black hover:bg-black hover:text-white transition-colors"
+                    className="h-10 w-10 rounded-full bg-foreground/5 text-foreground hover:bg-foreground hover:text-background transition-colors"
                     onClick={handleTwitter}
                     title="Share on X"
                 >
@@ -109,7 +109,7 @@ export function ShareButton({ title, text, url: propUrl, compact, className }: S
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-full bg-zinc-100 text-zinc-600 hover:bg-zinc-800 hover:text-white transition-colors"
+                    className="h-10 w-10 rounded-full bg-muted text-muted-foreground hover:bg-foreground hover:text-background transition-colors"
                     onClick={handleCopy}
                     title="Copy link"
                 >

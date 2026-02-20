@@ -315,12 +315,12 @@ export default function FeedbackPage() {
 
     if (error && !seminar) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 text-center">
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
                 <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">Seminar Not Found</h1>
-                <p className="text-gray-500 font-medium mb-6 max-w-md">{error}</p>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Seminar Not Found</h1>
+                <p className="text-muted-foreground font-medium mb-6 max-w-md">{error}</p>
                 <Link href="/resources/seminars">
-                    <button className="h-12 px-6 bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
+                    <button className="h-12 px-6 bg-card border border-border text-foreground hover:bg-muted rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 shadow-sm">
                         <ArrowLeft className="w-4 h-4" />
                         Return to Seminars
                     </button>
@@ -330,19 +330,19 @@ export default function FeedbackPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white relative overflow-hidden py-12 md:py-24">
+        <div className="min-h-screen bg-background relative overflow-hidden py-12 md:py-24">
             {/* Background elements to match main form style if needed */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:20px_20px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40 pointer-events-none" />
 
             <div className="container relative z-10 mx-auto px-4">
                 <div className="max-w-3xl mx-auto">
-                    <div className="bg-white border border-gray-200 rounded-[2rem] p-5 md:px-8 md:py-6 shadow-xl relative flex flex-col">
+                    <div className="bg-card border border-border rounded-[2rem] p-5 md:px-8 md:py-6 shadow-xl relative flex flex-col">
                         {currentStep < 5 && (
                             <div className="mb-6 flex items-center justify-between relative px-2">
                                 {/* Stepper Logic with fixed line offsets */}
-                                <div className="absolute top-6 left-12 right-12 h-0.5 bg-gray-100 -z-0"></div>
+                                <div className="absolute top-6 left-12 right-12 h-0.5 bg-muted -z-0"></div>
                                 <div
-                                    className="absolute top-6 left-12 right-12 h-0.5 bg-zinc-900 transition-all duration-500 z-0 origin-left"
+                                    className="absolute top-6 left-12 right-12 h-0.5 bg-foreground transition-all duration-500 z-0 origin-left"
                                     style={{ transform: `scaleX(${(currentStep - 1) / (STEPS.length - 1)})` }}
                                 ></div>
                                 {STEPS.map((step, idx) => (
@@ -350,16 +350,16 @@ export default function FeedbackPage() {
                                         <div className={cn(
                                             "w-12 h-12 rounded-2xl flex items-center justify-center font-mono text-sm transition-all duration-500 border",
                                             currentStep === step.id
-                                                ? "bg-zinc-900 border-zinc-900 text-white shadow-lg scale-110"
+                                                ? "bg-foreground border-foreground text-background shadow-lg scale-110"
                                                 : currentStep > step.id
-                                                    ? "bg-gray-100 border-gray-200 text-zinc-900"
-                                                    : "bg-white border-gray-100 text-gray-300"
+                                                    ? "bg-muted border-border text-foreground"
+                                                    : "bg-background border-muted text-border"
                                         )}>
                                             {currentStep > idx + 1 ? <CheckCircle2 className="w-5 h-5" /> : `0${step.id}`}
                                         </div>
                                         <span className={cn(
                                             "text-[10px] uppercase font-bold tracking-wider hidden md:block",
-                                            currentStep === step.id ? "text-zinc-900" : "text-gray-300"
+                                            currentStep === step.id ? "text-foreground" : "text-border"
                                         )}>
                                             {step.title}
                                         </span>
@@ -381,8 +381,8 @@ export default function FeedbackPage() {
                                         className="w-full"
                                     >
                                         <div className="space-y-1 mb-6">
-                                            <h3 className="text-lg font-bold text-gray-900">Personal Details</h3>
-                                            <p className="text-xs text-gray-500 font-medium">
+                                            <h3 className="text-lg font-bold text-foreground">Personal Details</h3>
+                                            <p className="text-xs text-muted-foreground font-medium">
                                                 Please provide your information for accurate certificate issuance.
                                             </p>
                                         </div>
@@ -390,13 +390,13 @@ export default function FeedbackPage() {
                                         <form onSubmit={step1Form.handleSubmit(handleStep1Submit)} className="space-y-5 relative z-10 w-full">
                                             <div className="grid md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
-                                                    <Label htmlFor="fullName" className="text-xs font-bold text-gray-700 ml-1">Full Name *</Label>
+                                                    <Label htmlFor="fullName" className="text-xs font-bold text-foreground ml-1">Full Name *</Label>
                                                     <Input
                                                         id="fullName"
                                                         placeholder="Enter your full name"
                                                         {...step1Form.register("fullName")}
                                                         className={cn(
-                                                            "h-10 px-3 bg-gray-50 border-gray-200 rounded-lg focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 text-sm",
+                                                            "h-10 px-3 bg-muted/50 border-border rounded-lg focus:border-foreground focus:ring-1 focus:ring-foreground focus:bg-background transition-all duration-300 text-foreground placeholder:text-muted-foreground text-sm",
                                                             step1Form.formState.errors.fullName && "border-red-500 bg-red-50"
                                                         )}
                                                     />
@@ -406,14 +406,14 @@ export default function FeedbackPage() {
                                                 </div>
 
                                                 <div className="space-y-1.5">
-                                                    <Label htmlFor="email" className="text-xs font-bold text-gray-700 ml-1">Email Address *</Label>
+                                                    <Label htmlFor="email" className="text-xs font-bold text-foreground ml-1">Email Address *</Label>
                                                     <Input
                                                         id="email"
                                                         type="email"
                                                         placeholder="you@email.com"
                                                         {...step1Form.register("email")}
                                                         className={cn(
-                                                            "h-10 px-3 bg-gray-50 border-gray-200 rounded-lg focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 text-sm",
+                                                            "h-10 px-3 bg-muted/50 border-border rounded-lg focus:border-foreground focus:ring-1 focus:ring-foreground focus:bg-background transition-all duration-300 text-foreground placeholder:text-muted-foreground text-sm",
                                                             step1Form.formState.errors.email && "border-red-500 bg-red-50"
                                                         )}
                                                     />
@@ -424,13 +424,13 @@ export default function FeedbackPage() {
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="collegeName" className="text-xs font-bold text-gray-700 ml-1">College / Organization Name *</Label>
+                                                <Label htmlFor="collegeName" className="text-xs font-bold text-foreground ml-1">College / Organization Name *</Label>
                                                 <Input
                                                     id="collegeName"
                                                     placeholder="Enter institution name"
                                                     {...step1Form.register("collegeName")}
                                                     className={cn(
-                                                        "h-10 px-3 bg-gray-50 border-gray-200 rounded-lg focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 text-sm",
+                                                        "h-10 px-3 bg-muted/50 border-border rounded-lg focus:border-foreground focus:ring-1 focus:ring-foreground focus:bg-background transition-all duration-300 text-foreground placeholder:text-muted-foreground text-sm",
                                                         step1Form.formState.errors.collegeName && "border-red-500 bg-red-50"
                                                     )}
                                                 />
@@ -441,17 +441,17 @@ export default function FeedbackPage() {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
-                                                    <Label htmlFor="year" className="text-xs font-bold text-gray-700 ml-1">Current Year of Study *</Label>
+                                                    <Label htmlFor="year" className="text-xs font-bold text-foreground ml-1">Current Year of Study *</Label>
                                                     <Select onValueChange={(value) => step1Form.setValue("year", value)}>
                                                         <SelectTrigger className={cn(
-                                                            "h-10 bg-gray-50 border-gray-200 rounded-lg focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 text-sm",
+                                                            "h-10 bg-muted/50 border-border rounded-lg focus:ring-1 focus:ring-foreground focus:border-foreground focus:bg-background transition-all duration-300 text-foreground text-sm",
                                                             step1Form.formState.errors.year && "border-red-500 bg-red-50"
                                                         )}>
                                                             <SelectValue placeholder="Select Year" />
                                                         </SelectTrigger>
-                                                        <SelectContent className="bg-white border-gray-200 text-gray-900">
+                                                        <SelectContent className="bg-background border-border text-foreground">
                                                             {YEAR_OPTIONS.map((year) => (
-                                                                <SelectItem key={year} value={year} className="focus:bg-gray-100 cursor-pointer">
+                                                                <SelectItem key={year} value={year} className="focus:bg-muted cursor-pointer">
                                                                     {year}
                                                                 </SelectItem>
                                                             ))}
@@ -463,13 +463,13 @@ export default function FeedbackPage() {
                                                 </div>
 
                                                 <div className="space-y-1.5">
-                                                    <Label htmlFor="cityState" className="text-xs font-bold text-gray-700 ml-1">Your Location (City, State) *</Label>
+                                                    <Label htmlFor="cityState" className="text-xs font-bold text-foreground ml-1">Your Location (City, State) *</Label>
                                                     <Input
                                                         id="cityState"
                                                         placeholder="e.g. Mumbai, Maharashtra"
                                                         {...step1Form.register("cityState")}
                                                         className={cn(
-                                                            "h-10 px-3 bg-gray-50 border-gray-200 rounded-lg focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 text-sm",
+                                                            "h-10 px-3 bg-muted/50 border-border rounded-lg focus:border-foreground focus:ring-1 focus:ring-foreground focus:bg-background transition-all duration-300 text-foreground placeholder:text-muted-foreground text-sm",
                                                             step1Form.formState.errors.cityState && "border-red-500 bg-red-50"
                                                         )}
                                                     />
@@ -480,13 +480,13 @@ export default function FeedbackPage() {
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="reminderContact" className="text-xs font-bold text-gray-700 ml-1">Contact Number (WhatsApp) *</Label>
+                                                <Label htmlFor="reminderContact" className="text-xs font-bold text-foreground ml-1">Contact Number (WhatsApp) *</Label>
                                                 <Input
                                                     id="reminderContact"
                                                     placeholder="Enter 10-digit number"
                                                     {...step1Form.register("reminderContact")}
                                                     className={cn(
-                                                        "h-10 px-3 bg-gray-50 border-gray-200 rounded-lg focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 text-sm",
+                                                        "h-10 px-3 bg-muted/50 border-border rounded-lg focus:border-foreground focus:ring-1 focus:ring-foreground focus:bg-background transition-all duration-300 text-foreground placeholder:text-muted-foreground text-sm",
                                                         step1Form.formState.errors.reminderContact && "border-red-500 bg-red-50"
                                                     )}
                                                 />
@@ -495,11 +495,11 @@ export default function FeedbackPage() {
                                                 )}
                                             </div>
 
-                                            <div className="pt-6 flex items-center justify-center border-t border-gray-100 mt-2">
+                                            <div className="pt-6 flex items-center justify-center border-t border-border mt-2">
                                                 <div className="w-full max-w-[280px]">
                                                     <button
                                                         type="submit"
-                                                        className="w-full h-10 rounded-lg bg-zinc-900 text-white font-bold text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
+                                                        className="w-full h-10 rounded-lg bg-foreground text-background font-bold text-xs hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
                                                     >
                                                         Next Step
                                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -520,15 +520,15 @@ export default function FeedbackPage() {
                                         className="w-full"
                                     >
                                         <div className="space-y-1 mb-6">
-                                            <h3 className="text-lg font-bold text-gray-900">Professional Interests</h3>
-                                            <p className="text-xs text-gray-500 font-medium">
+                                            <h3 className="text-lg font-bold text-foreground">Professional Interests</h3>
+                                            <p className="text-xs text-muted-foreground font-medium">
                                                 Help us tailor our future training according to your interests.
                                             </p>
                                         </div>
 
                                         <form onSubmit={step2Form.handleSubmit(handleStep2Submit)} className="space-y-5 relative z-10 w-full">
                                             <div className="space-y-4">
-                                                <Label className="text-xs font-bold text-gray-700 ml-1 block">Primary Career Interest *</Label>
+                                                <Label className="text-xs font-bold text-foreground ml-1 block">Primary Career Interest *</Label>
                                                 <RadioGroup
                                                     onValueChange={(value) => step2Form.setValue("careerInterest", value)}
                                                     className="grid gap-3"
@@ -540,7 +540,7 @@ export default function FeedbackPage() {
                                                                 "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer group",
                                                                 step2Form.watch("careerInterest") === interest
                                                                     ? "bg-zinc-900 border-zinc-900 shadow-md ring-1 ring-zinc-900"
-                                                                    : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                                                                    : "bg-background border-border hover:bg-muted hover:border-border"
                                                             )}
                                                         >
                                                             <RadioGroupItem value={interest} id={interest} className="border-gray-300 text-white data-[state=checked]:border-white data-[state=checked]:text-white scale-75" />
@@ -548,7 +548,7 @@ export default function FeedbackPage() {
                                                                 htmlFor={interest}
                                                                 className={cn(
                                                                     "cursor-pointer flex-1 font-bold select-none transition-colors text-sm",
-                                                                    step2Form.watch("careerInterest") === interest ? "text-white" : "text-gray-700 group-hover:text-gray-900"
+                                                                    step2Form.watch("careerInterest") === interest ? "text-white" : "text-foreground group-hover:text-foreground"
                                                                 )}
                                                             >
                                                                 {interest}
@@ -567,7 +567,7 @@ export default function FeedbackPage() {
                                                     animate={{ opacity: 1, height: "auto" }}
                                                     className="space-y-2"
                                                 >
-                                                    <Label htmlFor="offensiveSecurityReason" className="text-xs font-bold text-gray-700 mb-1 ml-1 block">
+                                                    <Label htmlFor="offensiveSecurityReason" className="text-xs font-bold text-foreground mb-1 ml-1 block">
                                                         Reason for Interest in Offensive Security
                                                     </Label>
                                                     <Textarea
@@ -575,7 +575,7 @@ export default function FeedbackPage() {
                                                         placeholder="What specifically interests you about offensive security?"
                                                         {...step2Form.register("offensiveSecurityReason")}
                                                         className={cn(
-                                                            "min-h-[80px] bg-white border-gray-200 rounded-lg px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-300 resize-none text-sm",
+                                                            "min-h-[80px] bg-muted/50 border-border rounded-lg px-3 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-foreground focus:border-foreground focus:bg-background transition-all duration-300 resize-none text-sm",
                                                             step2Form.formState.errors.offensiveSecurityReason && "border-red-500 bg-red-50"
                                                         )}
                                                     />
@@ -585,11 +585,11 @@ export default function FeedbackPage() {
                                                 </motion.div>
                                             )}
 
-                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-gray-100 mt-2">
+                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-border mt-2">
                                                 <div className="w-full max-w-[280px]">
                                                     <button
                                                         type="submit"
-                                                        className="w-full h-10 rounded-lg bg-zinc-900 text-white font-bold text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
+                                                        className="w-full h-10 rounded-lg bg-foreground text-background font-bold text-xs hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
                                                     >
                                                         Next Step
                                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -598,7 +598,7 @@ export default function FeedbackPage() {
                                                 <button
                                                     type="button"
                                                     onClick={goBack}
-                                                    className="text-xs font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest"
+                                                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
                                                 >
                                                     Go Back
                                                 </button>
@@ -617,15 +617,15 @@ export default function FeedbackPage() {
                                         className="w-full"
                                     >
                                         <div className="space-y-1 mb-6 text-center">
-                                            <h3 className="text-lg font-bold text-gray-900">Seminar Feedback</h3>
-                                            <p className="text-xs text-gray-500 font-medium">
+                                            <h3 className="text-lg font-bold text-foreground">Seminar Feedback</h3>
+                                            <p className="text-xs text-muted-foreground font-medium">
                                                 Your feedback helps us improve future sessions.
                                             </p>
                                         </div>
 
                                         <form onSubmit={step3Form.handleSubmit(handleStep3Submit)} className="space-y-5 relative z-10 w-full">
                                             <div className="space-y-3">
-                                                <Label className="text-xs font-bold text-gray-700 block text-center">Overall Session Rating (1-5) *</Label>
+                                                <Label className="text-xs font-bold text-foreground block text-center">Overall Session Rating (1-5) *</Label>
                                                 <div className="flex gap-3 justify-center">
                                                     {[1, 2, 3, 4, 5].map((rating) => (
                                                         <button
@@ -639,7 +639,7 @@ export default function FeedbackPage() {
                                                                     "w-8 h-8 transition-all duration-300",
                                                                     step3Form.watch("seminarRating") >= rating
                                                                         ? "fill-amber-400 text-amber-400 scale-110 drop-shadow-md"
-                                                                        : "text-gray-200 group-hover:text-amber-200"
+                                                                        : "text-muted-foreground group-hover:text-amber-200"
                                                                 )}
                                                             />
                                                         </button>
@@ -653,7 +653,7 @@ export default function FeedbackPage() {
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="mostValuablePart" className="text-xs font-bold text-gray-700 ml-1 block">
+                                                <Label htmlFor="mostValuablePart" className="text-xs font-bold text-foreground ml-1 block">
                                                     What did you find most valuable? *
                                                 </Label>
                                                 <Textarea
@@ -661,7 +661,7 @@ export default function FeedbackPage() {
                                                     placeholder="Share your key takeaways..."
                                                     {...step3Form.register("mostValuablePart")}
                                                     className={cn(
-                                                        "min-h-[80px] bg-white border-gray-200 rounded-lg px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all duration-300 resize-none text-sm",
+                                                        "min-h-[80px] bg-muted/50 border-border rounded-lg px-3 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground focus:border-foreground focus:bg-background transition-all duration-300 resize-none text-sm",
                                                         step3Form.formState.errors.mostValuablePart && "border-red-500 bg-red-50"
                                                     )}
                                                 />
@@ -671,7 +671,7 @@ export default function FeedbackPage() {
                                             </div>
 
                                             <div className="space-y-1.5">
-                                                <Label htmlFor="futureSuggestions" className="text-xs font-bold text-gray-700 ml-1 block">
+                                                <Label htmlFor="futureSuggestions" className="text-xs font-bold text-foreground ml-1 block">
                                                     Suggestions for Future Topics *
                                                 </Label>
                                                 <Textarea
@@ -679,7 +679,7 @@ export default function FeedbackPage() {
                                                     placeholder="What would you like us to cover next?"
                                                     {...step3Form.register("futureSuggestions")}
                                                     className={cn(
-                                                        "min-h-[80px] bg-white border-gray-200 rounded-lg px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-all duration-300 resize-none text-sm",
+                                                        "min-h-[80px] bg-muted/50 border-border rounded-lg px-3 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-foreground focus:border-foreground focus:bg-background transition-all duration-300 resize-none text-sm",
                                                         step3Form.formState.errors.futureSuggestions && "border-red-500 bg-red-50"
                                                     )}
                                                 />
@@ -696,8 +696,8 @@ export default function FeedbackPage() {
                                                         className={cn(
                                                             "flex items-start space-x-4 p-5 rounded-xl border cursor-pointer transition-all duration-300",
                                                             field.value
-                                                                ? "bg-zinc-900 border-zinc-900 shadow-md"
-                                                                : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                                                                    ? "bg-zinc-900 border-zinc-900 shadow-md"
+                                                                    : "bg-background border-border hover:bg-muted hover:border-border"
                                                         )}
                                                     >
                                                         <Checkbox
@@ -706,10 +706,10 @@ export default function FeedbackPage() {
                                                             className="mt-1 border-gray-300 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900"
                                                         />
                                                         <div className="space-y-1">
-                                                            <span className={cn("cursor-pointer font-bold text-xs block", field.value ? "text-white" : "text-gray-900")}>
+                                                            <span className={cn("cursor-pointer font-bold text-xs block", field.value ? "text-white" : "text-foreground")}>
                                                                 Join the ZecurX Community
                                                             </span>
-                                                            <p className={cn("text-[10px]", field.value ? "text-gray-400" : "text-gray-500")}>
+                                                            <p className={cn("text-[10px]", field.value ? "text-gray-400" : "text-muted-foreground")}>
                                                                 Receive updates on workshops, career opportunities, and advanced modules.
                                                             </p>
                                                         </div>
@@ -717,11 +717,11 @@ export default function FeedbackPage() {
                                                 )}
                                             />
 
-                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-gray-100 mt-2">
+                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-border mt-2">
                                                 <div className="w-full max-w-[280px]">
                                                     <button
                                                         type="submit"
-                                                        className="w-full h-10 rounded-lg bg-zinc-900 text-white font-bold text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
+                                                        className="w-full h-10 rounded-lg bg-foreground text-background font-bold text-xs hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group"
                                                     >
                                                         Next Step
                                                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -730,7 +730,7 @@ export default function FeedbackPage() {
                                                 <button
                                                     type="button"
                                                     onClick={goBack}
-                                                    className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest"
+                                                    className="text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
                                                 >
                                                     Go Back
                                                 </button>
@@ -749,21 +749,21 @@ export default function FeedbackPage() {
                                         className="w-full"
                                     >
                                         <div className="space-y-1 mb-6 text-center">
-                                            <h3 className="text-lg font-bold text-gray-900">Certificate Details</h3>
-                                            <p className="text-xs text-gray-500 font-medium">
+                                            <h3 className="text-lg font-bold text-foreground">Certificate Details</h3>
+                                            <p className="text-xs text-muted-foreground font-medium">
                                                 Confirm your name as it should appear on your certificate.
                                             </p>
                                         </div>
 
                                         <form onSubmit={step4Form.handleSubmit(handleFinalSubmit)} className="space-y-6 relative z-10 w-full">
                                             <div className="space-y-3 text-center">
-                                                <Label htmlFor="certificateName" className="text-xs font-bold text-gray-700 mb-2 block text-center">Name on Certificate</Label>
+                                                <Label htmlFor="certificateName" className="text-xs font-bold text-foreground mb-2 block text-center">Name on Certificate</Label>
                                                 <Input
                                                     id="certificateName"
                                                     placeholder="Your full name"
                                                     {...step4Form.register("certificateName")}
                                                     className={cn(
-                                                        "h-16 text-center text-2xl font-bold bg-white border-gray-200 rounded-xl focus:border-zinc-900 focus:ring-zinc-900 focus:bg-white transition-all duration-300 px-4 text-gray-900 placeholder:text-gray-300",
+                                                        "h-16 text-center text-2xl font-bold bg-muted/50 border-border rounded-xl focus:border-foreground focus:ring-foreground focus:bg-background transition-all duration-300 px-4 text-foreground placeholder:text-border",
                                                         step4Form.formState.errors.certificateName && "border-red-500 text-red-500 bg-red-50"
                                                     )}
                                                 />
@@ -787,15 +787,15 @@ export default function FeedbackPage() {
                                                                 <p className="text-xs font-bold text-amber-700 uppercase tracking-widest">
                                                                     Name Confirmation Required
                                                                 </p>
-                                                                <p className="text-sm leading-relaxed text-gray-600">
-                                                                    The name provided differs from your registered name (<span className="text-gray-900 font-bold">{registeredName}</span>).
+                                                                <p className="text-sm leading-relaxed text-muted-foreground">
+                                                                    The name provided differs from your registered name (<span className="text-foreground font-bold">{registeredName}</span>).
                                                                     Please provide a reason for this change for our records.
                                                                 </p>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div className="space-y-3">
-                                                        <Label htmlFor="nameChangeReason" className="text-xs font-bold text-gray-700 mb-1 ml-1 block">
+                                                        <Label htmlFor="nameChangeReason" className="text-xs font-bold text-foreground mb-1 ml-1 block">
                                                             Reason for Name Change
                                                         </Label>
                                                         <Textarea
@@ -804,7 +804,7 @@ export default function FeedbackPage() {
                                                             value={nameChangeReason}
                                                             onChange={(e) => setNameChangeReason(e.target.value)}
                                                             className={cn(
-                                                                "min-h-[80px] bg-white border-gray-200 rounded-lg px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-zinc-900 focus:border-zinc-900 focus:ring-1 transition-all duration-300 resize-none text-sm",
+                                                                "min-h-[80px] bg-muted/50 border-border rounded-lg px-3 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-foreground focus:border-foreground focus:ring-1 focus:bg-background transition-all duration-300 resize-none text-sm",
                                                                 nameChangeReason.trim().length > 0 && nameChangeReason.trim().length < 10 && "border-red-500 bg-red-50"
                                                             )}
                                                         />
@@ -817,12 +817,12 @@ export default function FeedbackPage() {
                                                 </motion.div>
                                             )}
 
-                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-gray-100 mt-2">
+                                            <div className="pt-6 flex flex-col items-center gap-3 border-t border-border mt-2">
                                                 <div className="w-full max-w-[280px]">
                                                     <button
                                                         type="submit"
                                                         disabled={isSubmitting}
-                                                        className="w-full h-10 rounded-lg bg-zinc-900 text-white font-bold text-xs hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        className="w-full h-10 rounded-lg bg-foreground text-background font-bold text-xs hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         {isSubmitting ? (
                                                             <>
@@ -840,7 +840,7 @@ export default function FeedbackPage() {
                                                 <button
                                                     type="button"
                                                     onClick={goBack}
-                                                    className="text-[10px] font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest"
+                                                    className="text-[10px] font-bold text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest"
                                                 >
                                                     Go Back
                                                 </button>
@@ -865,12 +865,12 @@ export default function FeedbackPage() {
                                     className="w-full"
                                 >
                                     {nameChangeSubmitted ? (
-                                        <div className="bg-white border border-gray-200 rounded-[2.5rem] p-12 shadow-xl relative overflow-hidden text-center">
+                                        <div className="bg-card border border-border rounded-[2.5rem] p-12 shadow-xl relative overflow-hidden text-center">
                                             <div className="w-24 h-24 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-amber-100 shadow-sm">
                                                 <Clock className="w-12 h-12 text-amber-500" />
                                             </div>
-                                            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Request Received</h1>
-                                            <p className="text-gray-500 text-sm font-medium mb-10 max-w-md mx-auto leading-relaxed">
+                                            <h1 className="text-4xl font-bold text-foreground mb-4 tracking-tight">Request Received</h1>
+                                            <p className="text-muted-foreground text-sm font-medium mb-10 max-w-md mx-auto leading-relaxed">
                                                 Your name change request has been submitted for review.
                                                 The certificate will be issued once the request is approved by our administration team.
                                             </p>
@@ -879,30 +879,30 @@ export default function FeedbackPage() {
                                                 <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">
                                                     Review in Progress
                                                 </p>
-                                                <p className="text-sm text-gray-600 mt-2 font-medium">
+                                                <p className="text-sm text-muted-foreground mt-2 font-medium">
                                                     You will receive an email notification once your certificate is ready.
                                                 </p>
                                             </div>
 
                                             <Link href="/resources/seminars">
-                                                <button className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-zinc-900 transition-colors group">
+                                                <button className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
                                                     <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
                                                     Back to Seminars
                                                 </button>
                                             </Link>
                                         </div>
                                     ) : (
-                                        <div className="bg-white border border-gray-200 rounded-[2.5rem] p-12 shadow-xl relative overflow-hidden text-center">
+                                        <div className="bg-card border border-border rounded-[2.5rem] p-12 shadow-xl relative overflow-hidden text-center">
                                             <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-emerald-100 shadow-sm">
                                                 <CheckCircle2 className="w-12 h-12 text-emerald-500" />
                                             </div>
-                                            <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Feedback Received</h1>
-                                            <p className="text-gray-500 text-sm font-medium mb-10 max-w-md mx-auto leading-relaxed">
+                                            <h1 className="text-4xl font-bold text-foreground mb-4 tracking-tight">Feedback Received</h1>
+                                            <p className="text-muted-foreground text-sm font-medium mb-10 max-w-md mx-auto leading-relaxed">
                                                 Thank you for your feedback. Your certificate will be available shortly.
                                             </p>
 
                                             <Link href="/resources/seminars">
-                                                <button className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-zinc-900 transition-colors group">
+                                                <button className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors group">
                                                     <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
                                                     Back to Seminars
                                                 </button>
