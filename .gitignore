@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+.env*.local
 
 # vercel
 .vercel
@@ -42,27 +43,32 @@ next-env.d.ts
 
 # opencode
 opencode.jsonc
-
-# mcp config
 .mcp.json
 nohup.out
 
-# agent configs and debug files
+# AI agent configs
 .agent/
+.claude/
 .gemini/
 .gsd/
+.vscode/
+.cursorrules
+adapters/
 GSD-STYLE.md
 MCP_GUIDE.md
 PROJECT_RULES.md
 model_capabilities.yaml
-adapters/
+
+# debug / temp files
 clear-data-*.js
-docs/
+clear-data.sh
+next_full.log
+server.log
 
 # landing redesign (separate project)
 landing-redesign/
 
-# Large assets (stored in Linode S3 CDN)
+# Large assets (stored in Hetzner S3 CDN)
 /public/brochures/
 /public/assets/*.png
 /public/images/pages/
@@ -71,35 +77,6 @@ landing-redesign/
 /public/images/dashboard-hero*.png
 /public/hero-bg.png
 /public/logo_new.png
-.env*.local
-
-# AI agent configs
-.agent/
-.gemini/
-.gsd/
-GSD-STYLE.md
-MCP_GUIDE.md
-PROJECT_RULES.md
-model_capabilities.yaml
-adapters/
-
-# debug / temp files
-clear-data-debug.js
-clear-data.sh
-next_full.log
-server.log
-docs/
-
-# scripts (non-essential)
-scripts/search_repo.*
-scripts/setup_search.*
-scripts/validate-*
-
-# landing-redesign (separate project)
-landing-redesign/
-
-# old certificate template
-public/certificate-template.old.pdf
 
 # PDF files (certificates generated at runtime, templates on CDN)
 *.pdf
