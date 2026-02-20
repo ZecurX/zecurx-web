@@ -41,7 +41,7 @@ export default function AcademyClient({ courses: initialCourses }: { courses: Co
                         className="max-w-4xl"
                     >
                         <h1 className="text-6xl md:text-8xl font-bold text-foreground mb-8 tracking-tighter">
-                            ZecurX Academy
+                            ZecurX Professional Certificates
                         </h1>
                         <p className="text-xl md:text-2xl text-muted-foreground font-manrope font-light leading-relaxed max-w-2xl mb-12">
                             Elite cybersecurity training for the modern threat landscape. Master the skills that matter.
