@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Plus, Search, Star } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import EditPlanDialog from "./EditPlanDialog";
 
@@ -14,14 +14,36 @@ type Plan = {
     active: boolean;
     in_stock: boolean;
     test_mode: boolean;
+    duration?: string | null;
+    level?: string | null;
+    features?: string[] | null;
+    logo?: string | null;
+    original_price?: number | null;
+    popular?: boolean;
+    students_count?: number | null;
+    brochure_link?: string | null;
+    pricing_type?: string;
 };
 
 export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
+    const [plans, setPlans] = useState<Plan[]>(initialPlans);
     const [activeTab, setActiveTab] = useState<'all' | 'internship' | 'academy'>('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
-    const filteredPlans = initialPlans?.filter(plan => {
+    const refetchPlans = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/plans?all=true');
+            if (res.ok) {
+                const data = await res.json();
+                setPlans(data.plans);
+            }
+        } catch (err) {
+            console.error('Failed to refetch plans:', err);
+        }
+    }, []);
+
+    const filteredPlans = plans.filter(plan => {
         const matchesTab = activeTab === 'all' || plan.type === activeTab;
         const matchesSearch = plan.name.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesTab && matchesSearch;
@@ -29,13 +51,12 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
 
     return (
         <div className="space-y-8">
-            {editingPlan && (
-                <EditPlanDialog
-                    plan={editingPlan}
-                    onClose={() => setEditingPlan(null)}
-                    onUpdate={() => window.location.reload()}
-                />
-            )}
+            <EditPlanDialog
+                plan={editingPlan}
+                open={!!editingPlan}
+                onOpenChange={(open) => !open && setEditingPlan(null)}
+                onUpdate={refetchPlans}
+            />
             {/* Header Controls */}
             <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
 
@@ -85,13 +106,23 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
                         >
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <div className="flex items-center gap-2 mb-2">
+                                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                                         <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border ${plan.type === 'internship'
                                             ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                                             : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
                                             }`}>
                                             {plan.type}
                                         </span>
+                                        {plan.level && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-zinc-500/10 text-zinc-400 border-zinc-500/20">
+                                                {plan.level}
+                                            </span>
+                                        )}
+                                        {plan.duration && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-zinc-500/10 text-zinc-400 border-zinc-500/20">
+                                                {plan.duration}
+                                            </span>
+                                        )}
                                         {plan.active && (
                                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                         )}
@@ -105,8 +136,23 @@ export default function PlansList({ initialPlans }: { initialPlans: Plan[] }) {
                                                 🧪 Test Mode
                                             </span>
                                         )}
+                                        {plan.pricing_type === 'institutional' && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-orange-500/10 text-orange-400 border-orange-500/20">
+                                                Institutional
+                                            </span>
+                                        )}
+                                        {plan.pricing_type === 'contact' && (
+                                            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full border bg-cyan-500/10 text-cyan-400 border-cyan-500/20">
+                                                Contact Pricing
+                                            </span>
+                                        )}
                                     </div>
-                                    <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors w-full line-clamp-1">{plan.name}</h3>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1">{plan.name}</h3>
+                                        {plan.popular && (
+                                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
