@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { SessionInfo, Role, Resource, Action } from "@/types/auth";
+import { SessionInfo, Resource, Action } from "@/types/auth";
 import { hasPermission as checkPermission } from "@/lib/permissions";
 
 interface AuthContextType {

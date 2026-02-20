@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Loader2, Save } from "lucide-react";
-import { Seminar, SeminarStatus, LocationType, DURATION_OPTIONS, SEMINAR_TYPES } from "@/types/seminar";
+import { X, Loader2 } from "lucide-react";
+import { Seminar, DURATION_OPTIONS, SEMINAR_TYPES } from "@/types/seminar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -9,7 +9,6 @@ import {
     Loader2,
     Calendar,
     ArrowRight,
-    Terminal,
     ChevronDown,
     Building2,
     Award,

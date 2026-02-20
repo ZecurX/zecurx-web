@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
@@ -197,7 +197,7 @@ function CheckoutContent() {
             const error = partnerData.error || regularData.error || 'Invalid code';
             setReferralError(error);
             if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
-        } catch (error) {
+        } catch (_error) {
             setReferralError('Failed to validate code');
         } finally {
             setValidatingCode(false);
@@ -213,6 +213,7 @@ function CheckoutContent() {
         if (codeFromUrl && !appliedCode) {
             validateCode(codeFromUrl);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     useEffect(() => {
@@ -285,6 +286,7 @@ function CheckoutContent() {
         const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
         setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid && isItemReady);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

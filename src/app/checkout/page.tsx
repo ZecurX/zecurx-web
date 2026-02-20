@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
@@ -123,12 +123,12 @@ function CheckoutContent() {
         fetchItemPrice();
     }, [itemId, itemType, isCartCheckout]);
 
-    const singleItem = !isCartCheckout && fetchedItem ? {
+    const singleItem = useMemo(() => !isCartCheckout && fetchedItem ? {
         id: fetchedItem.id,
         name: fetchedItem.name,
         price: promoPriceValid && promoPrice ? promoPrice : fetchedItem.price,
         type: fetchedItem.type
-    } : null;
+    } : null, [isCartCheckout, fetchedItem, promoPriceValid, promoPrice]);
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
     const finalAmount = appliedCode ? checkoutAmount - appliedCode.discount_amount : checkoutAmount;
@@ -208,7 +208,7 @@ function CheckoutContent() {
             const error = partnerData.error || regularData.error || 'Invalid code';
             setReferralError(error);
             if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
-        } catch (error) {
+        } catch (_error) {
             setReferralError('Failed to validate code');
         } finally {
             setValidatingCode(false);

@@ -14,9 +14,6 @@ import {
     ArrowRight,
     Mail,
     User,
-    Phone,
-    GraduationCap,
-    MapPin,
     Star,
     Award,
     Sparkles,
@@ -27,7 +24,6 @@ import {
     Instagram,
     Clock,
     Download,
-    Shield,
     Check
 } from "lucide-react";
 import Link from "next/link";
@@ -37,7 +33,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
     Select,
     SelectContent,

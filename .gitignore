@@ -47,6 +47,21 @@ opencode.jsonc
 .mcp.json
 nohup.out
 
+# agent configs and debug files
+.agent/
+.gemini/
+.gsd/
+GSD-STYLE.md
+MCP_GUIDE.md
+PROJECT_RULES.md
+model_capabilities.yaml
+adapters/
+clear-data-*.js
+docs/
+
+# landing redesign (separate project)
+landing-redesign/
+
 # Large assets (stored in Linode S3 CDN)
 /public/brochures/
 /public/assets/*.png

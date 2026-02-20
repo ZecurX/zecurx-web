@@ -4,10 +4,10 @@ import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import {
     Search, Filter, Download, FileSpreadsheet, ChevronDown, Check,
-    Eye, Trash2, Building2, Mail, Phone, Calendar, DollarSign
+    Eye, Trash2, Building2, Calendar, DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { EnterpriseLead, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
+import { EnterpriseLead, LEAD_STATUS } from '@/types/lead-types';
 import { LeadStatusBadge, getStatusOptions } from '@/components/leads/LeadStatusBadge';
 import { LeadPriorityBadge, getPriorityOptions } from '@/components/leads/LeadPriorityBadge';
 
@@ -67,6 +67,7 @@ export default function EnterpriseLeadsClient({ initialLeads, totalCount }: Ente
             }
         }, 300);
         return () => clearTimeout(debounce);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, statusFilter, priorityFilter, page]);
 
     const stats = useMemo(() => {

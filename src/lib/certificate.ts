@@ -265,7 +265,7 @@ export async function generateCertificatePreview(certificate: Certificate): Prom
     const name = escapeXml(certificate.recipient_name);
     const nameSize = certificate.recipient_name.length > 25 ? 60 : 72;
 
-    const seminarTitle = escapeXml(certificate.seminar_title);
+    const _seminarTitle = escapeXml(certificate.seminar_title);
     const titleLines = splitTextToLines(certificate.seminar_title, 55);
 
     const dateStr = new Date(certificate.seminar_date).toLocaleDateString('en-US', {

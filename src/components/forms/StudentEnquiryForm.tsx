@@ -7,7 +7,7 @@ import {
     FIELDS_OF_INTEREST,
     StudentLeadFormData
 } from '@/types/lead-types';
-import { GraduationCap, Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2 } from 'lucide-react';
 
 export function StudentEnquiryForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
