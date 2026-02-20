@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import { Shield, UserPlus, Edit, Trash2, KeyRound, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -208,7 +209,7 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">User Management</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage admin users and their roles</p>
@@ -239,96 +240,183 @@ export default function UsersPage() {
       )}
 
       {/* Users Table */}
-      <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-muted/50 text-muted-foreground border-b border-border/50">
-              <tr>
-                <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium">Email</th>
-                <th className="px-6 py-4 font-medium">Role</th>
-                <th className="px-6 py-4 font-medium">Status</th>
-                <th className="px-6 py-4 font-medium">Created</th>
-                <th className="px-6 py-4 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-foreground">{user.name}</span>
-                  </td>
-                  <td className="px-6 py-4 text-muted-foreground">{user.email}</td>
-                  <td className="px-6 py-4">
-                    <RoleBadge role={user.role} size="sm" />
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        user.is_active
-                          ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
-                          : 'bg-muted text-muted-foreground border border-border'
-                      }`}
-                    >
-                      {user.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-muted-foreground">
-                    {new Date(user.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => openEditDialog(user)}
-                        className={`p-1.5 rounded transition-colors ${
-                          user.role === 'super_admin' 
-                            ? 'text-muted-foreground/50 cursor-not-allowed' 
-                            : 'text-blue-500 hover:bg-blue-500/10'
-                        }`}
-                        title={user.role === 'super_admin' ? 'Cannot edit super admin' : 'Edit user'}
-                        disabled={user.role === 'super_admin'}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => openResetPasswordDialog(user)}
-                        className="p-1.5 text-orange-500 hover:bg-orange-500/10 rounded transition-colors"
-                        title="Reset password"
-                      >
-                        <KeyRound className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => openDeleteDialog(user)}
-                        className={`p-1.5 rounded transition-colors ${
-                          user.id === currentUser?.id || user.role === 'super_admin'
-                            ? 'text-muted-foreground/50 cursor-not-allowed'
-                            : 'text-destructive hover:bg-destructive/10'
-                        }`}
-                        title={
-                          user.role === 'super_admin' 
-                            ? 'Cannot delete super admin' 
-                            : user.id === currentUser?.id 
-                              ? 'Cannot delete yourself' 
-                              : 'Delete user'
-                        }
-                        disabled={user.id === currentUser?.id || user.role === 'super_admin'}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {users.length === 0 && (
+      <div className="hidden md:block">
+        <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-muted/50 text-muted-foreground border-b border-border/50">
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
-                    No users found.
-                  </td>
+                  <th className="px-6 py-4 font-medium">Name</th>
+                  <th className="px-6 py-4 font-medium">Email</th>
+                  <th className="px-6 py-4 font-medium">Role</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Created</th>
+                  <th className="px-6 py-4 font-medium">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {users.map((user) => (
+                  <tr key={user.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <span className="font-medium text-foreground">{user.name}</span>
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">{user.email}</td>
+                    <td className="px-6 py-4">
+                      <RoleBadge role={user.role} size="sm" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          user.is_active
+                            ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
+                            : 'bg-muted text-muted-foreground border border-border'
+                        }`}
+                      >
+                        {user.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => openEditDialog(user)}
+                          className={`p-1.5 rounded transition-colors ${
+                            user.role === 'super_admin' 
+                              ? 'text-muted-foreground/50 cursor-not-allowed' 
+                              : 'text-blue-500 hover:bg-blue-500/10'
+                          }`}
+                          title={user.role === 'super_admin' ? 'Cannot edit super admin' : 'Edit user'}
+                          disabled={user.role === 'super_admin'}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openResetPasswordDialog(user)}
+                          className="p-1.5 text-orange-500 hover:bg-orange-500/10 rounded transition-colors"
+                          title="Reset password"
+                        >
+                          <KeyRound className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openDeleteDialog(user)}
+                          className={`p-1.5 rounded transition-colors ${
+                            user.id === currentUser?.id || user.role === 'super_admin'
+                              ? 'text-muted-foreground/50 cursor-not-allowed'
+                              : 'text-destructive hover:bg-destructive/10'
+                          }`}
+                          title={
+                            user.role === 'super_admin' 
+                              ? 'Cannot delete super admin' 
+                              : user.id === currentUser?.id 
+                                ? 'Cannot delete yourself' 
+                                : 'Delete user'
+                          }
+                          disabled={user.id === currentUser?.id || user.role === 'super_admin'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                      No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <div className="md:hidden space-y-3">
+        <AnimatePresence>
+          {users.map((user) => (
+            <motion.article
+              key={user.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="rounded-2xl p-4 bg-background/70 backdrop-blur-xl border border-white/[0.08] dark:border-white/[0.06] shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2)] space-y-3"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="font-medium text-foreground">{user.name}</div>
+                <div className="flex items-center gap-1 shrink-0 -mr-2 -mt-2">
+                  <button
+                    onClick={() => openEditDialog(user)}
+                    className={`p-2 rounded transition-colors ${
+                      user.role === 'super_admin' 
+                        ? 'text-muted-foreground/50 cursor-not-allowed' 
+                        : 'text-blue-500 hover:bg-blue-500/10'
+                    }`}
+                    title={user.role === 'super_admin' ? 'Cannot edit super admin' : 'Edit user'}
+                    disabled={user.role === 'super_admin'}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => openResetPasswordDialog(user)}
+                    className="p-2 text-orange-500 hover:bg-orange-500/10 rounded transition-colors"
+                    title="Reset password"
+                  >
+                    <KeyRound className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => openDeleteDialog(user)}
+                    className={`p-2 rounded transition-colors ${
+                      user.id === currentUser?.id || user.role === 'super_admin'
+                        ? 'text-muted-foreground/50 cursor-not-allowed'
+                        : 'text-destructive hover:bg-destructive/10'
+                    }`}
+                    title={
+                      user.role === 'super_admin' 
+                        ? 'Cannot delete super admin' 
+                        : user.id === currentUser?.id 
+                          ? 'Cannot delete yourself' 
+                          : 'Delete user'
+                    }
+                    disabled={user.id === currentUser?.id || user.role === 'super_admin'}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="text-sm text-muted-foreground truncate">
+                {user.email}
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/50">
+                <div className="flex items-center gap-2">
+                  <RoleBadge role={user.role} size="sm" />
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      user.is_active
+                        ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
+                        : 'bg-muted text-muted-foreground border border-border'
+                    }`}
+                  >
+                    {user.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(user.created_at).toLocaleDateString()}
+                </span>
+              </div>
+            </motion.article>
+          ))}
+        </AnimatePresence>
+
+        {users.length === 0 && (
+          <div className="p-8 text-center text-muted-foreground bg-card/40 border border-border/50 rounded-xl backdrop-blur-sm">
+            No users found.
+          </div>
+        )}
       </div>
 
       {/* Create User Dialog */}

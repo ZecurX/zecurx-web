@@ -1,7 +1,6 @@
+import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { CourseData } from '@/lib/courses';
 import { getCdnUrl } from '@/lib/cdn';
-import AcademyClient from './AcademyClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,9 +21,7 @@ interface DBPlan {
     pricing_type: string;
 }
 
-export default async function AcademyPage() {
-    let courses: CourseData[] = [];
-
+export async function GET() {
     try {
         const result = await query<DBPlan>(
             `SELECT id, name, price, description, duration, level, features,
@@ -43,8 +40,8 @@ export default async function AcademyPage() {
                name`
         );
 
-        courses = result.rows.map(row => {
-            const pricingType = row.pricing_type as CourseData['pricingType'];
+        const courses = result.rows.map(row => {
+            const pricingType = row.pricing_type as 'fixed' | 'contact' | 'institutional';
             const price = parseFloat(row.price);
             const originalPrice = row.original_price ? parseFloat(row.original_price) : undefined;
 
@@ -64,7 +61,7 @@ export default async function AcademyPage() {
                 price: displayPrice,
                 originalPrice: originalPrice && !isNaN(originalPrice) ? originalPrice : undefined,
                 duration: row.duration || 'Custom',
-                level: (row.level as CourseData['level']) || 'Beginner',
+                level: row.level || 'Beginner',
                 features: row.features || [],
                 popular: row.popular ?? false,
                 logo: row.logo || undefined,
@@ -74,9 +71,10 @@ export default async function AcademyPage() {
                 pricingType,
             };
         });
-    } catch (error) {
-        console.error('Failed to fetch courses from DB:', error);
-    }
 
-    return <AcademyClient courses={courses} />;
+        return NextResponse.json(courses);
+    } catch (error) {
+        console.error('Failed to fetch courses:', error);
+        return NextResponse.json([], { status: 500 });
+    }
 }

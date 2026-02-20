@@ -116,7 +116,7 @@ export default function ProductDialog({ product, trigger, onSuccess }: ProductDi
                     <DialogTitle>{product ? "Edit Product" : "Add New Product"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="name">Product Name</Label>
                             <Input
@@ -140,7 +140,7 @@ export default function ProductDialog({ product, trigger, onSuccess }: ProductDi
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="stock">Stock</Label>
                             <Input
@@ -295,7 +295,7 @@ export default function ProductDialog({ product, trigger, onSuccess }: ProductDi
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="features">Features (one per line)</Label>
                             <Textarea

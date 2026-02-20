@@ -2,9 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { query } from '@/lib/db';
-import { Calendar, Clock, ArrowLeft, Tag, Twitter, Linkedin, Facebook, Copy } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, Tag } from 'lucide-react';
 import { calculateReadingTime, formatBlogDate } from '@/lib/blog';
 import ViewIncrement from '@/components/blog/ViewIncrement';
+import ShareButtons from '@/components/blog/ShareButtons';
 import { Metadata } from 'next';
 
 interface RelatedPost {
@@ -153,18 +154,6 @@ export default async function BlogPostPage({ params }: Props) {
           </h1>
 
           <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground border-b border-border/50 pb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                {(post.author as Record<string, unknown>)?.name?.toString().charAt(0) || 'Z'}
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-foreground">{(post.author as Record<string, unknown>)?.name?.toString() || 'ZecurX Team'}</span>
-                <span>Author</span>
-              </div>
-            </div>
-
-            <div className="w-px h-8 bg-border/50 hidden sm:block" />
-
             <div className="flex flex-col">
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
@@ -221,24 +210,8 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Share Buttons (Placeholder logic) */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-muted-foreground">Share:</span>
-            <div className="flex gap-2">
-              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Twitter">
-                <Twitter className="w-4 h-4" />
-              </button>
-              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on LinkedIn">
-                <Linkedin className="w-4 h-4" />
-              </button>
-              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Share on Facebook">
-                <Facebook className="w-4 h-4" />
-              </button>
-              <button className="p-2 bg-muted/50 hover:bg-muted rounded-full transition-colors text-foreground" aria-label="Copy Link">
-                <Copy className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+          {/* Share Buttons */}
+          <ShareButtons title={post.title} slug={slug} />
         </div>
 
         {/* Related Posts */}
