@@ -17,6 +17,7 @@ interface CourseCardProps {
     popular?: boolean;
     delay?: number;
     brochureLink?: string;
+    logo?: string;
     pricingType?: 'fixed' | 'contact' | 'institutional';
     inStock?: boolean;
 }
@@ -34,6 +35,7 @@ export default function CourseCard({
     popular = false,
     delay = 0,
     brochureLink,
+    logo,
     pricingType = 'fixed',
     inStock = true,
 }: CourseCardProps) {
@@ -69,6 +71,12 @@ export default function CourseCard({
                 viewport={{ once: true }}
                 className="group relative flex flex-col h-full bg-background/50 border border-border/40 hover:border-border/80 hover:bg-muted/30 transition-all duration-300 rounded-2xl overflow-hidden"
             >
+                {logo && (
+                    <div className="w-full h-36 bg-muted/20 border-b border-border/30 overflow-hidden flex items-center justify-center">
+                        <img src={logo} alt={title} className="h-full w-full object-contain p-6" />
+                    </div>
+                )}
+
                 {/* Minimal Popular Tag */}
                 {popular && (
                     <div className="absolute top-0 right-0">

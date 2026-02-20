@@ -20,9 +20,6 @@ export interface CourseData {
     inStock?: boolean;
 }
 
-// Import CDN_ASSETS is only needed for brochure links on the client side.
-// For server-side usage (API routes), brochureLink isn't needed.
-
 export const courses: CourseData[] = [
     {
         id: '93a3af86-761a-47a9-80f5-a97534916364',
@@ -43,7 +40,7 @@ export const courses: CourseData[] = [
             'Internship Opportunity',
         ],
         popular: true,
-        logo: '/images/courses/bundle-ai.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/bundle-ai.png',
     },
     {
         id: '06a10be6-115a-4a83-b338-67168abcce1a',
@@ -63,7 +60,7 @@ export const courses: CourseData[] = [
             'Active Directory Attacks',
             'Project-Based Learning',
         ],
-        logo: '/images/courses/cpeh.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCPEH.png',
     },
     {
         id: '1033198a-bf65-4183-9e6e-aab727903039',
@@ -83,7 +80,7 @@ export const courses: CourseData[] = [
             'Custom Exploit Development',
             'Industry Standard Tools',
         ],
-        logo: '/images/courses/cppt.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCPPT.png',
     },
     {
         id: 'b5276793-8c55-4759-8206-3d1a833fe304',
@@ -103,7 +100,7 @@ export const courses: CourseData[] = [
             'AI Risk Management',
             'Real-world Case Studies',
         ],
-        logo: '/images/courses/gaip.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxGAIP.png',
     },
     {
         id: '7f0e2cb3-82c1-4634-9a95-67a2ae14a815',
@@ -119,7 +116,7 @@ export const courses: CourseData[] = [
             'Log Analysis',
             'Institutional Training',
         ],
-        logo: '/images/courses/zxCCP.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCP.png',
         pricingType: 'institutional',
     },
     {
@@ -136,7 +133,7 @@ export const courses: CourseData[] = [
             'Security Ethics',
             'Career Roadmap',
         ],
-        logo: '/images/courses/zxCCF.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCF.png',
         pricingType: 'institutional',
     },
     {
@@ -153,7 +150,7 @@ export const courses: CourseData[] = [
             'Enterprise Architecture',
             'Strategic Planning',
         ],
-        logo: '/images/courses/zxCCE.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCE.png',
         pricingType: 'institutional',
     },
     {
@@ -172,7 +169,7 @@ export const courses: CourseData[] = [
             'API Development',
             'DevSecOps Basics',
         ],
-        logo: '/images/courses/zxCFD.png',
+        logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCFD.png',
         pricingType: 'contact',
     },
 ];
