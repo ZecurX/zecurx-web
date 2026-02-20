@@ -118,9 +118,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
       // This is important for auto-save logic if we were comparing changes
       setOriginalPost(updatedPost);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error saving post:', err);
-      if (!silent) setError(err.message || 'Failed to save changes');
+      if (!silent) setError(err instanceof Error ? err.message : 'Failed to save changes');
     } finally {
       if (!silent) setSaving(false);
     }

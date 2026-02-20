@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { type MotionValue, motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -88,8 +88,8 @@ export default function ServicesSection() {
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <div className="w-12 h-px bg-blue-500/50" />
-                            <span className="text-[10px] font-mono text-blue-400 uppercase tracking-[0.4em]">
-                                Tactical Capabilities
+                            <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">
+                                Service Capabilities
                             </span>
                         </div>
                         <h2 className="text-4xl md:text-6xl lg:text-7xl font-manrope font-medium text-white tracking-tight leading-none">
@@ -99,12 +99,8 @@ export default function ServicesSection() {
 
                     {/* The Mesh Container - Cards appear here in sequence */}
                     <div className="relative w-full h-[450px]">
-                        {/* Data Spine (Decorative) - Grows with scroll */}
+                        {/* Vertical Guide Line */}
                         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/5 -translate-x-1/2 hidden lg:block" />
-                        <motion.div
-                            style={{ height: useTransform(scrollYProgress, [0.05, 0.95], ["0%", "100%"]) }}
-                            className="absolute left-1/2 top-0 w-px bg-gradient-to-b from-blue-500 via-blue-400 to-transparent -translate-x-1/2 hidden lg:block shadow-[0_0_15px_rgba(59,130,246,0.6)] z-0"
-                        />
 
                         {services.map((service, i) => (
                             <ServiceBlock
@@ -128,7 +124,7 @@ function ServiceBlock({
 }: {
     service: (typeof services)[0];
     index: number;
-    globalProgress: any;
+    globalProgress: MotionValue<number>;
 }) {
     const isEven = index % 2 === 0;
 
@@ -147,20 +143,13 @@ function ServiceBlock({
     const lineProgress = useTransform(globalProgress, [start, peak], [0, 1]);
     const glowOpacity = useTransform(globalProgress, [start, peak, end], [0, 1, 0.4]);
 
+    // Stationary horizontal stagger (No Y translation to avoid scrolling out of view)
     const offsets = [
         "lg:-translate-x-40",
         "lg:translate-x-48",
         "lg:-translate-x-56",
         "lg:translate-x-40",
     ];
-
-    // Move all transforms top-level to follow Rule of Hooks
-    const pathOpacity = useTransform(glowOpacity, [0, 1], [0, 0.6]);
-    const circleCx = useTransform(lineProgress, [0, 1], [500, isEven ? 220 : 780]);
-    const innerGlowOpacity = useTransform(glowOpacity, [0, 1], [0, 0.2]);
-    const cornerNodeScale = useTransform(glowOpacity, [0, 1], [0.5, 1.2]);
-    const titleColor = useTransform(glowOpacity, [0, 1], ["rgba(255,255,255,0.7)", "rgba(255,255,255,1)"]);
-    const tagDotOpacity = useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]);
 
     return (
         <motion.div
@@ -195,7 +184,7 @@ function ServiceBlock({
                             strokeWidth="4"
                             fill="transparent"
                             filter="url(#glow)"
-                            style={{ pathLength: lineProgress, opacity: pathOpacity }}
+                            style={{ pathLength: lineProgress, opacity: useTransform(glowOpacity, [0, 1], [0, 0.6]) }}
                         />
                         <motion.path
                             d={isEven ? "M 500 150 L 220 150" : "M 500 150 L 780 150"}
@@ -206,7 +195,7 @@ function ServiceBlock({
                         />
                         {/* Data Head Pulse */}
                         <motion.circle
-                            cx={circleCx}
+                            cx={useTransform(lineProgress, [0, 1], [500, isEven ? 220 : 780])}
                             cy="150"
                             r="2.5"
                             fill="#fff"
@@ -219,28 +208,14 @@ function ServiceBlock({
                 <motion.div
                     className={cn(
                         "relative p-8 md:p-12 group cursor-default overflow-hidden",
-                        "bg-zinc-950/40 border border-white/5 backdrop-blur-xl",
+                        "bg-zinc-900 border border-zinc-800",
                         "hover:border-blue-500/40 transition-colors duration-700"
                     )}
                 >
                     {/* Inner Glow Layer */}
                     <motion.div
-                        className="absolute inset-0 bg-blue-500/10 pointer-events-none"
-                        style={{ opacity: innerGlowOpacity }}
-                    />
-
-                    {/* Tactical Texture */}
-                    <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
-                        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-
-                    {/* Corner Nodes */}
-                    <motion.div
-                        className="absolute -top-[3px] -left-[3px] w-[8px] h-[8px] bg-blue-500 rounded-full blur-[2px]"
-                        style={{ opacity: glowOpacity, scale: cornerNodeScale }}
-                    />
-                    <motion.div
-                        className="absolute -bottom-[3px] -right-[3px] w-[8px] h-[8px] bg-blue-500 rounded-full blur-[2px]"
-                        style={{ opacity: glowOpacity, scale: cornerNodeScale }}
+                        className="absolute inset-0 bg-blue-500/5 pointer-events-none"
+                        style={{ opacity: useTransform(glowOpacity, [0, 1], [0, 0.2]) }}
                     />
 
                     <div className="relative mb-6">
@@ -254,7 +229,7 @@ function ServiceBlock({
                         </div>
                         <motion.h3
                             className="text-2xl md:text-3xl font-manrope font-semibold text-white tracking-tight leading-none"
-                            style={{ color: titleColor }}
+                            style={{ color: useTransform(glowOpacity, [0, 1], ["rgba(255,255,255,0.7)", "rgba(255,255,255,1)"]) }}
                         >
                             {service.title}
                         </motion.h3>
@@ -264,20 +239,28 @@ function ServiceBlock({
                         {service.description}
                     </p>
 
-                    <div className="relative flex flex-wrap gap-x-4 gap-y-2">
-                        {service.tags.map((tag, i) => (
-                            <div key={i} className="flex items-center gap-2">
-                                <motion.div
-                                    className="w-1 h-1 rounded-full bg-blue-500"
-                                    style={{ opacity: tagDotOpacity }}
-                                />
-                                <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">{tag}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <ServiceTags tags={service.tags} glowOpacity={glowOpacity} />
                 </motion.div>
             </div>
         </motion.div>
+    );
+}
+
+function ServiceTags({ tags, glowOpacity }: { tags: string[]; glowOpacity: MotionValue<number> }) {
+    const dotOpacity = useTransform(glowOpacity, [0.5, 1], [0.2, 0.8]);
+
+    return (
+        <div className="relative flex flex-wrap gap-x-4 gap-y-2">
+            {tags.map((tag, i) => (
+                <div key={i} className="flex items-center gap-2">
+                    <motion.div
+                        className="w-1 h-1 rounded-full bg-blue-500"
+                        style={{ opacity: dotOpacity }}
+                    />
+                    <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">{tag}</span>
+                </div>
+            ))}
+        </div>
     );
 }
 

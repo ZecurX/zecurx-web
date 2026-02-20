@@ -29,6 +29,7 @@ export default async function ReferralCodesPage() {
         );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ReferralCodesList = require("./ReferralCodesList").default;
 
     return (

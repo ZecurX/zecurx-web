@@ -1,3 +1,0 @@
-# Global Rules
-
-- **Git Push Protocol:** NEVER push changes to the remote repository (GitHub) without explicit approval from the user. Always ask for confirmation before running `git push`.

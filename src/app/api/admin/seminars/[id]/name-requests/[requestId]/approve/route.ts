@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { CertificateNameRequest, SeminarFeedback, Seminar } from '@/types/seminar';
-import { createCertificate, sendCertificateEmail } from '@/lib/certificate';
+import { createCertificate, sendCertificateEmail, generateFeedbackPromoCode } from '@/lib/certificate';
 
 export async function POST(
     request: NextRequest,
@@ -69,6 +69,7 @@ export async function POST(
             recipientName: nameRequest.requested_name,
             recipientEmail: nameRequest.email,
             seminarTitle: seminar.title,
+            seminarTopic: seminar.topic || 'Cybersecurity',
             seminarDate: new Date(seminar.date),
             speakerName: seminar.speaker_name,
             organization: feedback.college_name || seminar.organization_name,
@@ -77,7 +78,8 @@ export async function POST(
             feedbackId: nameRequest.feedback_id,
         });
 
-        const emailSent = await sendCertificateEmail(certificate, nameRequest.email);
+        const promoCode = await generateFeedbackPromoCode();
+        const emailSent = await sendCertificateEmail(certificate, nameRequest.email, promoCode);
 
         return NextResponse.json({
             success: true,

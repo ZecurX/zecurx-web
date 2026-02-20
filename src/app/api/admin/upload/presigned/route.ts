@@ -29,12 +29,14 @@ export async function POST(req: NextRequest) {
     const data = await getSignedUploadUrl(key, contentType);
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Presigned URL error:', error);
+    const errMsg = error instanceof Error ? error.message : 'An error occurred';
+    const errCode = error instanceof Error ? ('code' in error ? (error as NodeJS.ErrnoException).code : error.name) : undefined;
     return NextResponse.json({ 
       error: 'Failed to generate upload URL',
-      details: error.message,
-      code: error.code || error.name
+      details: errMsg,
+      code: errCode
     }, { status: 500 });
   }
 }

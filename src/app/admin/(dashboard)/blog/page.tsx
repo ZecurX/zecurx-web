@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Plus,
   Search,
@@ -29,7 +28,6 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function BlogListPage() {
-  const _router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,7 +119,6 @@ export default function BlogListPage() {
   };
 
   const canManageBlog = ['super_admin', 'admin', 'marketing', 'media'].includes(user?.role || '');
-  const _canEdit = canManageBlog;
 
   return (
     <div className="space-y-6">
@@ -158,7 +155,7 @@ export default function BlogListPage() {
         <div className="flex gap-2">
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as BlogStatus | 'all')}
             className="px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           >
             <option value="all">All Status</option>

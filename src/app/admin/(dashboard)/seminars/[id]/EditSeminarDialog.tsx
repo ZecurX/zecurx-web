@@ -68,7 +68,7 @@ export default function EditSeminarDialog({ seminar, onClose, onUpdate }: EditSe
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

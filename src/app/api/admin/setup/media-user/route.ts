@@ -67,16 +67,16 @@ export async function POST(req: NextRequest) {
         note: 'Media has full blog access (blog:*)',
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Create media user error:', error);
     
-    if (error.code === '23505') {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === '23505') {
       return NextResponse.json({ error: 'User already exists' }, { status: 409 });
     }
     
     return NextResponse.json({
       error: 'Failed to create media user',
-      details: error.message,
+      details: error instanceof Error ? error.message : 'An error occurred',
     }, { status: 500 });
   }
 }

@@ -57,6 +57,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
@@ -64,10 +65,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/validator": "^13.15.10",
+    "coderabbitai-mcp": "^1.1.1",
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
     "vercel": "^50.15.1"
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { ValidateReferralCodeResponse } from '@/types/referral-types';
+import { ValidateReferralCodeResponse, DiscountType } from '@/types/referral-types';
 import { checkValidateRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         const normalizedCode = code.toUpperCase().trim();
 
         // First, check regular referral codes
-        const regularResult = await query(`
+        const regularResult = await query<ReferralCodeRow>(`
             SELECT * FROM public.referral_codes 
             WHERE code = $1 AND is_active = true
         `, [normalizedCode]);
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         }
 
         // If not found, check partner referral codes
-        const partnerResult = await query(`
+        const partnerResult = await query<PartnerCodeRow>(`
             SELECT * FROM public.partner_referrals 
             WHERE code = $1 AND is_active = true
         `, [normalizedCode]);
@@ -54,9 +54,10 @@ export async function POST(request: NextRequest) {
             error: 'Invalid referral code'
         });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error validating referral code:', error);
-        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
+        const errMsg = error instanceof Error ? error.message : '';
+        const isConnectionError = errMsg.includes('timeout') || errMsg.includes('ETIMEDOUT') || errMsg.includes('Connection terminated');
         return NextResponse.json<ValidateReferralCodeResponse>({
             valid: false,
             error: isConnectionError
@@ -66,8 +67,34 @@ export async function POST(request: NextRequest) {
     }
 }
 
+interface ReferralCodeRow {
+    code: string;
+    valid_until: string | null;
+    valid_from: string;
+    max_uses: number | null;
+    current_uses: number;
+    min_order_amount: number;
+    discount_type: DiscountType;
+    discount_value: number;
+    max_discount: number | null;
+}
+
+interface PartnerCodeRow {
+    id: string;
+    code: string;
+    valid_until: string | null;
+    valid_from: string | null;
+    max_uses: number | null;
+    current_uses: number;
+    min_order_amount: number | null;
+    user_discount_type: DiscountType;
+    user_discount_value: number;
+    max_user_discount: number | null;
+    partner_name: string;
+}
+
 // Validate regular referral code from referral_codes table
-function validateRegularReferralCode(referralCode: any, orderAmount: number) {
+function validateRegularReferralCode(referralCode: ReferralCodeRow, orderAmount: number) {
     // Check if expired
     if (referralCode.valid_until && new Date(referralCode.valid_until) < new Date()) {
         return NextResponse.json<ValidateReferralCodeResponse>({
@@ -128,7 +155,7 @@ function validateRegularReferralCode(referralCode: any, orderAmount: number) {
 }
 
 // Validate partner referral code from partner_referrals table
-function validatePartnerReferralCode(partnerCode: any, orderAmount: number) {
+function validatePartnerReferralCode(partnerCode: PartnerCodeRow, orderAmount: number) {
     // Check if expired
     if (partnerCode.valid_until && new Date(partnerCode.valid_until) < new Date()) {
         return NextResponse.json<ValidateReferralCodeResponse>({

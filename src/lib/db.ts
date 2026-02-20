@@ -3,9 +3,9 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: false,
-    max: 10,
+    max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 3000,
+    connectionTimeoutMillis: 10000, // Increased from 3000
 });
 
 pool.on('connect', (client) => {
@@ -23,13 +23,13 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
 ): Promise<QueryResult<T>> {
     if (process.env.NODE_ENV === 'development') {
         const start = Date.now();
-        const res = await pool.query<T>(text, params as any);
+        const res = await pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
         const duration = Date.now() - start;
         console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
         return res;
     }
 
-    return pool.query<T>(text, params as any);
+    return pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
 }
 
 export async function getClient() {

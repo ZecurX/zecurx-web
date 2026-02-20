@@ -79,8 +79,8 @@ export default function UsersPage() {
       setShowCreateDialog(false);
       setFormData({ email: '', password: '', name: '', role: 'sales' });
       fetchUsers();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
@@ -114,8 +114,8 @@ export default function UsersPage() {
       setShowEditDialog(false);
       setSelectedUser(null);
       fetchUsers();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
@@ -143,8 +143,8 @@ export default function UsersPage() {
       setShowDeleteDialog(false);
       setSelectedUser(null);
       fetchUsers();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
@@ -171,8 +171,8 @@ export default function UsersPage() {
       setShowResetPasswordDialog(false);
       setSelectedUser(null);
       setNewPassword('');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Clock,
@@ -38,9 +38,65 @@ function isPast(dateStr: string) {
     return new Date(dateStr) < new Date();
 }
 
-// ─── Description Toggle ────────────────────────────────────
-function DescriptionToggle({ description }: { description: string }) {
+const FILLER_RE = /\b(maybe not if|maybe|probably|i think|we think|we want to|we want|we will have|we need to|we need|we are going to|we're going to|we plan to)\b/gi;
+const PARENS_RE = /\(.*?\)/g;
+const BULLET_RE = /(?:^|\n)\s*[-–—•*]\s*/g;
+
+function extractTopics(raw: string): string[] {
+    const text = raw.replace(PARENS_RE, " ").replace(FILLER_RE, " ");
+
+    const fragments = text
+        .split(/[\n\r]+|[;]|,\s*(?=[A-Z])|,\s*-\s*/g)
+        .flatMap((s) => s.split(BULLET_RE))
+        .map((s) =>
+            s.replace(/^[-–—•*:]+\s*/, "")
+                .replace(/[,;:]+$/, "")
+                .replace(/\s{2,}/g, " ")
+                .trim()
+        )
+        .filter((s) => s.length > 3);
+
+    const seen = new Set<string>();
+    const topics: string[] = [];
+
+    for (const frag of fragments) {
+        const lower = frag.toLowerCase();
+        if (seen.has(lower)) continue;
+
+        const isSubset = topics.some(
+            (t) => t.toLowerCase().includes(lower) || lower.includes(t.toLowerCase())
+        );
+        if (isSubset) continue;
+
+        seen.add(lower);
+        topics.push(frag);
+    }
+
+    return topics;
+}
+
+function summarizeDescription(raw: string, title: string, seminarType: string | null): string {
+    const topics = extractTopics(raw);
+    if (topics.length === 0) return raw.trim();
+
+    const type = (seminarType || "session").toLowerCase();
+
+    if (topics.length === 1) {
+        return `This ${type} on ${title} covers ${topics[0].toLowerCase()}.`;
+    }
+
+    if (topics.length === 2) {
+        return `This ${type} on ${title} covers ${topics[0].toLowerCase()} and ${topics[1].toLowerCase()}.`;
+    }
+
+    const leading = topics.slice(0, -1).map((t) => t.toLowerCase()).join(", ");
+    const last = topics[topics.length - 1].toLowerCase();
+    return `This ${type} on ${title} covers ${leading}, and ${last}.`;
+}
+
+function DescriptionToggle({ description, title, seminarType }: { description: string; title: string; seminarType: string | null }) {
     const [open, setOpen] = useState(false);
+    const summary = useMemo(() => summarizeDescription(description, title, seminarType), [description, title, seminarType]);
 
     return (
         <div className="mt-4">
@@ -60,8 +116,8 @@ function DescriptionToggle({ description }: { description: string }) {
                         transition={{ duration: 0.25, ease: "easeOut" }}
                         className="overflow-hidden"
                     >
-                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-2xl whitespace-pre-line pl-5 border-l-2 border-border">
-                            {description}
+                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-2xl pl-5 border-l-2 border-border">
+                            {summary}
                         </p>
                     </motion.div>
                 )}
@@ -127,7 +183,7 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
 
                                 {/* Expandable Description */}
                                 {seminar.description && (
-                                    <DescriptionToggle description={seminar.description} />
+                                    <DescriptionToggle description={seminar.description} title={seminar.title} seminarType={seminar.seminar_type} />
                                 )}
                             </div>
 
@@ -238,28 +294,31 @@ export default function SeminarsPage() {
                                         asChild
                                         className="h-12 px-8 rounded-full bg-foreground text-background font-medium text-sm hover:scale-105 transition-transform"
                                     >
-                                        <a href="#schedule">
-                                            View Schedule
+                                        <Link href="/book-seminar">
+                                            Book Seminar
                                             <ArrowRight className="w-4 h-4 ml-2" />
-                                        </a>
+                                        </Link>
                                     </Button>
                                     <Button
                                         asChild
                                         variant="ghost"
                                         className="h-12 px-6 rounded-full border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground font-medium"
                                     >
-                                        <Link href="/contact">
-                                            Request Private Session
-                                        </Link>
+                                        <a href="#schedule">
+                                            View Schedule
+                                        </a>
                                     </Button>
                                 </div>
                             </div>
 
                             {/* Right — Next Session Card (or stat card) */}
                             <div>
-                                {nextSession ? (
-                                    <Card className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 rounded-3xl overflow-hidden">
-                                        {/* Grid texture */}
+                                {loading ? (
+                                    <Card className="h-full min-h-[400px] bg-card/50 border border-border/50 rounded-3xl flex items-center justify-center">
+                                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                                    </Card>
+                                ) : nextSession ? (
+                                    <Card className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 rounded-3xl overflow-hidden relative">
                                         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
                                         <CardContent className="p-8 md:p-10 relative z-10">
