@@ -79,6 +79,7 @@ export const CDN_ASSETS = {
   },
   certificates: {
     background: getCdnUrl('images/certificate-bg.png'),
+    template: getCdnUrl('templates/certificate-template.pdf'),
     signature: getCdnUrl('images/signature-harsh-priyam.png'),
     emailLogo: getCdnUrl('images/zecurx-email-logo.png'),
   },

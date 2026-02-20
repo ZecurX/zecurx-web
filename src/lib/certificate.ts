@@ -4,6 +4,7 @@ import { query } from '@/lib/db';
 import { Certificate, Seminar } from '@/types/seminar';
 import { Resend } from 'resend';
 import { uploadToS3 } from '@/lib/s3';
+import { fetchFromCdn } from '@/lib/cdn';
 import { brandedEmailTemplate, emailSection, emailCourseCatalog } from '@/lib/email-template';
 import { courses } from '@/lib/courses';
 
@@ -31,10 +32,10 @@ export function generateCertificateId(): string {
 }
 
 export async function generateCertificatePDF(data: CertificateData & { certificateId: string }): Promise<Buffer> {
-    const path = await import('path');
-    const fs = await import('fs');
-    const templatePath = path.join(process.cwd(), 'public', 'certificate-template.pdf');
-    const templateBytes = fs.readFileSync(templatePath);
+    const templateBytes = await fetchFromCdn('templates/certificate-template.pdf');
+    if (!templateBytes) {
+        throw new Error('Failed to fetch certificate template from CDN');
+    }
     const pdfDoc = await PDFDocument.load(templateBytes);
     const page = pdfDoc.getPage(0);
 
@@ -151,11 +152,10 @@ export async function generateCertificatePreview(certificate: Certificate & { lo
     // Scale factor from PDF points to preview pixels
     const _S = 2;
 
-    const path = await import('path');
-    const fs = await import('fs');
-
-    const bgPath = path.join(process.cwd(), 'public', 'certificate-template-bg.png');
-    const bgBuffer = fs.readFileSync(bgPath);
+    const bgBuffer = await fetchFromCdn('images/certificate-bg.png');
+    if (!bgBuffer) {
+        throw new Error('Failed to fetch certificate background from CDN');
+    }
 
     const name = escapeXml(certificate.recipient_name);
     const nameSize = certificate.recipient_name.length > 25 ? 64 : 80;
