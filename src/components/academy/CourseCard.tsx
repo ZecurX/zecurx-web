@@ -17,6 +17,8 @@ interface CourseCardProps {
     popular?: boolean;
     delay?: number;
     brochureLink?: string;
+    pricingType?: 'fixed' | 'contact' | 'institutional';
+    inStock?: boolean;
 }
 
 export default function CourseCard({
@@ -32,6 +34,8 @@ export default function CourseCard({
     popular = false,
     delay = 0,
     brochureLink,
+    pricingType = 'fixed',
+    inStock = true,
 }: CourseCardProps) {
     const [isPurchased, setIsPurchased] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -98,52 +102,25 @@ export default function CourseCard({
 
                     {/* Footer */}
                     <div className="mt-auto pt-6 border-t border-border/50">
-                        <div className="flex items-end justify-between gap-4 mb-6">
-                            <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground">Investment</span>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-xl font-bold text-foreground">{formatPrice(price)}</span>
-                                    {originalPrice && (
-                                        <span className="text-sm text-muted-foreground line-through decoration-red-500/70 decoration-[1.5px]">
-                                            {formatPrice(originalPrice)}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {error && (
-                            <div className="mb-3 text-xs text-red-500">
-                                {error}
+                        {!inStock && (
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-muted-foreground">Coming Soon</span>
+                                <span className="flex-1 h-px bg-border/50" />
                             </div>
                         )}
-
-                        {/* Buttons: Enroll/Contact + Brochure */}
-                        <div className="flex flex-col gap-3 mt-4">
-                            {isPurchased ? (
-                                <div className="w-full py-3 text-center text-sm font-medium text-green-500 border border-green-500/20 bg-green-500/5 rounded-lg">
-                                    Enrolled
+                        {pricingType === 'institutional' ? (
+                            <>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-muted-foreground">Institutional</span>
+                                    <span className="flex-1 h-px bg-border/50" />
                                 </div>
-                            ) : (
                                 <div className="flex gap-2">
-                                    {/* Primary Button */}
-                                    {typeof price === 'number' ? (
-                                        <a
-                                            href={`/checkout?itemId=${id}&type=course`}
-                                            className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-lg"
-                                        >
-                                            Enroll Now
-                                        </a>
-                                    ) : (
-                                        <a
-                                            href="/contact"
-                                            className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-foreground border border-border hover:bg-muted/30 transition-colors rounded-lg"
-                                        >
-                                            Contact for Pricing
-                                        </a>
-                                    )}
-
-                                    {/* Secondary Button - Brochure */}
+                                    <a
+                                        href="/contact"
+                                        className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-foreground border border-border hover:bg-muted/30 transition-colors rounded-lg"
+                                    >
+                                        Contact Us
+                                    </a>
                                     {brochureLink && (
                                         <button
                                             onClick={() => setIsBrochureOpen(true)}
@@ -153,8 +130,84 @@ export default function CourseCard({
                                         </button>
                                     )}
                                 </div>
-                            )}
-                        </div>
+                            </>
+                        ) : pricingType === 'contact' ? (
+                            <>
+                                <div className="flex flex-col mb-6">
+                                    <span className="text-xs text-muted-foreground">Investment</span>
+                                    <span className="text-lg font-bold text-foreground">Contact for Pricing</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <a
+                                        href="/contact"
+                                        className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-foreground border border-border hover:bg-muted/30 transition-colors rounded-lg"
+                                    >
+                                        Contact for Pricing
+                                    </a>
+                                    {brochureLink && (
+                                        <button
+                                            onClick={() => setIsBrochureOpen(true)}
+                                            className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-medium bg-transparent text-foreground border border-foreground/20 hover:bg-foreground/5 transition-colors rounded-lg cursor-pointer"
+                                        >
+                                            View Brochure
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <div className="flex items-end justify-between gap-4 mb-6">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-muted-foreground">Investment</span>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-xl font-bold text-foreground">{formatPrice(price)}</span>
+                                            {originalPrice && (
+                                                <span className="text-sm text-muted-foreground line-through decoration-red-500/70 decoration-[1.5px]">
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {error && (
+                                    <div className="mb-3 text-xs text-red-500">
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div className="flex flex-col gap-3 mt-4">
+                                    {isPurchased ? (
+                                        <div className="w-full py-3 text-center text-sm font-medium text-green-500 border border-green-500/20 bg-green-500/5 rounded-lg">
+                                            Enrolled
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            {inStock ? (
+                                                <a
+                                                    href={`/checkout?itemId=${id}&type=course`}
+                                                    className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-lg"
+                                                >
+                                                    Enroll Now
+                                                </a>
+                                            ) : (
+                                                <span className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-muted-foreground border border-border/50 rounded-lg cursor-not-allowed">
+                                                    Not Available
+                                                </span>
+                                            )}
+                                            {brochureLink && (
+                                                <button
+                                                    onClick={() => setIsBrochureOpen(true)}
+                                                    className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-medium bg-transparent text-foreground border border-foreground/20 hover:bg-foreground/5 transition-colors rounded-lg cursor-pointer"
+                                                >
+                                                    View Brochure
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </motion.div>
