@@ -1,168 +1,18 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import {
-    GraduationCap, Award, Users,
-    BookOpen, ArrowRight, ShoppingBag, ShoppingCart
+import { ShoppingBag, ShoppingCart, GraduationCap, Award, Users,
+    BookOpen, ArrowRight
 } from 'lucide-react';
 import Link from 'next/link';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import CourseCard from '@/components/academy/CourseCard';
 import TrustedPartners from '@/components/landing/TrustedPartners';
-import { CDN_ASSETS } from '@/lib/cdn';
+import { CourseData } from '@/lib/courses';
 
-// Sample courses data - replace with your actual courses
-const courses = [
-    {
-        id: '93a3af86-761a-47a9-80f5-a97534916364',
-        title: 'CyberSecurity + Generative AI Bundle',
-        description: 'Master the future of security with this comprehensive program combining core cybersecurity skills with cutting-edge Generative AI defense strategies.',
-        price: 9500,
-        originalPrice: 34999,
-        duration: '3 Months',
-        students: 150,
-        level: 'Beginner' as const,
-        features: [
-            'Full practical exposure on live targets',
-            'ISO Verified Certification',
-            '3 ISO Certified Exam Vouchers',
-            'AI for Threat Detection & Response',
-            'Prompt Engineering for Security Ops',
-            'Hands-on Labs & Capstone Project',
-            'Internship Opportunity',
-        ],
-        popular: true,
-        // brochureLink: '/brochures/Bundle.pdf', // Missing
-    },
-    {
-        id: '06a10be6-115a-4a83-b338-67168abcce1a',
-        title: 'zxCPEH - Certified Professional Ethical Hacker',
-        description: 'Advanced ethical hacking methodology. Learn to think like an adversary to secure critical infrastructure.',
-        price: 25000,
-        originalPrice: 35499,
-        duration: '60 Hours',
-        students: 500,
-        level: 'Intermediate' as const,
-        features: [
-            'ISO Verified Certification',
-            'ISO Certified Exam Voucher',
-            'Advanced Exploitation',
-            'Network & Web Security',
-            'Privilege Escalation',
-            'Active Directory Attacks',
-            'Project-Based Learning',
-        ],
-        brochureLink: CDN_ASSETS.brochures.zxCPEH,
-    },
-    {
-        id: '1033198a-bf65-4183-9e6e-aab727903039',
-        title: 'zxCPPT - Certified Professional Pen Tester',
-        description: 'Professional penetration testing certification. Master the art of identifying potential security breaches.',
-        price: 35400,
-        originalPrice: 49999,
-        duration: '80 Hours',
-        students: 200,
-        level: 'Advanced' as const,
-        features: [
-            'ISO Verified Certification',
-            'ISO Certified Exam Voucher',
-            'Red Teaming Methodology',
-            'Advanced Evasion Techniques',
-            'Report Writing & Documentation',
-            'Custom Exploit Development',
-            'Industry Standard Tools',
-        ],
-        brochureLink: CDN_ASSETS.brochures.zxCPPT,
-    },
-    {
-        id: 'b5276793-8c55-4759-8206-3d1a833fe304',
-        title: 'zxGAIP - Generative AI Professional',
-        description: 'Leverage Generative AI for security operations, automation, and threat intelligence.',
-        price: 25000,
-        originalPrice: 35499,
-        duration: '40 Hours',
-        students: 120,
-        level: 'Intermediate' as const,
-        features: [
-            'ISO Verified Certification',
-            'ISO Certified Exam Voucher',
-            'LLMs for Security',
-            'Automated Threat Hunting',
-            'Secure AI Deployment',
-            'AI Risk Management',
-            'Real-world Case Studies',
-        ],
-        // brochureLink: '/brochures/zxGAIP.pdf', // Missing
-    },
-    {
-        id: '7f0e2cb3-82c1-4634-9a95-67a2ae14a815',
-        title: 'zxCCP - Certified Cybersecurity Practitioner',
-        description: 'Practical cybersecurity skills for professionals. Focus on defense, incident handling, and everyday security operations.',
-        price: "Institution Only",
-        duration: 'Custom',
-        level: 'Beginner' as const,
-        features: [
-            'Incident Response Basics',
-            'Security Controls Implementation',
-            'Policy & Compliance',
-            'Log Analysis',
-            'Institutional Training',
-        ],
-        brochureLink: CDN_ASSETS.brochures.zxCCP,
-    },
-    {
-        id: '3613d162-d801-47c6-9305-719f999738c8',
-        title: 'zxCCF - Certified Cybersecurity Foundations',
-        description: 'Foundational knowledge for a career in cybersecurity. Understand the landscape, threats, and basic protections.',
-        price: "Institution Only",
-        duration: 'Custom',
-        level: 'Beginner' as const,
-        features: [
-            'Core Security Concepts',
-            'Network Fundamentals',
-            'Cryptography Basics',
-            'Security Ethics',
-            'Career Roadmap',
-        ],
-        brochureLink: CDN_ASSETS.brochures.zxCCF,
-    },
-    {
-        id: 'ef34cbc8-c918-4e64-bd88-799863b299e1',
-        title: 'zxCCE - Certified Cybersecurity Expert',
-        description: 'Expert-level training for leadership roles. Strategy, governance, and advanced security architecture.',
-        price: "Institution Only",
-        duration: 'Custom',
-        level: 'Expert' as const,
-        features: [
-            'Security Governance',
-            'Risk Management',
-            'C-Level Communication',
-            'Enterprise Architecture',
-            'Strategic Planning',
-        ],
-        brochureLink: CDN_ASSETS.brochures.zxCCE,
-    },
-    {
-        id: '9bce53be-103e-46b9-9fa0-2b91260f38db',
-        title: 'zxCFD - Certified Fullstack Dev',
-        description: 'Become a security-aware fullstack developer. Build robust, secure applications from the ground up.',
-        price: "Contact for Pricing",
-        duration: 'Coming Soon',
-        level: 'Intermediate' as const,
-        features: [
-            'ISO Verified Certification',
-            'ISO Certified Exam Voucher',
-            'Secure Coding Practices',
-            'Modern Stack (Next.js, Node)',
-            'Database Security',
-            'API Development',
-            'DevSecOps Basics',
-        ],
-        // brochureLink: '/brochures/zxCFD.pdf', // Missing
-    }
-];
+const POLL_INTERVAL = 10_000;
 
 const stats = [
     { icon: Users, value: '1,200+', label: 'Students Trained' },
@@ -171,35 +21,33 @@ const stats = [
     { icon: GraduationCap, value: '10+', label: 'Expert Instructors' },
 ];
 
-export default function AcademyClient() {
+export default function AcademyClient({ courses: initialCourses }: { courses: CourseData[] }) {
+    const [courses, setCourses] = useState(initialCourses);
+
+    const refreshPrices = useCallback(async () => {
+        try {
+            const res = await fetch('/api/academy/prices');
+            if (!res.ok) return;
+            const prices: Record<string, number> = await res.json();
+            setCourses(prev =>
+                prev.map(course => {
+                    const dbPrice = prices[course.id];
+                    if (dbPrice !== undefined && dbPrice !== course.price) {
+                        return { ...course, price: dbPrice };
+                    }
+                    return course;
+                })
+            );
+        } catch { }
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(refreshPrices, POLL_INTERVAL);
+        return () => clearInterval(interval);
+    }, [refreshPrices]);
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
-
-            <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300, delay: 0.5 }}
-                className="fixed top-24 left-1/2 -translate-x-1/2 z-40"
-            >
-                <div className="flex items-center bg-foreground/95 backdrop-blur-xl rounded-full p-1.5 shadow-lg shadow-black/10 border border-white/10">
-                    <Link
-                        href="/shop"
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-background hover:text-background/80 transition-colors"
-                    >
-                        <ShoppingBag className="w-4 h-4" />
-                        <span>Shop</span>
-                    </Link>
-
-                    <Link
-                        href="/cart"
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
-                    >
-                        <ShoppingCart className="w-4 h-4" />
-                        <span>Cart</span>
-                    </Link>
-                </div>
-            </motion.div>
 
             {/* HERO SECTION */}
             <section className="relative pt-40 pb-20 overflow-hidden">
@@ -300,6 +148,22 @@ export default function AcademyClient() {
                             <p className="text-muted-foreground max-w-xl text-lg font-light">
                                 From foundational security to advanced red teaming.
                             </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/shop"
+                                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-foreground border border-border rounded-full hover:bg-foreground hover:text-background transition-colors"
+                            >
+                                <ShoppingBag className="w-4 h-4" />
+                                Shop
+                            </Link>
+                            <Link
+                                href="/cart"
+                                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-foreground text-background rounded-full hover:bg-foreground/80 transition-colors"
+                            >
+                                <ShoppingCart className="w-4 h-4" />
+                                Cart
+                            </Link>
                         </div>
                     </motion.div>
 
