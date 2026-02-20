@@ -38,6 +38,7 @@ export default function PartnerUsagesDialog({ partnerId, partnerName, trigger }:
         if (open) {
             fetchUsages();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, partnerId]);
 
     const formatCurrency = (amount: number) => {

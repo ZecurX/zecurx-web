@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Send, Loader2, AlertCircle, ExternalLink, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, AlertCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
@@ -20,7 +20,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const router = useRouter();
   const [initialLoading, setInitialLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [publishing, setPublishing] = useState(false);
+  const [_publishing, _setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
@@ -160,6 +160,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     }, 30000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialLoading, title, content, excerpt, featuredImage, metaDescription, selectedLabels]);
 
   if (initialLoading) {

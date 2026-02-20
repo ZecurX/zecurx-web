@@ -33,7 +33,7 @@ export default function SudoLoginPage() {
             } else {
                 setError(data.error || "Access Denied");
             }
-        } catch (err) {
+        } catch (_err) {
             setError("Connection failed");
         } finally {
             setLoading(false);
@@ -60,7 +60,7 @@ export default function SudoLoginPage() {
             } else {
                 setError(data.error || "Invalid Token");
             }
-        } catch (err) {
+        } catch (_err) {
             setError("Verification failed");
         } finally {
             setLoading(false);

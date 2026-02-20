@@ -3,7 +3,7 @@ import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
 import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
-import { ROLES, Role, CreateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
+import { Role, CreateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
 export async function GET(req: NextRequest) {

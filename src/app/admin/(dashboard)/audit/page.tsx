@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { FileText, Trash2, Filter, X } from 'lucide-react';
+import { Trash2, Filter, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { AuditLog, AuditAction, Resource } from '@/types/auth';
 
@@ -20,6 +20,7 @@ export default function AuditLogsPage() {
 
   useEffect(() => {
     fetchLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchLogs = async () => {
@@ -331,7 +332,7 @@ export default function AuditLogsPage() {
 }
 
 // Dialog Component
-function Dialog({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function Dialog({ children, onClose: _onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-card border border-border rounded-xl max-w-2xl w-full p-6 shadow-2xl">

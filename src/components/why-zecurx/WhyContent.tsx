@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
-    ChevronLeft, ChevronRight, Quote, ArrowRight, CheckCircle2
+    ChevronLeft, ChevronRight, Quote, ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 
@@ -101,7 +101,7 @@ export default function WhyContent() {
     const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
+    const [isPaused, _setIsPaused] = useState(false);
 
     const nextTestimonial = useCallback(() => {
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
