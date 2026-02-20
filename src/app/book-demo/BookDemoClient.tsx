@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import { MoveRight, CheckCircle2, Loader2, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import {
     Select,
@@ -128,32 +127,33 @@ function BookDemoContent() {
             </div>
 
             {/* Right Side: Form */}
-            <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10 lg:border-l lg:border-border/40">
-                <div className="w-full max-w-lg bg-background p-8 lg:p-12">
+            <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10 lg:border-l lg:border-gray-100 bg-gray-50/50">
+                <div className="w-full max-w-lg bg-white border border-gray-100 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden">
+
                     {isSuccess ? (
-                        <div className="flex flex-col items-center justify-center text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
-                                <CheckCircle2 className="w-10 h-10 text-green-500" />
+                        <div className="relative z-10 flex flex-col items-center justify-center text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 shadow-sm">
+                                <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <h3 className="text-3xl font-bold mb-3">Request Received!</h3>
-                            <p className="text-muted-foreground mb-8 text-lg max-w-sm">
-                                Our team will review your request and confirm your demo slot shortly.
+                            <h3 className="text-3xl font-bold text-gray-900 mb-3">Demo Requested</h3>
+                            <p className="text-gray-500 mb-8 text-sm max-w-[240px] font-medium leading-relaxed">
+                                Thank you for your interest. Our team will review your request and get back to you shortly.
                             </p>
 
                             <div className="w-full space-y-4">
                                 {/* Calendar Options */}
                                 {preferredDate && (
-                                    <div className="bg-muted/30 rounded-2xl p-6 border border-border/50">
-                                        <h4 className="font-semibold text-foreground mb-4 flex items-center justify-center gap-2">
-                                            <Calendar className="w-4 h-4" />
-                                            Add to Calendar
+                                    <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 shadow-sm">
+                                        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6 flex items-center justify-center gap-2">
+                                            <Calendar className="w-3 h-3" />
+                                            Schedule to Calendar
                                         </h4>
                                         <div className="grid grid-cols-2 gap-3">
                                             <a
                                                 href={getGoogleCalendarUrl()}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-black rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md"
                                             >
                                                 Google
                                             </a>
@@ -161,111 +161,114 @@ function BookDemoContent() {
                                                 href={getOutlookCalendarUrl()}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-sm font-medium hover:bg-[#006cbd] transition-colors shadow-sm"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#006cbd] transition-all duration-300 shadow-sm hover:shadow-md"
                                             >
                                                 Outlook
                                             </a>
                                         </div>
-                                        <p className="text-xs text-muted-foreground mt-3">
-                                            Selected: {preferredDate.toLocaleString()}
+                                        <p className="text-[10px] font-mono text-gray-400 mt-4 uppercase tracking-[0.1em]">
+                                            Slot: {preferredDate.toLocaleString()}
                                         </p>
                                     </div>
                                 )}
                             </div>
 
-                            <Button onClick={() => setIsSuccess(false)} variant="ghost" className="mt-8 text-muted-foreground hover:text-foreground">
-                                Submit Another Request
-                            </Button>
+                            <button onClick={() => setIsSuccess(false)} className="mt-10 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors">
+                                New Request
+                            </button>
                         </div>
                     ) : (
-                        <>
-                            <div className="mb-8">
-                                <h3 className="text-2xl font-manrope font-medium mb-2">Get Started</h3>
-                                <p className="text-muted-foreground text-sm">Fill out the form below and we&apos;ll be in touch shortly.</p>
+                        <div className="relative z-10">
+                            <div className="mb-10">
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Request Demo</h3>
+                                <p className="text-gray-500 text-sm font-medium">Experience the power of ZecurX tailored for your team.</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label htmlFor="first-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">First Name</label>
-                                        <input name="first-name" id="first-name" type="text" required className="w-full bg-muted/20 border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-colors" placeholder="Jane" />
+                                        <label htmlFor="first-name" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">First Name</label>
+                                        <input name="first-name" id="first-name" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Jane" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="last-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Last Name</label>
-                                        <input name="last-name" id="last-name" type="text" required className="w-full bg-muted/20 border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-colors" placeholder="Doe" />
+                                        <label htmlFor="last-name" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Last Name</label>
+                                        <input name="last-name" id="last-name" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Doe" />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Work Email</label>
-                                    <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-muted/20 border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-colors" placeholder="jane@company.com" />
+                                    <label htmlFor="email" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Work Email</label>
+                                    <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="jane@company.com" />
                                 </div>
 
                                 {service && (
-                                    <div className="p-3 bg-foreground/5 border border-border/50 rounded-lg">
-                                        <p className="text-xs text-muted-foreground">Interested in: <span className="font-medium text-foreground">{service}</span></p>
+                                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                                        <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Service Interest: <span className="text-gray-900 ml-2">{service}</span></p>
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
-                                    <label htmlFor="company" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Company</label>
-                                    <input name="company" id="company" type="text" required className="w-full bg-muted/20 border border-border rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-colors" placeholder="Acme Corp" />
+                                    <label htmlFor="company" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Company</label>
+                                    <input name="company" id="company" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Acme Corp" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="role" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</label>
+                                    <label htmlFor="role" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Your Role</label>
                                     <Select value={role} onValueChange={setRole} required>
-                                        <SelectTrigger>
+                                        <SelectTrigger className="h-14 bg-gray-50 border-gray-200 rounded-xl text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200">
                                             <SelectValue placeholder="Select your role" />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="CISO / CSO">CISO / CSO</SelectItem>
-                                            <SelectItem value="Security Director">Security Director</SelectItem>
-                                            <SelectItem value="Security Engineer">Security Engineer</SelectItem>
-                                            <SelectItem value="Developer">Developer</SelectItem>
-                                            <SelectItem value="IT Manager">IT Manager</SelectItem>
-                                            <SelectItem value="CTO / CIO">CTO / CIO</SelectItem>
-                                            <SelectItem value="Other">Other</SelectItem>
+                                        <SelectContent className="bg-white border-gray-200 rounded-xl shadow-lg">
+                                            <SelectItem value="CISO / CSO" className="text-gray-900 focus:bg-gray-50 cursor-pointer">CISO / CSO</SelectItem>
+                                            <SelectItem value="Security Director" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Security Director</SelectItem>
+                                            <SelectItem value="Security Engineer" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Security Engineer</SelectItem>
+                                            <SelectItem value="Developer" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Developer</SelectItem>
+                                            <SelectItem value="IT Manager" className="text-gray-900 focus:bg-gray-50 cursor-pointer">IT Manager</SelectItem>
+                                            <SelectItem value="CTO / CIO" className="text-gray-900 focus:bg-gray-50 cursor-pointer">CTO / CIO</SelectItem>
+                                            <SelectItem value="Other" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Date &amp; Time</label>
+                                    <label className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Preferred Date & Time</label>
                                     <DateTimePicker
                                         name="preferred-date"
                                         onChange={setPreferredDate}
+                                        className="bg-gray-50 border-gray-200 text-gray-900"
                                     />
-                                    <p className="text-xs text-muted-foreground/60">Optional - we&apos;ll confirm availability</p>
+                                    <p className="text-xs text-gray-500 ml-1">Optional - our team will coordinate with you</p>
                                 </div>
 
                                 {error && (
-                                    <p className="text-red-500 text-sm">{error}</p>
+                                    <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center gap-3 text-red-600 animate-in shake">
+                                        <p className="text-xs font-bold uppercase tracking-widest">{error}</p>
+                                    </div>
                                 )}
 
-                                <Button
+                                <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-full font-medium text-base flex items-center justify-center gap-2 mt-4"
+                                    className="w-full h-16 bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            Submitting...
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Submitting Request...
                                         </>
                                     ) : (
                                         <>
-                                            Request Demo
-                                            <MoveRight className="w-4 h-4" />
+                                            Book Demo
+                                            <MoveRight className="w-5 h-5" />
                                         </>
                                     )}
-                                </Button>
+                                </button>
 
-                                <p className="text-xs text-center text-muted-foreground pt-4">
-                                    By submitting this form, you acknowledge that you have read and understood our Privacy Policy.
+                                <p className="text-xs text-center text-gray-500 pt-6 leading-relaxed">
+                                    By submitting this form, you agree to our<br /> terms of service & privacy policy.
                                 </p>
                             </form>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>

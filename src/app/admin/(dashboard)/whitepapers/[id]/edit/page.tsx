@@ -56,7 +56,7 @@ export default function EditWhitepaperPage({ params }: { params: Promise<{ id: s
         setPdfUrl(whitepaper.pdf_url);
         setCoverImageUrl(whitepaper.cover_image_url || '');
         setStatus(whitepaper.status as WhitepaperStatus);
-      } catch (_err) {
+      } catch {
         setError('Failed to load whitepaper');
       } finally {
         setFetching(false);

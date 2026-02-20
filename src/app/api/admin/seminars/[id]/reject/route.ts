@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { Seminar } from '@/types/seminar';
+import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
 
 export async function POST(
     request: NextRequest,
@@ -44,47 +45,49 @@ export async function POST(
 
         const seminar = result.rows[0];
 
-        const rejectionEmailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #1a1a1a; margin: 0;">ZecurX</h1>
-                    <p style="color: #666; margin: 5px 0 0 0;">Cybersecurity Excellence</p>
-                </div>
+        const bodyContent = `
+            <p style="color: #333; font-size: 16px; margin: 0 0 20px 0; text-align: center;">
+                Unfortunately, we couldn't approve your seminar request at this time.
+            </p>
 
-                <div style="background: #ffebee; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 30px;">
-                    <h2 style="color: #c62828; margin: 0 0 10px 0;">Seminar Request Update</h2>
-                    <p style="color: #555; margin: 0;">Unfortunately, we couldn't approve your seminar request at this time.</p>
-                </div>
+            ${emailSection(seminar.title, `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Organization:</strong> ${seminar.organization_name}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Requested Date:</strong> ${new Date(seminar.date).toLocaleDateString('en-US', { dateStyle: 'full' })}</td></tr>
+                </table>
+            `)}
 
-                <div style="background: #f5f5f5; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a1a;">${seminar.title}</h3>
-                    <p style="margin: 5px 0; color: #555;"><strong>Organization:</strong> ${seminar.organization_name}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Requested Date:</strong> ${new Date(seminar.date).toLocaleDateString('en-US', { dateStyle: 'full' })}</p>
-                </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0; font-weight: bold;">Reason:</p>
+            <p style="color: #555; font-size: 14px; margin: 10px 0; padding: 15px; background-color: #f9f9f9; border-left: 3px solid #0a0a0f;">
+                ${reason}
+            </p>
 
-                <div style="background: #fff; padding: 25px; border: 1px solid #e0e0e0; border-radius: 12px; margin-bottom: 25px;">
-                    <h4 style="margin: 0 0 10px 0; color: #333;">Reason:</h4>
-                    <p style="color: #555; margin: 0;">${reason}</p>
-                </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                <strong>What you can do:</strong>
+            </p>
+            <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+                <li>Review the feedback and adjust your requirements</li>
+                <li>Submit a new booking request with the changes</li>
+                <li>Contact us at official@zecurx.com for further discussion</li>
+            </ul>
 
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                    <h4 style="margin: 0 0 10px 0; color: #1565c0;">What can you do?</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #555;">
-                        <li>Review the feedback and adjust your requirements</li>
-                        <li>Submit a new booking request with the changes</li>
-                        <li>Contact us at official@zecurx.com for further discussion</li>
-                    </ul>
-                </div>
-
-                <p style="color: #888; font-size: 12px; text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    We appreciate your interest in ZecurX and hope to work with you soon.
-                </p>
-            </div>
+            <p style="color: #888; font-size: 13px; margin: 20px 0; text-align: center;">
+                We appreciate your interest in ZecurX and hope to work with you soon.
+            </p>
         `;
+
+        const rejectionEmailHtml = brandedEmailTemplate({
+            accent: 'error',
+            body: bodyContent,
+            previewText: `Seminar Request Update: ${seminar.title}`,
+            includeMarketing: true,
+            marketingType: 'corporate',
+            showSocials: false,
+        });
 
         try {
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: seminar.contact_email,
                 subject: `Seminar Request Update: ${seminar.title} - ZecurX`,
                 html: rejectionEmailHtml,

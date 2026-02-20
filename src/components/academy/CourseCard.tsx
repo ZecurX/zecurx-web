@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import BrochureModal from './BrochureModal';
 import { useState } from 'react';
+import BrochureModal from './BrochureModal';
 
 interface CourseCardProps {
     id: string;

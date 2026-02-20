@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifyOtp } from '@/lib/otp';
-import { sendCertificateEmail } from '@/lib/certificate';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar, SeminarRegistration, Certificate } from '@/types/seminar';
 
@@ -69,17 +68,15 @@ export async function POST(
         if (existingCertResult.rows.length > 0) {
             const cert = existingCertResult.rows[0];
             
-            // Resend the certificate email
-            await sendCertificateEmail(cert, email.trim().toLowerCase());
-            
+            // Certificate already exists — redirect to download/share page (no re-send)
             return NextResponse.json({
                 success: true,
-                status: 'certificate_sent',
+                status: 'certificate_exists',
                 hasRegistration: true,
                 hasCertificate: true,
                 hasFeedback: true,
                 certificateId: cert.certificate_id,
-                message: 'Certificate found and sent to your email',
+                message: 'You already have a certificate. Redirecting to your certificate page.',
                 certificate: {
                     certificateId: cert.certificate_id,
                     recipientName: cert.recipient_name,

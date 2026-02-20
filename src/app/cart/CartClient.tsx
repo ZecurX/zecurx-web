@@ -65,7 +65,7 @@ export default function CartPage() {
             } else {
                 setReferralError(data.error || 'Invalid code');
             }
-        } catch (_error) {
+        } catch {
             setReferralError('Failed to validate code');
         } finally {
             setValidatingCode(false);

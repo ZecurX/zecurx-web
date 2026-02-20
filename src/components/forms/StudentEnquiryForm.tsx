@@ -7,7 +7,8 @@ import {
     FIELDS_OF_INTEREST,
     StudentLeadFormData
 } from '@/types/lead-types';
-import { Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2, Loader2, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export function StudentEnquiryForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +44,7 @@ export function StudentEnquiryForm() {
                 body: JSON.stringify({
                     ...formData,
                     lead_source: 'Website Form',
-                    source_page: window.location.href,
+                    source_page: typeof window !== 'undefined' ? window.location.href : '',
                     enquiry_type: 'Student Enquiry',
                 }),
             });
@@ -63,24 +64,28 @@ export function StudentEnquiryForm() {
     };
 
     const inputClass = cn(
-        "w-full px-4 py-3 text-sm rounded-xl",
-        "bg-white/[0.05] border border-white/[0.1]",
-        "text-foreground placeholder:text-muted-foreground/50",
-        "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50",
+        "w-full h-14 px-5 py-3 text-sm rounded-xl font-medium",
+        "bg-gray-50 border border-gray-200",
+        "text-gray-900 placeholder:text-gray-400",
+        "focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white",
         "transition-all duration-200"
     );
 
-    const labelClass = "block text-sm font-medium text-foreground mb-2";
+    const labelClass = "block text-sm font-bold text-gray-700 mb-2 ml-1";
 
     if (isSuccess) {
         return (
-            <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-20 px-8 bg-white border border-gray-200 rounded-[2.5rem] shadow-xl"
+            >
+                <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-8 shadow-sm">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">Thank You! 🎉</h3>
-                <p className="text-muted-foreground mb-6">
-                    We&apos;ve received your enquiry and will contact you within 24 hours.
+                <h3 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Application Received</h3>
+                <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto leading-relaxed">
+                    Thank you for your interest. Our academic counselors will review your application and contact you shortly.
                 </p>
                 <button
                     onClick={() => {
@@ -96,139 +101,146 @@ export function StudentEnquiryForm() {
                             message: '',
                         });
                     }}
-                    className="px-6 py-3 text-sm font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+                    className="h-14 px-8 text-sm font-bold rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                    Submit Another Enquiry
+                    Submit Another Application
                 </button>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
             {error && (
-                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                <div className="p-4 rounded-lg bg-red-50 text-red-600 border border-red-100 text-sm font-bold">
                     {error}
                 </div>
             )}
 
-            <div className="grid gap-6 sm:grid-cols-2">
-                <div>
-                    <label htmlFor="full_name" className={labelClass}>Full Name *</label>
-                    <input
-                        type="text"
-                        id="full_name"
-                        name="full_name"
-                        value={formData.full_name}
-                        onChange={handleChange}
-                        required
-                        placeholder="Enter your full name"
-                        className={inputClass}
-                    />
+            <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Personal Profile</h4>
                 </div>
 
-                <div>
-                    <label htmlFor="email" className={labelClass}>Email Address *</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        placeholder="your.email@example.com"
-                        className={inputClass}
-                    />
-                </div>
+                <div className="grid gap-6 sm:grid-cols-2">
+                    <div>
+                        <label htmlFor="full_name" className={labelClass}>Full Name *</label>
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            value={formData.full_name}
+                            onChange={handleChange}
+                            required
+                            placeholder="Full Name"
+                            className={inputClass}
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="phone" className={labelClass}>Phone Number *</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        placeholder="+91 98765 43210"
-                        className={inputClass}
-                    />
-                </div>
+                    <div>
+                        <label htmlFor="email" className={labelClass}>Email Address *</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            placeholder="you@example.com"
+                            className={inputClass}
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="current_education" className={labelClass}>Current Education *</label>
-                    <select
-                        id="current_education"
-                        name="current_education"
-                        value={formData.current_education}
-                        onChange={handleChange}
-                        required
-                        className={inputClass}
-                    >
-                        <option value="">Select your education level</option>
-                        {EDUCATION_LEVELS.map(level => (
-                            <option key={level} value={level}>{level}</option>
-                        ))}
-                    </select>
-                </div>
+                    <div>
+                        <label htmlFor="phone" className={labelClass}>Phone Number *</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                            placeholder="+91"
+                            className={inputClass}
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="field_of_interest" className={labelClass}>Field of Interest *</label>
-                    <select
-                        id="field_of_interest"
-                        name="field_of_interest"
-                        value={formData.field_of_interest}
-                        onChange={handleChange}
-                        required
-                        className={inputClass}
-                    >
-                        <option value="">Select your interest</option>
-                        {FIELDS_OF_INTEREST.map(field => (
-                            <option key={field} value={field}>{field}</option>
-                        ))}
-                    </select>
-                </div>
+                    <div>
+                        <label htmlFor="current_education" className={labelClass}>Current Education *</label>
+                        <select
+                            id="current_education"
+                            name="current_education"
+                            value={formData.current_education}
+                            onChange={handleChange}
+                            required
+                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                        >
+                            <option value="" className="text-gray-500">Select level</option>
+                            {EDUCATION_LEVELS.map(level => (
+                                <option key={level} value={level} className="text-gray-900">{level}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                <div>
-                    <label htmlFor="preferred_course" className={labelClass}>Preferred Course</label>
-                    <input
-                        type="text"
-                        id="preferred_course"
-                        name="preferred_course"
-                        value={formData.preferred_course}
-                        onChange={handleChange}
-                        placeholder="e.g., Cybersecurity Internship"
-                        className={inputClass}
-                    />
-                </div>
+                    <div>
+                        <label htmlFor="field_of_interest" className={labelClass}>Field of Interest *</label>
+                        <select
+                            id="field_of_interest"
+                            name="field_of_interest"
+                            value={formData.field_of_interest}
+                            onChange={handleChange}
+                            required
+                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                        >
+                            <option value="" className="text-gray-500">Select interest</option>
+                            {FIELDS_OF_INTEREST.map(field => (
+                                <option key={field} value={field} className="text-gray-900">{field}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                <div>
-                    <label htmlFor="intake_year" className={labelClass}>Intake Year</label>
-                    <select
-                        id="intake_year"
-                        name="intake_year"
-                        value={formData.intake_year}
-                        onChange={handleChange}
-                        className={inputClass}
-                    >
-                        <option value="">Select year</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                        <option value="2027">2027</option>
-                    </select>
+                    <div>
+                        <label htmlFor="preferred_course" className={labelClass}>Preferred Course</label>
+                        <input
+                            type="text"
+                            id="preferred_course"
+                            name="preferred_course"
+                            value={formData.preferred_course}
+                            onChange={handleChange}
+                            placeholder="e.g. SOC Analyst"
+                            className={inputClass}
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="intake_year" className={labelClass}>Preferred Intake Year</label>
+                        <select
+                            id="intake_year"
+                            name="intake_year"
+                            value={formData.intake_year}
+                            onChange={handleChange}
+                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                        >
+                            <option value="" className="text-gray-500">Select year</option>
+                            <option value="2025" className="text-gray-900">2025</option>
+                            <option value="2026" className="text-gray-900">2026</option>
+                            <option value="2027" className="text-gray-900">2027</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <label htmlFor="message" className={labelClass}>Message (Optional)</label>
+            <div className="space-y-3">
+                <label htmlFor="message" className={labelClass}>Additional Information</label>
                 <textarea
                     id="message"
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
                     rows={4}
-                    placeholder="Tell us about your career goals or any specific questions..."
-                    className={cn(inputClass, "resize-none")}
+                    placeholder="Tell us about your career goals and expectations..."
+                    className={cn(inputClass, "h-32 resize-none pt-4")}
                 />
             </div>
 
@@ -236,27 +248,29 @@ export function StudentEnquiryForm() {
                 type="submit"
                 disabled={isSubmitting}
                 className={cn(
-                    "w-full px-6 py-4 text-sm font-medium rounded-xl",
-                    "bg-primary text-primary-foreground",
-                    "hover:bg-primary/90 active:scale-[0.98]",
+                    "w-full h-14 text-sm font-bold rounded-xl",
+                    "bg-zinc-900 text-white",
+                    "hover:bg-zinc-800 active:scale-[0.98]",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
-                    "transition-all duration-200",
-                    "flex items-center justify-center gap-2"
+                    "transition-all duration-300",
+                    "flex items-center justify-center gap-3",
+                    "shadow-lg hover:shadow-xl"
                 )}
             >
                 {isSubmitting ? (
-                    'Submitting...'
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
                 ) : (
                     <>
-                        <Send className="w-4 h-4" />
-                        Submit Enquiry
+                        <Send className="w-5 h-5" />
+                        Submit Application
                     </>
                 )}
             </button>
 
-            <p className="text-xs text-muted-foreground/60 text-center">
-                By submitting this form, you agree to receive communications from Zecurx.
-            </p>
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                <Shield className="w-3 h-3 text-gray-400" />
+                <span>Secure and encrypted transmission</span>
+            </div>
         </form>
     );
 }
