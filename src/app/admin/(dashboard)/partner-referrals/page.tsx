@@ -29,6 +29,7 @@ export default async function PartnerReferralsPage() {
         );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const PartnerReferralsList = require("./PartnerReferralsList").default;
 
     return (

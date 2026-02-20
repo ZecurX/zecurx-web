@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { requirePermission, getClientIP, getUserAgent } from '@/lib/auth';
+import { requirePermission } from '@/lib/auth';
 import { generateSlug } from '@/lib/blog-utils';
 import { CreateWhitepaperRequest } from '@/types/auth';
 

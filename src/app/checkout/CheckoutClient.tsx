@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
@@ -124,12 +124,12 @@ function CheckoutContent() {
         fetchItemPrice();
     }, [itemId, itemType, isCartCheckout]);
 
-    const singleItem = !isCartCheckout && fetchedItem ? {
+    const singleItem = useMemo(() => !isCartCheckout && fetchedItem ? {
         id: fetchedItem.id,
         name: fetchedItem.name,
         price: promoPriceValid && promoPrice ? promoPrice : fetchedItem.price,
         type: fetchedItem.type
-    } : null;
+    } : null, [isCartCheckout, fetchedItem, promoPriceValid, promoPrice]);
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
     const finalAmount = appliedCode ? checkoutAmount - appliedCode.discount_amount : checkoutAmount;
@@ -197,7 +197,7 @@ function CheckoutContent() {
             const error = partnerData.error || regularData.error || 'Invalid code';
             setReferralError(error);
             if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
-        } catch (error) {
+        } catch {
             setReferralError('Failed to validate code');
         } finally {
             setValidatingCode(false);
@@ -213,6 +213,7 @@ function CheckoutContent() {
         if (codeFromUrl && !appliedCode) {
             validateCode(codeFromUrl);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams]);
 
     useEffect(() => {
@@ -285,7 +286,7 @@ function CheckoutContent() {
         const isItemReady = isCartCheckout || (!isLoadingItem && !itemFetchError && singleItem !== null);
 
         setIsFormValid(isBasicValid && isAddressValid && isCollegeValid && isPromoPriceValid && isItemReady);
-    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
+    }, [formData, isCartCheckout, singleItem?.type, urlPromoPrice, urlPromoCode, promoPriceValid, isLoadingItem, itemFetchError, singleItem]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -304,7 +305,7 @@ function CheckoutContent() {
                 const priceChanges: string[] = [];
 
                 for (const cartItem of items) {
-                    const dbProduct = productsData.products?.find((p: any) => p.id.toString() === cartItem.id);
+                    const dbProduct = productsData.products?.find((p: Record<string, unknown>) => String(p.id) === cartItem.id);
                     if (dbProduct && Math.abs(dbProduct.price - cartItem.price) > 0.01) {
                         priceChanges.push(
                             `${cartItem.name}: ₹${cartItem.price} → ₹${dbProduct.price}`
@@ -334,7 +335,7 @@ function CheckoutContent() {
                 const stockData = await stockCheckRes.json();
 
                 if (!stockData.available) {
-                    const unavailableNames = stockData.unavailableItems?.map((item: any) =>
+                    const unavailableNames = stockData.unavailableItems?.map((item: Record<string, unknown>) =>
                         `${item.name} (${item.reason})`
                     ).join(', ') || 'Some items';
 

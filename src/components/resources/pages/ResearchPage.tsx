@@ -8,11 +8,8 @@ import {
     Shield,
     Globe,
     Lock,
-    Cpu,
     Database,
-    ExternalLink,
     Filter,
-    Clock,
     TrendingUp,
     Building2,
     Code2,
@@ -20,7 +17,6 @@ import {
     List,
     LayoutGrid,
     ChevronLeft,
-    MoreHorizontal
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

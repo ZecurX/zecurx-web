@@ -2,17 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye, 
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Eye,
   Calendar,
   FileText,
-  MoreVertical,
   Globe,
   Loader2
 } from 'lucide-react';
@@ -31,7 +28,6 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function BlogListPage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,13 +118,7 @@ export default function BlogListPage() {
     }
   };
 
-  const canEdit = user?.role === 'marketing' || user?.role === 'super_admin'; // Super admin usually can do everything, but per requirements marketing is the main editor. Logic says marketing has update permission. Admin has read.
-  // Actually per requirements:
-  // marketing: create, update, delete
-  // admin: read only
-  // super_admin: full access (implied)
-  // Let's rely on the API for enforcement, but UI should hide buttons.
-  const canManageBlog = user?.role === 'media' || user?.role === 'super_admin';
+  const canManageBlog = ['super_admin', 'admin', 'marketing', 'media'].includes(user?.role || '');
 
   return (
     <div className="space-y-6">
@@ -137,7 +127,7 @@ export default function BlogListPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Blog Management</h1>
           <p className="text-sm text-muted-foreground mt-1">Manage your blog posts, labels, and content</p>
         </div>
-        
+
         {canManageBlog && (
           <Link
             href="/admin/blog/new"
@@ -161,11 +151,11 @@ export default function BlogListPage() {
             className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as BlogStatus | 'all')}
             className="px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           >
             <option value="all">All Status</option>
@@ -196,15 +186,15 @@ export default function BlogListPage() {
           <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium text-foreground">No posts found</h3>
           <p className="text-muted-foreground mt-1">
-            {search || statusFilter !== 'all' || selectedLabel !== 'all' 
-              ? 'Try adjusting your filters' 
+            {search || statusFilter !== 'all' || selectedLabel !== 'all'
+              ? 'Try adjusting your filters'
               : 'Get started by creating your first blog post'}
           </p>
         </div>
       ) : (
         <div className="grid gap-4">
           {posts.map((post) => (
-            <div 
+            <div
               key={post.id}
               className="group flex flex-col sm:flex-row gap-4 p-4 bg-card/40 border border-border/50 rounded-xl hover:bg-card/60 transition-colors"
             >
@@ -233,15 +223,14 @@ export default function BlogListPage() {
                       {post.title}
                     </h3>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
-                        post.status === 'published' 
-                          ? 'bg-green-500/10 text-green-600 border-green-500/20' 
-                          : 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20'
-                      }`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${post.status === 'published'
+                        ? 'bg-green-500/10 text-green-600 border-green-500/20'
+                        : 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20'
+                        }`}>
                         {post.status === 'published' ? 'Published' : 'Draft'}
                       </span>
                       {post.labels?.map(label => (
-                        <span 
+                        <span
                           key={label.id}
                           className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white"
                           style={{ backgroundColor: label.color }}
@@ -282,23 +271,15 @@ export default function BlogListPage() {
                       </>
                     )}
                     {!canManageBlog && (
-                       <Link
-                       href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
-                       className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                       title="View Details"
-                     >
-                       <Eye className="w-4 h-4" />
-                     </Link>
+                      <Link
+                        href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
+                        className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Link>
                     )}
-                    {!canManageBlog && (
-                       <Link
-                       href={`/admin/blog/${post.id}/edit`} // Reuse edit page in read-only mode if possible, or just view. For now, let's link to edit page and handle read-only there.
-                       className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
-                       title="View Details"
-                     >
-                       <Eye className="w-4 h-4" />
-                     </Link>
-                    )}
+
                   </div>
                 </div>
 
@@ -306,8 +287,8 @@ export default function BlogListPage() {
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     <span>
-                      {post.published_at 
-                        ? new Date(post.published_at).toLocaleDateString() 
+                      {post.published_at
+                        ? new Date(post.published_at).toLocaleDateString()
                         : `Created ${new Date(post.created_at).toLocaleDateString()}`}
                     </span>
                   </div>

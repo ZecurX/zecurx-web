@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Upload, X, Loader2, Link as LinkIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +21,7 @@ export default function ImageUpload({
   onUpload, 
   onUrlChange,
   onRemove,
-  label = 'Featured Image',
+  label: _label = 'Featured Image',
   maxSizeMB = 20 
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);

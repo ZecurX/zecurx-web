@@ -4,6 +4,7 @@ import { appendToSheet } from '@/lib/google-sheets';
 import { fetchFromCdn } from '@/lib/cdn';
 import { query } from '@/lib/db';
 import { checkEmailRateLimit, getClientIp } from '@/lib/rate-limit';
+import { brandedEmailTemplate } from '@/lib/email-template';
 
 async function saveStudentLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
     try {
@@ -195,70 +196,58 @@ export async function POST(request: NextRequest) {
             </div>
         ` : '';
 
-        const htmlContent = isSeminarBooking ? `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
-                    🎤 New Seminar/Workshop Booking Request
-                </h2>
-                
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0 0 10px 0;"><strong>Contact Person:</strong> ${name}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Organization:</strong> ${body.organization}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Seminar Type:</strong> ${seminarTypeLabels[body.seminarType] || body.seminarType}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Topic:</strong> ${body.topic}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Expected Attendees:</strong> ${body.attendees}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'Not specified'}</p>
-                </div>
-
-                ${body.message ? `
-                <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #333;">Additional Requirements:</h3>
-                    <p style="color: #555; line-height: 1.6;">${body.message.replace(/\n/g, '<br>')}</p>
-                </div>` : ''}
-
-                <p style="color: #888; font-size: 12px; margin-top: 20px;">
-                    This booking request was submitted from the ZecurX website.
-                </p>
+        const adminEmailBody = isSeminarBooking ? `
+            <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
+                🎤 New Seminar/Workshop Booking Request
+            </h2>
+            
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0 0 10px 0;"><strong>Contact Person:</strong> ${name}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Organization:</strong> ${body.organization}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Seminar Type:</strong> ${seminarTypeLabels[body.seminarType] || body.seminarType}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Topic:</strong> ${body.topic}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Expected Attendees:</strong> ${body.attendees}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'Not specified'}</p>
             </div>
+
+            ${body.message ? `
+            <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h3 style="margin-top: 0; color: #333;">Additional Requirements:</h3>
+                <p style="color: #555; line-height: 1.6;">${body.message.replace(/\n/g, '<br>')}</p>
+            </div>` : ''}
         ` : `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
-                    ${isDemo ? '🎯 New Demo Request' : isBrochure ? '📄 Brochure Download Request' : isInternship ? '🎓 New Internship Enrollment' : isPurchase ? '💰 New Purchase' : '📧 New Contact Message'}
-                </h2>
+            <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
+                ${isDemo ? '🎯 New Demo Request' : isBrochure ? '📄 Brochure Download Request' : isInternship ? '🎓 New Internship Enrollment' : isPurchase ? '💰 New Purchase' : '📧 New Contact Message'}
+            </h2>
+            
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
+                ${body.mobile ? `<p style="margin: 0 0 10px 0;"><strong>Mobile:</strong> ${body.mobile}</p>` : ''}
+                ${body.college ? `<p style="margin: 0 0 10px 0;"><strong>College:</strong> ${body.college}</p>` : ''}
                 
-                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
-                    <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
-                    ${body.mobile ? `<p style="margin: 0 0 10px 0;"><strong>Mobile:</strong> ${body.mobile}</p>` : ''}
-                    ${body.college ? `<p style="margin: 0 0 10px 0;"><strong>College:</strong> ${body.college}</p>` : ''}
-                    
-                    ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${body.courseTitle}</p>` : ''}
-                    ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${body.itemName}</p>` : ''}
-                    
-                    ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0;"><strong>Original Price:</strong> ₹${body.originalPrice}</p>` : ''}
-                    ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0; color: green;"><strong>Discount:</strong> -₹${body.discountAmount}</p>` : ''}
-                    
-                    ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>${body.discountAmount > 0 ? 'Total Paid' : 'Price'}:</strong> ₹${body.price}</p>` : ''}
-                    ${isPurchase && body.paymentId ? `<p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${body.paymentId}</p>` : ''}
-                    
-                    ${body.company ? `<p style="margin: 0 0 10px 0;"><strong>Company:</strong> ${body.company}</p>` : ''}
-                    ${body.role ? `<p style="margin: 0 0 10px 0;"><strong>Role:</strong> ${body.role}</p>` : ''}
-                    ${preferredDate ? `<p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${new Date(preferredDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>` : ''}
-                    ${body.service ? `<p style="margin: 0 0 10px 0;"><strong>Service Interest:</strong> ${body.service}</p>` : ''}
-                    ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
-                </div>
-
-                ${!isBrochure && !isPurchase ? `
-                <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #333;">Message:</h3>
-                    <p style="color: #555; line-height: 1.6;">${message ? message.replace(/\n/g, '<br>') : 'No message provided'}</p>
-                </div>` : ''}
-
-                <p style="color: #888; font-size: 12px; margin-top: 20px;">
-                    This email was sent from the ZecurX website.
-                </p>
+                ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${body.courseTitle}</p>` : ''}
+                ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${body.itemName}</p>` : ''}
+                
+                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0;"><strong>Original Price:</strong> ₹${body.originalPrice}</p>` : ''}
+                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0; color: green;"><strong>Discount:</strong> -₹${body.discountAmount}</p>` : ''}
+                
+                ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>${body.discountAmount > 0 ? 'Total Paid' : 'Price'}:</strong> ₹${body.price}</p>` : ''}
+                ${isPurchase && body.paymentId ? `<p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${body.paymentId}</p>` : ''}
+                
+                ${body.company ? `<p style="margin: 0 0 10px 0;"><strong>Company:</strong> ${body.company}</p>` : ''}
+                ${body.role ? `<p style="margin: 0 0 10px 0;"><strong>Role:</strong> ${body.role}</p>` : ''}
+                ${preferredDate ? `<p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${new Date(preferredDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>` : ''}
+                ${body.service ? `<p style="margin: 0 0 10px 0;"><strong>Service Interest:</strong> ${body.service}</p>` : ''}
+                ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
             </div>
+
+            ${!isBrochure && !isPurchase ? `
+            <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+                <h3 style="margin-top: 0; color: #333;">Message:</h3>
+                <p style="color: #555; line-height: 1.6;">${message ? message.replace(/\n/g, '<br>') : 'No message provided'}</p>
+            </div>` : ''}
         `;
 
         const serviceToPdf: { [key: string]: { filename: string; cdnPath: string } } = {
@@ -306,15 +295,23 @@ export async function POST(request: NextRequest) {
             ? 'zecurxintern@gmail.com'
             : 'official@zecurx.com';
 
+        // Generate admin email HTML using branded template
+        const adminEmailHtml = brandedEmailTemplate({
+            accent: 'default',
+            body: adminEmailBody,
+            previewText: emailSubject,
+            includeMarketing: false,
+        });
+
         // Send admin notification email
         let adminEmailSent = false;
         try {
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: adminEmail,
                 replyTo: email,
                 subject: emailSubject,
-                html: htmlContent,
+                html: adminEmailHtml,
             });
             adminEmailSent = true;
 
@@ -353,22 +350,22 @@ export async function POST(request: NextRequest) {
             userMessage = 'We have received your message and will get back to you as soon as possible.';
         }
 
-        const userEmailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                <h2 style="color: #1a1a1a;">Thank you, ${name}!</h2>
-                <p style="color: #555;">
-                    ${userMessage}
-                </p>
-                
-                ${(isDemo || (isContact && preferredDate)) ? calendarHtml : ''}
-                ${isDemo && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${body.service || 'service'} brochure for your reference.</strong></p>` : ''}
-                ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${body.courseTitle} brochure is attached to this email.</strong></p>` : ''}
-
-                <p style="color: #888; font-size: 12px; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    Best regards,<br>ZecurX Private Limited
-                </p>
-            </div>
+        const userEmailContentBody = `
+            <p style="color: #555;">
+                ${userMessage}
+            </p>
+            
+            ${(isDemo || (isContact && preferredDate)) ? calendarHtml : ''}
+            ${isDemo && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${body.service || 'service'} brochure for your reference.</strong></p>` : ''}
+            ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${body.courseTitle} brochure is attached to this email.</strong></p>` : ''}
         `;
+
+        const userEmailHtml = brandedEmailTemplate({
+            accent: 'default',
+            body: userEmailContentBody,
+            previewText: userSubject,
+            includeMarketing: false,
+        });
 
         // Send user confirmation email
         // Skip for purchases - the Razorpay webhook sends a complete email with invoice and LMS credentials
@@ -379,7 +376,7 @@ export async function POST(request: NextRequest) {
 
                 if ((isDemo || isBrochure) && attachments.length > 0) {
                     await resend.emails.send({
-                        from: 'ZecurX Private Limited <official@zecurx.com>',
+                        from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,
@@ -387,7 +384,7 @@ export async function POST(request: NextRequest) {
                     });
                 } else {
                     await resend.emails.send({
-                        from: 'ZecurX Private Limited <official@zecurx.com>',
+                        from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,

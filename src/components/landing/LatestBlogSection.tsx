@@ -26,7 +26,7 @@ export default async function LatestBlogSection() {
         JOIN blog_post_labels bpl ON bl.id = bpl.label_id
         WHERE bpl.blog_post_id = $1
       `, [post.id]);
-      post.labels = labelsRes.rows.map((l: any) => ({ blog_labels: l }));
+      post.labels = labelsRes.rows.map((l: Record<string, unknown>) => ({ blog_labels: l }));
     }
 
     return (
@@ -73,13 +73,13 @@ export default async function LatestBlogSection() {
                   )}
                   {/* Labels Overlay */}
                   <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                    {post.labels?.slice(0, 1).map((l: any) => (
+                    {post.labels?.slice(0, 1).map((l: Record<string, unknown>) => (
                       <span
-                        key={l.blog_labels.id}
+                        key={(l.blog_labels as Record<string, unknown>).id as string}
                         className="px-2 py-1 text-xs font-semibold text-white rounded-full shadow-sm"
-                        style={{ backgroundColor: l.blog_labels.color }}
+                        style={{ backgroundColor: (l.blog_labels as Record<string, unknown>).color as string }}
                       >
-                        {l.blog_labels.name}
+                        {(l.blog_labels as Record<string, unknown>).name as string}
                       </span>
                     ))}
                     {post.labels && post.labels.length > 1 && (

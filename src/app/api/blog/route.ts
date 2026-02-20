@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
     );
 
     const postIdsForLabels = postsResult.rows.map(p => p.id);
-    let labelsMap: Record<string, { id: string; name: string; slug: string; color: string }[]> = {};
+    const labelsMap: Record<string, { id: string; name: string; slug: string; color: string }[]> = {};
 
     if (postIdsForLabels.length > 0) {
       const labelsPlaceholders = postIdsForLabels.map((_, i) => `$${i + 1}`).join(', ');

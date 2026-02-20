@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import { Shield, Target, Zap, CheckCircle2 } from 'lucide-react';
 import {
     Card,
     CardHeader,
