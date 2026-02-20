@@ -245,20 +245,20 @@ export default function CertificatePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-zinc-900" />
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-foreground" />
             </div>
         );
     }
 
     if (error && !seminar) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
                 <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
-                <h1 className="text-2xl font-bold text-zinc-900 mb-2">Seminar Not Found</h1>
-                <p className="text-zinc-500 mb-6">{error}</p>
+                <h1 className="text-2xl font-bold text-foreground mb-2">Seminar Not Found</h1>
+                <p className="text-muted-foreground mb-6">{error}</p>
                 <Link href="/resources/seminars">
-                    <Button variant="outline" className="rounded-lg h-11 px-6 border-zinc-200 text-zinc-900 hover:bg-zinc-100">
+                    <Button variant="outline" className="rounded-lg h-11 px-6 border-border text-foreground hover:bg-muted">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back to Seminars
                     </Button>
@@ -269,14 +269,14 @@ export default function CertificatePage() {
 
     if (!seminar?.certificate_enabled) {
         return (
-            <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6">
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
                 <AlertCircle className="w-10 h-10 text-amber-500 mb-4" />
-                <h1 className="text-2xl font-bold text-zinc-900 mb-2">Certificates Pending</h1>
-                <p className="text-zinc-500 mb-6 text-center max-w-md">
-                    Certificates for <span className="font-semibold text-zinc-900">{seminar?.title}</span> are not available yet.
+                <h1 className="text-2xl font-bold text-foreground mb-2">Certificates Pending</h1>
+                <p className="text-muted-foreground mb-6 text-center max-w-md">
+                    Certificates for <span className="font-semibold text-foreground">{seminar?.title}</span> are not available yet.
                 </p>
                 <Link href="/resources/seminars">
-                    <Button variant="outline" className="rounded-lg h-11 px-6 border-zinc-200 text-zinc-900 hover:bg-zinc-100">
+                    <Button variant="outline" className="rounded-lg h-11 px-6 border-border text-foreground hover:bg-muted">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back to Seminars
                     </Button>
@@ -286,10 +286,10 @@ export default function CertificatePage() {
     }
 
     return (
-        <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-            <div className="w-full max-w-5xl min-h-[600px] grid grid-cols-1 lg:grid-cols-2 rounded-2xl overflow-hidden border border-zinc-200 bg-white">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 lg:p-8">
+            <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 rounded-2xl overflow-hidden bg-card border border-border shadow-lg">
                 {/* Left — Form */}
-                <div className="flex flex-col justify-center p-8 md:p-12">
+                <div className="flex flex-col justify-center p-8 md:p-12 bg-card">
                     <AnimatePresence mode="wait">
                         {step === "email" && (
                             <motion.div
@@ -300,20 +300,19 @@ export default function CertificatePage() {
                                 transition={{ duration: 0.3 }}
                             >
                                 {seminar && (
-                                    <p className="text-[11px] text-zinc-400 uppercase tracking-[0.2em] font-semibold mb-6">
+                                    <p className="text-[11px] text-muted-foreground uppercase tracking-[0.2em] font-semibold mb-6">
                                         {seminar.title}
                                     </p>
                                 )}
-                                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
                                     Access Your Certificate
                                 </h1>
-                                <p className="text-sm text-zinc-500 mb-8">
+                                <p className="text-sm text-muted-foreground mb-8">
                                     Enter the email you registered with to access your certificate.
                                 </p>
-
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                        <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                             Email Address
                                         </Label>
                                         <div className="relative group">
@@ -323,10 +322,10 @@ export default function CertificatePage() {
                                                 placeholder="name@company.com"
                                                 value={email}
                                                 onChange={(e) => setEmail(e.target.value)}
-                                                className="h-12 rounded-lg bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all px-4 pr-10"
+                                                className="h-12 rounded-lg bg-muted/50 border-border text-foreground placeholder:text-muted-foreground focus:ring-foreground focus:border-foreground focus:bg-background transition-all px-4 pr-10"
                                                 onKeyDown={(e) => e.key === "Enter" && requestOtp()}
                                             />
-                                            <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-zinc-700 transition-colors" />
+                                            <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
                                         </div>
                                     </div>
 
@@ -339,7 +338,7 @@ export default function CertificatePage() {
 
                                     <button
                                         onClick={requestOtp}
-                                        className="w-full h-12 rounded-lg bg-zinc-900 text-white font-semibold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all"
+                                        className="w-full h-12 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/90 active:scale-[0.98] transition-all"
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? (
@@ -353,10 +352,10 @@ export default function CertificatePage() {
                                     </button>
                                 </div>
 
-                                <div className="mt-8 pt-6 border-t border-zinc-100">
+                                <div className="mt-8 pt-6 border-t border-border">
                                     <Link
                                         href="/resources/seminars"
-                                        className="flex items-center gap-2 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
+                                        className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         <ArrowLeft className="w-3 h-3" />
                                         Back to Seminars
@@ -374,21 +373,21 @@ export default function CertificatePage() {
                                 transition={{ duration: 0.3 }}
                             >
                                 {seminar && (
-                                    <p className="text-[11px] text-zinc-400 uppercase tracking-[0.2em] font-semibold mb-6">
+                                    <p className="text-[11px] text-muted-foreground uppercase tracking-[0.2em] font-semibold mb-6">
                                         {seminar.title}
                                     </p>
                                 )}
-                                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
                                     Verify Your Email
                                 </h1>
-                                <p className="text-sm text-zinc-500 mb-8">
+                                <p className="text-sm text-muted-foreground mb-8">
                                     We sent a 6-digit code to{" "}
-                                    <span className="font-semibold text-zinc-900">{email}</span>
+                                    <span className="font-semibold text-foreground">{email}</span>
                                 </p>
 
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <Label htmlFor="otp" className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                        <Label htmlFor="otp" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                             Verification Code
                                         </Label>
                                         <Input
@@ -397,7 +396,7 @@ export default function CertificatePage() {
                                             placeholder="000000"
                                             value={otp}
                                             onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                                            className="h-14 text-center text-2xl tracking-[0.6em] font-mono bg-zinc-50 border-zinc-200 text-zinc-900 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white rounded-lg transition-all"
+                                            className="h-14 text-center text-2xl tracking-[0.6em] font-mono bg-muted/50 border-border text-foreground focus:ring-foreground focus:border-foreground focus:bg-background rounded-lg transition-all"
                                             maxLength={6}
                                             onKeyDown={(e) => e.key === "Enter" && otp.length === 6 && verifyOtp()}
                                         />
@@ -412,7 +411,7 @@ export default function CertificatePage() {
 
                                     <button
                                         onClick={verifyOtp}
-                                        className="w-full h-12 rounded-lg bg-zinc-900 text-white font-semibold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all"
+                                        className="w-full h-12 rounded-lg bg-foreground text-background font-semibold text-sm hover:bg-foreground/90 active:scale-[0.98] transition-all"
                                         disabled={isSubmitting || otp.length !== 6}
                                     >
                                         {isSubmitting ? (
@@ -426,7 +425,7 @@ export default function CertificatePage() {
                                         <button
                                             type="button"
                                             onClick={() => { setStep("email"); setError(null); }}
-                                            className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-700 transition-colors"
+                                            className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                                         >
                                             <ArrowLeft className="w-3 h-3" />
                                             Change Email
@@ -434,7 +433,7 @@ export default function CertificatePage() {
                                         <button
                                             type="button"
                                             onClick={resendOtp}
-                                            className="text-xs font-medium text-zinc-400 hover:text-zinc-700 transition-colors"
+                                            className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                                             disabled={isSubmitting}
                                         >
                                             Resend Code
@@ -453,14 +452,14 @@ export default function CertificatePage() {
                                 transition={{ duration: 0.3 }}
                             >
                                 {seminar && (
-                                    <p className="text-[11px] text-zinc-400 uppercase tracking-[0.2em] font-semibold mb-6">
+                                    <p className="text-[11px] text-muted-foreground uppercase tracking-[0.2em] font-semibold mb-6">
                                         {seminar.title}
                                     </p>
                                 )}
-                                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">
+                                <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
                                     Almost There
                                 </h1>
-                                <p className="text-sm text-zinc-500 mb-8">
+                                <p className="text-sm text-muted-foreground mb-8">
                                     {status.hasRegistration
                                         ? "Complete your feedback to unlock the certificate."
                                         : "We couldn\u2019t find a registration for this email."}
@@ -505,7 +504,7 @@ export default function CertificatePage() {
                                 {status.hasRegistration ? (
                                     <Button
                                         onClick={goToFeedback}
-                                        className="w-full h-11 rounded-lg font-semibold text-sm bg-zinc-900 text-white hover:bg-zinc-800"
+                                        className="w-full h-11 rounded-lg font-semibold text-sm bg-foreground text-background hover:bg-foreground/90"
                                     >
                                         Complete Feedback
                                     </Button>
@@ -513,16 +512,16 @@ export default function CertificatePage() {
                                     <Button
                                         onClick={() => { setStep("email"); setError(null); }}
                                         variant="outline"
-                                        className="w-full h-11 rounded-lg font-semibold text-sm border-zinc-200 text-zinc-900 hover:bg-zinc-100"
+                                        className="w-full h-11 rounded-lg font-semibold text-sm border-border text-foreground hover:bg-muted"
                                     >
                                         Try a different email
                                     </Button>
                                 )}
 
-                                <div className="mt-8 pt-6 border-t border-zinc-100">
+                                <div className="mt-8 pt-6 border-t border-border">
                                     <Link
                                         href="/resources/seminars"
-                                        className="flex items-center gap-2 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
+                                        className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         <ArrowLeft className="w-3 h-3" />
                                         Back to Seminars
@@ -534,41 +533,67 @@ export default function CertificatePage() {
                 </div>
 
                 {/* Right — Cybersecurity Facts */}
-                <div className="hidden lg:flex flex-col justify-center bg-zinc-950 text-white p-10 xl:p-16">
-                    <div className="mb-8">
-                        <p className="text-[11px] text-zinc-500 uppercase tracking-[0.2em] font-semibold mb-3">
-                            Did you know?
-                        </p>
-                        <h2 className="text-xl font-bold tracking-tight text-zinc-100">
-                            Cybersecurity Facts
-                        </h2>
-                    </div>
+                <div className="hidden lg:flex flex-col justify-between bg-card border-l border-border p-10 xl:p-12 relative overflow-hidden">
+                    <div className="relative z-10 flex flex-col gap-6">
+                        <div className="mb-10">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border mb-5">
+                                <Shield className="w-3 h-3 text-foreground" />
+                                <span className="text-[10px] text-foreground uppercase tracking-[0.18em] font-bold">
+                                    Threat Intelligence
+                                </span>
+                            </div>
+                            <h2 className="text-2xl xl:text-3xl font-bold tracking-tight text-foreground leading-snug">
+                                The Landscape of{" "}
+                                <span className="text-primary">
+                                    Modern Security
+                                </span>
+                            </h2>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                While you wait — key facts every professional should know.
+                            </p>
+                        </div>
 
-                    <div className="space-y-6">
-                        {displayedFacts.map((fact, i) => {
-                            const Icon = fact.icon;
-                            return (
-                                <div key={i} className="flex gap-4">
-                                    <div className="shrink-0 w-9 h-9 rounded-lg bg-zinc-800 flex items-center justify-center mt-0.5">
-                                        <Icon className="w-4 h-4 text-zinc-400" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-semibold text-zinc-200 mb-1">
-                                            {fact.title}
-                                        </h3>
-                                        <p className="text-xs text-zinc-500 leading-relaxed">
-                                            {fact.description}
-                                        </p>
-                                    </div>
+                        <div className="space-y-3">
+                            {displayedFacts.map((fact, i) => {
+                                const Icon = fact.icon;
+                                return (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, y: 16 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: i * 0.12, duration: 0.45 }}
+                                        className="group flex gap-4 p-5 rounded-xl bg-background border border-border hover:border-foreground/20 hover:shadow-sm transition-all duration-300"
+                                    >
+                                        <div className="shrink-0 w-10 h-10 rounded-lg bg-muted border border-border flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-colors duration-300">
+                                            <Icon className="w-[18px] h-[18px] text-muted-foreground group-hover:text-primary-foreground transition-colors duration-300" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h3 className="text-sm font-semibold text-foreground mb-1 leading-snug">
+                                                {fact.title}
+                                            </h3>
+                                            <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                                                {fact.description}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                                <div className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/40 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground"></span>
                                 </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="mt-10 pt-6 border-t border-zinc-800">
-                        <p className="text-[10px] text-zinc-600 uppercase tracking-[0.15em] font-medium">
-                            Powered by ZecurX
-                        </p>
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+                                    Live Telemetry
+                                </span>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.18em] font-medium">
+                                Powered by ZecurX
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
