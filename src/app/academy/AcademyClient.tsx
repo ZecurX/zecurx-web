@@ -24,27 +24,21 @@ const stats = [
 export default function AcademyClient({ courses: initialCourses }: { courses: CourseData[] }) {
     const [courses, setCourses] = useState(initialCourses);
 
-    const refreshPrices = useCallback(async () => {
+    const refreshCourses = useCallback(async () => {
         try {
-            const res = await fetch('/api/academy/prices');
+            const res = await fetch('/api/academy/courses');
             if (!res.ok) return;
-            const prices: Record<string, number> = await res.json();
-            setCourses(prev =>
-                prev.map(course => {
-                    const dbPrice = prices[course.id];
-                    if (dbPrice !== undefined && dbPrice !== course.price) {
-                        return { ...course, price: dbPrice };
-                    }
-                    return course;
-                })
-            );
+            const freshCourses: CourseData[] = await res.json();
+            if (freshCourses.length > 0) {
+                setCourses(freshCourses);
+            }
         } catch { }
     }, []);
 
     useEffect(() => {
-        const interval = setInterval(refreshPrices, POLL_INTERVAL);
+        const interval = setInterval(refreshCourses, POLL_INTERVAL);
         return () => clearInterval(interval);
-    }, [refreshPrices]);
+    }, [refreshCourses]);
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
