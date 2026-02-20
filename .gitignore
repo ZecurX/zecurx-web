@@ -100,3 +100,7 @@ landing-redesign/
 
 # old certificate template
 public/certificate-template.old.pdf
+
+# PDF files (certificates generated at runtime, templates on CDN)
+*.pdf
+public/certificates/
