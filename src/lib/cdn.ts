@@ -85,6 +85,19 @@ export const CDN_ASSETS = {
   brand: {
     logo: getCdnUrl('images/zecurx-logo.png'),
   },
+  courses: {
+    'bundle-ai': getCdnUrl('images/courses/bundle-ai.png'),
+    'cpeh': getCdnUrl('images/courses/cpeh.png'),
+    'cppt': getCdnUrl('images/courses/cppt.png'),
+    'gaip': getCdnUrl('images/courses/gaip.png'),
+    'zxCCP': getCdnUrl('images/courses/zxCCP.png'),
+    'zxCCE': getCdnUrl('images/courses/zxCCE.png'),
+    'zxCCF': getCdnUrl('images/courses/zxCCF.png'),
+    'zxCFD': getCdnUrl('images/courses/zxCFD.png'),
+    'zxCPEH': getCdnUrl('images/courses/zxCPEH.png'),
+    'zxCPPT': getCdnUrl('images/courses/zxCPPT.png'),
+    'zxGAIP': getCdnUrl('images/courses/zxGAIP.png'),
+  },
 } as const;
 
 /**

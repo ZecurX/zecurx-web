@@ -7,6 +7,12 @@ interface CartItem {
     quantity: number;
 }
 
+interface ProductRow {
+    id: string;
+    name: string;
+    stock: number;
+}
+
 interface UnavailableItem {
     id: string;
     name: string;
@@ -29,13 +35,13 @@ export async function POST(request: NextRequest) {
 
         const productIds = items.map(item => item.id);
         
-        const result = await query(
+        const result = await query<ProductRow>(
             `SELECT id, name, stock FROM products WHERE id::text = ANY($1)`,
             [productIds]
         );
 
         const productsMap = new Map(
-            result.rows.map((p: any) => [p.id.toString(), p])
+            result.rows.map((p) => [String(p.id), p])
         );
 
         const unavailableItems: UnavailableItem[] = [];

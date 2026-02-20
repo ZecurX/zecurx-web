@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 import { verifySession } from "@/lib/auth";
 import { hasPermission } from "@/lib/permissions";
 import { redirect } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { ShieldAlert } from "lucide-react";
 
 export default async function PlansPage() {
     const cookieStore = await cookies();

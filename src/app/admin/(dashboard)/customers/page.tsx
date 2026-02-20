@@ -38,7 +38,7 @@ export default async function CustomersPage() {
 
     const customerIds = customersResult.rows.map(c => c.id);
     
-    let transactionsMap: Record<string, Transaction[]> = {};
+    const transactionsMap: Record<string, Transaction[]> = {};
     
     if (customerIds.length > 0) {
         const placeholders = customerIds.map((_, i) => `$${i + 1}`).join(', ');

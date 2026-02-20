@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Terminal, ChevronRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
@@ -22,7 +22,7 @@ export default function ToolPageLayout({
     description,
     icon: Icon,
     children,
-    features = []
+    features: _features = []
 }: ToolPageLayoutProps) {
     return (
         <main className="min-h-screen bg-background text-foreground selection:bg-foreground/20">

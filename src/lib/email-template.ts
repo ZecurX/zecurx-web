@@ -11,6 +11,12 @@ const LOGO_URL = CDN_ASSETS.brand.logo;
 const WEBSITE_URL = 'https://www.zecurx.com';
 const SUPPORT_EMAIL = 'official@zecurx.com';
 
+function getCourseLogo(logoPath: string): string {
+    if (!logoPath) return '';
+    const courseName = logoPath.split('/').pop()?.replace('.png', '') || '';
+    return (CDN_ASSETS.courses as Record<string, string>)[courseName] || logoPath;
+}
+
 // Social links
 const SOCIAL = {
     linkedin: 'https://www.linkedin.com/company/zecurx',
@@ -117,15 +123,10 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                     
                     <!-- ═══════════ HEADER ═══════════ -->
                     <tr>
-                        <td style="background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%); padding: 48px 30px; text-align: center;">
+                        <td style="background: #ffffff; padding: 48px 30px; text-align: center; border-bottom: 3px solid ${accentColor};">
                             <img src="${LOGO_URL}" alt="ZecurX" width="145" height="auto" style="display: block; margin: 0 auto; max-width: 145px;" />
-                            <p style="color: #ffffff; margin: 20px 0 0; font-size: 15px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">ZecurX Private Limited</p>
+                            <p style="color: #0a0a0f; margin: 20px 0 0; font-size: 15px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700;">ZecurX Cybersecurity Private Limited</p>
                         </td>
-                    </tr>
-
-                    <!-- Accent bar -->
-                    <tr>
-                        <td style="background: ${accentColor}; height: 3px; font-size: 0; line-height: 0;">&nbsp;</td>
                     </tr>
 
                     <!-- ═══════════ BODY ═══════════ -->
@@ -139,12 +140,12 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                     <!-- ═══════════ CTA SECTION ═══════════ -->
                     <tr>
                         <td style="padding: 0 32px 32px;">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #000000 0%, #2a2a2a 100%); border-radius: 14px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: #ffffff; border: 2px solid ${accentColor}; border-radius: 14px; overflow: hidden;">
                                 <tr>
                                     <td style="padding: 44px 32px; text-align: center;">
-                                        <h3 style="color: #ffffff; margin: 0 0 12px; font-size: 21px; font-weight: 700; letter-spacing: -0.5px;">${cta.title}</h3>
-                                        <p style="color: #b0b0b0; margin: 0 0 28px; font-size: 15px; line-height: 1.6;">${cta.description}</p>
-                                        <a href="${cta.buttonUrl}" style="display: inline-block; background-color: #ffffff; color: #000000; text-decoration: none; padding: 16px 36px; border-radius: 8px; font-weight: 800; font-size: 14px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255,255,255,0.25); text-transform: uppercase;">${cta.buttonText}</a>
+                                        <h3 style="color: #0a0a0f; margin: 0 0 12px; font-size: 21px; font-weight: 700; letter-spacing: -0.5px;">${cta.title}</h3>
+                                        <p style="color: #555; margin: 0 0 28px; font-size: 15px; line-height: 1.6;">${cta.description}</p>
+                                        <a href="${cta.buttonUrl}" style="display: inline-block; background-color: #0a0a0f; color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 8px; font-weight: 800; font-size: 14px; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(10,10,15,0.25); text-transform: uppercase;">${cta.buttonText}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -207,7 +208,7 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
 
                     <!-- ═══════════ FOOTER ═══════════ -->
                     <tr>
-                        <td style="background-color: #fafafa; padding: 28px 32px; border-top: 1px solid #e8e8ec;">
+                        <td style="background-color: #ffffff; padding: 28px 32px; border-top: 1px solid #e8e8ec;">
                             ${showSocials ? `
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
@@ -245,10 +246,10 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
 // ═══════════════════════════════════════════════════════════
 export function emailSection(title: string, content: string): string {
     return `
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; margin-bottom: 20px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border: 2px solid #0a0a0f; border-radius: 10px; margin-bottom: 20px;">
             <tr>
                 <td style="padding: 22px 24px;">
-                    <h3 style="color: #1a1a1a; margin: 0 0 14px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">${title}</h3>
+                    <h3 style="color: #0a0a0f; margin: 0 0 14px; font-size: 15px; font-weight: 600; border-bottom: 2px solid #0a0a0f; padding-bottom: 10px;">${title}</h3>
                     ${content}
                 </td>
             </tr>
@@ -287,10 +288,10 @@ export function emailButton(text: string, url: string, color: string = '#0a0a0f'
 // ═══════════════════════════════════════════════════════════
 export function emailCallout(content: string, type: 'info' | 'success' | 'warning' | 'error' = 'info'): string {
     const colors = {
-        info: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
-        success: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
-        warning: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
-        error: { bg: '#f8f9fa', border: '#0a0a0f', text: '#1a1a1a' },
+        info: { bg: '#ffffff', border: '#0a0a0f', text: '#0a0a0f' },
+        success: { bg: '#ffffff', border: '#0a0a0f', text: '#0a0a0f' },
+        warning: { bg: '#ffffff', border: '#0a0a0f', text: '#0a0a0f' },
+        error: { bg: '#ffffff', border: '#0a0a0f', text: '#0a0a0f' },
     };
     const c = colors[type];
     return `
@@ -298,6 +299,58 @@ export function emailCallout(content: string, type: 'info' | 'success' | 'warnin
             <tr>
                 <td style="background: ${c.bg}; border-left: 4px solid ${c.border}; padding: 18px 22px; border-radius: 0 8px 8px 0;">
                     <div style="color: ${c.text}; font-size: 14px; line-height: 1.6;">${content}</div>
+                </td>
+            </tr>
+        </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// Template helper: Course catalog showcase
+// ═══════════════════════════════════════════════════════════
+export function emailCourseCatalog(courses: Array<{ title: string; description: string; level: string; logo?: string }>): string {
+    const courseRows = courses.map((course) => `
+        <tr>
+            <td style="padding: 16px; border-bottom: 1px solid #f0f0f0;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td width="80" style="padding-right: 12px; vertical-align: top;">
+                            ${course.logo ? `<img src="${getCourseLogo(course.logo)}" alt="${course.title}" width="70" height="70" style="display: block; border-radius: 6px; object-fit: cover;" />` : ''}
+                        </td>
+                        <td style="vertical-align: top;">
+                            <p style="margin: 0 0 6px 0; color: #1a1a1a; font-size: 16px; font-weight: 600;">${course.title}</p>
+                            <p style="margin: 0 0 8px 0; color: #666; font-size: 13px; line-height: 1.5;">${course.description}</p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">
+                                <strong style="color: #0a0a0f;">Level:</strong> ${course.level}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    `).join('');
+
+    return `
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 24px 0; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <tr>
+                <td style="background: #f9f9f9; padding: 20px; text-align: center; border-bottom: 2px solid #0a0a0f;">
+                    <p style="margin: 0; color: #1a1a1a; font-size: 18px; font-weight: bold;">
+                        🎓 ZecurX Academy Courses
+                    </p>
+                    <p style="margin: 6px 0 0 0; color: #666; font-size: 13px;">
+                        Expand your cybersecurity skills with our certified courses
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0;">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        ${courseRows}
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="background: #f9f9f9; padding: 16px; text-align: center; border-top: 1px solid #e0e0e0;">
+                    <a href="${WEBSITE_URL}/academy" style="display: inline-block; background: #0a0a0f; color: #ffffff; text-decoration: none; padding: 11px 28px; border-radius: 6px; font-weight: 600; font-size: 13px;">Explore All Courses</a>
                 </td>
             </tr>
         </table>`;

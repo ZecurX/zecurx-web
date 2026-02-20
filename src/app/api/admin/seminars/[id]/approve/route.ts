@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { Seminar } from '@/types/seminar';
+import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
 
 export async function POST(
     request: NextRequest,
@@ -39,59 +40,57 @@ export async function POST(
         const date = new Date(seminar.date);
         const dateStr = date.toLocaleDateString('en-US', { dateStyle: 'full' });
 
-        const approvalEmailHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #1a1a1a; margin: 0;">ZecurX</h1>
-                    <p style="color: #666; margin: 5px 0 0 0;">Cybersecurity Excellence</p>
-                </div>
+        const bodyContent = `
+            <p style="color: #333; font-size: 16px; margin: 0 0 20px 0; text-align: center;">
+                <strong style="color: #2e7d32;">✓ Seminar Approved!</strong> Your seminar booking has been approved.
+            </p>
 
-                <div style="background: #e8f5e9; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 30px;">
-                    <h2 style="color: #2e7d32; margin: 0 0 10px 0;">Seminar Approved!</h2>
-                    <p style="color: #555; margin: 0;">Your seminar booking has been approved.</p>
-                </div>
+            ${emailSection(seminar.title, `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Date:</strong> ${dateStr}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Time:</strong> ${seminar.time}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Duration:</strong> ${seminar.duration}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Speaker:</strong> ${seminar.speaker_name}</td></tr>
+                    <tr><td style="padding: 8px 0; color: #555; font-size: 14px;"><strong>Location:</strong> ${seminar.location_type === 'online' ? 'Online' : seminar.venue_address}</td></tr>
+                </table>
+            `)}
 
-                <div style="background: #f5f5f5; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a1a;">${seminar.title}</h3>
-                    <p style="margin: 5px 0; color: #555;"><strong>Date:</strong> ${dateStr}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Time:</strong> ${seminar.time}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Duration:</strong> ${seminar.duration}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Speaker:</strong> ${seminar.speaker_name}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Location:</strong> ${seminar.location_type === 'online' ? 'Online' : seminar.venue_address}</p>
-                </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                Share the registration link below with your students:
+            </p>
+            <p style="color: #999; font-size: 12px; margin: 10px 0 0 0; text-align: center; word-break: break-all;">
+                <a href="${registrationLink}" style="color: #0a0a0f; text-decoration: underline;">${registrationLink}</a>
+            </p>
 
-                <div style="background: #fff3e0; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 15px 0; color: #e65100;">Student Registration Link</h3>
-                    <p style="color: #555; margin: 0 0 15px 0;">
-                        Share this link with your students to register for the seminar:
-                    </p>
-                    <div style="background: #fff; padding: 15px; border-radius: 8px; word-break: break-all;">
-                        <a href="${registrationLink}" style="color: #1976d2; text-decoration: none; font-weight: bold;">
-                            ${registrationLink}
-                        </a>
-                    </div>
-                </div>
-
-                <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                    <h4 style="margin: 0 0 10px 0; color: #1565c0;">What happens next?</h4>
-                    <ol style="margin: 0; padding-left: 20px; color: #555;">
-                        <li>Share the registration link with your students</li>
-                        <li>Students register using their email (OTP verification)</li>
-                        <li>After the seminar, mark attendance in the admin panel</li>
-                        <li>Enable certificates for students to download</li>
-                    </ol>
-                </div>
-
-                <p style="color: #888; font-size: 12px; text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    If you have any questions, contact us at official@zecurx.com<br>
-                    Seminar ID: ${seminar.id}
-                </p>
-            </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                <strong>What happens next:</strong>
+            </p>
+            <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+                <li>Share the registration link with your students</li>
+                <li>Students register using their email (OTP verification)</li>
+                <li>After the seminar, mark attendance in the admin panel</li>
+                <li>Enable certificates for students to download</li>
+            </ol>
         `;
+
+        const approvalEmailHtml = brandedEmailTemplate({
+            accent: 'success',
+            body: bodyContent,
+            previewText: `Seminar Approved: ${seminar.title}`,
+            cta: {
+                title: 'Seminar Details',
+                description: 'View and share the registration link',
+                buttonText: 'REGISTRATION LINK',
+                buttonUrl: registrationLink
+            },
+            includeMarketing: true,
+            marketingType: 'corporate',
+            showSocials: true,
+        });
 
         try {
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: seminar.contact_email,
                 subject: `Seminar Approved: ${seminar.title} - ZecurX`,
                 html: approvalEmailHtml,

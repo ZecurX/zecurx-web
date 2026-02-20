@@ -107,9 +107,9 @@ export default function RichTextEditor({
           url = await uploadFileToS3(file, 'blog');
         }
         editor.chain().focus().setImage({ src: url }).run();
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Failed to upload image:', error);
-        alert(`Failed to upload image: ${error.message || 'Unknown error'}`);
+        alert(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };
 

@@ -31,7 +31,7 @@ export async function createLmsUser(
     email: string,
     name: string,
     roleType: RoleType = 'STUDENT',
-    phone?: string
+    _phone?: string
 ): Promise<LmsUser | null> {
     const existingUser = await query<LmsUser>(
         'SELECT id, email, name, "roleId" FROM public.users WHERE email = $1',
@@ -119,7 +119,7 @@ export async function createInternship(
 export async function createEnrollment(
     userId: string,
     courseId: string,
-    paymentId?: string
+    _paymentId?: string
 ): Promise<string | null> {
     const existingEnrollment = await query<{ id: string }>(
         'SELECT id FROM public.enrollments WHERE "userId" = $1 AND "courseId" = $2',

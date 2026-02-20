@@ -6,6 +6,7 @@ import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { Resend } from 'resend';
 import { processLmsEnrollment } from '@/lib/lms-integration';
 import { incrementReferralCodeUsage } from '@/lib/discount-validation';
+import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -77,95 +78,61 @@ async function sendInvoiceEmail(data: {
         ? `Enrollment Confirmed: ${data.itemName} - ZecurX`
         : `Order Confirmation: ${data.itemName} - ZecurX`;
 
-    const userEmailHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
-            <div style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); padding: 40px 30px; text-align: center;">
-                <img src="https://www.zecurx.com/images/zecurx-logo.png" alt="ZecurX" style="height: 40px; display: block; margin: 0 auto;" />
-                <p style="color: #a0a0a0; margin: 15px 0 0 0; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;">Cybersecurity Solutions</p>
-            </div>
-            
-            <div style="padding: 40px 30px;">
-                <h2 style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 22px;">
-                    ${data.isInternship ? '🎓 Welcome to the Program!' : '✅ Order Confirmed!'}
-                </h2>
-                
-                <p style="color: #555; line-height: 1.7; margin-bottom: 25px;">
-                    Hi <strong>${data.name || 'there'}</strong>,<br><br>
-                    ${data.isInternship 
-                        ? `Congratulations on enrolling in <strong>${data.itemName}</strong>! Your journey into cybersecurity excellence begins now.`
-                        : `Thank you for your purchase of <strong>${data.itemName}</strong>. Your order has been confirmed.`
-                    }
-                </p>
+    const userBodyContent = `
+        <h2 style="color: #1a1a1a; margin: 0 0 16px 0; font-size: 22px;">
+            ${data.isInternship ? '🎓 Welcome to the Program!' : '✅ Order Confirmed!'}
+        </h2>
+        
+        <p style="color: #555; line-height: 1.7; margin: 0 0 20px 0;">
+            Hi <strong>${data.name || 'there'}</strong>,<br><br>
+            ${data.isInternship 
+                ? `Congratulations on enrolling in <strong>${data.itemName}</strong>! Your journey into cybersecurity excellence begins now.`
+                : `Thank you for your purchase of <strong>${data.itemName}</strong>. Your order has been confirmed.`
+            }
+        </p>
 
-                <div style="background: #f8f9fa; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
-                    <h3 style="color: #1a1a1a; margin: 0 0 15px 0; font-size: 16px; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;">
-                        Order Summary
-                    </h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr>
-                            <td style="padding: 8px 0; color: #666;">Item:</td>
-                            <td style="padding: 8px 0; color: #1a1a1a; text-align: right; font-weight: 500;">${data.itemName}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; color: #666;">Amount Paid:</td>
-                            <td style="padding: 8px 0; color: #1a1a1a; text-align: right; font-weight: 600; font-size: 18px;">₹${data.amount.toLocaleString('en-IN')}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; color: #666;">Payment ID:</td>
-                            <td style="padding: 8px 0; color: #666; text-align: right; font-family: monospace; font-size: 12px;">${data.paymentId}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 8px 0; color: #666;">Status:</td>
-                            <td style="padding: 8px 0; text-align: right;">
-                                <span style="background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">PAID</span>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+        ${emailSection('Order Summary', `
+            <table width="100%" style="border-collapse: collapse;">
+                <tr><td style="padding: 8px 0; color: #666;"><strong>Item:</strong></td><td style="padding: 8px 0; color: #1a1a1a; text-align: right;">${data.itemName}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666;"><strong>Amount Paid:</strong></td><td style="padding: 8px 0; color: #1a1a1a; text-align: right; font-weight: 600; font-size: 18px;">₹${data.amount.toLocaleString('en-IN')}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666;"><strong>Payment ID:</strong></td><td style="padding: 8px 0; color: #666; text-align: right; font-family: monospace; font-size: 12px;">${data.paymentId}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666;"><strong>Status:</strong></td><td style="padding: 8px 0; text-align: right;"><span style="background: #d4edda; color: #155724; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">PAID</span></td></tr>
+            </table>
+        `)}
 
-                ${data.isInternship ? `
-                <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
-                    <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
-                    <ul style="color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
-                        ${data.lmsResetUrl ? `<li><strong>Set up your LMS account:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> (valid for 24 hours)</li>` : ''}
-                        <li>Our team will contact you within 24-48 hours</li>
-                        <li>Onboarding session will be scheduled</li>
-                    </ul>
-                </div>
-                ` : `
-                <div style="background: #e8f4fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 25px; border-radius: 0 8px 8px 0;">
-                    <h4 style="color: #1565c0; margin: 0 0 10px 0;">What's Next?</h4>
-                    ${data.lmsResetUrl ? `
-                    <p style="color: #555; margin: 0 0 10px 0; line-height: 1.6;">
-                        <strong>Access your course:</strong> <a href="${data.lmsResetUrl}" style="color: #2196f3;">Click here to set your password</a> and log in to the learning portal. (Link valid for 24 hours)
-                    </p>
-                    ` : `
-                    <p style="color: #555; margin: 0; line-height: 1.6;">
-                        You will receive further instructions regarding delivery/access within 24-48 hours.
-                    </p>
-                    `}
-                </div>
-                `}
+        <p style="color: #666; font-size: 14px; margin: 20px 0;">
+            <strong>What's Next:</strong>
+        </p>
+        <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+            ${data.isInternship 
+                ? data.lmsResetUrl 
+                    ? `<li><strong>Set up your LMS account:</strong> <a href="${data.lmsResetUrl}" style="color: #0a0a0f; text-decoration: underline;">Click here to set your password</a> (valid for 24 hours)</li><li>Our team will contact you within 24-48 hours</li><li>Onboarding session will be scheduled</li>`
+                    : `<li>Our team will contact you within 24-48 hours</li><li>Onboarding session will be scheduled</li>`
+                : data.lmsResetUrl
+                    ? `<li><strong>Access your course:</strong> <a href="${data.lmsResetUrl}" style="color: #0a0a0f; text-decoration: underline;">Click here to set your password</a> and log in to the learning portal. (Link valid for 24 hours)</li>`
+                    : `<li>You will receive further instructions regarding delivery/access within 24-48 hours.</li>`
+            }
+        </ul>
 
-                <p style="color: #555; line-height: 1.7;">
-                    📎 <strong>Your invoice is attached to this email.</strong><br><br>
-                    If you have any questions, feel free to reply to this email or contact us at 
-                    <a href="mailto:official@zecurx.com" style="color: #2196f3;">official@zecurx.com</a>
-                </p>
-            </div>
-
-            <div style="background: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                <p style="color: #888; font-size: 12px; margin: 0;">
-                    © ${new Date().getFullYear()} ZecurX Private Limited. All rights reserved.<br>
-                    <a href="https://www.zecurx.com" style="color: #2196f3; text-decoration: none;">www.zecurx.com</a>
-                </p>
-            </div>
-        </div>
+        <p style="color: #555; line-height: 1.7; margin: 20px 0 0 0;">
+            📎 <strong>Your invoice is attached to this email.</strong><br><br>
+            If you have any questions, feel free to reply to this email or contact us at 
+            <a href="mailto:official@zecurx.com" style="color: #0a0a0f; text-decoration: underline;">official@zecurx.com</a>
+        </p>
     `;
+
+    const userEmailHtml = brandedEmailTemplate({
+        accent: data.isInternship ? 'success' : 'info',
+        body: userBodyContent,
+        previewText: emailSubject,
+        includeMarketing: true,
+        marketingType: 'corporate',
+        showSocials: true,
+    });
 
     try {
         await resend.emails.send({
-            from: 'ZecurX Private Limited <official@zecurx.com>',
+            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
             to: data.email,
             subject: emailSubject,
             html: userEmailHtml,
@@ -177,32 +144,40 @@ async function sendInvoiceEmail(data: {
     } catch {
     }
 
-    const adminEmailHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
-                ${data.isInternship ? '🎓 New Internship Enrollment' : '💰 New Purchase'}
-            </h2>
-            
-            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0 0 10px 0;"><strong>Customer:</strong> ${data.name || 'N/A'}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${data.email}</p>
-                ${data.phone ? `<p style="margin: 0 0 10px 0;"><strong>Phone:</strong> ${data.phone}</p>` : ''}
-                ${data.college ? `<p style="margin: 0 0 10px 0;"><strong>Institution:</strong> ${data.college}</p>` : ''}
-                <p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${data.itemName}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Amount:</strong> ₹${data.amount.toLocaleString('en-IN')}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${data.paymentId}</p>
-                <p style="margin: 0;"><strong>Invoice #:</strong> ${invoiceNumber}</p>
-            </div>
-            
-            <p style="color: #888; font-size: 12px;">
-                Invoice has been automatically sent to the customer.
-            </p>
-        </div>
+    const adminBodyContent = `
+        <h2 style="color: #1a1a1a; margin: 0 0 16px 0; font-size: 20px;">
+            ${data.isInternship ? '🎓 New Internship Enrollment' : '💰 New Purchase'}
+        </h2>
+
+        ${emailSection('Customer & Order Details', `
+            <table width="100%" style="border-collapse: collapse;">
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Customer:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.name || 'N/A'}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Email:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.email}</td></tr>
+                ${data.phone ? `<tr><td style="padding: 6px 0; color: #666;"><strong>Phone:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.phone}</td></tr>` : ''}
+                ${data.college ? `<tr><td style="padding: 6px 0; color: #666;"><strong>Institution:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.college}</td></tr>` : ''}
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Item:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.itemName}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Amount:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">₹${data.amount.toLocaleString('en-IN')}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Payment ID:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${data.paymentId}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;"><strong>Invoice #:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${invoiceNumber}</td></tr>
+            </table>
+        `)}
+
+        <p style="color: #666; font-size: 13px; margin: 20px 0 0 0;">
+            Invoice has been automatically sent to the customer.
+        </p>
     `;
+
+    const adminEmailHtml = brandedEmailTemplate({
+        accent: 'info',
+        body: adminBodyContent,
+        previewText: `New ${data.isInternship ? 'Enrollment' : 'Purchase'}: ${data.itemName}`,
+        includeMarketing: false,
+        showSocials: false,
+    });
 
     try {
         await resend.emails.send({
-            from: 'ZecurX Private Limited <official@zecurx.com>',
+            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
             to: adminEmail,
             subject: `New ${data.isInternship ? 'Enrollment' : 'Purchase'}: ${data.itemName} - ₹${data.amount}`,
             html: adminEmailHtml,
