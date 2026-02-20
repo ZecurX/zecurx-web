@@ -43,6 +43,42 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             updates.push(`test_mode = $${paramIndex++}`);
             values.push(body.test_mode);
         }
+        if (body.duration !== undefined) {
+            updates.push(`duration = $${paramIndex++}`);
+            values.push(body.duration);
+        }
+        if (body.level !== undefined) {
+            updates.push(`level = $${paramIndex++}`);
+            values.push(body.level);
+        }
+        if (body.features !== undefined) {
+            updates.push(`features = $${paramIndex++}`);
+            values.push(JSON.stringify(body.features));
+        }
+        if (body.logo !== undefined) {
+            updates.push(`logo = $${paramIndex++}`);
+            values.push(body.logo);
+        }
+        if (body.original_price !== undefined) {
+            updates.push(`original_price = $${paramIndex++}`);
+            values.push(body.original_price === null ? null : Number(body.original_price));
+        }
+        if (body.popular !== undefined) {
+            updates.push(`popular = $${paramIndex++}`);
+            values.push(body.popular);
+        }
+        if (body.students_count !== undefined) {
+            updates.push(`students_count = $${paramIndex++}`);
+            values.push(body.students_count === null ? null : Number(body.students_count));
+        }
+        if (body.brochure_link !== undefined) {
+            updates.push(`brochure_link = $${paramIndex++}`);
+            values.push(body.brochure_link);
+        }
+        if (body.pricing_type !== undefined) {
+            updates.push(`pricing_type = $${paramIndex++}`);
+            values.push(body.pricing_type);
+        }
 
         if (updates.length === 0) {
             return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
@@ -58,6 +94,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             description: string | null;
             active: boolean;
             in_stock: boolean;
+            duration: string | null;
+            level: string | null;
+            features: string[] | null;
+            logo: string | null;
+            original_price: number | null;
+            popular: boolean;
+            students_count: number | null;
+            brochure_link: string | null;
+            pricing_type: string;
             created_at: string;
         }>(
             `UPDATE plans SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`,

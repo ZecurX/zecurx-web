@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, Filter, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { AuditLog, AuditAction, Resource } from '@/types/auth';
@@ -102,12 +103,12 @@ export default function AuditLogsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Audit Logs</h1>
           <p className="text-sm text-muted-foreground mt-1">View all system activity and changes</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -221,71 +222,133 @@ export default function AuditLogsPage() {
       )}
 
       {/* Logs Table */}
-      <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-muted/50 text-muted-foreground border-b border-border/50">
-              <tr>
-                <th className="px-6 py-4 font-medium">Timestamp</th>
-                <th className="px-6 py-4 font-medium">User</th>
-                <th className="px-6 py-4 font-medium">Role</th>
-                <th className="px-6 py-4 font-medium">Action</th>
-                <th className="px-6 py-4 font-medium">Resource</th>
-                <th className="px-6 py-4 font-medium">Details</th>
-                <th className="px-6 py-4 font-medium">IP Address</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/50">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
-                    {new Date(log.created_at).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-foreground">{log.admin_email || log.admin_id}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {log.admin_role && <RoleBadge role={log.admin_role} size="sm" />}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionColor(log.action)}`}
-                    >
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-foreground font-medium">{log.resource}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {log.details && (
-                      <div className="max-w-md">
-                        <details className="cursor-pointer">
-                          <summary className="text-muted-foreground hover:text-foreground">
-                            View details
-                          </summary>
-                          <pre className="mt-2 text-xs bg-muted/50 p-2 rounded overflow-x-auto">
-                            {JSON.stringify(log.details, null, 2)}
-                          </pre>
-                        </details>
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-muted-foreground text-xs">
-                    {log.ip_address || 'N/A'}
-                  </td>
-                </tr>
-              ))}
-              {logs.length === 0 && (
+      <div className="hidden md:block">
+        <div className="bg-card/40 border border-border/50 rounded-xl overflow-hidden backdrop-blur-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-muted/50 text-muted-foreground border-b border-border/50">
                 <tr>
-                  <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">
-                    No audit logs found.
-                  </td>
+                  <th className="px-6 py-4 font-medium">Timestamp</th>
+                  <th className="px-6 py-4 font-medium">User</th>
+                  <th className="px-6 py-4 font-medium">Role</th>
+                  <th className="px-6 py-4 font-medium">Action</th>
+                  <th className="px-6 py-4 font-medium">Resource</th>
+                  <th className="px-6 py-4 font-medium">Details</th>
+                  <th className="px-6 py-4 font-medium">IP Address</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border/50">
+                {logs.map((log) => (
+                  <tr key={log.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">
+                      {new Date(log.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="font-medium text-foreground">{log.admin_email || log.admin_id}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {log.admin_role && <RoleBadge role={log.admin_role} size="sm" />}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionColor(log.action)}`}
+                      >
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-foreground font-medium">{log.resource}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {log.details && (
+                        <div className="max-w-md">
+                          <details className="cursor-pointer">
+                            <summary className="text-muted-foreground hover:text-foreground">
+                              View details
+                            </summary>
+                            <pre className="mt-2 text-xs bg-muted/50 p-2 rounded overflow-x-auto">
+                              {JSON.stringify(log.details, null, 2)}
+                            </pre>
+                          </details>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-muted-foreground text-xs">
+                      {log.ip_address || 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+                {logs.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-8 text-center text-muted-foreground">
+                      No audit logs found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <div className="md:hidden space-y-3">
+        <AnimatePresence>
+          {logs.map((log) => (
+            <motion.article
+              key={log.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="rounded-2xl p-4 bg-background/70 backdrop-blur-xl border border-white/[0.08] dark:border-white/[0.06] shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_2px_4px_rgba(0,0,0,0.2)] space-y-3"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionColor(log.action)}`}
+                >
+                  {log.action}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(log.created_at).toLocaleString()}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-foreground text-sm truncate">
+                  {log.admin_email || log.admin_id}
+                </span>
+                {log.admin_role && <RoleBadge role={log.admin_role} size="sm" />}
+              </div>
+
+              <div className="text-sm">
+                <span className="text-muted-foreground mr-2">Resource:</span>
+                <span className="text-foreground font-medium">{log.resource}</span>
+              </div>
+
+              {log.details && (
+                <div className="text-sm">
+                  <details className="cursor-pointer">
+                    <summary className="text-muted-foreground hover:text-foreground">
+                      View details
+                    </summary>
+                    <pre className="mt-2 text-xs bg-muted/50 p-2 rounded overflow-x-auto">
+                      {JSON.stringify(log.details, null, 2)}
+                    </pre>
+                  </details>
+                </div>
+              )}
+
+              <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
+                IP: {log.ip_address || 'N/A'}
+              </div>
+            </motion.article>
+          ))}
+        </AnimatePresence>
+
+        {logs.length === 0 && (
+          <div className="p-8 text-center text-muted-foreground bg-card/40 border border-border/50 rounded-xl backdrop-blur-sm">
+            No audit logs found.
+          </div>
+        )}
       </div>
 
       {/* Total Count */}
