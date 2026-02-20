@@ -8,7 +8,7 @@ import {
     Edit2, Trash2, Save, X, ChevronDown, Check
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { StudentLead, LeadNote, LeadActivity, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
+import { StudentLead, LeadNote, LeadActivity } from '@/types/lead-types';
 import { LeadStatusBadge, getStatusOptions } from '@/components/leads/LeadStatusBadge';
 import { LeadPriorityBadge, getPriorityOptions } from '@/components/leads/LeadPriorityBadge';
 import { LeadNotesPanel } from '@/components/leads/LeadNotesPanel';

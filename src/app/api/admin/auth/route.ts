@@ -9,7 +9,7 @@ import {
   getUserAgent,
 } from '@/lib/auth';
 import { logLogin } from '@/lib/audit';
-import { Admin, Role } from '@/types/auth';
+import { Role } from '@/types/auth';
 
 async function verifyPassword(
   password: string,

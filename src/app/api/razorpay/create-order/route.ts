@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
             }
         } else {
             let finalAmount = verifiedAmount;
-            let isTestOrder = false;
+            const isTestOrder = false;
             let isPromoPrice = false;
             let verifiedFromDb = false;
 

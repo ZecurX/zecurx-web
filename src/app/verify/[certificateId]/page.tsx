@@ -3,14 +3,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
-    CheckCircle2,
     Download,
     Calendar,
     User,
-    Building2,
     Award,
     Shield,
-    Share2,
     ExternalLink
 } from "lucide-react";
 
@@ -81,7 +78,7 @@ export default async function CertificateVerifyPage({ params }: Props) {
         month: "long",
         day: "numeric",
     });
-    const issuedDate = new Date(certificate.issuedAt).toLocaleDateString("en-US", {
+    const _issuedDate = new Date(certificate.issuedAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",

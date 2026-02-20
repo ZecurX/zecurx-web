@@ -7,7 +7,7 @@ import {
     Eye, Trash2, GraduationCap, Mail, Phone, Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { StudentLead, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
+import { StudentLead, LEAD_STATUS } from '@/types/lead-types';
 import { LeadStatusBadge, getStatusOptions } from '@/components/leads/LeadStatusBadge';
 import { LeadPriorityBadge, getPriorityOptions } from '@/components/leads/LeadPriorityBadge';
 
@@ -68,6 +68,7 @@ export default function StudentLeadsClient({ initialLeads, totalCount }: Student
             }
         }, 300);
         return () => clearTimeout(debounce);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, statusFilter, priorityFilter, page]);
 
     // Stats

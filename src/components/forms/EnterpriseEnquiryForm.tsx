@@ -10,7 +10,7 @@ import {
     URGENCY_LEVELS,
     EnterpriseLeadFormData
 } from '@/types/lead-types';
-import { Building2, Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2 } from 'lucide-react';
 
 export function EnterpriseEnquiryForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);

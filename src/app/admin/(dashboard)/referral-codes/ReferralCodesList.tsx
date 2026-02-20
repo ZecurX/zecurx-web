@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MoreVertical, Pencil, Trash2, Ticket, Check, X, Copy } from "lucide-react";
+import { Search, MoreVertical, Pencil, Trash2, Ticket, Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

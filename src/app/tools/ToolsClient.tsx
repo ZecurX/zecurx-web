@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
     Search, FolderSearch, Radar, Lock,
-    Code2, FileSearch, ArrowRight, Terminal
+    Code2, FileSearch, ArrowRight
 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';

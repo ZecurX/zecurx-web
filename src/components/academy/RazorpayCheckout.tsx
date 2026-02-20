@@ -121,7 +121,7 @@ export default function RazorpayCheckout({
                 } else {
                     onFailure?.(verifyData.error || 'Dev mode verification failed');
                 }
-            } catch (error) {
+            } catch (_error) {
                 onFailure?.('Dev mode payment failed');
             } finally {
                 setIsLoading(false);
@@ -168,7 +168,7 @@ export default function RazorpayCheckout({
                         } else {
                             onFailure?.(verifyData.error || 'Payment verification failed');
                         }
-                    } catch (error) {
+                    } catch (_error) {
                         onFailure?.('Payment verification failed. Please contact support.');
                     }
                 },

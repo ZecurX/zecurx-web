@@ -1,10 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Clock, Users, Award, CheckCircle } from 'lucide-react';
-import RazorpayCheckout from './RazorpayCheckout';
-import { useState } from 'react';
 import BrochureModal from './BrochureModal';
+import { useState } from 'react';
 
 interface CourseCardProps {
     id: string;
@@ -28,7 +26,7 @@ export default function CourseCard({
     price,
     originalPrice,
     duration,
-    students = 0,
+    students: _students = 0,
     level,
     features,
     popular = false,
@@ -39,12 +37,12 @@ export default function CourseCard({
     const [error, setError] = useState<string | null>(null);
     const [isBrochureOpen, setIsBrochureOpen] = useState(false);
 
-    const handleSuccess = (_paymentId: string) => {
+    const _handleSuccess = (_paymentId: string) => {
         setIsPurchased(true);
         setError(null);
     };
 
-    const handleFailure = (errorMessage: string) => {
+    const _handleFailure = (errorMessage: string) => {
         setError(errorMessage);
         setTimeout(() => setError(null), 5000);
     };

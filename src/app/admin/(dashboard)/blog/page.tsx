@@ -6,13 +6,11 @@ import { useRouter } from 'next/navigation';
 import {
   Plus,
   Search,
-  Filter,
   Edit,
   Trash2,
   Eye,
   Calendar,
   FileText,
-  MoreVertical,
   Globe,
   Loader2
 } from 'lucide-react';
@@ -31,7 +29,7 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function BlogListPage() {
-  const router = useRouter();
+  const _router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +121,7 @@ export default function BlogListPage() {
   };
 
   const canManageBlog = ['super_admin', 'admin', 'marketing', 'media'].includes(user?.role || '');
-  const canEdit = canManageBlog;
+  const _canEdit = canManageBlog;
 
   return (
     <div className="space-y-6">
