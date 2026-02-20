@@ -57,3 +57,31 @@ nohup.out
 /public/hero-bg.png
 /public/logo_new.png
 .env*.local
+
+# AI agent configs
+.agent/
+.gemini/
+.gsd/
+GSD-STYLE.md
+MCP_GUIDE.md
+PROJECT_RULES.md
+model_capabilities.yaml
+adapters/
+
+# debug / temp files
+clear-data-debug.js
+clear-data.sh
+next_full.log
+server.log
+docs/
+
+# scripts (non-essential)
+scripts/search_repo.*
+scripts/setup_search.*
+scripts/validate-*
+
+# landing-redesign (separate project)
+landing-redesign/
+
+# old certificate template
+public/certificate-template.old.pdf
