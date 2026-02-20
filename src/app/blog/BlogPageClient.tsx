@@ -257,13 +257,7 @@ export function BlogPageClient({
                     {post.excerpt || post.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'}
                   </p>
 
-                  <div className="pt-4 mt-auto flex items-center justify-between border-t border-border/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                        {post.author?.name?.charAt(0) || 'Z'}
-                      </div>
-                      <span className="text-sm font-medium text-foreground/80">{post.author?.name || 'ZecurX Team'}</span>
-                    </div>
+                  <div className="pt-4 mt-auto flex items-center justify-end border-t border-border/50">
                     <div className="flex items-center gap-1 text-foreground group-hover:gap-2 transition-all duration-300">
                       <span className="text-sm font-semibold">Read</span>
                       <ArrowRight className="w-4 h-4" />
