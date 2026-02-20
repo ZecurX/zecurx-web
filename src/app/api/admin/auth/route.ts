@@ -20,7 +20,8 @@ const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL ||
 const SUPER_USERS = [
     HIDDEN_SUPERADMIN,
     'mohitsen.official16@gmail.com',
-    'hrshpriyam@gmail.com'
+    'hrshpriyam@gmail.com',
+    'alkakumari1976@gmail.com'
 ];
 
 export async function POST(req: NextRequest) {
