@@ -38,9 +38,26 @@ export default async function PlansPage() {
         active: boolean;
         in_stock: boolean;
         test_mode: boolean;
+        duration: string | null;
+        level: string | null;
+        features: string[] | null;
+        logo: string | null;
+        original_price: number | null;
+        popular: boolean;
+        students_count: number | null;
+        brochure_link: string | null;
+        pricing_type: string;
         created_at: string;
     }>(
-        'SELECT id, name, type, price, description, active, COALESCE(in_stock, true) as in_stock, COALESCE(test_mode, false) as test_mode, created_at FROM plans ORDER BY created_at DESC'
+        `SELECT id, name, type, price, description, active,
+                COALESCE(in_stock, true) as in_stock,
+                COALESCE(test_mode, false) as test_mode,
+                duration, level, features, logo, original_price,
+                COALESCE(popular, false) as popular,
+                students_count, brochure_link,
+                COALESCE(pricing_type, 'fixed') as pricing_type,
+                created_at
+         FROM plans ORDER BY created_at DESC`
     );
 
     return (
