@@ -16,6 +16,8 @@ export interface CourseData {
     popular?: boolean;
     brochureLink?: string;
     logo?: string;
+    pricingType?: 'fixed' | 'contact' | 'institutional';
+    inStock?: boolean;
 }
 
 // Import CDN_ASSETS is only needed for brochure links on the client side.
@@ -118,6 +120,7 @@ export const courses: CourseData[] = [
             'Institutional Training',
         ],
         logo: '/images/courses/zxCCP.png',
+        pricingType: 'institutional',
     },
     {
         id: '3613d162-d801-47c6-9305-719f999738c8',
@@ -134,6 +137,7 @@ export const courses: CourseData[] = [
             'Career Roadmap',
         ],
         logo: '/images/courses/zxCCF.png',
+        pricingType: 'institutional',
     },
     {
         id: 'ef34cbc8-c918-4e64-bd88-799863b299e1',
@@ -150,6 +154,7 @@ export const courses: CourseData[] = [
             'Strategic Planning',
         ],
         logo: '/images/courses/zxCCE.png',
+        pricingType: 'institutional',
     },
     {
         id: '9bce53be-103e-46b9-9fa0-2b91260f38db',
@@ -168,6 +173,7 @@ export const courses: CourseData[] = [
             'DevSecOps Basics',
         ],
         logo: '/images/courses/zxCFD.png',
+        pricingType: 'contact',
     },
 ];
 
