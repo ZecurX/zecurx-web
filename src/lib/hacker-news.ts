@@ -52,7 +52,7 @@ function processStory(story: HNStory): EnrichedStory | null {
   if (story.url) {
     try {
       domain = new URL(story.url).hostname.replace('www.', '');
-    } catch (e) {
+    } catch {
       
     }
   }
@@ -89,7 +89,7 @@ async function fetchMetadata(url: string): Promise<string | undefined> {
     if (metaDesc && metaDesc[1]) return metaDesc[1];
 
     return undefined;
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }

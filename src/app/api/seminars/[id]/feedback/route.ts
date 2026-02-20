@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { createCertificate, sendCertificateEmail } from '@/lib/certificate';
+import { createCertificate, sendCertificateEmail, generateFeedbackPromoCode } from '@/lib/certificate';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar, SeminarRegistration, SeminarFeedback } from '@/types/seminar';
 
@@ -180,6 +180,7 @@ export async function POST(
             recipientName: certificateName,
             recipientEmail: email.toLowerCase(),
             seminarTitle: seminar.title,
+            seminarTopic: seminar.topic || 'Cybersecurity',
             seminarDate: new Date(seminar.date),
             speakerName: seminar.speaker_name,
             organization: collegeName || seminar.organization_name,
@@ -188,14 +189,15 @@ export async function POST(
             feedbackId: feedback.id,
         });
 
-        const emailSent = await sendCertificateEmail(certificate, email.toLowerCase());
+        const promoCode = await generateFeedbackPromoCode();
+
+        sendCertificateEmail(certificate, email.toLowerCase(), promoCode).catch((err) => {
+            console.error('Email send failed:', err);
+        });
 
         return NextResponse.json({
             success: true,
-            message: emailSent 
-                ? 'Feedback submitted and certificate sent to your email' 
-                : 'Feedback submitted. Certificate generated but email delivery failed.',
-            emailSent,
+            message: 'Feedback submitted successfully. Certificate email will be sent shortly.',
             certificate: {
                 id: certificate.id,
                 certificateId: certificate.certificate_id,

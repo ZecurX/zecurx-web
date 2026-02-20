@@ -4,6 +4,10 @@ import { createOtp, sendOtpEmail } from '@/lib/otp';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar, SeminarRegistration } from '@/types/seminar';
 
+export const config = {
+    maxDuration: 60,
+};
+
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Package, Ticket, X, Loader2 } from 'lucide-react';
+import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
@@ -123,12 +123,12 @@ function CheckoutContent() {
         fetchItemPrice();
     }, [itemId, itemType, isCartCheckout]);
 
-    const singleItem = !isCartCheckout && fetchedItem ? {
+    const singleItem = useMemo(() => !isCartCheckout && fetchedItem ? {
         id: fetchedItem.id,
         name: fetchedItem.name,
         price: promoPriceValid && promoPrice ? promoPrice : fetchedItem.price,
         type: fetchedItem.type
-    } : null;
+    } : null, [isCartCheckout, fetchedItem, promoPriceValid, promoPrice]);
 
     const checkoutAmount = isCartCheckout ? totalPrice : (singleItem?.price || 0);
     const finalAmount = appliedCode ? checkoutAmount - appliedCode.discount_amount : checkoutAmount;
@@ -137,7 +137,7 @@ function CheckoutContent() {
         : (singleItem?.name || '');
 
     // Validate referral code - checks both regular and partner referral codes
-    const validateCode = useCallback(async (codeToValidate: string) => {
+    const validateCode = async (codeToValidate: string) => {
         if (!codeToValidate.trim()) return;
 
         setValidatingCode(true);
@@ -208,12 +208,12 @@ function CheckoutContent() {
             const error = partnerData.error || regularData.error || 'Invalid code';
             setReferralError(error);
             if (codeToValidate !== referralCode) setReferralCode(codeToValidate);
-        } catch (error) {
+        } catch {
             setReferralError('Failed to validate code');
         } finally {
             setValidatingCode(false);
         }
-    }, [checkoutAmount, formData.email, referralCode]);
+    };
 
     const handleApplyReferralCode = () => {
         validateCode(referralCode);
@@ -224,7 +224,8 @@ function CheckoutContent() {
         if (codeFromUrl && !appliedCode) {
             validateCode(codeFromUrl);
         }
-    }, [searchParams, validateCode, appliedCode]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
 
     useEffect(() => {
         const validatePromoPrice = async () => {
@@ -315,7 +316,7 @@ function CheckoutContent() {
                 const priceChanges: string[] = [];
 
                 for (const cartItem of items) {
-                    const dbProduct = productsData.products?.find((p: any) => p.id.toString() === cartItem.id);
+                    const dbProduct = productsData.products?.find((p: Record<string, unknown>) => String(p.id) === cartItem.id);
                     if (dbProduct && Math.abs(dbProduct.price - cartItem.price) > 0.01) {
                         priceChanges.push(
                             `${cartItem.name}: ₹${cartItem.price} → ₹${dbProduct.price}`
@@ -345,7 +346,7 @@ function CheckoutContent() {
                 const stockData = await stockCheckRes.json();
 
                 if (!stockData.available) {
-                    const unavailableNames = stockData.unavailableItems?.map((item: any) =>
+                    const unavailableNames = stockData.unavailableItems?.map((item: Record<string, unknown>) =>
                         `${item.name} (${item.reason})`
                     ).join(', ') || 'Some items';
 

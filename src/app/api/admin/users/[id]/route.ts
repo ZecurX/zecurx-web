@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
+import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
-import { ROLES, Role, UpdateUserRequest, AdminPublic } from "@/types/auth";
+import { ROLES, Role, UpdateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
 export async function GET(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.READ, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -39,10 +39,10 @@ export async function PUT(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.UPDATE, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -78,7 +78,7 @@ export async function PUT(
             if (!emailRegex.test(email)) {
                 return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
             }
-            
+
             const emailCheck = await db.query<{ id: string }>(
                 'SELECT id FROM admins WHERE email = $1 AND id != $2',
                 [email, id]
@@ -137,9 +137,9 @@ export async function PUT(
             'update',
             'user',
             id,
-            { 
+            {
                 previous: { email: existingUser.email, role: existingUser.role, name: existingUser.name, is_active: existingUser.is_active },
-                updated: updateDetails 
+                updated: updateDetails
             },
             ipAddress,
             userAgent
@@ -156,10 +156,10 @@ export async function DELETE(
     req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.USERS, ACTIONS.DELETE, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -197,7 +197,7 @@ export async function DELETE(
 
         if (permanent) {
             await db.query('DELETE FROM admins WHERE id = $1', [id]);
-            
+
             await logCRUD(
                 { id: auth.session.sub, email: auth.session.email, role: auth.session.role as Role },
                 'delete',

@@ -46,7 +46,7 @@ interface RazorpayCheckoutProps {
     itemName: string;
     itemDescription?: string;
     amount: number;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, string | number | boolean>;
     onSuccess?: (paymentId: string) => void;
     onFailure?: (error: string) => void;
     children: React.ReactNode;
@@ -121,7 +121,7 @@ export default function RazorpayCheckout({
                 } else {
                     onFailure?.(verifyData.error || 'Dev mode verification failed');
                 }
-            } catch (error) {
+            } catch {
                 onFailure?.('Dev mode payment failed');
             } finally {
                 setIsLoading(false);
@@ -168,7 +168,7 @@ export default function RazorpayCheckout({
                         } else {
                             onFailure?.(verifyData.error || 'Payment verification failed');
                         }
-                    } catch (error) {
+                    } catch {
                         onFailure?.('Payment verification failed. Please contact support.');
                     }
                 },

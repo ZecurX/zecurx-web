@@ -4,14 +4,13 @@ import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
 import { ReferralCode, CreateReferralCodeRequest } from "@/types/referral-types";
 
-// Generate a random referral code
-function generateCode(length: number = 8): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+// Generate a random referral code in format ZX-XX-XXXXXX
+function generateCode(): string {
+    const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const middle = Array.from({ length: 2 }, () => ALPHA[Math.floor(Math.random() * ALPHA.length)]).join('');
+    const suffix = Array.from({ length: 6 }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join('');
+    return `ZX-${middle}-${suffix}`;
 }
 
 export async function GET(req: NextRequest) {

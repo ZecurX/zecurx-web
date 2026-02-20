@@ -4,6 +4,8 @@ import { query } from '@/lib/db';
 import { verifyOtp } from '@/lib/otp';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar, SeminarRegistration } from '@/types/seminar';
+import { brandedEmailTemplate, emailSection, emailCourseCatalog } from '@/lib/email-template';
+import { courses } from '@/lib/courses';
 
 export async function POST(
     request: NextRequest,
@@ -84,52 +86,63 @@ export async function POST(
             return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${location}`;
         };
 
-        const confirmationHtml = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #1a1a1a; margin: 0;">ZecurX</h1>
-                    <p style="color: #666; margin: 5px 0 0 0;">Cybersecurity Excellence</p>
-                </div>
+        const bodyContent = `
+            <h2 style="color: #2e7d32; margin: 0 0 16px 0; font-size: 22px; text-align: center;">
+                ✓ Registration Confirmed!
+            </h2>
+            <p style="color: #555; font-size: 15px; line-height: 1.6; margin: 0 0 20px 0; text-align: center;">
+                You're all set for the seminar.
+            </p>
 
-                <div style="background: #e8f5e9; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 30px;">
-                    <h2 style="color: #2e7d32; margin: 0 0 10px 0;">Registration Confirmed!</h2>
-                    <p style="color: #555; margin: 0;">You're all set for the seminar.</p>
-                </div>
+            ${emailSection(seminar.title, `
+                <table width="100%" style="border-collapse: collapse;">
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Date:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${dateStr}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Time:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${seminar.time}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Duration:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${seminar.duration}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Speaker:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${seminar.speaker_name}${seminar.speaker_title ? `, ${seminar.speaker_title}` : ''}</td></tr>
+                    <tr><td style="padding: 6px 0; color: #666;"><strong>Location:</strong></td><td style="padding: 6px 0; color: #1a1a1a; text-align: right;">${seminar.location_type === 'online' ? 'Online' : seminar.venue_address}</td></tr>
+                </table>
+            `)}
 
-                <div style="background: #f5f5f5; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <h3 style="margin: 0 0 15px 0; color: #1a1a1a;">${seminar.title}</h3>
-                    <p style="margin: 5px 0; color: #555;"><strong>Date:</strong> ${dateStr}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Time:</strong> ${seminar.time}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Duration:</strong> ${seminar.duration}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Speaker:</strong> ${seminar.speaker_name}${seminar.speaker_title ? `, ${seminar.speaker_title}` : ''}</p>
-                    <p style="margin: 5px 0; color: #555;"><strong>Location:</strong> ${seminar.location_type === 'online' ? 'Online' : seminar.venue_address}</p>
-                </div>
+            <p style="color: #666; font-size: 14px; margin: 20px 0;">
+                <strong>Important reminders:</strong>
+            </p>
+            <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+                <li>Please arrive 10 minutes before the scheduled time</li>
+                <li>Bring your student/employee ID for verification</li>
+                <li>Certificates will be available after the seminar</li>
+            </ul>
 
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <a href="${getGoogleCalendarUrl()}" style="display: inline-block; background: #1a1a1a; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                        Add to Google Calendar
-                    </a>
-                </div>
+            <p style="color: #999; font-size: 12px; margin: 20px 0 0 0; text-align: center;">
+                Registration ID: ${registration.id}
+            </p>
 
-                <div style="background: #fff3e0; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                    <h4 style="margin: 0 0 10px 0; color: #e65100;">Important Notes</h4>
-                    <ul style="margin: 0; padding-left: 20px; color: #555;">
-                        <li>Please arrive 10 minutes before the scheduled time</li>
-                        <li>Bring your student/employee ID for verification</li>
-                        <li>Certificates will be available after the seminar</li>
-                    </ul>
-                </div>
-
-                <p style="color: #888; font-size: 12px; text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                    If you have any questions, contact us at official@zecurx.com<br>
-                    Registration ID: ${registration.id}
-                </p>
-            </div>
+            ${emailCourseCatalog(courses.slice(0, 4).map(course => ({
+                title: course.title,
+                description: course.description,
+                level: course.level,
+                logo: course.logo
+            })))}
         `;
+
+        const confirmationHtml = brandedEmailTemplate({
+            accent: 'success',
+            body: bodyContent,
+            previewText: `Registration Confirmed: ${seminar.title}`,
+            cta: {
+                title: 'Add to Calendar',
+                description: 'Save the seminar to your Google Calendar',
+                buttonText: 'ADD TO GOOGLE CALENDAR',
+                buttonUrl: getGoogleCalendarUrl()
+            },
+            includeMarketing: true,
+            marketingType: 'student',
+            showSocials: false,
+        });
 
         try {
             await resend.emails.send({
-                from: 'ZecurX Private Limited <official@zecurx.com>',
+                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
                 to: email,
                 subject: `Registration Confirmed: ${seminar.title} - ZecurX`,
                 html: confirmationHtml,

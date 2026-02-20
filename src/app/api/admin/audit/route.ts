@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePermission } from "@/lib/auth";
 import { getAuditLogs, cleanupOldAuditLogs } from "@/lib/audit";
-import { ROLES, AuditAction } from "@/types/auth";
+import { AuditAction, RESOURCES, ACTIONS } from "@/types/auth";
 
 // GET - Fetch audit logs with filtering (super_admin only)
 export async function GET(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.AUDIT, ACTIONS.READ, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
         const searchParams = req.nextUrl.searchParams;
-        
+
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '50');
         const adminId = searchParams.get('admin_id') || undefined;
@@ -53,10 +53,10 @@ export async function GET(req: NextRequest) {
 
 // DELETE - Cleanup old audit logs (super_admin only)
 export async function DELETE(req: NextRequest) {
-    const auth = await requireRole([ROLES.SUPER_ADMIN], req);
-    
+    const auth = await requirePermission(RESOURCES.AUDIT, ACTIONS.DELETE, req);
+
     if (!auth.authorized) {
-        return NextResponse.json({ error: auth.error }, { status: 401 });
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
     try {
@@ -67,9 +67,9 @@ export async function DELETE(req: NextRequest) {
             return NextResponse.json({ error }, { status: 500 });
         }
 
-        return NextResponse.json({ 
-            success: true, 
-            message: `Cleaned up ${deleted} old audit logs` 
+        return NextResponse.json({
+            success: true,
+            message: `Cleaned up ${deleted} old audit logs`
         });
     } catch (error) {
         console.error("Cleanup audit logs error:", error);
