@@ -152,7 +152,7 @@ export async function generateCertificatePreview(certificate: Certificate & { lo
     // Scale factor from PDF points to preview pixels
     const _S = 2;
 
-    const bgBuffer = await fetchFromCdn('images/certificate-bg.png');
+    const bgBuffer = await fetchFromCdn('templates/certificate-template-bg.png');
     if (!bgBuffer) {
         throw new Error('Failed to fetch certificate background from CDN');
     }
