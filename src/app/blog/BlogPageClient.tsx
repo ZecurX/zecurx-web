@@ -24,9 +24,33 @@ function AnimatedGridPattern({ className }: { className?: string }) {
   );
 }
 
+interface BlogLabel {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+}
+
+interface BlogAuthor {
+  name: string;
+  email: string;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  featured_image_url?: string;
+  published_at?: string;
+  labels: Array<{ blog_labels: BlogLabel }>;
+  author?: BlogAuthor;
+}
+
 interface BlogPageClientProps {
-  posts?: any[];
-  allLabels?: any[];
+  posts?: BlogPost[];
+  allLabels?: BlogLabel[];
   page?: number;
   totalPages?: number;
   search?: string;
@@ -199,7 +223,7 @@ export function BlogPageClient({
 
                   {post.labels.length > 0 && (
                     <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                      {post.labels.slice(0, 2).map((l: any) => (
+                      {post.labels.slice(0, 2).map((l) => (
                         <span
                           key={l.blog_labels.id}
                           className="px-3 py-1 text-xs font-semibold text-white rounded-full shadow-lg backdrop-blur-sm"
@@ -236,9 +260,9 @@ export function BlogPageClient({
                   <div className="pt-4 mt-auto flex items-center justify-between border-t border-border/50">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                        {(post.author as any)?.name?.charAt(0) || 'Z'}
+                        {post.author?.name?.charAt(0) || 'Z'}
                       </div>
-                      <span className="text-sm font-medium text-foreground/80">{(post.author as any)?.name || 'ZecurX Team'}</span>
+                      <span className="text-sm font-medium text-foreground/80">{post.author?.name || 'ZecurX Team'}</span>
                     </div>
                     <div className="flex items-center gap-1 text-foreground group-hover:gap-2 transition-all duration-300">
                       <span className="text-sm font-semibold">Read</span>

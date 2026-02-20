@@ -18,9 +18,12 @@ export async function createOtp(
     const otp = generateOtp();
     const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
+    // Clean up only expired or already-verified OTPs, keep valid ones alive
+    // so the user can still use a previously sent code if the resend email arrives late
     await query(
         `DELETE FROM seminar.otp_verifications 
-         WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL))`,
+         WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL))
+         AND (expires_at < NOW() OR verified = true)`,
         [email, purpose, seminarId || null]
     );
 
@@ -40,42 +43,38 @@ export async function verifyOtp(
     purpose: OtpPurpose,
     seminarId?: string
 ): Promise<{ valid: boolean; error?: string }> {
-    // Only check seminar_id if it's provided or if purpose requires it (registration/certificate)
-    // For admin_login, seminar_id is null
-
-    // Construct query based on seminarId presence
     const result = await query<OtpVerification>(
         `SELECT * FROM seminar.otp_verifications 
          WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL)) AND verified = false
-         ORDER BY created_at DESC LIMIT 1`,
-        [email, purpose, seminarId || null]
+         AND expires_at > NOW() AND attempts < $4
+         ORDER BY created_at DESC`,
+        [email, purpose, seminarId || null, MAX_ATTEMPTS]
     );
 
-    const record = result.rows[0];
-
-    if (!record) {
+    if (result.rows.length === 0) {
         return { valid: false, error: 'No OTP found. Please request a new one.' };
     }
 
-    if (new Date(record.expires_at) < new Date()) {
-        return { valid: false, error: 'OTP has expired. Please request a new one.' };
-    }
+    const match = result.rows.find(r => r.otp_code === otp);
 
-    if (record.attempts >= MAX_ATTEMPTS) {
-        return { valid: false, error: 'Too many failed attempts. Please request a new OTP.' };
-    }
-
-    if (record.otp_code !== otp) {
+    if (!match) {
         await query(
-            `UPDATE seminar.otp_verifications SET attempts = attempts + 1 WHERE id = $1`,
-            [record.id]
+            `UPDATE seminar.otp_verifications SET attempts = attempts + 1 
+             WHERE id = $1`,
+            [result.rows[0].id]
         );
         return { valid: false, error: 'Invalid OTP. Please try again.' };
     }
 
     await query(
         `UPDATE seminar.otp_verifications SET verified = true WHERE id = $1`,
-        [record.id]
+        [match.id]
+    );
+
+    await query(
+        `DELETE FROM seminar.otp_verifications 
+         WHERE email = $1 AND purpose = $2 AND (seminar_id = $3 OR ($3 IS NULL AND seminar_id IS NULL)) AND verified = false`,
+        [email, purpose, seminarId || null]
     );
 
     return { valid: true };

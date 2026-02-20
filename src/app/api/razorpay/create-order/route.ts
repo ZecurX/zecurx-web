@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
                 for (const item of items) {
                     const dbProduct = stockCheck.rows.find(
-                        (p: any) => p.id.toString() === item.id.toString()
+                        (p: Record<string, unknown>) => String(p.id) === String(item.id)
                     );
 
                     if (!dbProduct) {
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
             }
         } else {
             let finalAmount = verifiedAmount;
-            let isTestOrder = false;
+            const isTestOrder = false;
             let isPromoPrice = false;
             let verifiedFromDb = false;
 

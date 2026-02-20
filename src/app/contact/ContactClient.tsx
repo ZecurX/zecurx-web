@@ -62,7 +62,7 @@ export default function ContactPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
-            
+
             setIsSuccess(true);
             (e.target as HTMLFormElement).reset();
             setSubject('');
@@ -143,42 +143,45 @@ export default function ContactPage() {
                     </div>
 
                     {/* Right: Form */}
-                    <div className="bg-muted/5 border border-border rounded-2xl p-8 lg:p-10">
+                    <div className="bg-white border border-gray-100 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden">
+
                         {isSuccess ? (
-                            <div className="flex flex-col items-center justify-center text-center py-12">
-                                <CheckCircle2 className="w-12 h-12 text-foreground mb-4" />
-                                <h3 className="text-xl font-medium mb-2">Message Sent</h3>
-                                <p className="text-muted-foreground mb-8">
-                                    We&apos;ll get back to you shortly.
+                            <div className="relative z-10 flex flex-col items-center justify-center text-center py-12">
+                                <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 shadow-sm">
+                                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Message Sent</h3>
+                                <p className="text-gray-500 mb-10 max-w-[280px] font-medium leading-relaxed">
+                                    Thank you for reaching out. Our team will review your message and get back to you shortly.
                                 </p>
 
                                 {/* Calendar Options */}
                                 {preferredDate && (
-                                    <div className="w-full bg-muted/30 rounded-2xl p-6 border border-border/50 mb-6">
-                                        <h4 className="font-semibold text-foreground mb-4 flex items-center justify-center gap-2">
-                                            <Calendar className="w-4 h-4" />
-                                            Add to Calendar
+                                    <div className="w-full bg-gray-50 rounded-2xl p-6 border border-gray-200 mb-10 shadow-sm">
+                                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-6 flex items-center justify-center gap-2">
+                                            <Calendar className="w-3 h-3" />
+                                            Sync with Calendar
                                         </h4>
                                         <div className="grid grid-cols-2 gap-3">
-                                            <a 
-                                                href={getGoogleCalendarUrl()} 
-                                                target="_blank" 
+                                            <a
+                                                href={getGoogleCalendarUrl()}
+                                                target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-black rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md"
                                             >
                                                 Google
                                             </a>
-                                            <a 
-                                                href={getOutlookCalendarUrl()} 
-                                                target="_blank" 
+                                            <a
+                                                href={getOutlookCalendarUrl()}
+                                                target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-sm font-medium hover:bg-[#006cbd] transition-colors shadow-sm"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#006cbd] transition-all duration-300 shadow-sm hover:shadow-md"
                                             >
                                                 Outlook
                                             </a>
                                         </div>
-                                        <p className="text-xs text-muted-foreground mt-3">
-                                            Selected: {preferredDate.toLocaleString()}
+                                        <p className="text-[10px] font-mono text-gray-400 mt-4 uppercase tracking-[0.1em]">
+                                            Scheduled: {preferredDate.toLocaleString()}
                                         </p>
                                     </div>
                                 )}
@@ -189,89 +192,97 @@ export default function ContactPage() {
                                         setPreferredDate(null);
                                     }}
                                     variant="outline"
-                                    className="rounded-full"
+                                    className="rounded-xl border-gray-200 hover:bg-gray-50 text-gray-900 text-xs font-bold uppercase tracking-widest px-8 shadow-sm"
                                 >
-                                    Send Another
+                                    Send Another Message
                                 </Button>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Name</label>
-                                    <input
-                                        name="name"
-                                        id="name"
-                                        type="text"
-                                        required
-                                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-all"
-                                        placeholder="John Doe"
-                                    />
-                                </div>
+                            <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
+                                <div className="space-y-6">
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label htmlFor="name" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Full Name</label>
+                                            <input
+                                                name="name"
+                                                id="name"
+                                                type="text"
+                                                required
+                                                className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200"
+                                                placeholder="John Doe"
+                                            />
+                                        </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</label>
-                                    <input
-                                        name="email"
-                                        id="email"
-                                        type="email"
-                                        required
-                                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-all"
-                                        placeholder="john@company.com"
-                                    />
-                                </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="email" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Work Email</label>
+                                            <input
+                                                name="email"
+                                                id="email"
+                                                type="email"
+                                                required
+                                                className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200"
+                                                placeholder="john@company.com"
+                                            />
+                                        </div>
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="subject" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subject</label>
-                                    <Select value={subject} onValueChange={setSubject} required>
-                                        <SelectTrigger className="bg-background">
-                                            <SelectValue placeholder="Select a topic" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Sales Inquiry">Sales Inquiry</SelectItem>
-                                            <SelectItem value="Seminar Booking">Seminar Booking</SelectItem>
-                                            <SelectItem value="Technical Support">Technical Support</SelectItem>
-                                            <SelectItem value="Partnership">Partnership</SelectItem>
-                                            <SelectItem value="Media / Press">Media / Press</SelectItem>
-                                            <SelectItem value="Schedule a Call">Schedule a Call</SelectItem>
-                                            <SelectItem value="Other">Other</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="subject" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Inquiry Type</label>
+                                        <Select value={subject} onValueChange={setSubject} required>
+                                            <SelectTrigger className="h-14 bg-gray-50 border-gray-200 rounded-xl text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200">
+                                                <SelectValue placeholder="Select a topic" />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-white border-gray-200 rounded-xl shadow-lg">
+                                                {/* Select Items need to be generic to avoid TS errors if I assume generic SelectItem content */}
+                                                <SelectItem value="Sales Inquiry" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Sales Inquiry</SelectItem>
+                                                <SelectItem value="Seminar Booking" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Seminar Booking</SelectItem>
+                                                <SelectItem value="Technical Support" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Technical Support</SelectItem>
+                                                <SelectItem value="Partnership" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Partnership</SelectItem>
+                                                <SelectItem value="Media / Press" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Media / Press</SelectItem>
+                                                <SelectItem value="Schedule a Call" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Schedule a Call</SelectItem>
+                                                <SelectItem value="Other" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Preferred Date &amp; Time (Optional)</label>
-                                    <DateTimePicker 
-                                        name="preferred-date"
-                                        onChange={setPreferredDate}
-                                    />
-                                    <p className="text-xs text-muted-foreground/60">Select if you&apos;d like to schedule a call</p>
-                                </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Preferred Date & Time (Optional)</label>
+                                        <DateTimePicker
+                                            name="preferred-date"
+                                            onChange={setPreferredDate}
+                                            className="bg-gray-50 border-gray-200 text-gray-900"
+                                        />
+                                        <p className="text-xs text-gray-500 ml-1">Select if you&apos;d like to schedule a call with our team</p>
+                                    </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="message" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Message</label>
-                                    <textarea
-                                        name="message"
-                                        id="message"
-                                        rows={4}
-                                        required
-                                        className="w-full bg-background border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-foreground/50 transition-all resize-none"
-                                        placeholder="How can we help?"
-                                    />
+                                    <div className="space-y-2">
+                                        <label htmlFor="message" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Message</label>
+                                        <textarea
+                                            name="message"
+                                            id="message"
+                                            rows={4}
+                                            required
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200 resize-none"
+                                            placeholder="How can we help you?"
+                                        />
+                                    </div>
                                 </div>
 
                                 {error && (
-                                    <p className="text-red-500 text-sm">{error}</p>
+                                    <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center gap-3 text-red-600 animate-in shake">
+                                        <p className="text-sm font-medium">{error}</p>
+                                    </div>
                                 )}
 
-                                <Button
+                                <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-full font-medium text-base transition-all flex items-center justify-center gap-2"
+                                    className="w-full h-14 bg-zinc-900 text-white hover:bg-zinc-800 active:scale-[0.98] rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            Sending...
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Sending Message...
                                         </>
                                     ) : (
                                         <>
@@ -279,7 +290,7 @@ export default function ContactPage() {
                                             <Send className="w-4 h-4" />
                                         </>
                                     )}
-                                </Button>
+                                </button>
                             </form>
                         )}
                     </div>

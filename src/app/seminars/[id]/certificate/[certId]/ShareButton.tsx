@@ -8,7 +8,6 @@ interface ShareButtonProps {
     title: string;
     text: string;
     url?: string;
-    certificateId?: string;
     compact?: boolean;
     className?: string;
 }
@@ -21,12 +20,11 @@ function XIcon({ className }: { className?: string }) {
     );
 }
 
-export function ShareButton({ title, text, url: propUrl, certificateId, compact, className }: ShareButtonProps) {
+export function ShareButton({ title, text, url: propUrl, compact, className }: ShareButtonProps) {
     const [copied, setCopied] = useState(false);
 
     const getUrl = () => {
         if (propUrl) return propUrl;
-        if (certificateId) return `${window.location.origin}/verify/${certificateId}`;
         return window.location.href;
     };
 
@@ -58,7 +56,7 @@ export function ShareButton({ title, text, url: propUrl, certificateId, compact,
 
     const handleTwitter = () => {
         const url = getUrl();
-        const tweetText = `${text}\n\nVerify: ${url}`;
+        const tweetText = `${text}\n\n${url}`;
         const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
         window.open(twitterUrl, "_blank", "width=600,height=400");
     };
@@ -72,51 +70,42 @@ export function ShareButton({ title, text, url: propUrl, certificateId, compact,
 
     if (compact) {
         return (
-            <div className={`flex items-center gap-2 ${className || ""}`}>
+            <div className={`flex items-center gap-4 ${className || ""}`}>
                 <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-xl"
+                    className="h-10 w-10 rounded-full bg-[#0077b5]/10 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-colors"
                     onClick={handleLinkedIn}
                     title="Share on LinkedIn"
                 >
-                    <Linkedin className="w-4 h-4" />
+                    <Linkedin className="w-5 h-5" />
                 </Button>
                 <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-xl"
+                    className="h-10 w-10 rounded-full bg-black/5 text-black hover:bg-black hover:text-white transition-colors"
                     onClick={handleTwitter}
                     title="Share on X"
                 >
                     <XIcon className="w-4 h-4" />
                 </Button>
                 <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-xl"
+                    className="h-10 w-10 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-colors"
                     onClick={handleWhatsApp}
                     title="Share on WhatsApp"
                 >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-5 h-5" />
                 </Button>
                 <Button
-                    variant="outline"
+                    variant="ghost"
                     size="icon"
-                    className="h-10 w-10 rounded-xl"
+                    className="h-10 w-10 rounded-full bg-zinc-100 text-zinc-600 hover:bg-zinc-800 hover:text-white transition-colors"
                     onClick={handleCopy}
                     title="Copy link"
                 >
-                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-                </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-10 w-10 rounded-xl"
-                    onClick={handleShare}
-                    title="More sharing options"
-                >
-                    <Share2 className="w-4 h-4" />
+                    {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
                 </Button>
             </div>
         );

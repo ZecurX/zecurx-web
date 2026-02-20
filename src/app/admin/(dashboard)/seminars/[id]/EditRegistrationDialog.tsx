@@ -55,7 +55,7 @@ export default function EditRegistrationDialog({ registration, onClose, onUpdate
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

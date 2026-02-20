@@ -10,7 +10,8 @@ import {
     URGENCY_LEVELS,
     EnterpriseLeadFormData
 } from '@/types/lead-types';
-import { Building2, Send, CheckCircle2 } from 'lucide-react';
+import { Send, CheckCircle2, Loader2, Shield } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export function EnterpriseEnquiryForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,7 +51,7 @@ export function EnterpriseEnquiryForm() {
                 body: JSON.stringify({
                     ...formData,
                     lead_source: 'Website Form',
-                    source_page: window.location.href,
+                    source_page: typeof window !== 'undefined' ? window.location.href : '',
                     enquiry_type: 'Enterprise Enquiry',
                 }),
             });
@@ -70,73 +71,62 @@ export function EnterpriseEnquiryForm() {
     };
 
     const inputClass = cn(
-        "w-full px-4 py-3 text-sm rounded-xl",
-        "bg-white/[0.05] border border-white/[0.1]",
-        "text-foreground placeholder:text-muted-foreground/50",
-        "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50",
+        "w-full h-14 px-5 py-3 text-sm rounded-xl font-medium",
+        "bg-gray-50 border border-gray-200",
+        "text-gray-900 placeholder:text-gray-400",
+        "focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white",
         "transition-all duration-200"
     );
 
-    const labelClass = "block text-sm font-medium text-foreground mb-2";
+    const labelClass = "block text-sm font-bold text-gray-700 mb-2 ml-1";
 
     if (isSuccess) {
         return (
-            <div className="text-center py-12">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-20 px-8 bg-white border border-gray-200 rounded-[2.5rem] shadow-xl"
+            >
+                <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-8 shadow-sm">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">Thank You! 💼</h3>
-                <p className="text-muted-foreground mb-6">
-                    Our enterprise team will contact you within 24 hours to discuss your requirements.
+                <h3 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Request Received</h3>
+                <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto leading-relaxed">
+                    Thank you for reaching out. Our team will review your requirements and get back to you within 24 business hours.
                 </p>
                 <button
-                    onClick={() => {
-                        setIsSuccess(false);
-                        setFormData({
-                            contact_person_name: '',
-                            email: '',
-                            phone: '',
-                            company_name: '',
-                            company_website: '',
-                            company_size: '',
-                            industry: '',
-                            designation: '',
-                            service_type: '',
-                            budget_range: '',
-                            urgency: 'MEDIUM',
-                            requirements: '',
-                        });
-                    }}
-                    className="px-6 py-3 text-sm font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+                    onClick={() => setIsSuccess(false)}
+                    className="h-14 px-8 text-sm font-bold rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
-                    Submit Another Enquiry
+                    Back to Form
                 </button>
-            </div>
+            </motion.div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
             {error && (
-                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+                <div className="p-4 rounded-lg bg-red-50 text-red-600 border border-red-100 text-sm font-bold">
                     {error}
                 </div>
             )}
 
             {/* Contact Information */}
-            <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">1</span>
-                    Contact Information
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-8">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Contact Information</h4>
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
                     <div>
                         <label htmlFor="contact_person_name" className={labelClass}>Contact Person *</label>
-                        <input type="text" id="contact_person_name" name="contact_person_name" value={formData.contact_person_name} onChange={handleChange} required placeholder="Your name" className={inputClass} />
+                        <input type="text" id="contact_person_name" name="contact_person_name" value={formData.contact_person_name} onChange={handleChange} required placeholder="Enter full name" className={inputClass} />
                     </div>
                     <div>
                         <label htmlFor="designation" className={labelClass}>Designation *</label>
-                        <input type="text" id="designation" name="designation" value={formData.designation} onChange={handleChange} required placeholder="e.g., CTO, IT Manager" className={inputClass} />
+                        <input type="text" id="designation" name="designation" value={formData.designation} onChange={handleChange} required placeholder="e.g. CTO / Product Manager" className={inputClass} />
                     </div>
                     <div>
                         <label htmlFor="email" className={labelClass}>Work Email *</label>
@@ -144,73 +134,75 @@ export function EnterpriseEnquiryForm() {
                     </div>
                     <div>
                         <label htmlFor="phone" className={labelClass}>Phone Number *</label>
-                        <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} required placeholder="+91 98765 43210" className={inputClass} />
+                        <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} required placeholder="Include country code" className={inputClass} />
                     </div>
                 </div>
             </div>
 
             {/* Company Information */}
-            <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">2</span>
-                    Company Information
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-8">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Company Profile</h4>
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
                     <div>
                         <label htmlFor="company_name" className={labelClass}>Company Name *</label>
-                        <input type="text" id="company_name" name="company_name" value={formData.company_name} onChange={handleChange} required placeholder="Your company name" className={inputClass} />
+                        <input type="text" id="company_name" name="company_name" value={formData.company_name} onChange={handleChange} required placeholder="Enterprise Name" className={inputClass} />
                     </div>
                     <div>
                         <label htmlFor="company_website" className={labelClass}>Company Website</label>
-                        <input type="url" id="company_website" name="company_website" value={formData.company_website} onChange={handleChange} placeholder="https://yourcompany.com" className={inputClass} />
+                        <input type="url" id="company_website" name="company_website" value={formData.company_website} onChange={handleChange} placeholder="https://www.example.com" className={inputClass} />
                     </div>
                     <div>
                         <label htmlFor="industry" className={labelClass}>Industry *</label>
-                        <select id="industry" name="industry" value={formData.industry} onChange={handleChange} required className={inputClass}>
-                            <option value="">Select industry</option>
-                            {INDUSTRIES.map(industry => (<option key={industry} value={industry}>{industry}</option>))}
+                        <select id="industry" name="industry" value={formData.industry} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
+                            <option value="" className="text-gray-500">Select industry</option>
+                            {INDUSTRIES.map(industry => (<option key={industry} value={industry} className="text-gray-900">{industry}</option>))}
                         </select>
                     </div>
                     <div>
                         <label htmlFor="company_size" className={labelClass}>Company Size *</label>
-                        <select id="company_size" name="company_size" value={formData.company_size} onChange={handleChange} required className={inputClass}>
-                            <option value="">Select size</option>
-                            {COMPANY_SIZES.map(size => (<option key={size} value={size}>{size} employees</option>))}
+                        <select id="company_size" name="company_size" value={formData.company_size} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
+                            <option value="" className="text-gray-500">Select size</option>
+                            {COMPANY_SIZES.map(size => (<option key={size} value={size} className="text-gray-900">{size} employees</option>))}
                         </select>
                     </div>
                 </div>
             </div>
 
             {/* Service Requirements */}
-            <div>
-                <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center">3</span>
-                    Service Requirements
-                </h3>
-                <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-8">
+                <div className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Service Requirements</h4>
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
                     <div>
                         <label htmlFor="service_type" className={labelClass}>Service Type *</label>
-                        <select id="service_type" name="service_type" value={formData.service_type} onChange={handleChange} required className={inputClass}>
-                            <option value="">Select service</option>
-                            {SERVICE_TYPES.map(type => (<option key={type} value={type}>{type}</option>))}
+                        <select id="service_type" name="service_type" value={formData.service_type} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
+                            <option value="" className="text-gray-500">Select service</option>
+                            {SERVICE_TYPES.map(type => (<option key={type} value={type} className="text-gray-900">{type}</option>))}
                         </select>
                     </div>
                     <div>
                         <label htmlFor="budget_range" className={labelClass}>Budget Range</label>
-                        <select id="budget_range" name="budget_range" value={formData.budget_range} onChange={handleChange} className={inputClass}>
-                            <option value="">Select budget</option>
-                            {BUDGET_RANGES.map(range => (<option key={range} value={range}>{range}</option>))}
+                        <select id="budget_range" name="budget_range" value={formData.budget_range} onChange={handleChange} className={cn(inputClass, "appearance-none bg-grey-50")}>
+                            <option value="" className="text-gray-500">Select budget</option>
+                            {BUDGET_RANGES.map(range => (<option key={range} value={range} className="text-gray-900">{range}</option>))}
                         </select>
                     </div>
                     <div className="sm:col-span-2">
-                        <label htmlFor="urgency" className={labelClass}>Project Urgency</label>
-                        <div className="flex flex-wrap gap-2">
+                        <label className={labelClass}>Project Urgency *</label>
+                        <div className="grid grid-cols-3 gap-3">
                             {URGENCY_LEVELS.map(level => (
                                 <label key={level} className={cn(
-                                    "flex-1 min-w-[80px] px-4 py-3 rounded-xl text-sm font-medium text-center cursor-pointer transition-all",
+                                    "h-12 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center cursor-pointer transition-all duration-300 border",
                                     formData.urgency === level
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-white/[0.05] border border-white/[0.1] text-muted-foreground hover:text-foreground hover:bg-white/[0.08]"
+                                        ? "bg-zinc-900 border-zinc-900 text-white shadow-lg"
+                                        : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-white hover:border-gray-300"
                                 )}>
                                     <input type="radio" name="urgency" value={level} checked={formData.urgency === level} onChange={handleChange} className="sr-only" />
                                     {level}
@@ -221,25 +213,31 @@ export function EnterpriseEnquiryForm() {
                 </div>
             </div>
 
-            <div>
-                <label htmlFor="requirements" className={labelClass}>Project Requirements</label>
-                <textarea id="requirements" name="requirements" value={formData.requirements} onChange={handleChange} rows={4} placeholder="Please describe your requirements, goals, and any specific challenges you're facing..." className={cn(inputClass, "resize-none")} />
+            <div className="space-y-3">
+                <label htmlFor="requirements" className={labelClass}>Project Brief</label>
+                <textarea id="requirements" name="requirements" value={formData.requirements} onChange={handleChange} rows={4} placeholder="Describe your requirements and security goals..." className={cn(inputClass, "h-32 resize-none pt-4")} />
             </div>
 
             <button type="submit" disabled={isSubmitting} className={cn(
-                "w-full px-6 py-4 text-sm font-medium rounded-xl",
-                "bg-primary text-primary-foreground",
-                "hover:bg-primary/90 active:scale-[0.98]",
+                "w-full h-14 text-sm font-bold rounded-xl",
+                "bg-zinc-900 text-white",
+                "hover:bg-zinc-800 active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
-                "transition-all duration-200",
-                "flex items-center justify-center gap-2"
+                "transition-all duration-300",
+                "flex items-center justify-center gap-3",
+                "shadow-lg hover:shadow-xl"
             )}>
-                {isSubmitting ? 'Submitting...' : (<><Send className="w-4 h-4" />Request Consultation</>)}
+                {isSubmitting ? (
+                    <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
+                ) : (
+                    <><Send className="w-5 h-5" /> Send Request</>
+                )}
             </button>
 
-            <p className="text-xs text-muted-foreground/60 text-center">
-                Your information is secure and will only be used to contact you regarding your enquiry.
-            </p>
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                <Shield className="w-3 h-3 text-gray-400" />
+                <span>Your details are protected by enterprise-grade security</span>
+            </div>
         </form>
     );
 }

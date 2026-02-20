@@ -140,7 +140,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
     const tableWidth = width - (margin * 2);
     const col1Width = tableWidth * 0.6;
     const col2Width = tableWidth * 0.2;
-    const col3Width = tableWidth * 0.2;
+    const _col3Width = tableWidth * 0.2;
     
     page.drawRectangle({
         x: margin,

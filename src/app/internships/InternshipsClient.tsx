@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import Link from 'next/link';
