@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, ShoppingCart, GraduationCap, Award, Users,
     BookOpen, ArrowRight
@@ -12,8 +12,6 @@ import CourseCard from '@/components/academy/CourseCard';
 import TrustedPartners from '@/components/landing/TrustedPartners';
 import { CourseData } from '@/lib/courses';
 
-const POLL_INTERVAL = 10_000;
-
 const stats = [
     { icon: Users, value: '1,200+', label: 'Students Trained' },
     { icon: Award, value: '95%', label: 'Pass Rate' },
@@ -22,23 +20,7 @@ const stats = [
 ];
 
 export default function AcademyClient({ courses: initialCourses }: { courses: CourseData[] }) {
-    const [courses, setCourses] = useState(initialCourses);
-
-    const refreshCourses = useCallback(async () => {
-        try {
-            const res = await fetch('/api/academy/courses');
-            if (!res.ok) return;
-            const freshCourses: CourseData[] = await res.json();
-            if (freshCourses.length > 0) {
-                setCourses(freshCourses);
-            }
-        } catch { }
-    }, []);
-
-    useEffect(() => {
-        const interval = setInterval(refreshCourses, POLL_INTERVAL);
-        return () => clearInterval(interval);
-    }, [refreshCourses]);
+    const [courses] = useState(initialCourses);
     return (
         <main className="min-h-screen bg-background">
             <CreativeNavBar />
