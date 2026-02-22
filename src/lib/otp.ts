@@ -1,5 +1,5 @@
 import { query } from '@/lib/db';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { OtpPurpose, OtpVerification } from '@/types/seminar';
 import { brandedEmailTemplate } from '@/lib/email-template';
 
@@ -86,7 +86,7 @@ export async function sendOtpEmail(
     purpose: OtpPurpose,
     seminarTitle: string
 ): Promise<boolean> {
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
 
     const purposeText = purpose === 'registration'
         ? 'complete your registration'
@@ -135,8 +135,7 @@ export async function sendOtpEmail(
     });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: email,
             subject,
             html,
