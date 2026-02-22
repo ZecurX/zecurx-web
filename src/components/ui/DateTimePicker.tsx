@@ -73,11 +73,18 @@ export default function DateTimePicker({ name, onChange, required, minDate, clas
 
     const handleDateSelect = (date: Date) => {
         const newDate = new Date(date);
+        const now = new Date();
+        const isToday = newDate.toDateString() === now.toDateString();
         if (selectedTime) {
             const [hours, minutes] = selectedTime.split(':').map(Number);
-            newDate.setHours(hours, minutes);
-            // Auto-close if time is already selected
-            setIsOpen(false);
+            // Clear selected time if switching to today and the time is in the past
+            if (isToday && (hours < now.getHours() || (hours === now.getHours() && minutes <= now.getMinutes()))) {
+                setSelectedTime(null);
+            } else {
+                newDate.setHours(hours, minutes);
+                // Auto-close if time is already selected
+                setIsOpen(false);
+            }
         }
         setSelectedDate(newDate);
         if (onChange) onChange(newDate);
@@ -258,22 +265,32 @@ export default function DateTimePicker({ name, onChange, required, minDate, clas
                                 data-lenis-prevent
                                 onWheel={(e) => e.stopPropagation()}
                             >
-                                {TIME_SLOTS.map((slot) => (
-                                    <button
-                                        key={slot.value}
-                                        type="button"
-                                        onClick={() => handleTimeSelect(slot.value)}
-                                        className={`
-                                            w-full text-left px-3 py-2 text-xs rounded-lg transition-colors shrink-0
-                                            ${selectedTime === slot.value
-                                                ? 'bg-primary text-primary-foreground shadow-sm'
-                                                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                                            }
-                                        `}
-                                    >
-                                        {slot.label}
-                                    </button>
-                                ))}
+                                {TIME_SLOTS.map((slot) => {
+                                    const [slotHours, slotMinutes] = slot.value.split(':').map(Number);
+                                    const now = new Date();
+                                    const isSelectedDateToday = selectedDate && selectedDate.toDateString() === now.toDateString();
+                                    const isPastTime = isSelectedDateToday && (slotHours < now.getHours() || (slotHours === now.getHours() && slotMinutes <= now.getMinutes()));
+
+                                    return (
+                                        <button
+                                            key={slot.value}
+                                            type="button"
+                                            onClick={() => !isPastTime && handleTimeSelect(slot.value)}
+                                            disabled={!!isPastTime}
+                                            className={`
+                                                w-full text-left px-3 py-2 text-xs rounded-lg transition-colors shrink-0
+                                                ${isPastTime
+                                                    ? 'text-muted-foreground/30 cursor-not-allowed'
+                                                    : selectedTime === slot.value
+                                                        ? 'bg-primary text-primary-foreground shadow-sm'
+                                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                                }
+                                            `}
+                                        >
+                                            {slot.label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     </motion.div>
