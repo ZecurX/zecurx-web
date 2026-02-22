@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { brandedEmailTemplate, emailSection, emailCourseCatalog } from '@/lib/email-template';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { courses } from '@/lib/courses';
 
 export async function POST(request: NextRequest) {
     try {
         const { email = 'windroexe@gmail.com', type = 'both' } = await request.json();
 
-        const resend = new Resend(process.env.RESEND_API_KEY);
+
         const sentEmails = [];
 
         // Send Registration Success Email
@@ -67,8 +67,7 @@ export async function POST(request: NextRequest) {
                 showSocials: false,
             });
 
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: email,
                 subject: 'Registration Confirmed: Hands-on Penetration Testing Workshop - ZecurX',
                 html: registrationHtml,
@@ -135,8 +134,7 @@ export async function POST(request: NextRequest) {
                 showSocials: true,
             });
 
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: email,
                 subject: 'Your Certificate of Participation - Hands-on Penetration Testing Workshop',
                 html: certificateHtml,
