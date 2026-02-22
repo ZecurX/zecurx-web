@@ -83,14 +83,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  icons: {
-    icon: [
-      { url: "/images/zecurx-logo.png", type: "image/png" },
-    ],
-    apple: [
-      { url: "/images/zecurx-logo.png" },
-    ],
-  },
   manifest: "/site.webmanifest",
   alternates: {
     canonical: "https://zecurx.com",
