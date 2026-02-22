@@ -1,5 +1,5 @@
 import { query } from '@/lib/db';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { OtpPurpose, OtpVerification } from '@/types/seminar';
 import { brandedEmailTemplate } from '@/lib/email-template';
 
@@ -86,7 +86,7 @@ export async function sendOtpEmail(
     purpose: OtpPurpose,
     seminarTitle: string
 ): Promise<boolean> {
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
 
     const purposeText = purpose === 'registration'
         ? 'complete your registration'
@@ -113,8 +113,10 @@ export async function sendOtpEmail(
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                     <td align="center">
-                        <div style="background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 10px; padding: 22px 44px; border-radius: 10px; display: inline-block; font-family: 'Courier New', monospace;">
+                        <div style="background-color: #0a0a0f; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); color: #ffffff !important; font-size: 36px; font-weight: 700; letter-spacing: 10px; padding: 22px 44px; border-radius: 10px; display: inline-block; font-family: 'Courier New', monospace; -webkit-text-fill-color: #ffffff;">
+                            <!--[if mso]><span style="color:#ffffff;"><![endif]-->
                             ${otp}
+                            <!--[if mso]></span><![endif]-->
                         </div>
                     </td>
                 </tr>
@@ -135,8 +137,7 @@ export async function sendOtpEmail(
     });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: email,
             subject,
             html,

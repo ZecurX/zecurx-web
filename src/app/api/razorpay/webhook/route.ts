@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { appendToSheet } from '@/lib/google-sheets';
 import { query } from '@/lib/db';
 import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
-import { Resend } from 'resend';
+import { sendEmail, toSendGridAttachment } from '@/lib/sendgrid';
 import { processLmsEnrollment } from '@/lib/lms-integration';
 import { incrementReferralCodeUsage } from '@/lib/discount-validation';
 import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
@@ -53,7 +53,7 @@ async function sendInvoiceEmail(data: {
     lmsResetUrl?: string;
     isNewLmsUser?: boolean;
 }): Promise<void> {
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const invoiceNumber = generateInvoiceNumber();
     
     const invoicePdf = await generateInvoicePDF({
@@ -131,15 +131,11 @@ async function sendInvoiceEmail(data: {
     });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: data.email,
             subject: emailSubject,
             html: userEmailHtml,
-            attachments: [{
-                filename: `ZecurX-Invoice-${invoiceNumber}.pdf`,
-                content: invoicePdf,
-            }],
+            attachments: [toSendGridAttachment(invoicePdf, `ZecurX-Invoice-${invoiceNumber}.pdf`)],
         });
     } catch {
     }
@@ -176,15 +172,11 @@ async function sendInvoiceEmail(data: {
     });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: adminEmail,
             subject: `New ${data.isInternship ? 'Enrollment' : 'Purchase'}: ${data.itemName} - ₹${data.amount}`,
             html: adminEmailHtml,
-            attachments: [{
-                filename: `ZecurX-Invoice-${invoiceNumber}.pdf`,
-                content: invoicePdf,
-            }],
+            attachments: [toSendGridAttachment(invoicePdf, `ZecurX-Invoice-${invoiceNumber}.pdf`)],
         });
     } catch {
     }
