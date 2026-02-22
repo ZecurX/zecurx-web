@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { query } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 import { Seminar } from '@/types/seminar';
@@ -26,7 +26,7 @@ export async function POST(
             );
         }
 
-        const resend = new Resend(process.env.RESEND_API_KEY);
+
 
         const result = await query<Seminar>(
             `UPDATE seminar.seminars 
@@ -86,8 +86,7 @@ export async function POST(
         });
 
         try {
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: seminar.contact_email,
                 subject: `Seminar Request Update: ${seminar.title} - ZecurX`,
                 html: rejectionEmailHtml,
