@@ -187,8 +187,9 @@ export default async function CertificatePage({ params }: Props) {
                                             <div className="w-full sm:w-auto">
                                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 text-center sm:text-left">Share Achievement</p>
                                                 <ShareButton 
-                                                    title={`Certificate - ${certificate.recipientName}`}
-                                                    text={`I've completed ${certificate.seminarTitle} with ZecurX!`}
+                                                    recipientName={certificate.recipientName}
+                                                    seminarTitle={certificate.seminarTitle}
+                                                    certificateId={certificate.certificateId}
                                                     compact
                                                     className="justify-center sm:justify-start"
                                                 />
