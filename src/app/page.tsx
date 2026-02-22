@@ -1,15 +1,9 @@
-import dynamic from "next/dynamic";
-
-const HeroSectionV3 = dynamic(
-  () => import("@/components/landing/HeroSectionV3"),
-  { loading: () => <div className="min-h-screen" /> }
-);
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
-import WhatWeDoSection from "@/components/landing/WhatWeDoSection";
-import WhyZecurXSection from "@/components/landing/WhyZecurXSection";
-import IndustriesSection from "@/components/landing/IndustriesSection";
-import ReadyToSecureSection from "@/components/landing/ReadyToSecureSection";
-import LatestBlogSection from "@/components/landing/LatestBlogSection";
+import { Hero } from "@/components/hero";
+import { Services } from "@/components/services";
+import { WhyUs } from "@/components/why-us";
+import { Industries } from "@/components/industries";
+import { Solutions } from "@/components/solutions";
 import Footer from "@/components/landing/Footer";
 import { Metadata } from "next";
 
@@ -30,14 +24,13 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+    <main className="bg-bg-primary min-h-screen text-text-primary selection:bg-accent/30 relative font-sans">
       <CreativeNavBar />
-      <HeroSectionV3 />
-      <WhatWeDoSection />
-      <WhyZecurXSection />
-      <IndustriesSection />
-      <ReadyToSecureSection />
-      <LatestBlogSection />
+      <Hero />
+      <Services />
+      <Solutions />
+      <Industries />
+      <WhyUs />
       <Footer />
     </main>
   );

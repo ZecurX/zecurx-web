@@ -31,8 +31,8 @@ export default function NavBarV2() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
-                        ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]"
-                        : "bg-transparent"
+                    ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]"
+                    : "bg-transparent"
                     }`}
             >
                 <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -40,7 +40,7 @@ export default function NavBarV2() {
                     <Link href="/" className="flex items-center gap-2.5 group">
                         <div className="relative w-7 h-7 transition-transform group-hover:scale-110 duration-300">
                             <Image
-                                src="/images/zecurx-logo.png"
+                                src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                                 alt="ZecurX"
                                 fill
                                 className="object-contain"

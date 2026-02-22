@@ -124,7 +124,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                 >
                     <div className="relative w-8 h-8 transition-transform group-hover:scale-105 duration-300">
                         <Image
-                            src="/images/zecurx-logo.png"
+                            src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                             alt=""
                             fill
                             className="object-contain"
@@ -174,7 +174,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                         const Icon = ICON_MAP[item.icon] || LayoutDashboard;
                         const hasChildren = item.children && item.children.length > 0;
                         const isExpanded = expandedItems.includes(item.href);
-                        const isChildActive = hasChildren && item.children?.some(child => 
+                        const isChildActive = hasChildren && item.children?.some(child =>
                             pathname === child.href || pathname.startsWith(child.href)
                         );
                         const isActive = !hasChildren && (pathname === item.href ||
