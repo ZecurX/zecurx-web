@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { query } from '@/lib/db';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
 import { Seminar } from '@/types/seminar';
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
 
     try {
         const body = await request.json();
@@ -190,16 +190,14 @@ export async function POST(request: NextRequest) {
         });
 
         try {
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: 'official@zecurx.com',
                 replyTo: email,
                 subject: `New Seminar Booking: ${title} - ${organization}`,
                 html: adminEmailHtml,
             });
 
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: email,
                 subject: `Seminar Booking Request Received - ZecurX`,
                 html: userEmailHtml,
