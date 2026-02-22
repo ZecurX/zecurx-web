@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { Seminar, DURATION_OPTIONS, SEMINAR_TYPES } from "@/types/seminar";
 import { Button } from "@/components/ui/button";
@@ -41,8 +41,20 @@ export default function EditSeminarDialog({ seminar, onClose, onUpdate }: EditSe
     status: seminar.status,
     rejection_reason: seminar.rejection_reason || '',
     registration_enabled: seminar.registration_enabled,
-    certificate_enabled: seminar.certificate_enabled
+    certificate_enabled: seminar.certificate_enabled,
+    blog_slug: seminar.blog_slug || ''
   });
+
+  const [blogs, setBlogs] = useState<{ title: string; slug: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/admin/blog?status=published&limit=100')
+      .then(r => r.json())
+      .then(data => {
+        if (data.posts) setBlogs(data.posts.map((p: { title: string; slug: string }) => ({ title: p.title, slug: p.slug })));
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -282,6 +294,29 @@ export default function EditSeminarDialog({ seminar, onClose, onUpdate }: EditSe
                   onChange={(e) => handleChange('brochure_url', e.target.value)} 
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Blog Post */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground border-b border-border pb-2">Blog Post</h3>
+            <div className="space-y-2">
+              <Label>Attach Blog Post</Label>
+              <p className="text-xs text-muted-foreground">Students will see a &ldquo;Read Blog&rdquo; button on the registration success page.</p>
+              <Select
+                value={formData.blog_slug || '__none__'}
+                onValueChange={(val) => handleChange('blog_slug', val === '__none__' ? '' : val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="No blog attached" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">No blog post</SelectItem>
+                  {blogs.map((blog) => (
+                    <SelectItem key={blog.slug} value={blog.slug}>{blog.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

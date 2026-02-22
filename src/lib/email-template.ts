@@ -55,6 +55,9 @@ interface EmailTemplateOptions {
     includeMarketing?: boolean;
     /** Type of marketing footer to display */
     marketingType?: 'student' | 'corporate';
+    /** Whether to show the ZecurX Academy promo block inside the student marketing section.
+     *  Set to false when emailCourseCatalog() is already in the body to avoid duplication. */
+    showAcademyPromo?: boolean;
     /** Whether to show social links in footer */
     showSocials?: boolean;
 }
@@ -71,6 +74,7 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
         cta,
         includeMarketing = true,
         marketingType = 'corporate',
+        showAcademyPromo = true,
         showSocials = true,
     } = options;
 
@@ -160,6 +164,7 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-top: 1px solid #e8e8ec; margin-top: 24px;">
                                 ${marketingType === 'student' ? `
                                 <!-- STUDENT MARKETING -->
+                                ${showAcademyPromo ? `
                                 <tr>
                                     <td style="padding: 24px 0 12px; text-align: center;">
                                         <p style="color: #6b6b80; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin: 0 0 16px; font-weight: 700;">Build Your Career in Cybersecurity</p>
@@ -171,6 +176,7 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                                         <a href="${WEBSITE_URL}/academy" style="display: inline-block; color: ${accentColor}; border: 1px solid ${accentColor}; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-weight: 600; font-size: 13px;">Explore Courses</a>
                                     </td>
                                 </tr>
+                                ` : ''}
                                 ` : `
                                 <!-- CORPORATE MARKETING -->
                                 <tr>
