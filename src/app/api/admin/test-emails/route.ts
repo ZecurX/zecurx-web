@@ -45,6 +45,14 @@ export async function POST(request: NextRequest) {
                         Registration ID: test-reg-123456
                     </p>
 
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td style="text-align: center; padding: 20px 0;">
+                                <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Test%20Seminar" style="display: inline-block; background-color: #0a0a0f; color: #ffffff; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; letter-spacing: 1px; text-decoration: none; padding: 12px 28px; border-radius: 6px;">ADD TO GOOGLE CALENDAR</a>
+                            </td>
+                        </tr>
+                    </table>
+
                     ${emailCourseCatalog(courses.slice(0, 4).map(course => ({
                         title: course.title,
                         description: course.description,
@@ -53,14 +61,9 @@ export async function POST(request: NextRequest) {
                     })))}
                 `,
                 previewText: 'Registration Confirmed: Hands-on Penetration Testing Workshop',
-                cta: {
-                    title: 'Add to Calendar',
-                    description: 'Save the seminar to your Google Calendar',
-                    buttonText: 'ADD TO GOOGLE CALENDAR',
-                    buttonUrl: 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=Test%20Seminar'
-                },
                 includeMarketing: true,
                 marketingType: 'student',
+                showAcademyPromo: false,
                 showSocials: false,
             });
 

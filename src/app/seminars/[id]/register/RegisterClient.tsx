@@ -600,10 +600,14 @@ export default function RegisterPage() {
                                         Back to Seminars
                                     </button>
                                 </Link>
-                                <button className="h-14 px-12 rounded-lg bg-foreground text-background text-sm font-bold hover:bg-foreground/90 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl">
-                                    View Seminar Details
-                                    <MoveRight className="w-4 h-4" />
-                                </button>
+                                {seminar?.blog_slug && (
+                                    <Link href={`/blog/${seminar.blog_slug}`} target="_blank" className="w-full sm:w-auto">
+                                        <button className="h-14 px-12 rounded-lg bg-foreground text-background text-sm font-bold hover:bg-foreground/90 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl">
+                                            Read Blog
+                                            <MoveRight className="w-4 h-4" />
+                                        </button>
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </motion.div>
