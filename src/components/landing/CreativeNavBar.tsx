@@ -82,24 +82,24 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                     className={cn(
                         "relative w-full max-w-[1400px]",
                         "rounded-2xl",
-                        forceDark 
-                            ? "bg-black border border-white/10 shadow-2xl shadow-black/50" 
+                        forceDark
+                            ? "bg-black border border-white/10 shadow-2xl shadow-black/50"
                             : "bg-white dark:bg-black border border-gray-100 dark:border-white/10",
                         !forceDark && "shadow-lg",
                     )}
                     onMouseLeave={handleMouseLeave}
                 >
                     <div className="flex items-center justify-between h-16 px-6">
-                        
+
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-                            <motion.div 
+                            <motion.div
                                 className="relative w-8 h-8"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
                                 <Image
-                                    src="/images/zecurx-logo.png"
+                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"
@@ -114,23 +114,23 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                         {/* Desktop Nav */}
                         <nav className="hidden lg:flex items-center gap-2 relative">
                             {Object.entries(navData).filter(([key]) => key !== 'academy').map(([key, data]) => (
-                                    <Link
-                                        key={key}
-                                        href={data.href}
-                                        className={cn(
-                                            "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
-                                            activeDropdown === key
-                                                ? (forceDark ? "text-white" : "text-foreground")
-                                                : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
-                                        )}
-                                        onMouseEnter={() => handleMouseEnter(key)}
-                                        onClick={() => {
-                                            setActiveDropdown(null);
-                                            setMobileMenuOpen(false);
-                                        }}
-                                        aria-expanded={activeDropdown === key}
-                                        aria-haspopup="true"
-                                    >
+                                <Link
+                                    key={key}
+                                    href={data.href}
+                                    className={cn(
+                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                                        activeDropdown === key
+                                            ? (forceDark ? "text-white" : "text-foreground")
+                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
+                                    )}
+                                    onMouseEnter={() => handleMouseEnter(key)}
+                                    onClick={() => {
+                                        setActiveDropdown(null);
+                                        setMobileMenuOpen(false);
+                                    }}
+                                    aria-expanded={activeDropdown === key}
+                                    aria-haspopup="true"
+                                >
                                     {data.label}
                                     <ChevronDown className={cn(
                                         "w-3.5 h-3.5 transition-transform duration-200",
@@ -170,7 +170,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
 
                         {/* Right Actions */}
                         <div className="hidden lg:flex items-center gap-2">
-                            <div 
+                            <div
                                 className="relative"
                                 onMouseEnter={() => handleMouseEnter('academy')}
                             >
@@ -192,7 +192,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <ThemeToggle />
                                 {showCart && <CartIcon />}
                             </div>
-                            
+
                             <Button
                                 asChild
                                 className={cn(
@@ -244,7 +244,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 onMouseLeave={handleMouseLeave}
                             >
                                 <div className="p-4">
-                                    <motion.div 
+                                    <motion.div
                                         className={cn(
                                             "grid gap-2",
                                             activeDropdown === "services" ? "grid-cols-2 min-w-[500px]" : "grid-cols-2 min-w-[400px]"
@@ -304,7 +304,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             onClick={() => setMobileMenuOpen(false)}
                             className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
                         />
-                        
+
                         <motion.div
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
@@ -316,7 +316,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                                     <div className="relative w-8 h-8">
                                         <Image
-                                            src="/images/zecurx-logo.png"
+                                            src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                                             alt="ZecurX"
                                             fill
                                             className="object-contain"
@@ -324,11 +324,11 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     </div>
                                     <span className="font-semibold text-lg">ZecurX</span>
                                 </Link>
-                                    <button
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
-                                        aria-label="Close menu"
-                                    >
+                                <button
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
+                                    aria-label="Close menu"
+                                >
                                     <X className="w-6 h-6" />
                                 </button>
                             </div>
@@ -342,11 +342,11 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                                 className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground group"
                                             >
                                                 {data.label}
-                                                <ChevronDown 
+                                                <ChevronDown
                                                     className={cn(
                                                         "w-5 h-5 text-muted-foreground transition-transform duration-200",
                                                         mobileExpanded === key ? "rotate-180" : "group-hover:text-foreground"
-                                                    )} 
+                                                    )}
                                                 />
                                             </button>
                                             <AnimatePresence>
@@ -408,8 +408,8 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 </Button>
                                 <div className="text-center">
                                     <p className="text-sm text-muted-foreground mb-2">Experiencing an incident?</p>
-                                    <Link 
-                                        href="/contact" 
+                                    <Link
+                                        href="/contact"
                                         className="text-sm font-medium text-primary hover:underline"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
