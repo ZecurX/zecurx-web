@@ -17,11 +17,11 @@ export default function Footer() {
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-3 group" aria-label="ZecurX Home">
                             <div className="relative w-10 h-10 transition-transform group-hover:scale-110 duration-300">
-                                <Image 
-                                    src="/images/zecurx-logo.png" 
-                                    alt="ZecurX" 
+                                <Image
+                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                    alt="ZecurX"
                                     fill
-                                    className="object-contain" 
+                                    className="object-contain"
                                 />
                             </div>
                             <span className="font-manrope font-bold text-2xl tracking-tight text-foreground">ZecurX</span>
