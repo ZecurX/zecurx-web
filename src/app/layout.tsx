@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Inter, Space_Grotesk } from "next/font/google";
+import { Manrope, Inter, Space_Grotesk, Newsreader } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
@@ -25,6 +25,12 @@ const pixelify = localFont({
   src: "../../public/fonts/PixelifySans.ttf",
   variable: "--font-pixel",
   display: "swap",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  style: ["italic", "normal"],
 });
 
 export const metadata: Metadata = {
@@ -106,7 +112,7 @@ export default function RootLayout({
         <StructuredData data={getWebSiteSchema()} />
       </head>
       <body
-        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} antialiased`}
+        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} antialiased`}
       >
         <NextTopLoader
           color="var(--primary)"
