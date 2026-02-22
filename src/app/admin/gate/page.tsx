@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Shield, KeyRound, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { CDN_ASSETS } from "@/lib/cdn";
 
 export default function SudoLoginPage() {
     const [email, setEmail] = useState("");
@@ -87,7 +88,7 @@ export default function SudoLoginPage() {
                         <div className="flex justify-center">
                             <div className="relative w-12 h-12">
                                 <Image
-                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                    src={CDN_ASSETS.brand.logo}
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"

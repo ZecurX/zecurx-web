@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import CartIcon from '@/components/shop/CartIcon';
+import { CDN_ASSETS } from "@/lib/cdn";
 
 // Navigation Data
 const navData = {
@@ -99,7 +100,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
                                 <Image
-                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                    src={CDN_ASSETS.brand.logo}
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"
@@ -316,7 +317,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                                     <div className="relative w-8 h-8">
                                         <Image
-                                            src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                            src={CDN_ASSETS.brand.logo}
                                             alt="ZecurX"
                                             fill
                                             className="object-contain"
