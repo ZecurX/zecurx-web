@@ -242,6 +242,7 @@ function BookDemoContent() {
                                     <DateTimePicker
                                         name="preferred-date"
                                         onChange={setPreferredDate}
+                                        minDate={new Date()}
                                         className="bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white"
                                     />
                                     <p className="text-xs text-gray-500 dark:text-zinc-500 ml-1">Optional - our team will coordinate with you</p>
