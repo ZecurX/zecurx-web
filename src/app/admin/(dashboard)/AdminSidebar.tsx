@@ -30,6 +30,7 @@ import {
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
 import { cn } from "@/lib/utils";
+import { CDN_ASSETS } from "@/lib/cdn";
 
 interface NavItem {
     href: string;
@@ -124,7 +125,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                 >
                     <div className="relative w-8 h-8 transition-transform group-hover:scale-105 duration-300">
                         <Image
-                            src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                            src={CDN_ASSETS.brand.logo}
                             alt=""
                             fill
                             className="object-contain"
@@ -322,7 +323,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                 >
                     <div className="relative w-8 h-8">
                         <Image
-                            src="/images/zecurx-logo.png"
+                            src={CDN_ASSETS.brand.logo}
                             alt=""
                             fill
                             className="object-contain"
