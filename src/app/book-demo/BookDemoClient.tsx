@@ -64,6 +64,7 @@ function BookDemoContent() {
         const data = {
             name: `${firstName} ${lastName}`,
             email: formData.get('email'),
+            phone: formData.get('phone'),
             company: formData.get('company'),
             role: role,
             preferredDate: preferredDate ? preferredDate.toISOString() : null,
@@ -196,9 +197,15 @@ function BookDemoContent() {
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Work Email</label>
-                                    <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="jane@company.com" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label htmlFor="email" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Work Email</label>
+                                        <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="jane@company.com" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="phone" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Phone Number</label>
+                                        <input name="phone" id="phone" type="tel" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="+91 98765 43210" />
+                                    </div>
                                 </div>
 
                                 {service && (
