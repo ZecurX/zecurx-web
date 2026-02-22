@@ -117,6 +117,14 @@ export async function POST(
                 Registration ID: ${registration.id}
             </p>
 
+            <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin: 24px 0;">
+                <tr>
+                    <td style="text-align: center; padding: 20px 0;">
+                        <a href="${getGoogleCalendarUrl()}" style="display: inline-block; background-color: #0a0a0f; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Add to Google Calendar</a>
+                    </td>
+                </tr>
+            </table>
+
             ${emailCourseCatalog(courses.slice(0, 4).map(course => ({
                 title: course.title,
                 description: course.description,
@@ -129,14 +137,9 @@ export async function POST(
             accent: 'success',
             body: bodyContent,
             previewText: `Registration Confirmed: ${seminar.title}`,
-            cta: {
-                title: 'Add to Calendar',
-                description: 'Save the seminar to your Google Calendar',
-                buttonText: 'ADD TO GOOGLE CALENDAR',
-                buttonUrl: getGoogleCalendarUrl()
-            },
             includeMarketing: true,
             marketingType: 'student',
+            showAcademyPromo: false,
             showSocials: false,
         });
 

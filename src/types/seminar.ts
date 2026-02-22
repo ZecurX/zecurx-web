@@ -89,6 +89,7 @@ export interface Seminar {
   registration_enabled: boolean;
   certificate_enabled: boolean;
   rejection_reason: string | null;
+  blog_slug: string | null;
 
   // Metadata
   created_at: string;
@@ -219,6 +220,7 @@ export interface PublicSeminar {
   certificate_enabled: boolean;
   registration_count?: number;
   max_attendees: number | null;
+  blog_slug?: string | null;
 }
 
 // Booking form submission (creates pending seminar)
