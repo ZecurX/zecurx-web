@@ -25,13 +25,6 @@ export function Hero() {
                         filter: "blur(80px)",
                     }}
                 />
-                <div
-                    className="absolute inset-0 dark:opacity-[0.03] opacity-[0.04]"
-                    style={{
-                        backgroundImage: "linear-gradient(#64748b 1px, transparent 1px), linear-gradient(90deg, #64748b 1px, transparent 1px)",
-                        backgroundSize: "60px 60px"
-                    }}
-                />
             </div>
 
             <motion.div
