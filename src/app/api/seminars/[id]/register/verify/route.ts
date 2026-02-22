@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { query } from '@/lib/db';
 import { verifyOtp } from '@/lib/otp';
 import { checkSeminarRateLimit, getClientIp } from '@/lib/rate-limit';
@@ -71,7 +71,7 @@ export async function POST(
         );
         const seminar = seminarResult.rows[0];
 
-        const resend = new Resend(process.env.RESEND_API_KEY);
+
 
         const date = new Date(seminar.date);
         const dateStr = date.toLocaleDateString('en-US', { dateStyle: 'full' });
@@ -144,8 +144,7 @@ export async function POST(
         });
 
         try {
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: email,
                 subject: `Registration Confirmed: ${seminar.title} - ZecurX`,
                 html: confirmationHtml,
