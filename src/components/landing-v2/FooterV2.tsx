@@ -18,7 +18,7 @@ export default function FooterV2() {
                         >
                             <div className="relative w-8 h-8 transition-transform group-hover:scale-110 duration-300">
                                 <Image
-                                    src="/images/zecurx-logo.png"
+                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"

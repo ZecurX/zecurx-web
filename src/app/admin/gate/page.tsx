@@ -87,7 +87,7 @@ export default function SudoLoginPage() {
                         <div className="flex justify-center">
                             <div className="relative w-12 h-12">
                                 <Image
-                                    src="/images/zecurx-logo.png"
+                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"
