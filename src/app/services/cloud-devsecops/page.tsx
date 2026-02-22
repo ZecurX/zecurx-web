@@ -109,6 +109,8 @@ export default function CloudDevSecOpsPage() {
                                 height={500}
                                 className="w-full max-w-md dark:invert dark:hue-rotate-180"
                                 priority
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURba+4tjh9tjg9djf9dje9Nbd8tTa8dDV7snP68DG59rg9Nrg89rf89ne8djc8NXZ7tDU7MnN6L3D5K+3393g8d3g8dzf8Nvd79rb7dbX7NHS6cjK5ru/4quz3t/g79/f7t7e7d3c7Nva69fW6dDQ58bH5Li84aix3uHg7OHf6+Dd6t/b6dzY6NfU5s/N5cPE47W64aav3+Pf6ePe6OLc5+Da5tzW5dbR5MzK47/B47G44qOv4eXe5uTd5ePb5ODY5NvU49PP48jH47u+46225KGv5Obe4+Xc4uPa4uDX4tnS4tDM48PE5La85am05p+v5+fd4Obb4OPZ4N7V4dbQ4svJ477B5bC556Wz6J6v6ejc3eba3uLX39vT4NLN4sXG5Li+5qy36KKy6pyv6////xRKlZcAAABkdFJOUwADBQgJCQcFAgEGCxAUEw8KBQIBChMcIiEaEQkEAg8bKDAvJhkOBwMRIC84Ny0fEgkEER8tNzctIBQLBQ4ZJSwtJhwSCgUJEBgeHxsVDggEBQkNEBEQDQkGAwIEBgcICAYFAwLUWnaMAAAAAWJLR0Rkwtq4CQAAAHZJREFUCB1jYGBkYmZhZWPn4GTg4ubh5eMXEBQSZhARFROXkJSSlpFlkJNXUFRSVlFVU2fQ0NTS1tHV0zcwZDAyNjE1M7ewtLJmsLG1s3dwdHJ2cWVwc/fw9PL28fXzZwgIDAoOCQ0Lj4hkiIqOiY2LT0hMSgYAwk8TV/GBfx8AAAAASUVORK5CYII="
                             />
                         </div>
                     </div>
