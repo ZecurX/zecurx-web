@@ -44,9 +44,8 @@ export function Hero() {
                             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                             className="text-5xl md:text-6xl lg:text-7xl font-newsreader font-medium tracking-tight mb-6 leading-[1.05] text-foreground"
                         >
-                            Security that lets you
-                            <br className="hidden md:block" />
-                            <span className="italic text-muted-foreground"> ship fearlessly.</span>
+                            Security that lets you{' '}
+                            <span className="italic text-muted-foreground">ship fearlessly.</span>
                         </motion.h1>
 
                         <motion.p
