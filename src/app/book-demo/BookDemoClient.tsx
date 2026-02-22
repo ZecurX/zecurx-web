@@ -64,6 +64,7 @@ function BookDemoContent() {
         const data = {
             name: `${firstName} ${lastName}`,
             email: formData.get('email'),
+            phone: formData.get('phone'),
             company: formData.get('company'),
             role: role,
             preferredDate: preferredDate ? preferredDate.toISOString() : null,
@@ -127,24 +128,24 @@ function BookDemoContent() {
             </div>
 
             {/* Right Side: Form */}
-            <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10 lg:border-l lg:border-gray-100 bg-gray-50/50">
-                <div className="w-full max-w-lg bg-white border border-gray-100 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden">
+            <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10 lg:border-l lg:border-gray-100 dark:lg:border-transparent bg-gray-50/50 dark:bg-background">
+                <div className="w-full max-w-lg bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
 
                     {isSuccess ? (
                         <div className="relative z-10 flex flex-col items-center justify-center text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 shadow-sm">
+                            <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 dark:border-emerald-800 shadow-sm">
                                 <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                             </div>
-                            <h3 className="text-3xl font-bold text-gray-900 mb-3">Demo Requested</h3>
-                            <p className="text-gray-500 mb-8 text-sm max-w-[240px] font-medium leading-relaxed">
+                            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">Demo Requested</h3>
+                            <p className="text-gray-500 dark:text-zinc-400 mb-8 text-sm max-w-[240px] font-medium leading-relaxed">
                                 Thank you for your interest. Our team will review your request and get back to you shortly.
                             </p>
 
                             <div className="w-full space-y-4">
                                 {/* Calendar Options */}
                                 {preferredDate && (
-                                    <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 shadow-sm">
-                                        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6 flex items-center justify-center gap-2">
+                                    <div className="bg-gray-50 dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 p-6 shadow-sm">
+                                        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500 mb-6 flex items-center justify-center gap-2">
                                             <Calendar className="w-3 h-3" />
                                             Schedule to Calendar
                                         </h4>
@@ -153,7 +154,7 @@ function BookDemoContent() {
                                                 href={getGoogleCalendarUrl()}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all duration-300 shadow-sm hover:shadow-md"
+                                                className="flex items-center justify-center gap-2 px-4 py-3 bg-white dark:bg-zinc-700 text-gray-900 dark:text-white border border-gray-200 dark:border-zinc-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-zinc-600 transition-all duration-300 shadow-sm hover:shadow-md"
                                             >
                                                 Google
                                             </a>
@@ -166,82 +167,88 @@ function BookDemoContent() {
                                                 Outlook
                                             </a>
                                         </div>
-                                        <p className="text-[10px] font-mono text-gray-400 mt-4 uppercase tracking-[0.1em]">
+                                        <p className="text-[10px] font-mono text-gray-400 dark:text-zinc-500 mt-4 uppercase tracking-[0.1em]">
                                             Slot: {preferredDate.toLocaleString()}
                                         </p>
                                     </div>
                                 )}
                             </div>
 
-                            <button onClick={() => setIsSuccess(false)} className="mt-10 text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-gray-600 transition-colors">
+                            <button onClick={() => setIsSuccess(false)} className="mt-10 text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors">
                                 New Request
                             </button>
                         </div>
                     ) : (
                         <div className="relative z-10">
                             <div className="mb-10">
-                                <h3 className="text-2xl font-bold text-gray-900 mb-2">Request Demo</h3>
-                                <p className="text-gray-500 text-sm font-medium">Experience the power of ZecurX tailored for your team.</p>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Request Demo</h3>
+                                <p className="text-gray-500 dark:text-zinc-400 text-sm font-medium">Experience the power of ZecurX tailored for your team.</p>
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label htmlFor="first-name" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">First Name</label>
-                                        <input name="first-name" id="first-name" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Jane" />
+                                        <label htmlFor="first-name" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">First Name</label>
+                                        <input name="first-name" id="first-name" type="text" required className="w-full h-14 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-5 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200" placeholder="Jane" />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="last-name" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Last Name</label>
-                                        <input name="last-name" id="last-name" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Doe" />
+                                        <label htmlFor="last-name" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Last Name</label>
+                                        <input name="last-name" id="last-name" type="text" required className="w-full h-14 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-5 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200" placeholder="Doe" />
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Work Email</label>
-                                    <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="jane@company.com" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label htmlFor="email" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Work Email</label>
+                                        <input name="email" id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full h-14 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-5 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200" placeholder="jane@company.com" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label htmlFor="phone" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Phone Number</label>
+                                        <input name="phone" id="phone" type="tel" required className="w-full h-14 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-5 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200" placeholder="+91 98765 43210" />
+                                    </div>
                                 </div>
 
                                 {service && (
-                                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                                        <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Service Interest: <span className="text-gray-900 ml-2">{service}</span></p>
+                                    <div className="p-4 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl">
+                                        <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500">Service Interest: <span className="text-gray-900 dark:text-white ml-2">{service}</span></p>
                                     </div>
                                 )}
 
                                 <div className="space-y-2">
-                                    <label htmlFor="company" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Company</label>
-                                    <input name="company" id="company" type="text" required className="w-full h-14 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200" placeholder="Acme Corp" />
+                                    <label htmlFor="company" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Company</label>
+                                    <input name="company" id="company" type="text" required className="w-full h-14 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-xl px-5 py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200" placeholder="Acme Corp" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label htmlFor="role" className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Your Role</label>
+                                    <label htmlFor="role" className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Your Role</label>
                                     <Select value={role} onValueChange={setRole} required>
-                                        <SelectTrigger className="h-14 bg-gray-50 border-gray-200 rounded-xl text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white transition-all duration-200">
+                                        <SelectTrigger className="h-14 bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 rounded-xl text-gray-900 dark:text-white focus:ring-1 focus:ring-zinc-900 dark:focus:ring-zinc-400 focus:border-zinc-900 dark:focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-800 transition-all duration-200">
                                             <SelectValue placeholder="Select your role" />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-white border-gray-200 rounded-xl shadow-lg">
-                                            <SelectItem value="CISO / CSO" className="text-gray-900 focus:bg-gray-50 cursor-pointer">CISO / CSO</SelectItem>
-                                            <SelectItem value="Security Director" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Security Director</SelectItem>
-                                            <SelectItem value="Security Engineer" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Security Engineer</SelectItem>
-                                            <SelectItem value="Developer" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Developer</SelectItem>
-                                            <SelectItem value="IT Manager" className="text-gray-900 focus:bg-gray-50 cursor-pointer">IT Manager</SelectItem>
-                                            <SelectItem value="CTO / CIO" className="text-gray-900 focus:bg-gray-50 cursor-pointer">CTO / CIO</SelectItem>
-                                            <SelectItem value="Other" className="text-gray-900 focus:bg-gray-50 cursor-pointer">Other</SelectItem>
+                                        <SelectContent className="bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 rounded-xl shadow-lg">
+                                            <SelectItem value="CISO / CSO" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">CISO / CSO</SelectItem>
+                                            <SelectItem value="Security Director" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">Security Director</SelectItem>
+                                            <SelectItem value="Security Engineer" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">Security Engineer</SelectItem>
+                                            <SelectItem value="Developer" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">Developer</SelectItem>
+                                            <SelectItem value="IT Manager" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">IT Manager</SelectItem>
+                                            <SelectItem value="CTO / CIO" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">CTO / CIO</SelectItem>
+                                            <SelectItem value="Other" className="text-gray-900 dark:text-white focus:bg-gray-50 dark:focus:bg-zinc-700 cursor-pointer">Other</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-gray-700 mb-2 ml-1 block">Preferred Date & Time</label>
+                                    <label className="text-sm font-bold text-gray-700 dark:text-zinc-300 mb-2 ml-1 block">Preferred Date & Time</label>
                                     <DateTimePicker
                                         name="preferred-date"
                                         onChange={setPreferredDate}
-                                        className="bg-gray-50 border-gray-200 text-gray-900"
+                                        className="bg-gray-50 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white"
                                     />
-                                    <p className="text-xs text-gray-500 ml-1">Optional - our team will coordinate with you</p>
+                                    <p className="text-xs text-gray-500 dark:text-zinc-500 ml-1">Optional - our team will coordinate with you</p>
                                 </div>
 
                                 {error && (
-                                    <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center gap-3 text-red-600 animate-in shake">
+                                    <div className="bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-800 rounded-lg p-4 flex items-center gap-3 text-red-600 dark:text-red-400 animate-in shake">
                                         <p className="text-xs font-bold uppercase tracking-widest">{error}</p>
                                     </div>
                                 )}
@@ -249,7 +256,7 @@ function BookDemoContent() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full h-16 bg-zinc-900 text-white hover:bg-zinc-800 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full h-16 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -264,7 +271,7 @@ function BookDemoContent() {
                                     )}
                                 </button>
 
-                                <p className="text-xs text-center text-gray-500 pt-6 leading-relaxed">
+                                <p className="text-xs text-center text-gray-500 dark:text-zinc-500 pt-6 leading-relaxed">
                                     By submitting this form, you agree to our<br /> terms of service & privacy policy.
                                 </p>
                             </form>

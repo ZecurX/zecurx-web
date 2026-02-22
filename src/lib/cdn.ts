@@ -71,6 +71,12 @@ export const CDN_ASSETS = {
     threatIntelligence: getCdnUrl('images/pages/threat-intelligence.jpeg'),
     zeroTrust: getCdnUrl('images/pages/zero-trust.jpeg'),
   },
+  services: {
+    applicationSecurity: getCdnUrl('images/services/application-security.png'),
+    cloudDevsecops: getCdnUrl('images/services/cloud-devsecops.png'),
+    complianceReadiness: getCdnUrl('images/services/compliance-readiness.png'),
+    secureAiDevelopment: getCdnUrl('images/services/secure-ai-development.png'),
+  },
   backgrounds: {
     dark: getCdnUrl('assets/dark-bg.png'),
     light: getCdnUrl('assets/light-bg.png'),

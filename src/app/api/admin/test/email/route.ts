@@ -1,6 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { verifySessionFromRequest } from '@/lib/auth';
 import { brandedEmailTemplate } from '@/lib/email-template';
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const resend = new Resend(process.env.RESEND_API_KEY);
+
 
         const testEmailBody = `
             <h2 style="color: #1a1a1a; margin: 0 0 15px 0;">✅ Email Test Successful!</h2>
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
             <div style="background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-top: 20px;">
                 <p style="margin: 0; font-size: 12px; color: #888;">
                     <strong>Timestamp: </strong> ${new Date().toISOString()}<br>
-                    <strong>Provider: </strong> Resend API
+                    <strong>Provider: </strong> SendGrid API
                 </p>
             </div>
         `;
@@ -43,28 +43,25 @@ export async function POST(request: NextRequest) {
             includeMarketing: false,
         });
 
-        const { data, error } = await resend.emails.send({
-            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
-            to: email,
-            subject: '🧪 ZecurX System Test - Email Delivery',
-            html: testEmailHtml,
-        });
-
-        if (error) {
+        try {
+            await sendEmail({
+                to: email,
+                subject: '🧪 ZecurX System Test - Email Delivery',
+                html: testEmailHtml,
+            });
+        return NextResponse.json({
+                success: true,
+                message: `Test email sent to ${email}`,
+                details: {
+                    recipient: email,
+                },
+            });
+        } catch (sendError) {
             return NextResponse.json(
-                { success: false, error: error.message },
+                { success: false, error: sendError instanceof Error ? sendError.message : 'Failed to send email' },
                 { status: 500 }
             );
         }
-
-        return NextResponse.json({
-            success: true,
-            message: `Test email sent to ${email} `,
-            details: {
-                messageId: data?.id,
-                recipient: email,
-            },
-        });
     } catch (error) {
         return NextResponse.json(
             {

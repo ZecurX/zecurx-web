@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail, toSendGridAttachment } from '@/lib/sendgrid';
 import { appendToSheet } from '@/lib/google-sheets';
 import { fetchFromCdn } from '@/lib/cdn';
 import { query } from '@/lib/db';
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
     try {
         const body = await request.json();
         const { name, email, subject, message, formType, preferredDate } = body;
@@ -265,11 +265,11 @@ export async function POST(request: NextRequest) {
         const selectedService = body.service?.toLowerCase() || 'general';
         const selectedPdf = serviceToPdf[selectedService] || serviceToPdf['penetration testing'];
 
-        let attachments: { filename: string; content: Buffer }[] = [];
+    let attachments: ReturnType<typeof toSendGridAttachment>[] = [];
         if (isDemo && selectedPdf) {
             const fileContent = await fetchFromCdn(selectedPdf.cdnPath);
             if (fileContent) {
-                attachments = [{ filename: selectedPdf.filename, content: fileContent }];
+            attachments = [toSendGridAttachment(fileContent, selectedPdf.filename)];
             } else {
             }
         }
@@ -285,7 +285,7 @@ export async function POST(request: NextRequest) {
             const fileContent = await fetchFromCdn(cdnPath);
             if (fileContent) {
                 const filename = `ZecurX_${body.courseTitle?.replace(/\s+/g, '_') || 'Course'}_Brochure.pdf`;
-                attachments = [{ filename, content: fileContent }];
+            attachments = [toSendGridAttachment(fileContent, filename)];
             } else {
             }
         }
@@ -306,8 +306,7 @@ export async function POST(request: NextRequest) {
         // Send admin notification email
         let adminEmailSent = false;
         try {
-            await resend.emails.send({
-                from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+            await sendEmail({
                 to: adminEmail,
                 replyTo: email,
                 subject: emailSubject,
@@ -375,16 +374,14 @@ export async function POST(request: NextRequest) {
 
 
                 if ((isDemo || isBrochure) && attachments.length > 0) {
-                    await resend.emails.send({
-                        from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+                    await sendEmail({
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,
-                        attachments: attachments,
+                        attachments,
                     });
                 } else {
-                    await resend.emails.send({
-                        from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+                    await sendEmail({
                         to: email,
                         subject: userSubject,
                         html: userEmailHtml,
