@@ -109,6 +109,8 @@ export default function ApplicationSecurityPage() {
                                 height={500}
                                 className="w-full max-w-md dark:invert dark:hue-rotate-180"
                                 priority
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURZ2u8Z2t8p2u8p6u856v8p6u8Zys75mp7ZOl6Y2f5aCx8Z+w8Z+v8p+v8p+v8Z6v8J2t75qr7JWn6ZCi5aS18aOz8aKy8aGx8aGx8aCx8J+w7p2u7Jmr6ZWn5qm48ae38aa28aa28aW18KW176S07qKy7KCw6Zyt56y88qy78qy78qy78ay78ay78Ku676q57ae36qS06K+/87C/87LA87PB8rTC8rTC8bTC8LLA7rC+7K276rLB87TD87fF9LnH9LvI9LzJ87zJ8rrH8LjF7rTC7LPC87fF9LvJ9L7L9cHO9cLP9cLP9MHN87/L8bvH7rTD87nH9L7L9cLP9sXR9sfT9sjT9sfS9MTQ88HM8LTD87vJ9MDN9sXR98nU98vW98zX98vW9snU9cbR8v///x86rZoAAABkdFJOUwECAwUGBgUEAgECAwYICgoJBgQCAwUJDQ8PDQkGAwQIDBETExAMBwQFCg8UFxYSDQgEBgsRFhgXEw0IBAUKEBUXFhEMBwMECA0SExIOCQUDAwYJDA4NCgYDAgIDBQcIBwUDAgHYG7ayAAAAAWJLR0Rkwtq4CQAAAHZJREFUCB1jYGBkYmZhZWPn4GTg4ubh5eMXEBQSZhARFROXkJSSlpFlkJNXUFRSVlFVU2fQ0NTS1tHV0zcwZDAyNjE1M7ewtLJmsLG1s3dwdHJ2cWVwc/fw9PL28fXzZwgIDAoOCQ0Lj4hkiIqOiY2LT0hMSgYAwk8TV/GBfx8AAAAASUVORK5CYII="
                             />
                         </div>
                     </div>
