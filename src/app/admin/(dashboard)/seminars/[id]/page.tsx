@@ -244,7 +244,7 @@ export default function SeminarDetailPage() {
   };
 
   const handleAlertCoordinator = async () => {
-    if (!confirm(`Send certificate alert to ${seminar?.contact_person} (${seminar?.contact_email})?`)) return;
+    if (!confirm(`Send certificate release alert to coordinator (${seminar?.contact_person}) and all registered students?`)) return;
 
     setAlertingCoordinator(true);
     try {
@@ -800,7 +800,7 @@ export default function SeminarDetailPage() {
                       ) : (
                         <>
                           <Send className="w-4 h-4 mr-2" />
-                          Alert Coordinator
+                          Alert Students & Coordinator
                         </>
                       )}
                     </Button>
