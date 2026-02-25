@@ -125,6 +125,7 @@ export async function POST(
                 </tr>
             </table>
 
+
             ${emailCourseCatalog(courses.slice(0, 4).map(course => ({
                 title: course.title,
                 description: course.description,
@@ -137,9 +138,7 @@ export async function POST(
             accent: 'success',
             body: bodyContent,
             previewText: `Registration Confirmed: ${seminar.title}`,
-            includeMarketing: true,
-            marketingType: 'student',
-            showAcademyPromo: false,
+            includeMarketing: false,
             showSocials: false,
         });
 

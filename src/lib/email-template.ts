@@ -88,6 +88,8 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light only">
     <title>ZecurX</title>
     <!--[if mso]>
     <noscript>
@@ -100,11 +102,23 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
     </noscript>
     <![endif]-->
     <style>
+        :root { color-scheme: light only; supported-color-schemes: light only; }
         * { margin: 0; padding: 0; }
         body { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
         table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
         img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
         a { color: ${accentColor}; text-decoration: none; }
+        /* Force light mode in all email clients */
+        [data-ogsc] body, [data-ogsb] body { background-color: #f0f0f0 !important; color: #1a1a1a !important; }
+        [data-ogsc] .email-card, [data-ogsb] .email-card { background-color: #ffffff !important; }
+        [data-ogsc] .otp-box, [data-ogsb] .otp-box { background-color: #0a0a0f !important; color: #ffffff !important; }
+        @media (prefers-color-scheme: dark) {
+            body, .body { background-color: #f0f0f0 !important; color: #1a1a1a !important; }
+            .email-card { background-color: #ffffff !important; }
+            .otp-box { background-color: #0a0a0f !important; color: #ffffff !important; }
+            .dark-text { color: #1a1a1a !important; }
+            .light-bg { background-color: #ffffff !important; }
+        }
         @media only screen and (max-width: 620px) {
             .email-container { width: 100% !important; }
             .fluid { max-width: 100% !important; height: auto !important; }
@@ -123,7 +137,7 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
             <td align="center" style="padding: 30px 10px;">
                 
                 <!-- Email container -->
-                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="email-container email-card" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
                     
                     <!-- ═══════════ HEADER ═══════════ -->
                     <tr>

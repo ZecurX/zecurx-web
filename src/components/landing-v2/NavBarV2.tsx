@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { CDN_ASSETS } from "@/lib/cdn";
 
 const navLinks = [
     { label: "Services", href: "/services" },
@@ -40,7 +41,7 @@ export default function NavBarV2() {
                     <Link href="/" className="flex items-center gap-2.5 group">
                         <div className="relative w-7 h-7 transition-transform group-hover:scale-110 duration-300">
                             <Image
-                                src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                src={CDN_ASSETS.brand.logo}
                                 alt="ZecurX"
                                 fill
                                 className="object-contain"
