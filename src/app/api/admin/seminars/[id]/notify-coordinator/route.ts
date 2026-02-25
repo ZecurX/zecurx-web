@@ -4,6 +4,9 @@ import { requirePermission } from '@/lib/auth';
 import { Seminar } from '@/types/seminar';
 import { sendCoordinatorCertificateAlert } from '@/lib/certificate';
 
+export const config = {
+    maxDuration: 60,
+};
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -47,7 +50,7 @@ export async function POST(
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://zecurx.com';
         const certificatePageUrl = `${baseUrl}/seminars/${seminarId}/certificate`;
 
-        const coordinatorSent = await sendCoordinatorCertificateAlert({
+        const coordinatorResult = await sendCoordinatorCertificateAlert({
             coordinatorName: seminar.contact_person || 'Coordinator',
             coordinatorEmail: seminar.contact_email,
             seminarTitle: seminar.title,
@@ -55,9 +58,9 @@ export async function POST(
             certificatePageUrl,
         });
 
-        if (!coordinatorSent) {
+        if (!coordinatorResult.success) {
             return NextResponse.json(
-                { error: 'Failed to send email to coordinator' },
+                { error: `Failed to send email to coordinator: ${coordinatorResult.error}` },
                 { status: 500 }
             );
         }
@@ -68,9 +71,10 @@ export async function POST(
         });
 
     } catch (error) {
-        console.error('Failed to notify coordinator:', error);
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Failed to notify coordinator:', message);
         return NextResponse.json(
-            { error: 'Failed to send coordinator alert' },
+            { error: `Failed to send coordinator alert: ${message}` },
             { status: 500 }
         );
     }

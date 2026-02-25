@@ -281,11 +281,17 @@ export default function SeminarDetailPage() {
       if (res.ok) {
         alert(data.message);
       } else {
-        alert(data.error || 'Failed to send alert');
+        let errorMsg = data.error || 'Failed to send alert';
+        if (data.details?.sampleErrors?.length) {
+          errorMsg += '\n\nSample errors:\n' + data.details.sampleErrors
+            .map((e: { email: string; error: string }) => `• ${e.email}: ${e.error}`)
+            .join('\n');
+        }
+        alert(errorMsg);
       }
     } catch (error) {
       console.error('Error alerting students:', error);
-      alert('An error occurred');
+      alert('An error occurred while sending alerts. Please try again.');
     } finally {
       setAlertingStudents(false);
     }
@@ -810,12 +816,12 @@ export default function SeminarDetailPage() {
                   </Button>
 
                   {certificateEnabled && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         onClick={handleAlertStudents}
                         disabled={alertingStudents}
                         variant="outline"
-                        className="flex-1"
+                        className="flex-1 min-w-[150px]"
                       >
                         {alertingStudents ? (
                           <>
@@ -834,7 +840,7 @@ export default function SeminarDetailPage() {
                           onClick={handleAlertCoordinator}
                           disabled={alertingCoordinator}
                           variant="outline"
-                          className="flex-1"
+                          className="flex-1 min-w-[150px]"
                         >
                           {alertingCoordinator ? (
                             <>

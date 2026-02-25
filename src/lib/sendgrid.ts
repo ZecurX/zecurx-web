@@ -1,6 +1,9 @@
-import sgMail from '@sendgrid/mail';
+import sgMail, { ResponseError } from '@sendgrid/mail';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
+const apiKey = process.env.SENDGRID_API_KEY;
+if (apiKey) {
+    sgMail.setApiKey(apiKey);
+}
 
 interface EmailAttachment {
     content: string;
@@ -39,6 +42,10 @@ export function toSendGridAttachment(
  * Centralizes all email sending so transport can be swapped in one place.
  */
 export async function sendEmail(options: SendEmailOptions): Promise<void> {
+    if (!apiKey) {
+        throw new Error('SENDGRID_API_KEY is not configured. Add it to your environment variables.');
+    }
+
     const msg = {
         to: options.to,
         from: options.from || 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
@@ -48,5 +55,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
         ...(options.attachments && options.attachments.length > 0 && { attachments: options.attachments }),
     };
 
-    await sgMail.send(msg);
+    try {
+        await sgMail.send(msg);
+    } catch (err) {
+        const error = err as ResponseError;
+        const sgBody = error.response?.body as { errors?: { message: string }[] } | undefined;
+        const details = sgBody?.errors?.map(e => e.message).join('; ')
+            || error.message
+            || 'Unknown SendGrid error';
+        throw new Error(`SendGrid email failed: ${details}`);
+    }
 }
