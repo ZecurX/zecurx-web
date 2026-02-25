@@ -94,23 +94,23 @@ export function Services() {
                             return (
                                 <div
                                     key={svc.title}
-                                    className="border-b dark:border-white/8 border-gray-200 last:border-0"
+                                    className="border-b border-border last:border-0"
                                 >
                                     <button
                                         onClick={() => setExpandedIndex(i)}
                                         className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
                                     >
-                                        <h3 className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${isExpanded ? 'dark:text-white text-gray-900' : 'dark:text-gray-400 text-gray-500 group-hover:dark:text-gray-300 group-hover:text-gray-700'
+                                        <h3 className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${isExpanded ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground/80'
                                             }`}>
                                             {svc.title}
                                         </h3>
                                         <motion.div
                                             animate={{ rotate: isExpanded ? 180 : 0 }}
                                             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                                            className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${isExpanded ? 'dark:bg-white/10 bg-gray-100' : 'dark:bg-transparent bg-transparent'
+                                            className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${isExpanded ? 'bg-muted' : 'bg-transparent'
                                                 }`}
                                         >
-                                            <ChevronDown className={`w-5 h-5 transition-colors duration-300 ${isExpanded ? 'dark:text-white text-black' : 'dark:text-gray-500 text-gray-400'
+                                            <ChevronDown className={`w-5 h-5 transition-colors duration-300 ${isExpanded ? 'text-foreground' : 'text-muted-foreground'
                                                 }`} />
                                         </motion.div>
                                     </button>
@@ -124,7 +124,7 @@ export function Services() {
                                                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                                             >
                                                 <div className="pb-8 pr-12">
-                                                    <p className="text-lg leading-relaxed dark:text-gray-400 text-gray-600">
+                                                    <p className="text-lg leading-relaxed text-muted-foreground">
                                                         {svc.description}
                                                     </p>
                                                 </div>
