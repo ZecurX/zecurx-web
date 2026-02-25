@@ -84,7 +84,7 @@ export function Solutions() {
         <div
             ref={outerRef}
             id="solutions"
-            style={{ height: `${N * 100}vh` }}
+            style={{ height: `${N * 70}vh` }}
         >
             {/* Inner: sticks to the top of the viewport */}
             <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden bg-background text-foreground">
