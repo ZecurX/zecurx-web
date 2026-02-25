@@ -231,7 +231,7 @@ export default function SeminarBookingForm() {
                         <div className="space-y-12">
                             {/* Partner Logos - Moved to Top for immediate trust and height balancing */}
                             <div className="space-y-4">
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Trusted by Top Institutions</p>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Trusted by Top Institutions</p>
                                 <div className="flex items-center gap-6">
                                     {partnerLogos.map((partner, i) => (
                                         <div key={i} className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
@@ -306,44 +306,44 @@ export default function SeminarBookingForm() {
                             <p className="text-muted-foreground">Schedule expert-led cybersecurity training.</p>
                         </div>
 
-                        <div className="bg-white border border-gray-200 rounded-[2.5rem] p-6 md:px-10 md:py-8 shadow-xl relative md:h-[760px] flex flex-col">
+                        <div className="bg-card border border-border rounded-[2.5rem] p-6 md:px-10 md:py-8 shadow-xl relative md:h-[760px] flex flex-col">
                             {isSuccess ? (
                                 <motion.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     className="text-center py-12 flex flex-col items-center justify-center h-full"
                                 >
-                                    <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mb-8 border border-zinc-100 shadow-sm relative">
-                                        <CheckCircle2 className="w-10 h-10 text-zinc-900" />
-                                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center shadow-lg">
+                                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-8 border border-border shadow-sm relative">
+                                        <CheckCircle2 className="w-10 h-10 text-foreground" />
+                                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-background flex items-center justify-center shadow-lg">
                                             <Shield className="w-3 h-3 text-white" />
                                         </div>
                                     </div>
 
                                     <div className="space-y-4 mb-10">
-                                        <h3 className="text-3xl font-bold text-zinc-900 tracking-tight">Booking Received</h3>
-                                        <p className="text-zinc-500 text-sm max-w-sm mx-auto leading-relaxed">
+                                        <h3 className="text-3xl font-bold text-foreground tracking-tight">Booking Received</h3>
+                                        <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
                                             Your seminar request is being processed. Our technical leads will review your requirements and reach out within 24 hours.
                                         </p>
                                     </div>
 
-                                    <div className="w-full max-w-sm bg-zinc-50 rounded-2xl border border-zinc-100 p-6 mb-10 text-left">
+                                    <div className="w-full max-w-sm bg-muted rounded-2xl border border-border p-6 mb-10 text-left">
                                         <div className="flex justify-between items-center mb-4">
-                                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Reference ID</span>
-                                            <span className="text-xs font-mono font-bold text-zinc-900 uppercase tracking-tighter">SEM-{(Math.random() * 10000).toFixed(0).padStart(5, '0')}</span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Reference ID</span>
+                                            <span className="text-xs font-mono font-bold text-foreground uppercase tracking-tighter">SEM-{(Math.random() * 10000).toFixed(0).padStart(5, '0')}</span>
                                         </div>
-                                        <div className="flex items-center gap-3 py-3 border-y border-zinc-200/50">
+                                        <div className="flex items-center gap-3 py-3 border-y border-border">
                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                            <p className="text-xs font-bold text-zinc-800 uppercase tracking-wide">Validation in progress</p>
+                                            <p className="text-xs font-bold text-foreground uppercase tracking-wide">Validation in progress</p>
                                         </div>
-                                        <p className="mt-4 text-[10px] text-zinc-400 leading-tight">
+                                        <p className="mt-4 text-[10px] text-muted-foreground leading-tight">
                                             A confirmation email with the session timeline and technical prerequisites has been sent to your primary contact.
                                         </p>
                                     </div>
 
                                     <button
                                         onClick={() => setIsSuccess(false)}
-                                        className="inline-flex items-center gap-2 text-sm font-bold text-zinc-400 hover:text-zinc-900 transition-colors group"
+                                        className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors group"
                                     >
                                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                                         Submit Another Request
@@ -353,20 +353,20 @@ export default function SeminarBookingForm() {
                                 <>
                                     {/* Stepper Header */}
                                     <div className="mb-8 flex items-center justify-between relative">
-                                        <div className="absolute top-4 left-12 right-12 h-0.5 bg-gray-100 -z-0"></div>
+                                        <div className="absolute top-4 left-12 right-12 h-0.5 bg-muted -z-0"></div>
                                         <div
-                                            className="absolute top-4 left-12 right-12 h-0.5 bg-zinc-900 transition-all duration-500 z-0 origin-left"
+                                            className="absolute top-4 left-12 right-12 h-0.5 bg-foreground transition-all duration-500 z-0 origin-left"
                                             style={{ transform: `scaleX(${currentStep / (steps.length - 1)})` }}
                                         ></div>
                                         {steps.map((step, idx) => (
                                             <div key={step.id} className="relative z-10 flex flex-col items-center gap-2 w-24">
                                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${currentStep >= idx
-                                                    ? "bg-zinc-900 text-white shadow-lg scale-110"
-                                                    : "bg-gray-100 text-gray-400"
+                                                    ? "bg-foreground text-background shadow-lg scale-110"
+                                                    : "bg-muted text-muted-foreground"
                                                     }`}>
                                                     {currentStep > idx ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                                                 </div>
-                                                <span className={`text-[10px] uppercase font-bold tracking-wider hidden md:block ${currentStep === idx ? "text-zinc-900" : "text-gray-300"
+                                                <span className={`text-[10px] uppercase font-bold tracking-wider hidden md:block ${currentStep === idx ? "text-foreground" : "text-muted-foreground/60"
                                                     }`}>
                                                     {step.title}
                                                 </span>
@@ -387,64 +387,64 @@ export default function SeminarBookingForm() {
                                                         className="space-y-6 flex flex-col"
                                                     >
                                                         <div className="space-y-2">
-                                                            <h3 className="text-xl font-bold text-gray-900">Contact Information</h3>
-                                                            <p className="text-sm text-gray-500">Who should we contact regarding this seminar?</p>
+                                                            <h3 className="text-xl font-bold text-foreground">Contact Information</h3>
+                                                            <p className="text-sm text-muted-foreground">Who should we contact regarding this seminar?</p>
                                                         </div>
 
                                                         <div className="grid md:grid-cols-2 gap-6">
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="name" className="text-sm font-bold text-gray-700 ml-1">Full Name *</Label>
+                                                                <Label htmlFor="name" className="text-sm font-bold text-foreground/80 ml-1">Full Name *</Label>
                                                                 <Input
                                                                     id="name"
                                                                     placeholder="Enter your name"
                                                                     {...register("name")}
-                                                                    className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.name ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.name ? "border-red-500 bg-red-50" : ""}`}
                                                                 />
                                                                 {errors.name && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.name.message}</p>}
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="email" className="text-sm font-bold text-gray-700 ml-1">Email Address *</Label>
+                                                                <Label htmlFor="email" className="text-sm font-bold text-foreground/80 ml-1">Email Address *</Label>
                                                                 <Input
                                                                     id="email"
                                                                     type="email"
                                                                     placeholder="you@institution.edu"
                                                                     {...register("email")}
-                                                                    className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.email ? "border-red-500 bg-red-50" : ""}`}
                                                                 />
                                                                 {errors.email && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.email.message}</p>}
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="phone" className="text-sm font-bold text-gray-700 ml-1">Phone Number</Label>
+                                                                <Label htmlFor="phone" className="text-sm font-bold text-foreground/80 ml-1">Phone Number</Label>
                                                                 <Input
                                                                     id="phone"
                                                                     type="tel"
                                                                     placeholder="Include country code"
                                                                     {...register("phone")}
-                                                                    className="h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200"
+                                                                    className="h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200"
                                                                 />
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="organization" className="text-sm font-bold text-gray-700 ml-1">Organization Name *</Label>
+                                                                <Label htmlFor="organization" className="text-sm font-bold text-foreground/80 ml-1">Organization Name *</Label>
                                                                 <Input
                                                                     id="organization"
                                                                     placeholder="Institution/Company Name"
                                                                     {...register("organization")}
-                                                                    className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.organization ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.organization ? "border-red-500 bg-red-50" : ""}`}
                                                                 />
                                                                 {errors.organization && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.organization.message}</p>}
                                                             </div>
                                                         </div>
                                                         <div className="pt-6">
-                                                            <div className="rounded-2xl bg-zinc-50 border border-zinc-100 p-5 flex gap-4 items-start shadow-sm border-dashed">
-                                                                <div className="w-10 h-10 rounded-xl bg-white border border-zinc-100 flex items-center justify-center shrink-0 shadow-sm">
-                                                                    <Shield className="w-5 h-5 text-zinc-400" />
+                                                            <div className="rounded-2xl bg-muted border border-border p-5 flex gap-4 items-start shadow-sm border-dashed">
+                                                                <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
+                                                                    <Shield className="w-5 h-5 text-muted-foreground" />
                                                                 </div>
                                                                 <div className="space-y-1">
-                                                                    <p className="text-[11px] font-bold text-zinc-900 uppercase tracking-wider">Privacy & Coordination</p>
-                                                                    <p className="text-xs text-zinc-500 leading-relaxed max-w-sm">Your institutional data is protected. We use these details solely to coordinate technical logistics with your team.</p>
+                                                                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">Privacy & Coordination</p>
+                                                                    <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">Your institutional data is protected. We use these details solely to coordinate technical logistics with your team.</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -461,35 +461,35 @@ export default function SeminarBookingForm() {
                                                         className="space-y-6 flex flex-col"
                                                     >
                                                         <div className="space-y-2">
-                                                            <h3 className="text-xl font-bold text-gray-900">Seminar Details</h3>
-                                                            <p className="text-sm text-gray-500">What kind of session are you looking for?</p>
+                                                            <h3 className="text-xl font-bold text-foreground">Seminar Details</h3>
+                                                            <p className="text-sm text-muted-foreground">What kind of session are you looking for?</p>
                                                         </div>
 
                                                         <div className="grid md:grid-cols-2 gap-6">
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="title" className="text-sm font-bold text-gray-700 ml-1">Seminar Topic / Title *</Label>
+                                                                <Label htmlFor="title" className="text-sm font-bold text-foreground/80 ml-1">Seminar Topic / Title *</Label>
                                                                 <Input
                                                                     id="title"
                                                                     placeholder="Enter the proposed title"
                                                                     {...register("title")}
-                                                                    className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.title ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.title ? "border-red-500 bg-red-50" : ""}`}
                                                                 />
                                                                 {errors.title && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.title.message}</p>}
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="seminarType" className="text-sm font-bold text-gray-700 ml-1">Session Type *</Label>
+                                                                <Label htmlFor="seminarType" className="text-sm font-bold text-foreground/80 ml-1">Session Type *</Label>
                                                                 <Controller
                                                                     name="seminarType"
                                                                     control={control}
                                                                     render={({ field }) => (
                                                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                            <SelectTrigger className={`h-14 rounded-xl bg-gray-50 border-gray-200 text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 ${errors.seminarType ? "border-red-500 bg-red-50" : ""}`}>
+                                                                            <SelectTrigger className={`h-14 rounded-xl bg-muted border-border text-foreground focus:ring-1 focus:ring-ring focus:border-ring ${errors.seminarType ? "border-red-500 bg-red-50" : ""}`}>
                                                                                 <SelectValue placeholder="Select type" />
                                                                             </SelectTrigger>
-                                                                            <SelectContent className="bg-white border-gray-200">
+                                                                            <SelectContent className="bg-card border-border">
                                                                                 {SEMINAR_TYPES.map(type => (
-                                                                                    <SelectItem key={type} value={type} className="text-gray-900 focus:bg-gray-50 cursor-pointer">{type}</SelectItem>
+                                                                                    <SelectItem key={type} value={type} className="text-foreground focus:bg-muted cursor-pointer">{type}</SelectItem>
                                                                                 ))}
                                                                             </SelectContent>
                                                                         </Select>
@@ -500,25 +500,25 @@ export default function SeminarBookingForm() {
                                                         </div>
 
                                                         <div className="space-y-2">
-                                                            <Label htmlFor="topic" className="text-sm font-bold text-gray-700 ml-1">Primary Focus Area *</Label>
+                                                            <Label htmlFor="topic" className="text-sm font-bold text-foreground/80 ml-1">Primary Focus Area *</Label>
                                                             <Controller
                                                                 name="topic"
                                                                 control={control}
                                                                 render={({ field }) => (
                                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                        <SelectTrigger className={`h-14 rounded-xl bg-gray-50 border-gray-200 text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 ${errors.topic ? "border-red-500 bg-red-50" : ""}`}>
+                                                                        <SelectTrigger className={`h-14 rounded-xl bg-muted border-border text-foreground focus:ring-1 focus:ring-ring focus:border-ring ${errors.topic ? "border-red-500 bg-red-50" : ""}`}>
                                                                             <SelectValue placeholder="Select focus" />
                                                                         </SelectTrigger>
-                                                                        <SelectContent className="bg-white border-gray-200">
-                                                                            <SelectItem value="Generative AI Security & Defense" className="text-gray-900 focus:bg-gray-50">Generative AI Security</SelectItem>
-                                                                            <SelectItem value="Ransomware Response & Resilience" className="text-gray-900 focus:bg-gray-50">Ransomware Response</SelectItem>
-                                                                            <SelectItem value="Zero Trust Network Architecture" className="text-gray-900 focus:bg-gray-50">Zero Trust Architecture</SelectItem>
-                                                                            <SelectItem value="Cloud Security Posture (CSPM)" className="text-gray-900 focus:bg-gray-50">Cloud Security</SelectItem>
-                                                                            <SelectItem value="API Security & DevSecOps" className="text-gray-900 focus:bg-gray-50">API / DevSecOps</SelectItem>
-                                                                            <SelectItem value="Ethical Hacking & Red Teaming" className="text-gray-900 focus:bg-gray-50">Ethical Hacking</SelectItem>
-                                                                            <SelectItem value="Offensive Security" className="text-gray-900 focus:bg-gray-50">Offensive Security</SelectItem>
-                                                                            <SelectItem value="Technological Awareness" className="text-gray-900 focus:bg-gray-50">Tech Awareness</SelectItem>
-                                                                            <SelectItem value="Other" className="text-gray-900 focus:bg-gray-50">Other Area</SelectItem>
+                                                                        <SelectContent className="bg-card border-border">
+                                                                            <SelectItem value="Generative AI Security & Defense" className="text-foreground focus:bg-muted">Generative AI Security</SelectItem>
+                                                                            <SelectItem value="Ransomware Response & Resilience" className="text-foreground focus:bg-muted">Ransomware Response</SelectItem>
+                                                                            <SelectItem value="Zero Trust Network Architecture" className="text-foreground focus:bg-muted">Zero Trust Architecture</SelectItem>
+                                                                            <SelectItem value="Cloud Security Posture (CSPM)" className="text-foreground focus:bg-muted">Cloud Security</SelectItem>
+                                                                            <SelectItem value="API Security & DevSecOps" className="text-foreground focus:bg-muted">API / DevSecOps</SelectItem>
+                                                                            <SelectItem value="Ethical Hacking & Red Teaming" className="text-foreground focus:bg-muted">Ethical Hacking</SelectItem>
+                                                                            <SelectItem value="Offensive Security" className="text-foreground focus:bg-muted">Offensive Security</SelectItem>
+                                                                            <SelectItem value="Technological Awareness" className="text-foreground focus:bg-muted">Tech Awareness</SelectItem>
+                                                                            <SelectItem value="Other" className="text-foreground focus:bg-muted">Other Area</SelectItem>
                                                                         </SelectContent>
                                                                     </Select>
                                                                 )}
@@ -527,12 +527,12 @@ export default function SeminarBookingForm() {
                                                         </div>
 
                                                         <div className="space-y-2">
-                                                            <Label htmlFor="description" className="text-sm font-bold text-gray-700 ml-1">Brief Description *</Label>
+                                                            <Label htmlFor="description" className="text-sm font-bold text-foreground/80 ml-1">Brief Description *</Label>
                                                             <Textarea
                                                                 id="description"
                                                                 placeholder="Describe the learning objectives and key focus areas..."
                                                                 {...register("description")}
-                                                                className={`min-h-[120px] rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 resize-none p-5 ${errors.description ? "border-red-500 bg-red-50" : ""}`}
+                                                                className={`min-h-[120px] rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-300 resize-none p-5 ${errors.description ? "border-red-500 bg-red-50" : ""}`}
                                                             />
                                                             {errors.description && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.description.message}</p>}
                                                         </div>
@@ -549,24 +549,24 @@ export default function SeminarBookingForm() {
                                                         className="space-y-6 flex flex-col"
                                                     >
                                                         <div className="space-y-2">
-                                                            <h3 className="text-xl font-bold text-gray-900">Logistics & Schedule</h3>
-                                                            <p className="text-sm text-gray-500">When and where should this take place?</p>
+                                                            <h3 className="text-xl font-bold text-foreground">Logistics & Schedule</h3>
+                                                            <p className="text-sm text-muted-foreground">When and where should this take place?</p>
                                                         </div>
 
                                                         <div className="grid md:grid-cols-2 gap-6">
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="duration" className="text-sm font-bold text-gray-700 ml-1">Planned Duration *</Label>
+                                                                <Label htmlFor="duration" className="text-sm font-bold text-foreground/80 ml-1">Planned Duration *</Label>
                                                                 <Controller
                                                                     name="duration"
                                                                     control={control}
                                                                     render={({ field }) => (
                                                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                            <SelectTrigger className={`h-14 rounded-xl bg-gray-50 border-gray-200 text-gray-900 focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 ${errors.duration ? "border-red-500 bg-red-50" : ""}`}>
+                                                                            <SelectTrigger className={`h-14 rounded-xl bg-muted border-border text-foreground focus:ring-1 focus:ring-ring focus:border-ring ${errors.duration ? "border-red-500 bg-red-50" : ""}`}>
                                                                                 <SelectValue placeholder="Select duration" />
                                                                             </SelectTrigger>
-                                                                            <SelectContent className="bg-white border-gray-200">
+                                                                            <SelectContent className="bg-card border-border">
                                                                                 {DURATION_OPTIONS.map(dur => (
-                                                                                    <SelectItem key={dur} value={dur} className="text-gray-900 focus:bg-gray-50 cursor-pointer">{dur}</SelectItem>
+                                                                                    <SelectItem key={dur} value={dur} className="text-foreground focus:bg-muted cursor-pointer">{dur}</SelectItem>
                                                                                 ))}
                                                                             </SelectContent>
                                                                         </Select>
@@ -576,21 +576,21 @@ export default function SeminarBookingForm() {
                                                             </div>
 
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="attendees" className="text-sm font-bold text-gray-700 ml-1">Expected Attendees *</Label>
+                                                                <Label htmlFor="attendees" className="text-sm font-bold text-foreground/80 ml-1">Expected Attendees *</Label>
                                                                 <Input
                                                                     id="attendees"
                                                                     type="number"
                                                                     min="1"
                                                                     placeholder="Estimated count"
                                                                     {...register("attendees")}
-                                                                    className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.attendees ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.attendees ? "border-red-500 bg-red-50" : ""}`}
                                                                 />
                                                                 {errors.attendees && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.attendees.message}</p>}
                                                             </div>
                                                         </div>
 
                                                         <div className="space-y-4">
-                                                            <Label className="text-sm font-bold text-gray-700 ml-1">Preferred Location *</Label>
+                                                            <Label className="text-sm font-bold text-foreground/80 ml-1">Preferred Location *</Label>
                                                             <Controller
                                                                 name="locationType"
                                                                 control={control}
@@ -600,8 +600,8 @@ export default function SeminarBookingForm() {
                                                                             type="button"
                                                                             onClick={() => field.onChange("onsite")}
                                                                             className={`h-14 rounded-xl border transition-all duration-300 flex items-center justify-center gap-3 text-sm font-bold ${field.value === "onsite"
-                                                                                ? "bg-zinc-900 border-zinc-900 text-white shadow-lg"
-                                                                                : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-white hover:border-gray-300"
+                                                                                ? "bg-foreground border-foreground text-background shadow-lg"
+                                                                                : "bg-muted border-border text-muted-foreground hover:text-foreground hover:bg-card hover:border-border"
                                                                                 }`}
                                                                         >
                                                                             <MapPin className="w-5 h-5" />
@@ -611,8 +611,8 @@ export default function SeminarBookingForm() {
                                                                             type="button"
                                                                             onClick={() => field.onChange("online")}
                                                                             className={`h-14 rounded-xl border transition-all duration-300 flex items-center justify-center gap-3 text-sm font-bold ${field.value === "online"
-                                                                                ? "bg-zinc-900 border-zinc-900 text-white shadow-lg"
-                                                                                : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-white hover:border-gray-300"
+                                                                                ? "bg-foreground border-foreground text-background shadow-lg"
+                                                                                : "bg-muted border-border text-muted-foreground hover:text-foreground hover:bg-card hover:border-border"
                                                                                 }`}
                                                                         >
                                                                             <Monitor className="w-5 h-5" />
@@ -626,19 +626,19 @@ export default function SeminarBookingForm() {
                                                         <div className="grid md:grid-cols-2 gap-6 items-start">
                                                             {locationType === "onsite" && (
                                                                 <div className="space-y-2 animate-in slide-in-from-left-4 duration-300">
-                                                                    <Label htmlFor="venueAddress" className="text-sm font-bold text-gray-700 ml-1">Venue Address / Details *</Label>
+                                                                    <Label htmlFor="venueAddress" className="text-sm font-bold text-foreground/80 ml-1">Venue Address / Details *</Label>
                                                                     <Input
                                                                         id="venueAddress"
                                                                         placeholder="Enter venue details"
                                                                         {...register("venueAddress")}
-                                                                        className={`h-14 px-5 rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-200 ${errors.venueAddress ? "border-red-500 bg-red-50" : ""}`}
+                                                                        className={`h-14 px-5 rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-200 ${errors.venueAddress ? "border-red-500 bg-red-50" : ""}`}
                                                                     />
                                                                     {errors.venueAddress && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.venueAddress.message}</p>}
                                                                 </div>
                                                             )}
 
                                                             <div className={`space-y-2 ${locationType !== "onsite" ? "md:col-span-2" : ""}`}>
-                                                                <Label htmlFor="date" className="text-sm font-bold text-gray-700 ml-1">Preferred Date *</Label>
+                                                                <Label htmlFor="date" className="text-sm font-bold text-foreground/80 ml-1">Preferred Date *</Label>
                                                                 <Controller
                                                                     name="date"
                                                                     control={control}
@@ -650,7 +650,7 @@ export default function SeminarBookingForm() {
                                                                                 field.onChange(date?.toISOString());
                                                                                 setPreferredDate(date);
                                                                             }}
-                                                                            className="bg-gray-50 border-gray-200 text-gray-900 h-14 rounded-xl"
+                                                                            className="bg-muted border-border text-foreground h-14 rounded-xl"
                                                                         />
                                                                     )}
                                                                 />
@@ -670,32 +670,32 @@ export default function SeminarBookingForm() {
                                                         className="space-y-6 flex flex-col"
                                                     >
                                                         <div className="space-y-2">
-                                                            <h3 className="text-xl font-bold text-gray-900">Final Details</h3>
-                                                            <p className="text-sm text-gray-500">Anything else we should know?</p>
+                                                            <h3 className="text-xl font-bold text-foreground">Final Details</h3>
+                                                            <p className="text-sm text-muted-foreground">Anything else we should know?</p>
                                                         </div>
 
                                                         <div className="space-y-6">
                                                             <div className="space-y-2">
-                                                                <Label htmlFor="message" className="text-sm font-bold text-gray-700 ml-1">Additional Requirements</Label>
+                                                                <Label htmlFor="message" className="text-sm font-bold text-foreground/80 ml-1">Additional Requirements</Label>
                                                                 <Textarea
                                                                     id="message"
                                                                     placeholder="Enter any specific requests or technical requirements..."
-                                                                    className={`min-h-[120px] rounded-xl bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 focus:bg-white transition-all duration-300 resize-none p-5 text-gray-900 ${errors.message ? "border-red-500 bg-red-50" : ""}`}
+                                                                    className={`min-h-[120px] rounded-xl bg-muted border-border text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring focus:bg-card transition-all duration-300 resize-none p-5 ${errors.message ? "border-red-500 bg-red-50" : ""}`}
                                                                     {...register("message")}
                                                                 />
                                                                 {errors.message && <p className="text-xs text-red-500 mt-1 ml-1 font-bold">{errors.message.message}</p>}
                                                             </div>
 
-                                                            <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-gray-100">
+                                                            <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-border">
                                                                 <label className="flex items-start gap-3 cursor-pointer group">
                                                                     <input
                                                                         type="checkbox"
                                                                         {...register("privacyPolicy")}
-                                                                        className="w-4 h-4 mt-0.5 rounded border-gray-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer accent-zinc-900"
+                                                                        className="w-4 h-4 mt-0.5 rounded border-border text-foreground focus:ring-ring cursor-pointer accent-foreground"
                                                                     />
                                                                     <div className="space-y-1">
-                                                                        <span className="text-xs text-gray-500 leading-tight block group-hover:text-gray-800 transition-colors">
-                                                                            I agree to the <a href="/privacy-policy" className="text-zinc-900 font-bold hover:underline underline-offset-4">Privacy Framework</a> and consent to data processing. *
+                                                                        <span className="text-xs text-muted-foreground leading-tight block group-hover:text-foreground transition-colors">
+                                                                            I agree to the <a href="/privacy-policy" className="text-foreground font-bold hover:underline underline-offset-4">Privacy Framework</a> and consent to data processing. *
                                                                         </span>
                                                                         {errors.privacyPolicy && <span className="text-xs text-red-500 font-bold block">{errors.privacyPolicy.message}</span>}
                                                                     </div>
@@ -705,22 +705,22 @@ export default function SeminarBookingForm() {
                                                                     <input
                                                                         type="checkbox"
                                                                         {...register("marketingConsent")}
-                                                                        className="w-4 h-4 mt-0.5 rounded border-gray-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer accent-zinc-900"
+                                                                        className="w-4 h-4 mt-0.5 rounded border-border text-foreground focus:ring-ring cursor-pointer accent-foreground"
                                                                     />
-                                                                    <span className="text-xs text-gray-500 leading-tight block group-hover:text-gray-800 transition-colors">
-                                                                        Notify me about future <span className="text-gray-900 font-bold">Training Sessions</span> and events.
+                                                                    <span className="text-xs text-muted-foreground leading-tight block group-hover:text-foreground transition-colors">
+                                                                        Notify me about future <span className="text-foreground font-bold">Training Sessions</span> and events.
                                                                     </span>
                                                                 </label>
                                                             </div>
                                                         </div>
                                                         <div className="pt-4">
-                                                            <div className="rounded-2xl bg-zinc-50 border border-zinc-100 p-5 flex gap-4 items-start shadow-sm border-dashed">
-                                                                <div className="w-10 h-10 rounded-xl bg-white border border-zinc-100 flex items-center justify-center shrink-0 shadow-sm">
-                                                                    <Shield className="w-5 h-5 text-zinc-400" />
+                                                            <div className="rounded-2xl bg-muted border border-border p-5 flex gap-4 items-start shadow-sm border-dashed">
+                                                                <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center shrink-0 shadow-sm">
+                                                                    <Shield className="w-5 h-5 text-muted-foreground" />
                                                                 </div>
                                                                 <div className="space-y-1">
-                                                                    <p className="text-[11px] font-bold text-zinc-900 uppercase tracking-wider">Secure Processing</p>
-                                                                    <p className="text-xs text-zinc-500 leading-relaxed max-w-sm">Once submitted, your request is routed to our technical leads for a feasibility review within 24 hours.</p>
+                                                                    <p className="text-[11px] font-bold text-foreground uppercase tracking-wider">Secure Processing</p>
+                                                                    <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">Once submitted, your request is routed to our technical leads for a feasibility review within 24 hours.</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -732,13 +732,13 @@ export default function SeminarBookingForm() {
                                         </div>
 
                                         {/* Form Footer / Navigation Actions */}
-                                        <div className="pt-6 mt-auto flex items-center justify-between border-t border-gray-100">
+                                        <div className="pt-6 mt-auto flex items-center justify-between border-t border-border">
                                             <div className="w-24">
                                                 {currentStep > 0 && (
                                                     <button
                                                         type="button"
                                                         onClick={prevStep}
-                                                        className="text-sm font-bold text-gray-400 hover:text-gray-900 transition-colors flex items-center gap-2 px-2 py-2"
+                                                        className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 px-2 py-2"
                                                     >
                                                         <ArrowLeft className="w-4 h-4" />
                                                         Back
@@ -751,7 +751,7 @@ export default function SeminarBookingForm() {
                                                     <button
                                                         type="button"
                                                         onClick={nextStep}
-                                                        className="w-full h-12 rounded-xl bg-zinc-900 text-white font-bold text-sm hover:bg-zinc-800 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95"
+                                                        className="w-full h-12 rounded-xl bg-foreground text-background font-bold text-sm hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-95"
                                                     >
                                                         Next Step
                                                         <ArrowRight className="w-4 h-4" />
