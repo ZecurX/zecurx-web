@@ -4,6 +4,11 @@ import { requirePermission } from '@/lib/auth';
 import { Seminar, SeminarRegistration } from '@/types/seminar';
 import { sendStudentCertificateAlert } from '@/lib/certificate';
 
+export const config = {
+    maxDuration: 60,
+};
+
+const BATCH_SIZE = 5;
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -56,42 +61,63 @@ export async function POST(
             );
         }
 
-        const emailPromises = registrations.map(async (reg) => {
-            const sent = await sendStudentCertificateAlert({
-                studentName: reg.full_name,
-                studentEmail: reg.email,
-                seminarTitle: seminar.title,
-                seminarId: seminarId,
-                certificatePageUrl,
-            });
-            return sent;
-        });
+        // Send emails in batches to avoid rate limits and timeouts
+        const results: { email: string; success: boolean; error?: string }[] = [];
 
-        const results = await Promise.all(emailPromises);
-        const studentsSent = results.filter(Boolean).length;
-        const studentsFailed = results.filter(r => !r).length;
+        for (let i = 0; i < registrations.length; i += BATCH_SIZE) {
+            const batch = registrations.slice(i, i + BATCH_SIZE);
+            const batchResults = await Promise.all(
+                batch.map(async (reg) => {
+                    const result = await sendStudentCertificateAlert({
+                        studentName: reg.full_name,
+                        studentEmail: reg.email,
+                        seminarTitle: seminar.title,
+                        seminarId: seminarId,
+                        certificatePageUrl,
+                    });
+                    return { email: reg.email, ...result };
+                })
+            );
+            results.push(...batchResults);
+        }
 
-        if (studentsSent === 0) {
-            return NextResponse.json(
-                { error: 'Failed to send emails to students' },
+        const sent = results.filter(r => r.success).length;
+        const failed = results.filter(r => !r.success);
+
+        if (sent === 0) {
+            // All emails failed — surface the first error for diagnosis
+            const firstError = failed[0]?.error || 'Unknown error';
+        return NextResponse.json({
+                    error: `Failed to send emails to students: ${firstError}`,
+                    details: {
+                        sent: 0,
+                        failed: failed.length,
+                        totalRegistrations: registrations.length,
+                        sampleErrors: failed.slice(0, 3).map(f => ({ email: f.email, error: f.error })),
+                    },
+                },
                 { status: 500 }
             );
         }
 
         return NextResponse.json({
             success: true,
-            message: `Certificate alert sent to ${studentsSent}/${registrations.length} participant(s).${studentsFailed > 0 ? ` ${studentsFailed} failed.` : ''}`,
+            message: `Certificate alert sent to ${sent}/${registrations.length} participant(s).${failed.length > 0 ? ` ${failed.length} failed.` : ''}`,
             details: {
-                studentsSent,
-                studentsFailed,
+                studentsSent: sent,
+                studentsFailed: failed.length,
                 totalRegistrations: registrations.length,
+                ...(failed.length > 0 && {
+                    failedEmails: failed.slice(0, 5).map(f => ({ email: f.email, error: f.error })),
+                }),
             },
         });
 
     } catch (error) {
-        console.error('Failed to notify students:', error);
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Failed to notify students:', message);
         return NextResponse.json(
-            { error: 'Failed to send student alerts' },
+            { error: `Failed to send student alerts: ${message}` },
             { status: 500 }
         );
     }

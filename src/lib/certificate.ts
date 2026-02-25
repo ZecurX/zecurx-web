@@ -504,7 +504,7 @@ export async function sendCoordinatorCertificateAlert(params: {
     seminarTitle: string;
     seminarId: string;
     certificatePageUrl: string;
-}): Promise<boolean> {
+}): Promise<{ success: boolean; error?: string }> {
 
 
     const bodyContent = `
@@ -554,20 +554,20 @@ export async function sendCoordinatorCertificateAlert(params: {
             subject: `Certificates Ready: ${params.seminarTitle} - ZecurX`,
             html,
         });
-        return true;
+        return { success: true };
     } catch (error) {
-        console.error('Failed to send coordinator certificate alert:', error);
-        return false;
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Failed to send coordinator certificate alert:', message);
+        return { success: false, error: message };
     }
 }
-
 export async function sendStudentCertificateAlert(params: {
     studentName: string;
     studentEmail: string;
     seminarTitle: string;
     seminarId: string;
     certificatePageUrl: string;
-}): Promise<boolean> {
+}): Promise<{ success: boolean; error?: string }> {
 
 
     const bodyContent = `
@@ -617,9 +617,10 @@ export async function sendStudentCertificateAlert(params: {
             subject: `Your Certificate is Ready: ${params.seminarTitle} - ZecurX`,
             html,
         });
-        return true;
+        return { success: true };
     } catch (error) {
-        console.error(`Failed to send student certificate alert to ${params.studentEmail}:`, error);
-        return false;
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`Failed to send student certificate alert to ${params.studentEmail}:`, message);
+        return { success: false, error: message };
     }
 }
