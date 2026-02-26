@@ -72,31 +72,31 @@ export function EnterpriseEnquiryForm() {
 
     const inputClass = cn(
         "w-full h-14 px-5 py-3 text-sm rounded-xl font-medium",
-        "bg-gray-50 border border-gray-200",
-        "text-gray-900 placeholder:text-gray-400",
-        "focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white",
+        "bg-muted border border-border",
+        "text-foreground placeholder:text-muted-foreground",
+        "focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card",
         "transition-all duration-200"
     );
 
-    const labelClass = "block text-sm font-bold text-gray-700 mb-2 ml-1";
+    const labelClass = "block text-sm font-bold text-foreground/80 mb-2 ml-1";
 
     if (isSuccess) {
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-20 px-8 bg-white border border-gray-200 rounded-[2.5rem] shadow-xl"
+                className="text-center py-20 px-8 bg-card border border-border rounded-[2.5rem] shadow-xl"
             >
                 <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-8 shadow-sm">
                     <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Request Received</h3>
-                <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto leading-relaxed">
+                <h3 className="text-3xl font-bold text-foreground mb-4 tracking-tight">Request Received</h3>
+                <p className="text-muted-foreground font-medium mb-10 max-w-sm mx-auto leading-relaxed">
                     Thank you for reaching out. Our team will review your requirements and get back to you within 24 business hours.
                 </p>
                 <button
                     onClick={() => setIsSuccess(false)}
-                    className="h-14 px-8 text-sm font-bold rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="h-14 px-8 text-sm font-bold rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                     Back to Form
                 </button>
@@ -105,7 +105,7 @@ export function EnterpriseEnquiryForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-card border border-border rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
             {error && (
                 <div className="p-4 rounded-lg bg-red-50 text-red-600 border border-red-100 text-sm font-bold">
                     {error}
@@ -115,8 +115,8 @@ export function EnterpriseEnquiryForm() {
             {/* Contact Information */}
             <div className="space-y-8">
                 <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Contact Information</h4>
+                    <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Contact Information</h4>
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -142,8 +142,8 @@ export function EnterpriseEnquiryForm() {
             {/* Company Information */}
             <div className="space-y-8">
                 <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Company Profile</h4>
+                    <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Company Profile</h4>
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -157,16 +157,16 @@ export function EnterpriseEnquiryForm() {
                     </div>
                     <div>
                         <label htmlFor="industry" className={labelClass}>Industry *</label>
-                        <select id="industry" name="industry" value={formData.industry} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
-                            <option value="" className="text-gray-500">Select industry</option>
-                            {INDUSTRIES.map(industry => (<option key={industry} value={industry} className="text-gray-900">{industry}</option>))}
+                        <select id="industry" name="industry" value={formData.industry} onChange={handleChange} required className={cn(inputClass, "appearance-none")}>
+                            <option value="" className="text-muted-foreground">Select industry</option>
+                            {INDUSTRIES.map(industry => (<option key={industry} value={industry} className="text-foreground">{industry}</option>))}
                         </select>
                     </div>
                     <div>
                         <label htmlFor="company_size" className={labelClass}>Company Size *</label>
-                        <select id="company_size" name="company_size" value={formData.company_size} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
-                            <option value="" className="text-gray-500">Select size</option>
-                            {COMPANY_SIZES.map(size => (<option key={size} value={size} className="text-gray-900">{size} employees</option>))}
+                        <select id="company_size" name="company_size" value={formData.company_size} onChange={handleChange} required className={cn(inputClass, "appearance-none")}>
+                            <option value="" className="text-muted-foreground">Select size</option>
+                            {COMPANY_SIZES.map(size => (<option key={size} value={size} className="text-foreground">{size} employees</option>))}
                         </select>
                     </div>
                 </div>
@@ -175,23 +175,23 @@ export function EnterpriseEnquiryForm() {
             {/* Service Requirements */}
             <div className="space-y-8">
                 <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Service Requirements</h4>
+                    <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Service Requirements</h4>
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">
                     <div>
                         <label htmlFor="service_type" className={labelClass}>Service Type *</label>
-                        <select id="service_type" name="service_type" value={formData.service_type} onChange={handleChange} required className={cn(inputClass, "appearance-none bg-grey-50")}>
-                            <option value="" className="text-gray-500">Select service</option>
-                            {SERVICE_TYPES.map(type => (<option key={type} value={type} className="text-gray-900">{type}</option>))}
+                        <select id="service_type" name="service_type" value={formData.service_type} onChange={handleChange} required className={cn(inputClass, "appearance-none")}>
+                            <option value="" className="text-muted-foreground">Select service</option>
+                            {SERVICE_TYPES.map(type => (<option key={type} value={type} className="text-foreground">{type}</option>))}
                         </select>
                     </div>
                     <div>
                         <label htmlFor="budget_range" className={labelClass}>Budget Range</label>
-                        <select id="budget_range" name="budget_range" value={formData.budget_range} onChange={handleChange} className={cn(inputClass, "appearance-none bg-grey-50")}>
-                            <option value="" className="text-gray-500">Select budget</option>
-                            {BUDGET_RANGES.map(range => (<option key={range} value={range} className="text-gray-900">{range}</option>))}
+                        <select id="budget_range" name="budget_range" value={formData.budget_range} onChange={handleChange} className={cn(inputClass, "appearance-none")}>
+                            <option value="" className="text-muted-foreground">Select budget</option>
+                            {BUDGET_RANGES.map(range => (<option key={range} value={range} className="text-foreground">{range}</option>))}
                         </select>
                     </div>
                     <div className="sm:col-span-2">
@@ -201,8 +201,8 @@ export function EnterpriseEnquiryForm() {
                                 <label key={level} className={cn(
                                     "h-12 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center cursor-pointer transition-all duration-300 border",
                                     formData.urgency === level
-                                        ? "bg-zinc-900 border-zinc-900 text-white shadow-lg"
-                                        : "bg-gray-50 border-gray-200 text-gray-500 hover:text-gray-900 hover:bg-white hover:border-gray-300"
+                                        ? "bg-foreground border-foreground text-background shadow-lg"
+                                        : "bg-muted border-border text-muted-foreground hover:text-foreground hover:bg-card hover:border-border"
                                 )}>
                                     <input type="radio" name="urgency" value={level} checked={formData.urgency === level} onChange={handleChange} className="sr-only" />
                                     {level}
@@ -220,8 +220,8 @@ export function EnterpriseEnquiryForm() {
 
             <button type="submit" disabled={isSubmitting} className={cn(
                 "w-full h-14 text-sm font-bold rounded-xl",
-                "bg-zinc-900 text-white",
-                "hover:bg-zinc-800 active:scale-[0.98]",
+                "bg-foreground text-background",
+                "hover:bg-foreground/90 active:scale-[0.98]",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 "transition-all duration-300",
                 "flex items-center justify-center gap-3",
@@ -234,8 +234,8 @@ export function EnterpriseEnquiryForm() {
                 )}
             </button>
 
-            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
-                <Shield className="w-3 h-3 text-gray-400" />
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <Shield className="w-3 h-3 text-muted-foreground" />
                 <span>Your details are protected by enterprise-grade security</span>
             </div>
         </form>

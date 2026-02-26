@@ -66,7 +66,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200"
+                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
 
@@ -90,7 +90,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200"
+                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
 
@@ -113,7 +113,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col lg:flex-row md:col-span-2 dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200 min-h-[250px] md:min-h-[300px]"
+                        className="group relative flex flex-col lg:flex-row md:col-span-2 bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border min-h-[250px] md:min-h-[300px]"
                     >
                         {/* Gradient overlay for text readability over entire image */}
                         <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/95 via-black/70 lg:via-black/80 to-transparent lg:to-black/30 z-10 pointer-events-none" />

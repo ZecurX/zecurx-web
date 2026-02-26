@@ -545,16 +545,16 @@ export default function FeedbackPage() {
                                                             className={cn(
                                                                 "flex items-center space-x-3 p-3 rounded-lg border transition-all duration-300 cursor-pointer group",
                                                                 step2Form.watch("careerInterest") === interest
-                                                                    ? "bg-zinc-900 border-zinc-900 shadow-md ring-1 ring-zinc-900"
+                                                                    ? "bg-foreground border-foreground shadow-md ring-1 ring-foreground"
                                                                     : "bg-background border-border hover:bg-muted hover:border-border"
                                                             )}
                                                         >
-                                                            <RadioGroupItem value={interest} id={interest} className="border-gray-300 text-white data-[state=checked]:border-white data-[state=checked]:text-white scale-75" />
+                                                            <RadioGroupItem value={interest} id={interest} className="border-muted-foreground text-background data-[state=checked]:border-background data-[state=checked]:text-background scale-75" />
                                                             <Label
                                                                 htmlFor={interest}
                                                                 className={cn(
                                                                     "cursor-pointer flex-1 font-bold select-none transition-colors text-sm",
-                                                                    step2Form.watch("careerInterest") === interest ? "text-white" : "text-foreground group-hover:text-foreground"
+                                                                    step2Form.watch("careerInterest") === interest ? "text-background" : "text-foreground group-hover:text-foreground"
                                                                 )}
                                                             >
                                                                 {interest}
@@ -702,20 +702,20 @@ export default function FeedbackPage() {
                                                         className={cn(
                                                             "flex items-start space-x-4 p-5 rounded-xl border cursor-pointer transition-all duration-300",
                                                             field.value
-                                                                    ? "bg-zinc-900 border-zinc-900 shadow-md"
+                                                                    ? "bg-foreground border-foreground shadow-md"
                                                                     : "bg-background border-border hover:bg-muted hover:border-border"
                                                         )}
                                                     >
                                                         <Checkbox
                                                             checked={field.value}
                                                             onCheckedChange={field.onChange}
-                                                            className="mt-1 border-gray-300 data-[state=checked]:bg-white data-[state=checked]:text-zinc-900"
+                                                            className="mt-1 border-muted-foreground data-[state=checked]:bg-background data-[state=checked]:text-foreground"
                                                         />
                                                         <div className="space-y-1">
-                                                            <span className={cn("cursor-pointer font-bold text-xs block", field.value ? "text-white" : "text-foreground")}>
+                                                            <span className={cn("cursor-pointer font-bold text-xs block", field.value ? "text-background" : "text-foreground")}>
                                                                 Join the ZecurX Community
                                                             </span>
-                                                            <p className={cn("text-[10px]", field.value ? "text-gray-400" : "text-muted-foreground")}>
+                                                            <p className={cn("text-[10px]", field.value ? "text-muted-foreground" : "text-muted-foreground")}>
                                                                 Receive updates on workshops, career opportunities, and advanced modules.
                                                             </p>
                                                         </div>

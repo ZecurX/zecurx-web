@@ -59,6 +59,8 @@ export async function POST(
             [seminarId, email]
         );
 
+        let isNewRegistration = false;
+
         if (existingReg.rows.length > 0) {
             const reg = existingReg.rows[0];
             if (reg.email_verified) {
@@ -75,6 +77,7 @@ export async function POST(
                 [fullName, phone || null, collegeName || null, year || null, cityState || null, reg.id]
             );
         } else {
+            isNewRegistration = true;
             await query(
                 `INSERT INTO seminar.registrations 
                   (seminar_id, full_name, email, phone, college_name, year, city_state)
@@ -85,16 +88,26 @@ export async function POST(
 
         const otp = await createOtp(email, 'registration', seminarId);
 
-        const emailSent = await sendOtpEmail(
+        const { sent, error: emailError } = await sendOtpEmail(
             email,
             otp,
             'registration',
             seminar.title
         );
 
-        if (!emailSent) {
+        if (!sent) {
+            // If this was a brand-new registration, remove the orphan row
+            // so it doesn't sit unverified forever
+            if (isNewRegistration) {
+                await query(
+                    `DELETE FROM seminar.registrations 
+                     WHERE seminar_id = $1 AND email = $2 AND email_verified = false`,
+                    [seminarId, email]
+                );
+            }
+            console.error(`OTP email failed for ${email} at seminar ${seminarId}:`, emailError);
             return NextResponse.json(
-                { error: 'Failed to send verification email. Please try again.' },
+                { error: 'Failed to send verification email. Please try again later.' },
                 { status: 500 }
             );
         }
