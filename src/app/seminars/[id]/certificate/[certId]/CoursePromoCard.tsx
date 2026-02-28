@@ -2,6 +2,7 @@ import { ArrowRight, ShieldCheck, Terminal, Award, Cpu } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { CDN_ASSETS } from "@/lib/cdn";
 
 interface PromoContent {
     id: string;
@@ -23,7 +24,7 @@ const PROMOS: PromoContent[] = [
         ctaLink: "/academy",
         ctaText: "View Curriculum",
         Icon: Award,
-        imagePath: "/images/courses/cppt.png",
+        imagePath: CDN_ASSETS.courses.cppt,
     },
     {
         id: "cpeh",
@@ -33,7 +34,7 @@ const PROMOS: PromoContent[] = [
         ctaLink: "/academy",
         ctaText: "Start Learning",
         Icon: Terminal,
-        imagePath: "/images/courses/cpeh.png",
+        imagePath: CDN_ASSETS.courses.cpeh,
     },
     {
         id: "gaip",
@@ -43,7 +44,7 @@ const PROMOS: PromoContent[] = [
         ctaLink: "/academy",
         ctaText: "Explore Course",
         Icon: Cpu,
-        imagePath: "/images/courses/gaip.png",
+        imagePath: CDN_ASSETS.courses.gaip,
     },
     {
         id: "bundle-ai",
@@ -53,7 +54,7 @@ const PROMOS: PromoContent[] = [
         ctaLink: "/academy",
         ctaText: "View Bundle",
         Icon: ShieldCheck,
-        imagePath: "/images/courses/bundle-ai.png",
+        imagePath: CDN_ASSETS.courses["bundle-ai"],
     }
 ];
 

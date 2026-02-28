@@ -77,15 +77,7 @@ export default function HeroSection() {
                 />
             </div>
 
-            {/* Subtle grid */}
-            <div
-                className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                style={{
-                    backgroundSize: "80px 80px",
-                    backgroundImage:
-                        "linear-gradient(to right, rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,1) 1px, transparent 1px)",
-                }}
-            />
+
 
             {/* Main Content */}
             <motion.div

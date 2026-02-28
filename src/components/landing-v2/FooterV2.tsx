@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CDN_ASSETS } from "@/lib/cdn";
 
 export default function FooterV2() {
     return (
@@ -18,7 +19,7 @@ export default function FooterV2() {
                         >
                             <div className="relative w-8 h-8 transition-transform group-hover:scale-110 duration-300">
                                 <Image
-                                    src="https://zecurx-web.fsn1.your-objectstorage.com/images/zecurx-logo.png"
+                                    src={CDN_ASSETS.brand.logo}
                                     alt="ZecurX"
                                     fill
                                     className="object-contain"
