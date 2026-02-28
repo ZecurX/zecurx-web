@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { CertificateVerification } from "@/types/seminar";
+import { CDN_ASSETS } from "@/lib/cdn";
 import { ShareButton } from "./ShareButton";
 import { Button } from "@/components/ui/button";
 
@@ -90,7 +91,7 @@ export default async function CertificatePage({ params }: Props) {
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <div className="relative w-8 h-8">
-                            <Image src="/images/zecurx-logo.png" alt="ZecurX" fill className="object-contain" />
+                            <Image src={CDN_ASSETS.brand.logo} alt="ZecurX" fill className="object-contain" />
                         </div>
                         <span className="font-bold text-lg tracking-tight text-foreground">ZecurX</span>
                     </Link>
@@ -186,8 +187,9 @@ export default async function CertificatePage({ params }: Props) {
                                             <div className="w-full sm:w-auto">
                                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 text-center sm:text-left">Share Achievement</p>
                                                 <ShareButton 
-                                                    title={`Certificate - ${certificate.recipientName}`}
-                                                    text={`I've completed ${certificate.seminarTitle} with ZecurX!`}
+                                                    recipientName={certificate.recipientName}
+                                                    seminarTitle={certificate.seminarTitle}
+                                                    certificateId={certificate.certificateId}
                                                     compact
                                                     className="justify-center sm:justify-start"
                                                 />

@@ -64,8 +64,9 @@ export default function SeminarDetailPage() {
   const [registrationEnabled, setRegistrationEnabled] = useState(false);
   const [certificateEnabled, setCertificateEnabled] = useState(false);
 
-  // Alert coordinator state
+  // Alert state
   const [alertingCoordinator, setAlertingCoordinator] = useState(false);
+  const [alertingStudents, setAlertingStudents] = useState(false);
 
   // Notify all participants state
   const [showNotifyDialog, setShowNotifyDialog] = useState(false);
@@ -244,8 +245,7 @@ export default function SeminarDetailPage() {
   };
 
   const handleAlertCoordinator = async () => {
-    if (!confirm(`Send certificate release alert to coordinator (${seminar?.contact_person}) and all registered students?`)) return;
-
+    if (!confirm(`Send certificate release alert to the coordinator (${seminar?.contact_person})?`)) return;
     setAlertingCoordinator(true);
     try {
       const res = await fetch(`/api/admin/seminars/${seminarId}/notify-coordinator`, {
@@ -264,6 +264,30 @@ export default function SeminarDetailPage() {
       alert('An error occurred');
     } finally {
       setAlertingCoordinator(false);
+    }
+  };
+
+  const handleAlertStudents = async () => {
+    if (!confirm('Send certificate release alert to all registered participants?')) return;
+
+    setAlertingStudents(true);
+    try {
+      const res = await fetch(`/api/admin/seminars/${seminarId}/notify-students`, {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message);
+      } else {
+        alert(data.error || 'Failed to send alert');
+      }
+    } catch (error) {
+      console.error('Error alerting students:', error);
+      alert('An error occurred');
+    } finally {
+      setAlertingStudents(false);
     }
   };
 
@@ -785,25 +809,47 @@ export default function SeminarDetailPage() {
                     )}
                   </Button>
 
-                  {certificateEnabled && seminar.contact_email && (
-                    <Button
-                      onClick={handleAlertCoordinator}
-                      disabled={alertingCoordinator}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      {alertingCoordinator ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Alert Students & Coordinator
-                        </>
+                  {certificateEnabled && (
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleAlertStudents}
+                        disabled={alertingStudents}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        {alertingStudents ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Users className="w-4 h-4 mr-2" />
+                            Alert Participants
+                          </>
+                        )}
+                      </Button>
+                      {seminar.contact_email && (
+                        <Button
+                          onClick={handleAlertCoordinator}
+                          disabled={alertingCoordinator}
+                          variant="outline"
+                          className="flex-1"
+                        >
+                          {alertingCoordinator ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-2" />
+                              Alert Coordinator
+                            </>
+                          )}
+                        </Button>
                       )}
-                    </Button>
+                    </div>
                   )}
 
                   <div className="pt-3 mt-3 border-t border-border">
