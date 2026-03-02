@@ -1,0 +1,244 @@
+
+> zx-web@0.1.0 build
+> next build
+
+   ??? Next.js 15.5.9
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ??? Compiled successfully in 18.3s
+   Linting and checking validity of types ...
+
+./src/app/services/page.tsx
+6:61  Warning: 'Zap' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:66  Warning: 'Clock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/components/industries.tsx
+87:30  Warning: 'index' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/components/solutions.tsx
+279:10  Warning: 'ActiveCaption' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/components/ui/landing-button.tsx
+38:34  Warning: 'asChild' is assigned a value but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+node.exe : API key does not start with "SG.".
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Users\achum\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (A 
+   PI key does not start with "SG.".:String)   
+  [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandErr 
+   or
+ 
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+API key does not start with "SG.".
+   Generating static pages (0/119) ...
+API key does not start with "SG.".
+API key does not start with "SG.".
+   Generating static pages (29/119) 
+   Generating static pages (59/119) 
+   Generating static pages (89/119) 
+ ??? Generating static pages (119/119)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                        Size  First Load JS  Revalidate  Expire
+??? ??? /                                                           7.51 kB         189 kB
+??? ??? /_not-found                                                   383 B         103 kB
+??? ?? /academy                                                    6.03 kB         189 kB
+??? ?? /admin                                                        383 B         103 kB
+??? ?? /admin/audit                                                5.83 kB         158 kB
+??? ?? /admin/blog                                                 5.42 kB         116 kB
+??? ?? /admin/blog/[id]/edit                                       5.17 kB         128 kB
+??? ?? /admin/blog/new                                             7.57 kB         172 kB
+??? ?? /admin/customers                                            4.67 kB         115 kB
+??? ??? /admin/gate                                                 3.07 kB         126 kB
+??? ?? /admin/leads/enterprise                                     5.82 kB         120 kB
+??? ?? /admin/leads/enterprise/[id]                                3.09 kB         122 kB
+??? ?? /admin/leads/student                                        5.92 kB         120 kB
+??? ?? /admin/leads/student/[id]                                   2.79 kB         121 kB
+??? ??? /admin/login                                                3.27 kB         127 kB
+??? ?? /admin/partner-referrals                                    8.55 kB         196 kB
+??? ?? /admin/plans                                                   6 kB         173 kB
+??? ?? /admin/products                                             6.48 kB         199 kB
+??? ?? /admin/referral-codes                                       7.99 kB         195 kB
+??? ?? /admin/sales                                                  383 B         103 kB
+??? ?? /admin/seminars                                              5.1 kB         119 kB
+??? ?? /admin/seminars/[id]                                        14.5 kB         161 kB
+??? ?? /admin/system-test                                           4.9 kB         110 kB
+??? ?? /admin/system-test/promo-links                              4.51 kB         110 kB
+??? ?? /admin/users                                                7.42 kB         160 kB
+??? ?? /admin/whitepapers                                          5.56 kB         116 kB
+??? ?? /admin/whitepapers/[id]/edit                                4.49 kB         166 kB
+??? ?? /admin/whitepapers/new                                      4.54 kB         166 kB
+??? ?? /api/academy/courses                                          383 B         103 kB
+??? ?? /api/admin/audit                                              383 B         103 kB
+??? ?? /api/admin/auth                                               383 B         103 kB
+??? ?? /api/admin/auth/verify                                        383 B         103 kB
+??? ?? /api/admin/blog                                               383 B         103 kB
+??? ?? /api/admin/blog/[id]                                          383 B         103 kB
+??? ?? /api/admin/blog/[id]/publish                                  383 B         103 kB
+??? ?? /api/admin/blog/labels                                        383 B         103 kB
+??? ?? /api/admin/blog/labels/[id]                                   383 B         103 kB
+??? ?? /api/admin/blog/upload                                        383 B         103 kB
+??? ?? /api/admin/clear-test-user                                    383 B         103 kB
+??? ?? /api/admin/export                                             383 B         103 kB
+??? ?? /api/admin/list-admins                                        383 B         103 kB
+??? ?? /api/admin/logout                                             383 B         103 kB
+??? ?? /api/admin/partner-referrals                                  383 B         103 kB
+??? ?? /api/admin/partner-referrals/[id]                             383 B         103 kB
+??? ?? /api/admin/partner-referrals/[id]/payouts                     383 B         103 kB
+??? ?? /api/admin/partner-referrals/[id]/usages                      383 B         103 kB
+??? ?? /api/admin/plans                                              383 B         103 kB
+??? ?? /api/admin/plans/[id]                                         383 B         103 kB
+??? ?? /api/admin/plans/upload                                       383 B         103 kB
+??? ?? /api/admin/products                                           383 B         103 kB
+??? ?? /api/admin/products/[id]                                      383 B         103 kB
+??? ?? /api/admin/promo-links                                        383 B         103 kB
+??? ?? /api/admin/promo-links/[id]                                   383 B         103 kB
+??? ?? /api/admin/referral-codes                                     383 B         103 kB
+??? ?? /api/admin/referral-codes/[id]                                383 B         103 kB
+??? ?? /api/admin/referral-codes/bulk                                383 B         103 kB
+??? ?? /api/admin/seminars                                           383 B         103 kB
+??? ?? /api/admin/seminars/[id]                                      383 B         103 kB
+??? ?? /api/admin/seminars/[id]/approve                              383 B         103 kB
+??? ?? /api/admin/seminars/[id]/feedback                             383 B         103 kB
+??? ?? /api/admin/seminars/[id]/name-requests                        383 B         103 kB
+??? ?? /api/admin/seminars/[id]/name-requests/[requestId]/approve    383 B         103 kB
+??? ?? /api/admin/seminars/[id]/name-requests/[requestId]/reject     383 B         103 kB
+??? ?? /api/admin/seminars/[id]/notify                               383 B         103 kB
+??? ?? /api/admin/seminars/[id]/notify-coordinator                   383 B         103 kB
+??? ?? /api/admin/seminars/[id]/notify-students                      383 B         103 kB
+??? ?? /api/admin/seminars/[id]/registrations                        383 B         103 kB
+??? ?? /api/admin/seminars/[id]/reject                               383 B         103 kB
+??? ?? /api/admin/seminars/cleanup                                   383 B         103 kB
+??? ?? /api/admin/settings                                           383 B         103 kB
+??? ?? /api/admin/setup/media-user                                   383 B         103 kB
+??? ?? /api/admin/test-emails                                        383 B         103 kB
+??? ?? /api/admin/test/database                                      383 B         103 kB
+??? ?? /api/admin/test/email                                         383 B         103 kB
+??? ?? /api/admin/test/invoice                                       383 B         103 kB
+??? ?? /api/admin/test/random-emails                                 383 B         103 kB
+??? ?? /api/admin/test/razorpay                                      383 B         103 kB
+??? ?? /api/admin/test/storage                                       383 B         103 kB
+??? ?? /api/admin/test/webhook                                       383 B         103 kB
+??? ?? /api/admin/upload                                             383 B         103 kB
+??? ?? /api/admin/upload/presigned                                   383 B         103 kB
+??? ?? /api/admin/users                                              383 B         103 kB
+??? ?? /api/admin/users/[id]                                         383 B         103 kB
+??? ?? /api/admin/users/[id]/reset-password                          383 B         103 kB
+??? ?? /api/admin/whitepapers                                        383 B         103 kB
+??? ?? /api/admin/whitepapers/[id]                                   383 B         103 kB
+??? ?? /api/admin/whitepapers/upload                                 383 B         103 kB
+??? ?? /api/blog                                                     383 B         103 kB
+??? ?? /api/blog/[slug]                                              383 B         103 kB
+??? ?? /api/certificates/[certificateId]                             383 B         103 kB
+??? ?? /api/certificates/[certificateId]/download                    383 B         103 kB
+??? ?? /api/certificates/[certificateId]/preview                     383 B         103 kB
+??? ?? /api/check-stock                                              383 B         103 kB
+??? ?? /api/checkout/item-price                                      383 B         103 kB
+??? ?? /api/email/send                                               383 B         103 kB
+??? ?? /api/leads/enterprise                                         383 B         103 kB
+??? ?? /api/leads/enterprise/[id]                                    383 B         103 kB
+??? ?? /api/leads/enterprise/[id]/notes                              383 B         103 kB
+??? ?? /api/leads/student                                            383 B         103 kB
+??? ?? /api/leads/student/[id]                                       383 B         103 kB
+??? ?? /api/leads/student/[id]/notes                                 383 B         103 kB
+??? ?? /api/orders                                                   383 B         103 kB
+??? ?? /api/partner-referrals/validate                               383 B         103 kB
+??? ?? /api/products                                                 383 B         103 kB
+??? ?? /api/products/[id]                                            383 B         103 kB
+??? ?? /api/promo-prices/validate                                    383 B         103 kB
+??? ?? /api/razorpay/create-order                                    383 B         103 kB
+??? ?? /api/razorpay/verify-payment                                  383 B         103 kB
+??? ?? /api/razorpay/webhook                                         383 B         103 kB
+??? ?? /api/referral-codes/validate                                  383 B         103 kB
+??? ?? /api/seminars                                                 383 B         103 kB
+??? ?? /api/seminars/[id]                                            383 B         103 kB
+??? ?? /api/seminars/[id]/certificate/request                        383 B         103 kB
+??? ?? /api/seminars/[id]/certificate/verify                         383 B         103 kB
+??? ?? /api/seminars/[id]/feedback                                   383 B         103 kB
+??? ?? /api/seminars/[id]/register                                   383 B         103 kB
+??? ?? /api/seminars/[id]/register/verify                            383 B         103 kB
+??? ?? /api/seminars/book                                            383 B         103 kB
+??? ?? /api/send-email                                               383 B         103 kB
+??? ?? /api/tools                                                    383 B         103 kB
+??? ?? /api/upload                                                   383 B         103 kB
+??? ?? /api/whitepapers                                              383 B         103 kB
+??? ?? /blog                                                        4.3 kB         165 kB
+??? ?? /blog/[slug]                                                2.19 kB         113 kB
+??? ??? /book-demo                                                  3.82 kB         215 kB
+??? ??? /book-seminar                                               7.74 kB         259 kB
+??? ??? /cart                                                        3.1 kB         182 kB
+??? ??? /checkout                                                   6.71 kB         185 kB
+??? ??? /contact                                                    3.71 kB         215 kB
+??? ??? /cookie-policy                                              2.15 kB         183 kB
+??? ??? /enquiry/enterprise                                         3.62 kB         156 kB
+??? ??? /enquiry/student                                            3.29 kB         156 kB
+??? ??? /how-we-work                                                 5.2 kB         187 kB
+??? ??? /icon.png                                                       0 B            0 B
+??? ??? /industries                                                 5.75 kB         184 kB
+??? ?? /internships                                                3.49 kB         182 kB
+??? ??? /orders                                                     3.02 kB         182 kB
+??? ??? /privacy-policy                                             2.31 kB         184 kB
+??? ??? /redesign                                                   8.46 kB         180 kB
+??? ??? /resources                                                  4.07 kB         183 kB
+??? ??? /resources/blog                                              3.4 kB         182 kB
+??? ??? /resources/guides                                           2.86 kB         181 kB
+??? ??? /resources/research                                         4.53 kB         183 kB         30m      1y
+??? ??? /resources/seminars                                         8.12 kB         191 kB
+??? ??? /resources/whitepapers                                      3.77 kB         182 kB
+??? ??? /robots.txt                                                   383 B         103 kB
+??? ??? /search-test                                                1.94 kB         104 kB
+??? ?? /seminars/[id]/certificate                                  10.1 kB         166 kB
+??? ?? /seminars/[id]/certificate/[certId]                         5.17 kB         125 kB
+??? ?? /seminars/[id]/feedback                                     13.9 kB         242 kB
+??? ?? /seminars/[id]/register                                     7.54 kB         233 kB
+??? ??? /services                                                   2.31 kB         181 kB
+??? ??? /services/ai-security                                         217 B         179 kB
+??? ??? /services/application-security                                217 B         179 kB
+??? ??? /services/cloud-devsecops                                     217 B         179 kB
+??? ??? /services/cloud-security                                      217 B         179 kB
+??? ??? /services/compliance-readiness                                217 B         179 kB
+??? ??? /services/devsecops                                           217 B         179 kB
+??? ??? /services/secure-ai-development                               217 B         179 kB
+??? ??? /services/secure-code-review                                  217 B         179 kB
+??? ??? /services/secure-development                                  217 B         179 kB
+??? ??? /shop                                                       2.32 kB         186 kB
+??? ?? /shop/[productId]                                           2.76 kB         186 kB
+??? ??? /sitemap.xml                                                  383 B         103 kB
+??? ??? /terms-of-service                                           2.55 kB         184 kB
+??? ??? /tools                                                      2.73 kB         181 kB
+??? ??? /tools/directory-scanner                                    2.77 kB         181 kB
+??? ??? /tools/header-scanner                                       3.13 kB         182 kB
+??? ??? /tools/param-finder                                         2.61 kB         181 kB
+??? ??? /tools/port-radar                                           2.96 kB         182 kB
+??? ??? /tools/ssl-analyzer                                         3.21 kB         182 kB
+??? ??? /tools/subdomain-finder                                     3.07 kB         182 kB
++ First Load JS shared by all                                    102 kB
+  ??? chunks/1255-8befde0980f5cba9.js                             45.6 kB
+  ??? chunks/4bd1b696-100b9d70ed4e49c1.js                         54.2 kB
+  ??? other shared chunks (total)                                 2.27 kB
+
+
+???  (Static)   prerendered as static content
+??  (Dynamic)  server-rendered on demand
+
