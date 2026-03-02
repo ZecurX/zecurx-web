@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { LogoCarouselBasic } from "@/components/ui/logo-carousel-demo";
+
 export default function Home() {
   return (
     <main className="bg-bg-primary min-h-screen text-text-primary selection:bg-accent/30 relative font-sans">
@@ -30,6 +32,7 @@ export default function Home() {
       <Services />
       <Solutions />
       <Industries />
+      <LogoCarouselBasic />
       <WhyUs />
       <Footer />
     </main>

@@ -36,7 +36,7 @@ export function Services() {
 
     return (
         <section ref={ref} className="py-24 md:py-32 bg-background text-foreground" id="services">
-            <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -45,12 +45,12 @@ export function Services() {
                     className="mb-16 md:mb-24"
                 >
                     <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">What We Do</span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
                         Security across <span className="font-newsreader italic text-muted-foreground">every attack surface</span>
                     </h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center">
 
                     {/* Left Side: The "Perfect Image" container */}
                     <motion.div
@@ -123,7 +123,7 @@ export function Services() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                                             >
-                                                <div className="pb-8 pr-12">
+                                                <div className="pb-8 pr-4 md:pr-12">
                                                     <p className="text-lg leading-relaxed dark:text-gray-400 text-gray-600">
                                                         {svc.description}
                                                     </p>
