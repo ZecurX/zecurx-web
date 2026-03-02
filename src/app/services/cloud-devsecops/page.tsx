@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
     title: "Cloud & DevSecOps Security | ZecurX",
@@ -70,37 +71,48 @@ export default function CloudDevSecOpsPage() {
             <CreativeNavBar />
 
             <section className="relative pt-32 pb-20 px-6">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-foreground/3 blur-[150px] rounded-full pointer-events-none" />
-
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="mb-8">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Infrastructure Security
-                        </span>
-                    </div>
-
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div className="mb-8">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
+                                    Infrastructure Security
+                                </span>
+                            </div>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                        Cloud & DevSecOps Security
-                    </h1>
-
+                                Cloud & DevSecOps Security
+                            </h1>
                     <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mb-12">
-                        Most cloud breaches are caused by misconfigurations. We help you secure your cloud infrastructure and deployment pipelines.
-                    </p>
-
+                                Most cloud breaches are caused by misconfigurations. We help you secure your cloud infrastructure and deployment pipelines.
+                            </p>
                     <div className="flex flex-wrap gap-4">
-                        <Link
-                            href="/contact"
-                            className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
-                        >
-                            Get a Cloud Audit
-                        </Link>
-                        <Link
-                            href="/how-we-work"
-                            className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
-                        >
-                            How We Work
-                        </Link>
+                                <Link
+                                    href="/contact"
+                                    className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
+                                >
+                                    Get a Cloud Audit
+                                </Link>
+                                <Link
+                                    href="/how-we-work"
+                                    className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
+                                >
+                                    How We Work
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center lg:justify-end">
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_CDN_URL || 'https://zecurx-web.fsn1.your-objectstorage.com'}/images/services/cloud-devsecops.png`}
+                                alt="Cloud & DevSecOps Security illustration"
+                                width={500}
+                                height={500}
+                                className="w-full max-w-md dark:invert dark:hue-rotate-180"
+                                priority
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURba+4tjh9tjg9djf9dje9Nbd8tTa8dDV7snP68DG59rg9Nrg89rf89ne8djc8NXZ7tDU7MnN6L3D5K+3393g8d3g8dzf8Nvd79rb7dbX7NHS6cjK5ru/4quz3t/g79/f7t7e7d3c7Nva69fW6dDQ58bH5Li84aix3uHg7OHf6+Dd6t/b6dzY6NfU5s/N5cPE47W64aav3+Pf6ePe6OLc5+Da5tzW5dbR5MzK47/B47G44qOv4eXe5uTd5ePb5ODY5NvU49PP48jH47u+46225KGv5Obe4+Xc4uPa4uDX4tnS4tDM48PE5La85am05p+v5+fd4Obb4OPZ4N7V4dbQ4svJ477B5bC556Wz6J6v6ejc3eba3uLX39vT4NLN4sXG5Li+5qy36KKy6pyv6////xRKlZcAAABkdFJOUwADBQgJCQcFAgEGCxAUEw8KBQIBChMcIiEaEQkEAg8bKDAvJhkOBwMRIC84Ny0fEgkEER8tNzctIBQLBQ4ZJSwtJhwSCgUJEBgeHxsVDggEBQkNEBEQDQkGAwIEBgcICAYFAwLUWnaMAAAAAWJLR0Rkwtq4CQAAAHZJREFUCB1jYGBkYmZhZWPn4GTg4ubh5eMXEBQSZhARFROXkJSSlpFlkJNXUFRSVlFVU2fQ0NTS1tHV0zcwZDAyNjE1M7ewtLJmsLG1s3dwdHJ2cWVwc/fw9PL28fXzZwgIDAoOCQ0Lj4hkiIqOiY2LT0hMSgYAwk8TV/GBfx8AAAAASUVORK5CYII="
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

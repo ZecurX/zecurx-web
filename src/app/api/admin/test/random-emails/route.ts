@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
+import { sendEmail } from '@/lib/sendgrid';
 import { verifySessionFromRequest } from '@/lib/auth';
 import { brandedEmailTemplate } from '@/lib/email-template';
 
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         const { to = 'spsidharth29@gmail.com', type = 'all' } = body;
-        const resend = new Resend(process.env.RESEND_API_KEY);
+
         const results = [];
 
         const templates = [
@@ -78,13 +78,16 @@ export async function POST(request: NextRequest) {
 
          for (const t of templates) {
              if (type === 'all' || type === t.id) {
-                 const { data, error } = await resend.emails.send({
-                     from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
-                     to,
-                     subject: t.subject,
-                     html: brandedEmailTemplate(t.options)
-                 });
-                 results.push({ type: t.id, success: !error, id: data?.id, error });
+                 try {
+                     await sendEmail({
+                         to,
+                         subject: t.subject,
+                         html: brandedEmailTemplate(t.options),
+                     });
+                     results.push({ type: t.id, success: true, id: undefined, error: undefined });
+                 } catch (err) {
+                     results.push({ type: t.id, success: false, id: undefined, error: err instanceof Error ? err.message : 'Send failed' });
+                 }
              }
          }
 

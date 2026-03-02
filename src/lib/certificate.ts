@@ -2,7 +2,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import sharp from 'sharp';
 import { query } from '@/lib/db';
 import { Certificate, Seminar } from '@/types/seminar';
-import { Resend } from 'resend';
+import { sendEmail, toSendGridAttachment } from '@/lib/sendgrid';
 import { uploadToS3 } from '@/lib/s3';
 import { fetchFromCdn } from '@/lib/cdn';
 import { brandedEmailTemplate, emailSection, emailCourseCatalog } from '@/lib/email-template';
@@ -358,7 +358,7 @@ export async function sendCertificateEmail(
     recipientEmail: string,
     promoCode?: string | null
 ): Promise<boolean> {
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
 
     const pdfBuffer = certificate.pdfBuffer || await regenerateCertificatePDF(certificate);
 
@@ -430,16 +430,12 @@ export async function sendCertificateEmail(
      });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: recipientEmail,
             subject: `Your Certificate of Participation - ${certificate.seminar_title}`,
             html,
             attachments: [
-                {
-                    filename: `ZecurX-Certificate-${certificate.certificate_id}.pdf`,
-                    content: pdfBuffer,
-                },
+                toSendGridAttachment(pdfBuffer, `ZecurX-Certificate-${certificate.certificate_id}.pdf`),
             ],
         });
         return true;
@@ -509,7 +505,7 @@ export async function sendCoordinatorCertificateAlert(params: {
     seminarId: string;
     certificatePageUrl: string;
 }): Promise<boolean> {
-    const resend = new Resend(process.env.RESEND_API_KEY);
+
 
     const bodyContent = `
         <p style="color: #333333; font-size: 16px; margin: 0 0 20px 0;">
@@ -553,8 +549,7 @@ export async function sendCoordinatorCertificateAlert(params: {
     });
 
     try {
-        await resend.emails.send({
-            from: 'ZecurX Cybersecurity Private Limited <official@zecurx.com>',
+        await sendEmail({
             to: params.coordinatorEmail,
             subject: `Certificates Ready: ${params.seminarTitle} - ZecurX`,
             html,
@@ -562,6 +557,69 @@ export async function sendCoordinatorCertificateAlert(params: {
         return true;
     } catch (error) {
         console.error('Failed to send coordinator certificate alert:', error);
+        return false;
+    }
+}
+
+export async function sendStudentCertificateAlert(params: {
+    studentName: string;
+    studentEmail: string;
+    seminarTitle: string;
+    seminarId: string;
+    certificatePageUrl: string;
+}): Promise<boolean> {
+
+
+    const bodyContent = `
+        <p style="color: #333333; font-size: 16px; margin: 0 0 20px 0;">
+            Hi ${params.studentName},
+        </p>
+        <p style="color: #666666; font-size: 15px; line-height: 1.6; margin: 0 0 25px 0;">
+            Great news! Certificates of participation are now available for the seminar you attended. Complete the feedback form to claim yours.
+        </p>
+
+        ${emailSection(params.seminarTitle, '')}
+
+        ${emailSection(
+            'How to get your certificate:',
+            `
+            <ol style="margin: 0; padding-left: 20px; color: #555555; font-size: 14px; line-height: 1.8;">
+                <li>Click the button below to visit the certificate page</li>
+                <li>Verify your email address</li>
+                <li>Submit a quick feedback form</li>
+                <li>Your certificate will be generated and emailed to you</li>
+            </ol>
+            `
+        )}
+
+        ${emailCourseCatalog(courses)}
+    `;
+
+    const html = brandedEmailTemplate({
+        accent: 'certificate',
+        body: bodyContent,
+        previewText: `Your certificate for ${params.seminarTitle} is ready!`,
+        cta: {
+            title: 'Get Your Certificate',
+            description: 'Click below to claim your certificate of participation',
+            buttonText: 'GET CERTIFICATE',
+            buttonUrl: params.certificatePageUrl,
+        },
+        includeMarketing: true,
+        marketingType: 'student',
+        showSocials: true,
+        showAcademyPromo: false,
+    });
+
+    try {
+        await sendEmail({
+            to: params.studentEmail,
+            subject: `Your Certificate is Ready: ${params.seminarTitle} - ZecurX`,
+            html,
+        });
+        return true;
+    } catch (error) {
+        console.error(`Failed to send student certificate alert to ${params.studentEmail}:`, error);
         return false;
     }
 }

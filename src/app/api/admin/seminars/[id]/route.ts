@@ -67,7 +67,7 @@ export async function PATCH(
             'location_type', 'venue_address', 'image_url', 'brochure_url',
             'max_attendees', 'registration_enabled', 'certificate_enabled', 'status',
             'organization_name', 'contact_person', 'contact_email', 'contact_phone',
-            'additional_notes', 'rejection_reason'
+            'additional_notes', 'rejection_reason', 'blog_slug'
         ];
 
         const updates: string[] = [];

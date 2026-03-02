@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
     title: "Compliance Readiness | ZecurX",
@@ -62,37 +63,48 @@ export default function ComplianceReadinessPage() {
             <CreativeNavBar />
 
             <section className="relative pt-32 pb-20 px-6">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-                <div className="absolute bottom-0 right-0 w-[500px] h-[400px] bg-foreground/3 blur-[120px] rounded-full pointer-events-none" />
-
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="mb-8">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Supporting Service
-                        </span>
-                    </div>
-
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div className="mb-8">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
+                                    Supporting Service
+                                </span>
+                            </div>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                        Compliance Readiness
-                    </h1>
-
+                                Compliance Readiness
+                            </h1>
                     <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mb-12">
-                        Prepare for security compliance without slowing down your product development. We help you navigate frameworks with confidence.
-                    </p>
-
+                                Prepare for security compliance without slowing down your product development. We help you navigate frameworks with confidence.
+                            </p>
                     <div className="flex flex-wrap gap-4">
-                        <Link
-                            href="/contact"
-                            className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
-                        >
-                            Start Compliance Journey
-                        </Link>
-                        <Link
-                            href="/how-we-work"
-                            className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
-                        >
-                            How We Work
-                        </Link>
+                                <Link
+                                    href="/contact"
+                                    className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
+                                >
+                                    Start Compliance Journey
+                                </Link>
+                                <Link
+                                    href="/how-we-work"
+                                    className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
+                                >
+                                    How We Work
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center lg:justify-end">
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_CDN_URL || 'https://zecurx-web.fsn1.your-objectstorage.com'}/images/services/compliance-readiness.png`}
+                                alt="Compliance Readiness illustration"
+                                width={500}
+                                height={500}
+                                className="w-full max-w-md dark:invert dark:hue-rotate-180"
+                                priority
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURX+Rw32Pv32OvH+PuoWUvI2cwZekx6Ctzqez1Ky42IaYyoWWxoSVw4aWwYuawpKhx5upzaOx06q32K67246fz42dzIucyYycx5CfyJelzJ6s0aWz1qu426+83pim0pWkz5OizJOhy5Wjy5qoz6Cu1Ka02Kq43K6836Gs05+q0ZyozpqmzZqnzpyq0aCu1aSz2ai33au636yy0qmw0KWtzqKrzZ+qzp6r0aCu1aKx2aW03Ki33re40bO1z6+yzqqvzaWtzqGs0J+t1KCv2KKy26S03cG9z726zbi3zLKzzKqwzaSt0KCt056t15+v2qCx3MnBzcW+zMC7y7m3y7CyzKevzqGt0p6s1p2t2Z2u29DEzMzCy8a+yr+6yrW1y6uwzqOt0Z6s1Zys2Jyt2v///53NSWcAAABkdFJOUwECAwMEBAQDAgECBAUHCAgIBgQDBAcKDA4ODQsIBQYKDhIUFRQQDAcIDRIWGRoYFA8JCA4UGBsbGhYPCQgNEhYZGRcTDggGCg8SExMSDwoGBAcKDA0NDAkGBAIEBgcHBwYFAwKPXztGAAAAAWJLR0Rkwtq4CQAAAHZJREFUCB1jYGBkYmZhZWPn4GTg4ubh5eMXEBQSZhARFROXkJSSlpFlkJNXUFRSVlFVU2fQ0NTS1tHV0zcwZDAyNjE1M7ewtLJmsLG1s3dwdHJ2cWVwc/fw9PL28fXzZwgIDAoOCQ0Lj4hkiIqOiY2LT0hMSgYAwk8TV/GBfx8AAAAASUVORK5CYII="
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

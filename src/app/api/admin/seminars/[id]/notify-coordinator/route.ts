@@ -47,7 +47,7 @@ export async function POST(
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://zecurx.com';
         const certificatePageUrl = `${baseUrl}/seminars/${seminarId}/certificate`;
 
-        const sent = await sendCoordinatorCertificateAlert({
+        const coordinatorSent = await sendCoordinatorCertificateAlert({
             coordinatorName: seminar.contact_person || 'Coordinator',
             coordinatorEmail: seminar.contact_email,
             seminarTitle: seminar.title,
@@ -55,7 +55,7 @@ export async function POST(
             certificatePageUrl,
         });
 
-        if (!sent) {
+        if (!coordinatorSent) {
             return NextResponse.json(
                 { error: 'Failed to send email to coordinator' },
                 { status: 500 }
@@ -64,13 +64,13 @@ export async function POST(
 
         return NextResponse.json({
             success: true,
-            message: `Certificate alert sent to ${seminar.contact_person} (${seminar.contact_email})`,
+            message: `Certificate alert sent to coordinator: ${seminar.contact_person} (${seminar.contact_email}).`,
         });
 
     } catch (error) {
         console.error('Failed to notify coordinator:', error);
         return NextResponse.json(
-            { error: 'Failed to notify coordinator' },
+            { error: 'Failed to send coordinator alert' },
             { status: 500 }
         );
     }

@@ -2,14 +2,20 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
+import * as motion from "framer-motion/client";
+import { ArrowRight, Shield, Cloud, Terminal, CheckCircle2, Zap, Clock, ShieldCheck, Cpu } from "lucide-react";
+import { BreakableCard } from "@/components/ui/kinetic-shatter-box";
+import Image from "next/image";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
 export const metadata: Metadata = {
     title: "Cybersecurity Services | ZecurX",
-    description: "Security that helps you ship faster. Application security, cloud security, secure AI development, and compliance readiness for startups, SMEs, and AI teams.",
+    description: "World-class cybersecurity services to build, secure, and scale with confidence. Application security, cloud security, secure AI development, and compliance readiness.",
     keywords: ["cybersecurity services", "application security", "cloud security", "DevSecOps", "AI security", "compliance"],
     openGraph: {
         title: "Cybersecurity Services | ZecurX",
-        description: "Security that helps you ship faster. Application security, cloud security, secure AI development, and compliance readiness.",
+        description: "Practical, real-world security for startups, SMEs, and AI teams. We help you ship faster, not slower.",
         type: "website",
         url: "https://zecurx.com/services",
     },
@@ -18,34 +24,43 @@ export const metadata: Metadata = {
     },
 };
 
-const coreServices = [
+const capabilities = [
     {
         title: "Application Security",
-        tagline: "Core Security Service",
-        description: "Web, API, and source code security testing. We identify and fix real-world vulnerabilities before attackers exploit them.",
+        tagline: "Uncover real-world vulnerabilities",
+        description: "Deep-dive web, API, and source code security testing. We identify and fix complex logic flaws before they affect your users.",
+        icon: Terminal,
         href: "/services/application-security",
+        gradient: "from-blue-500/20 to-cyan-500/20",
+        image: `${CDN_URL}/services/app_sec.png`
     },
     {
-        title: "Cloud & DevSecOps Security",
-        tagline: "Infrastructure Security",
-        description: "Cloud misconfiguration and CI/CD security audits. Secure your AWS, GCP, or Azure infrastructure.",
+        title: "Cloud & DevSecOps",
+        tagline: "Secure your infrastructure",
+        description: "Continuous cloud posture management and automated CI/CD pipeline security for AWS, GCP, and Azure environments.",
+        icon: Cloud,
         href: "/services/cloud-devsecops",
+        gradient: "from-purple-500/20 to-pink-500/20",
+        image: `${CDN_URL}/services/cloud_sec.png`
     },
-];
-
-const buildServices = [
     {
-        title: "Secure AI Application Development",
-        tagline: "Build & Secure",
-        description: "Secure AI-powered MVPs and systems. LLM integration, threat modeling, and AI abuse testing.",
+        title: "Secure AI Development",
+        tagline: "Build safe intelligent systems",
+        description: "Advanced threat modeling, LLM sandbox integration, and AI abuse testing for secure GenAI applications.",
+        icon: Cpu,
         href: "/services/secure-ai-development",
+        gradient: "from-emerald-500/20 to-teal-500/20",
+        image: `${CDN_URL}/services/ai_sec.png`
     },
     {
         title: "Compliance Readiness",
-        tagline: "Supporting Service",
-        description: "ISO 27001, SOC 2, and DPDP readiness support. Prepare for compliance without slowing down.",
+        tagline: "Accelerate your certification",
+        description: "Streamlined pathways to SOC 2, ISO 27001, and DPDP readiness without grinding your engineering team to a halt.",
+        icon: ShieldCheck,
         href: "/services/compliance-readiness",
-    },
+        gradient: "from-orange-500/20 to-red-500/20",
+        image: `${CDN_URL}/services/compliance.png`
+    }
 ];
 
 export default function ServicesPage() {
@@ -53,139 +68,314 @@ export default function ServicesPage() {
         <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
             <CreativeNavBar />
 
-            <section className="relative pt-32 pb-20 px-6">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-foreground/3 blur-[120px] rounded-full pointer-events-none" />
+            {/* --- HERO SECTION --- */}
+            <section className="relative pt-28 pb-20 md:pt-40 md:pb-32 px-4 md:px-6 flex flex-col items-center justify-center min-h-[70vh] md:min-h-[85vh]">
+                {/* Abstract Premium Background Vector */}
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                    <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_30px_rgba(var(--primary),0.8)]" />
 
-                <div className="max-w-5xl mx-auto relative z-10 text-center">
-                    <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-foreground mb-6">
-                        Security Services
-                    </h1>
+                    {/* Dark Premium Glows */}
+                    <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-primary/10 rounded-full blur-[120px] mix-blend-screen opacity-50 animate-float" />
+                    <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px] mix-blend-screen opacity-50 animate-float" style={{ animationDelay: "2s" }} />
 
-                    <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-12">
-                        Practical, real-world security for startups, SMEs, and AI teams. We help you ship faster, not slower.
-                    </p>
+                    {/* SVG Grid Pattern */}
+                    <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="1" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                </div>
 
-                    <Link
-                        href="/contact"
-                        className="inline-flex px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
+                <div className="max-w-5xl mx-auto relative z-10 text-center flex flex-col items-center">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                        className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground mb-6 md:mb-8 text-balance"
                     >
-                        Get a Security Assessment
-                    </Link>
-                </div>
-            </section>
+                        Build, secure, and <br className="hidden md:block" />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-muted-foreground to-foreground">scale with confidence.</span>
+                    </motion.h1>
 
-            <div className="w-full h-px bg-border/40 max-w-5xl mx-auto" />
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                        className="text-lg md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto mb-8 md:mb-12 text-balance font-light"
+                    >
+                        Practical, real-world security for startups, SMEs, and AI teams. We engineer resilience so you can ship faster, not slower.
+                    </motion.p>
 
-            <section className="py-20 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <div className="flex items-center gap-4 mb-12">
-                        <div className="h-px flex-1 bg-border/40" />
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Core Security Services
-                        </span>
-                        <div className="h-px flex-1 bg-border/40" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {coreServices.map((service, i) => (
-                            <Link
-                                key={i}
-                                href={service.href}
-                                className="group p-8 rounded-2xl border border-border/40 bg-card/20 hover:bg-card/40 transition-all duration-300"
-                            >
-                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">
-                                    {service.tagline}
-                                </span>
-                                <h2 className="text-2xl font-bold text-foreground mt-3 mb-4 group-hover:text-foreground/80 transition-colors">
-                                    {service.title}
-                                </h2>
-                                <p className="text-muted-foreground leading-relaxed mb-6">
-                                    {service.description}
-                                </p>
-                                <span className="text-sm font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
-                                    Learn more →
-                                </span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <section className="py-20 px-6 bg-muted/10">
-                <div className="max-w-5xl mx-auto">
-                    <div className="flex items-center gap-4 mb-12">
-                        <div className="h-px flex-1 bg-border/40" />
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Build & Compliance
-                        </span>
-                        <div className="h-px flex-1 bg-border/40" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {buildServices.map((service, i) => (
-                            <Link
-                                key={i}
-                                href={service.href}
-                                className="group p-8 rounded-2xl border border-border/40 bg-background hover:bg-card/30 transition-all duration-300"
-                            >
-                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.15em]">
-                                    {service.tagline}
-                                </span>
-                                <h2 className="text-2xl font-bold text-foreground mt-3 mb-4 group-hover:text-foreground/80 transition-colors">
-                                    {service.title}
-                                </h2>
-                                <p className="text-muted-foreground leading-relaxed mb-6">
-                                    {service.description}
-                                </p>
-                                <span className="text-sm font-semibold text-foreground/60 group-hover:text-foreground transition-colors">
-                                    Learn more →
-                                </span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <section className="py-20 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-                        <div>
-                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-4 block">
-                                Free Tools
-                            </span>
-                            <h2 className="text-3xl font-bold text-foreground">
-                                VulnHunter Suite
-                            </h2>
-                            <p className="text-muted-foreground mt-2">
-                                Open security tools for reconnaissance and testing.
-                            </p>
-                        </div>
-                        <Link
-                            href="/tools"
-                            className="px-6 py-3 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors whitespace-nowrap"
-                        >
-                            Explore Tools →
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            <section className="py-20 px-6">
-                <div className="max-w-4xl mx-auto">
-                    <div className="p-8 md:p-12 rounded-3xl border border-border/40 bg-card/20 text-center">
-                        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-                            Ready to secure your product?
-                        </h2>
-                        <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                            Get a security assessment tailored to your needs. Fast turnaround, developer-friendly approach.
-                        </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+                        className="flex flex-col sm:flex-row gap-4 items-center"
+                    >
                         <Link
                             href="/contact"
-                            className="inline-flex px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
+                            className="inline-flex items-center justify-center px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:bg-foreground/90 transition-all w-full sm:w-auto text-lg group"
                         >
-                            Contact Us
+                            Get Started
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
+                        <Link
+                            href="#capabilities"
+                            className="inline-flex items-center justify-center px-8 py-4 bg-transparent border border-border text-foreground font-semibold rounded-full hover:bg-muted/10 transition-all w-full sm:w-auto text-lg"
+                        >
+                            Explore capabilities
+                        </Link>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* --- METRICS / IMPACT SECTION --- */}
+            <section className="py-16 md:py-24 px-4 md:px-6 border-y border-border/40 relative bg-muted/5">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-foreground">Efficient security recovery</h2>
+                        <p className="text-muted-foreground mt-4 text-lg">Measurable impact across our entire portfolio.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-border/40">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="pt-8 md:pt-0"
+                        >
+                            <h3 className="text-4xl md:text-7xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground to-foreground/50">10x</h3>
+                            <p className="text-xl font-medium text-foreground mb-2">Faster Compliance</p>
+                            <p className="text-muted-foreground">Reduction in time-to-certification.</p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.1 }}
+                            className="pt-12 md:pt-0"
+                        >
+                            <h3 className="text-4xl md:text-7xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-primary to-primary/50">24/7</h3>
+                            <p className="text-xl font-medium text-foreground mb-2">Continuous Protection</p>
+                            <p className="text-muted-foreground">Always-on DevSecOps integration.</p>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.2 }}
+                            className="pt-12 md:pt-0"
+                        >
+                            <h3 className="text-4xl md:text-7xl font-bold mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground to-foreground/50">0</h3>
+                            <p className="text-xl font-medium text-foreground mb-2">Critical Leaks</p>
+                            <p className="text-muted-foreground">Zero high-severity breaches reported for managed clients.</p>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* --- GUIDING PHILOSOPHY --- */}
+            <section className="py-20 md:py-32 px-4 md:px-6 relative overflow-hidden">
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-6 md:mb-8 text-balance leading-tight">
+                            Hands-on guidance with 24/7/365 support from the team that never sleeps.
+                        </h2>
+                        <p className="text-base md:text-xl text-muted-foreground leading-relaxed">
+                            Always-on support prepares, matures, and fortifies all facets of your security program. We don't just hand you a PDF report; we work alongside your engineers to fix flaws and ship secure code.
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* --- THREAT ARCHITECTURE SECTION --- */}
+            <section className="py-16 px-6 relative overflow-hidden">
+                <div className="max-w-5xl mx-auto flex flex-col items-center justify-center">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="w-full relative drop-shadow-[0_0_50px_rgba(220,38,38,0.15)]"
+                    >
+                        <Image
+                            src={`${CDN_URL}/diagram.png`}
+                            alt="Threat Architecture Diagram"
+                            width={1200}
+                            height={1200}
+                            className="w-full h-auto object-contain pointer-events-none mix-blend-screen"
+                            priority
+                            unoptimized // Since it's a 14MB file, Next.js optimization might struggle or delay loading
+                        />
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* --- CAPABILITIES SECTION --- */}
+            <section id="capabilities" className="py-16 md:py-24 px-4 md:px-6 bg-muted/10">
+                <div className="max-w-7xl mx-auto">
+                    <div className="mb-16">
+                        <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Key capabilities</h2>
+                        <p className="text-base md:text-xl text-muted-foreground">End-to-end security solutions for modern engineering teams.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {capabilities.map((service, i) => (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                            >
+                                <BreakableCard className="h-[300px] md:h-[380px]">
+                                    <Link
+                                        href={service.href}
+                                        className="block group h-full w-full"
+                                    >
+                                        <div className="relative h-full w-full p-6 md:p-8 bg-card overflow-hidden hover:border-primary/50 transition-colors duration-500 rounded-3xl">
+                                            {/* Background Image */}
+                                            <div
+                                                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-110 opacity-40 dark:opacity-60"
+                                                style={{ backgroundImage: `url(${service.image})` }}
+                                            />
+
+                                            {/* Overlay Gradients to Ensure Text Readability (Light and Dark Mode) */}
+                                            <div className="absolute inset-0 bg-white/70 dark:bg-background/80 md:bg-white/50 dark:md:bg-background/60" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-background dark:via-background/80" />
+
+                                            {/* Hover Gradient Effect */}
+                                            <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
+
+                                            <div className="relative z-10 flex flex-col h-full justify-between">
+                                                <div>
+                                                    {/* Icon has been removed as requested */}
+                                                    <h3 className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-2 drop-shadow-md">
+                                                        {service.tagline}
+                                                    </h3>
+
+                                                    <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors drop-shadow-md">
+                                                        {service.title}
+                                                    </h2>
+
+                                                    <p className="text-muted-foreground leading-snug drop-shadow-sm text-sm md:text-base font-medium line-clamp-3">
+                                                        {service.description}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex items-center text-primary font-medium group/link text-sm md:text-base pt-4">
+                                                    Learn more
+                                                    <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </BreakableCard>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* --- EXPANDED REACH / TOOLS --- */}
+            <section className="py-16 md:py-32 px-4 md:px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="order-2 md:order-1"
+                        >
+                            <h2 className="text-2xl md:text-5xl font-bold text-foreground mb-4 md:mb-6">
+                                Expanded reach through open-source tools
+                            </h2>
+                            <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
+                                We believe in giving back to the community. The <strong className="text-foreground">VulnHunter Suite</strong> provides security teams and developers with reconnaissance and testing tools to identify exposure before an adversary does.
+                            </p>
+
+                            <ul className="space-y-4 mb-10">
+                                {['Automated reconnaissance', 'API security testing', 'SBOM generation and scanning'].map((feature, idx) => (
+                                    <li key={idx} className="flex items-center text-base md:text-lg text-foreground">
+                                        <CheckCircle2 className="w-6 h-6 text-primary mr-4 shrink-0" />
+                                        {feature}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <Link
+                                href="/tools"
+                                className="inline-flex items-center px-6 py-3 border-2 border-primary text-primary font-semibold rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                            >
+                                Explore VulnHunter Suite
+                            </Link>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            className="order-1 md:order-2 relative aspect-square md:aspect-auto md:h-[600px] w-full bg-transparent overflow-hidden flex items-center justify-center p-4 md:p-8"
+                        >
+                            {/* VulnHunter Image */}
+                            <div className="relative w-full max-w-md">
+                                <Image
+                                    src={`${CDN_URL}/vulnhunter.png`}
+                                    alt="VulnHunter Suite"
+                                    width={800}
+                                    height={800}
+                                    className="w-full h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                                />
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* --- FINAL CTA --- */}
+            <section className="py-16 md:py-24 px-4 md:px-6 border-t border-border/40 bg-background">
+                <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border overflow-hidden">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                        <div className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start">
+                            <div className="flex items-center space-x-2 text-sm font-medium text-muted-foreground">
+                                <ShieldCheck className="h-4 w-4" />
+                                <span>Secure Your Digital Assets</span>
+                            </div>
+                            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
+                                <span className="text-primary">Ready</span> to Secure Your{' '}
+                                <span className="text-primary">Product?</span>
+                            </h2>
+                            <p className="text-lg text-muted-foreground leading-relaxed">
+                                Deploy fearlessly with a trusted security partner guarding your flank. Schedule a consultation with our advanced security architects today.
+                            </p>
+                            <div>
+                                <Link
+                                    href="/contact"
+                                    className="inline-flex items-center justify-center h-12 md:h-14 px-6 md:px-8 text-sm md:text-base rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 font-medium transition-all active:scale-95"
+                                >
+                                    Contact us today
+                                </Link>
+                            </div>
+                        </div>
+                        <div className="relative w-full min-h-[200px] md:min-h-[320px] flex items-center justify-center">
+                            <Image
+                                src={`${CDN_URL}/image.png`}
+                                alt="ZecurX Security"
+                                width={500}
+                                height={500}
+                                className="w-full max-w-md object-contain"
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

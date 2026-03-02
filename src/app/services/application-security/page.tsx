@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
     title: "Application Security Services | ZecurX",
@@ -70,37 +71,48 @@ export default function ApplicationSecurityPage() {
             <CreativeNavBar />
 
             <section className="relative pt-32 pb-20 px-6">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-foreground/3 blur-[120px] rounded-full pointer-events-none" />
-
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="mb-8">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Core Security Service
-                        </span>
-                    </div>
-
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div className="mb-8">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
+                                    Core Security Service
+                                </span>
+                            </div>
                     <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                        Application Security
-                    </h1>
-
+                                Application Security
+                            </h1>
                     <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mb-12">
-                        We identify and fix real-world vulnerabilities in your applications, APIs, and codebases before attackers exploit them.
-                    </p>
-
+                                We identify and fix real-world vulnerabilities in your applications, APIs, and codebases before attackers exploit them.
+                            </p>
                     <div className="flex flex-wrap gap-4">
-                        <Link
-                            href="/contact"
-                            className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
-                        >
-                            Get a Security Assessment
-                        </Link>
-                        <Link
-                            href="/how-we-work"
-                            className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
-                        >
-                            How We Work
-                        </Link>
+                                <Link
+                                    href="/contact"
+                                    className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
+                                >
+                                    Get a Security Assessment
+                                </Link>
+                                <Link
+                                    href="/how-we-work"
+                                    className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
+                                >
+                                    How We Work
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center lg:justify-end">
+                            <Image
+                                src={`${process.env.NEXT_PUBLIC_CDN_URL || 'https://zecurx-web.fsn1.your-objectstorage.com'}/images/services/application-security.png`}
+                                alt="Application Security illustration"
+                                width={500}
+                                height={500}
+                                className="w-full max-w-md dark:invert dark:hue-rotate-180"
+                                priority
+                                placeholder="blur"
+                                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAMAAAC67D+PAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAEvUExURZ2u8Z2t8p2u8p6u856v8p6u8Zys75mp7ZOl6Y2f5aCx8Z+w8Z+v8p+v8p+v8Z6v8J2t75qr7JWn6ZCi5aS18aOz8aKy8aGx8aGx8aCx8J+w7p2u7Jmr6ZWn5qm48ae38aa28aa28aW18KW176S07qKy7KCw6Zyt56y88qy78qy78qy78ay78ay78Ku676q57ae36qS06K+/87C/87LA87PB8rTC8rTC8bTC8LLA7rC+7K276rLB87TD87fF9LnH9LvI9LzJ87zJ8rrH8LjF7rTC7LPC87fF9LvJ9L7L9cHO9cLP9cLP9MHN87/L8bvH7rTD87nH9L7L9cLP9sXR9sfT9sjT9sfS9MTQ88HM8LTD87vJ9MDN9sXR98nU98vW98zX98vW9snU9cbR8v///x86rZoAAABkdFJOUwECAwUGBgUEAgECAwYICgoJBgQCAwUJDQ8PDQkGAwQIDBETExAMBwQFCg8UFxYSDQgEBgsRFhgXEw0IBAUKEBUXFhEMBwMECA0SExIOCQUDAwYJDA4NCgYDAgIDBQcIBwUDAgHYG7ayAAAAAWJLR0Rkwtq4CQAAAHZJREFUCB1jYGBkYmZhZWPn4GTg4ubh5eMXEBQSZhARFROXkJSSlpFlkJNXUFRSVlFVU2fQ0NTS1tHV0zcwZDAyNjE1M7ewtLJmsLG1s3dwdHJ2cWVwc/fw9PL28fXzZwgIDAoOCQ0Lj4hkiIqOiY2LT0hMSgYAwk8TV/GBfx8AAAAASUVORK5CYII="
+                            />
+                        </div>
                     </div>
                 </div>
             </section>

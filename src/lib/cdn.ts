@@ -23,11 +23,16 @@ export const CDN_ASSETS = {
     logoWhite: getCdnUrl('images/zecurx-logo.png'), // Fallback to main logo if white version not found
   },
   courses: {
-    // These will be used by the email template system to resolve course logos
+    // Used by email template system to resolve course logos
     'ethical-hacking': getCdnUrl('images/courses/ethical-hacking.png'),
     'cyber-security': getCdnUrl('images/courses/cyber-security.png'),
     'network-security': getCdnUrl('images/courses/network-security.png'),
     'cloud-security': getCdnUrl('images/courses/cloud-security.png'),
+    // Used by CoursePromoCard on certificate page
+    cppt: getCdnUrl('images/courses/zxCPPT.png'),
+    cpeh: getCdnUrl('images/courses/zxCPEH.png'),
+    gaip: getCdnUrl('images/courses/zxGAIP.png'),
+    'bundle-ai': getCdnUrl('images/courses/bundle-ai.png'),
   }
 };
 
