@@ -111,7 +111,7 @@ export function LogoCarousel({ columns = 2, logos }: LogoCarouselProps) {
     }, []);
 
     return (
-        <div className="flex justify-center gap-4 py-8">
+        <div className="flex justify-center gap-4 py-4">
             {logoColumns.map((columnLogos, index) => (
                 <LogoColumn
                     key={index}

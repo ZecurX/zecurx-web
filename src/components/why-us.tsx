@@ -38,7 +38,7 @@ export function WhyUs() {
     return (
         <section
             ref={ref}
-            className="py-24 md:py-32 bg-background text-foreground"
+            className="pt-4 pb-24 md:pt-6 md:pb-32 bg-background text-foreground"
             id="why-us"
         >
             <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">

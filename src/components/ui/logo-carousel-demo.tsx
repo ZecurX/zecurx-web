@@ -17,14 +17,14 @@ const demoLogos = [
 
 export function LogoCarouselBasic() {
     return (
-        <section className="py-12 md:py-24 px-4 sm:px-12 bg-transparent w-full">
+        <section className="py-4 md:py-6 px-4 sm:px-12 bg-transparent w-full">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center space-y-4 mb-12">
-                    <p className="text-sm font-medium tracking-widest text-muted-foreground uppercase">
-                        TRUSTED BY TEAMS FROM AROUND THE WORLD
+                <div className="text-center space-y-3 mb-4">
+                    <p className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase">
+                        Trusted By Teams From Around The World
                     </p>
-                    <h2 className="text-2xl md:text-5xl font-bold tracking-tight leading-none text-foreground">
-                        The best are already here
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground">
+                        The best are <span className="font-newsreader italic text-muted-foreground">already here</span>
                     </h2>
                 </div>
                 <div className="w-full">

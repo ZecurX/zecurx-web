@@ -3,9 +3,10 @@ import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
 import * as motion from "framer-motion/client";
-import { ArrowRight, Shield, Cloud, Terminal, CheckCircle2, Zap, Clock, ShieldCheck, Cpu } from "lucide-react";
-import { BreakableCard } from "@/components/ui/kinetic-shatter-box";
+import { ArrowRight, CheckCircle2, Zap, Clock, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { ServicesHeroSection } from "@/components/ui/hero-section";
+import CapabilitiesBento from "@/components/ui/capabilities-bento";
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -24,44 +25,6 @@ export const metadata: Metadata = {
     },
 };
 
-const capabilities = [
-    {
-        title: "Application Security",
-        tagline: "Uncover real-world vulnerabilities",
-        description: "Deep-dive web, API, and source code security testing. We identify and fix complex logic flaws before they affect your users.",
-        icon: Terminal,
-        href: "/services/application-security",
-        gradient: "from-blue-500/20 to-cyan-500/20",
-        image: `${CDN_URL}/services/app_sec.png`
-    },
-    {
-        title: "Cloud & DevSecOps",
-        tagline: "Secure your infrastructure",
-        description: "Continuous cloud posture management and automated CI/CD pipeline security for AWS, GCP, and Azure environments.",
-        icon: Cloud,
-        href: "/services/cloud-devsecops",
-        gradient: "from-purple-500/20 to-pink-500/20",
-        image: `${CDN_URL}/services/cloud_sec.png`
-    },
-    {
-        title: "Secure AI Development",
-        tagline: "Build safe intelligent systems",
-        description: "Advanced threat modeling, LLM sandbox integration, and AI abuse testing for secure GenAI applications.",
-        icon: Cpu,
-        href: "/services/secure-ai-development",
-        gradient: "from-emerald-500/20 to-teal-500/20",
-        image: `${CDN_URL}/services/ai_sec.png`
-    },
-    {
-        title: "Compliance Readiness",
-        tagline: "Accelerate your certification",
-        description: "Streamlined pathways to SOC 2, ISO 27001, and DPDP readiness without grinding your engineering team to a halt.",
-        icon: ShieldCheck,
-        href: "/services/compliance-readiness",
-        gradient: "from-orange-500/20 to-red-500/20",
-        image: `${CDN_URL}/services/compliance.png`
-    }
-];
 
 export default function ServicesPage() {
     return (
@@ -69,68 +32,7 @@ export default function ServicesPage() {
             <CreativeNavBar />
 
             {/* --- HERO SECTION --- */}
-            <section className="relative pt-28 pb-20 md:pt-40 md:pb-32 px-4 md:px-6 flex flex-col items-center justify-center min-h-[70vh] md:min-h-[85vh]">
-                {/* Abstract Premium Background Vector */}
-                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                    <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_30px_rgba(var(--primary),0.8)]" />
-
-                    {/* Dark Premium Glows */}
-                    <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] bg-primary/10 rounded-full blur-[120px] mix-blend-screen opacity-50 animate-float" />
-                    <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-accent/10 rounded-full blur-[100px] mix-blend-screen opacity-50 animate-float" style={{ animationDelay: "2s" }} />
-
-                    {/* SVG Grid Pattern */}
-                    <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-                                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="1" />
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#grid)" />
-                    </svg>
-                </div>
-
-                <div className="max-w-5xl mx-auto relative z-10 text-center flex flex-col items-center">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                        className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground mb-6 md:mb-8 text-balance"
-                    >
-                        Build, secure, and <br className="hidden md:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-muted-foreground to-foreground">scale with confidence.</span>
-                    </motion.h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                        className="text-lg md:text-2xl text-muted-foreground leading-relaxed max-w-3xl mx-auto mb-8 md:mb-12 text-balance font-light"
-                    >
-                        Practical, real-world security for startups, SMEs, and AI teams. We engineer resilience so you can ship faster, not slower.
-                    </motion.p>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-                        className="flex flex-col sm:flex-row gap-4 items-center"
-                    >
-                        <Link
-                            href="/contact"
-                            className="inline-flex items-center justify-center px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:bg-foreground/90 transition-all w-full sm:w-auto text-lg group"
-                        >
-                            Get Started
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                        <Link
-                            href="#capabilities"
-                            className="inline-flex items-center justify-center px-8 py-4 bg-transparent border border-border text-foreground font-semibold rounded-full hover:bg-muted/10 transition-all w-full sm:w-auto text-lg"
-                        >
-                            Explore capabilities
-                        </Link>
-                    </motion.div>
-                </div>
-            </section>
+            <ServicesHeroSection />
 
             {/* --- METRICS / IMPACT SECTION --- */}
             <section className="py-16 md:py-24 px-4 md:px-6 border-y border-border/40 relative bg-muted/5">
@@ -222,70 +124,7 @@ export default function ServicesPage() {
             </section>
 
             {/* --- CAPABILITIES SECTION --- */}
-            <section id="capabilities" className="py-16 md:py-24 px-4 md:px-6 bg-muted/10">
-                <div className="max-w-7xl mx-auto">
-                    <div className="mb-16">
-                        <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Key capabilities</h2>
-                        <p className="text-base md:text-xl text-muted-foreground">End-to-end security solutions for modern engineering teams.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {capabilities.map((service, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                            >
-                                <BreakableCard className="h-[300px] md:h-[380px]">
-                                    <Link
-                                        href={service.href}
-                                        className="block group h-full w-full"
-                                    >
-                                        <div className="relative h-full w-full p-6 md:p-8 bg-card overflow-hidden hover:border-primary/50 transition-colors duration-500 rounded-3xl">
-                                            {/* Background Image */}
-                                            <div
-                                                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-110 opacity-40 dark:opacity-60"
-                                                style={{ backgroundImage: `url(${service.image})` }}
-                                            />
-
-                                            {/* Overlay Gradients to Ensure Text Readability (Light and Dark Mode) */}
-                                            <div className="absolute inset-0 bg-white/70 dark:bg-background/80 md:bg-white/50 dark:md:bg-background/60" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-background dark:via-background/80" />
-
-                                            {/* Hover Gradient Effect */}
-                                            <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-
-                                            <div className="relative z-10 flex flex-col h-full justify-between">
-                                                <div>
-                                                    {/* Icon has been removed as requested */}
-                                                    <h3 className="text-[10px] md:text-xs font-semibold text-primary uppercase tracking-[0.2em] mb-2 drop-shadow-md">
-                                                        {service.tagline}
-                                                    </h3>
-
-                                                    <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors drop-shadow-md">
-                                                        {service.title}
-                                                    </h2>
-
-                                                    <p className="text-muted-foreground leading-snug drop-shadow-sm text-sm md:text-base font-medium line-clamp-3">
-                                                        {service.description}
-                                                    </p>
-                                                </div>
-
-                                                <div className="flex items-center text-primary font-medium group/link text-sm md:text-base pt-4">
-                                                    Learn more
-                                                    <ArrowRight className="ml-2 w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </BreakableCard>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <CapabilitiesBento />
 
             {/* --- EXPANDED REACH / TOOLS --- */}
             <section className="py-16 md:py-32 px-4 md:px-6">
