@@ -557,7 +557,7 @@ export async function sendCoordinatorCertificateAlert(params: {
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Failed to send coordinator certificate alert:', message);
+        console.error('Failed to send coordinator certificate alert:', message, error);
         return { success: false, error: message };
     }
 }
@@ -620,7 +620,7 @@ export async function sendStudentCertificateAlert(params: {
         return { success: true };
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`Failed to send student certificate alert to ${params.studentEmail}:`, message);
+        console.error(`Failed to send student certificate alert to ${params.studentEmail}:`, message, error);
         return { success: false, error: message };
     }
 }
