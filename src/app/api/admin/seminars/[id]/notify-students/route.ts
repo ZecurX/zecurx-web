@@ -91,7 +91,7 @@ export async function POST(
                         sent: 0,
                         failed: failed.length,
                         totalRegistrations: registrations.length,
-                        sampleErrors: failed.slice(0, 3).map(f => ({ email: f.email, error: f.error })),
+                        sampleErrors: failed.slice(0, 3).map(f => ({ email: f.email, error: f.error || 'Unknown error' })),
                     },
                 },
                 { status: 500 }
@@ -113,7 +113,7 @@ export async function POST(
 
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Failed to notify students:', message);
+        console.error('Failed to notify students:', { error, message });
         return NextResponse.json(
             { error: `Failed to send student alerts: ${message}` },
             { status: 500 }

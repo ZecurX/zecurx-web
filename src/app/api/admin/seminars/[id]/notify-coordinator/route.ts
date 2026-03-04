@@ -59,7 +59,7 @@ export async function POST(
 
         if (!coordinatorResult.success) {
             return NextResponse.json(
-                { error: `Failed to send email to coordinator: ${coordinatorResult.error}` },
+                { error: `Failed to send email to coordinator: ${coordinatorResult.error ?? 'Unknown error'}` },
                 { status: 500 }
             );
         }
@@ -71,7 +71,7 @@ export async function POST(
 
     } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error('Failed to notify coordinator:', message);
+        console.error('Failed to notify coordinator:', message, error);
         return NextResponse.json(
             { error: `Failed to send coordinator alert: ${message}` },
             { status: 500 }
