@@ -4,9 +4,7 @@ import { requirePermission } from '@/lib/auth';
 import { Seminar, SeminarRegistration } from '@/types/seminar';
 import { sendStudentCertificateAlert } from '@/lib/certificate';
 
-export const config = {
-    maxDuration: 60,
-};
+export const maxDuration = 60;
 
 const BATCH_SIZE = 5;
 export async function POST(
@@ -87,7 +85,7 @@ export async function POST(
         if (sent === 0) {
             // All emails failed — surface the first error for diagnosis
             const firstError = failed[0]?.error || 'Unknown error';
-        return NextResponse.json({
+            return NextResponse.json({
                     error: `Failed to send emails to students: ${firstError}`,
                     details: {
                         sent: 0,
