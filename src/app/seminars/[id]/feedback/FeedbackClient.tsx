@@ -715,7 +715,7 @@ export default function FeedbackPage() {
                                                             <span className={cn("cursor-pointer font-bold text-xs block", field.value ? "text-background" : "text-foreground")}>
                                                                 Join the ZecurX Community
                                                             </span>
-                                                            <p className={cn("text-[10px]", field.value ? "text-muted-foreground" : "text-muted-foreground")}>
+                                                            <p className="text-[10px] text-muted-foreground">
                                                                 Receive updates on workshops, career opportunities, and advanced modules.
                                                             </p>
                                                         </div>

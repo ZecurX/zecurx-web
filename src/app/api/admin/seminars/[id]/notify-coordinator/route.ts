@@ -4,9 +4,8 @@ import { requirePermission } from '@/lib/auth';
 import { Seminar } from '@/types/seminar';
 import { sendCoordinatorCertificateAlert } from '@/lib/certificate';
 
-export const config = {
-    maxDuration: 60,
-};
+export const maxDuration = 60;
+
 export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
