@@ -85,7 +85,7 @@ export async function sendOtpEmail(
     otp: string,
     purpose: OtpPurpose,
     seminarTitle: string
-): Promise<boolean> {
+): Promise<{ sent: boolean; error?: string }> {
 
 
     const purposeText = purpose === 'registration'
@@ -142,10 +142,11 @@ export async function sendOtpEmail(
             subject,
             html,
         });
-        return true;
+        return { sent: true };
     } catch (error) {
-        console.error('Failed to send OTP email:', error);
-        return false;
+        const message = error instanceof Error ? error.message : 'Unknown email delivery error';
+        console.error('Failed to send OTP email:', message, error);
+        return { sent: false, error: message };
     }
 }
 

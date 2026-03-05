@@ -109,10 +109,10 @@ export function Solutions() {
                         <div className="lg:w-[60%] w-full flex-shrink-0">
                             <div className="relative">
                                 {/* + corner decorators */}
-                                <span className="absolute -top-2 -left-2 text-sm leading-none dark:text-white/20 text-gray-300 select-none pointer-events-none z-20">+</span>
-                                <span className="absolute -top-2 -right-2 text-sm leading-none dark:text-white/20 text-gray-300 select-none pointer-events-none z-20">+</span>
-                                <span className="absolute -bottom-2 -left-2 text-sm leading-none dark:text-white/20 text-gray-300 select-none pointer-events-none z-20">+</span>
-                                <span className="absolute -bottom-2 -right-2 text-sm leading-none dark:text-white/20 text-gray-300 select-none pointer-events-none z-20">+</span>
+                                <span className="absolute -top-2 -left-2 text-sm leading-none text-border select-none pointer-events-none z-20">+</span>
+                                <span className="absolute -top-2 -right-2 text-sm leading-none text-border select-none pointer-events-none z-20">+</span>
+                                <span className="absolute -bottom-2 -left-2 text-sm leading-none text-border select-none pointer-events-none z-20">+</span>
+                                <span className="absolute -bottom-2 -right-2 text-sm leading-none text-border select-none pointer-events-none z-20">+</span>
 
                                 {/* Image container (transparent, no window chrome) */}
                                 <div className="relative w-full rounded-2xl overflow-hidden bg-transparent">
@@ -292,7 +292,7 @@ function ActiveCaption({
 
     if (asCaption) {
         return (
-            <motion.p className="mt-3 text-center text-xs font-medium text-gray-500">
+            <motion.p className="mt-3 text-center text-xs font-medium text-muted-foreground">
                 {text}
             </motion.p>
         )
