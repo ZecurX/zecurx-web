@@ -28,9 +28,15 @@ import {
   Send,
   X,
   AlertTriangle,
-  Trash2
+  Trash2,
 } from 'lucide-react';
-import { Seminar, SeminarRegistration, SeminarFeedback, SeminarStatus, CertificateNameRequest } from '@/types/seminar';
+import {
+  Seminar,
+  SeminarRegistration,
+  SeminarFeedback,
+  SeminarStatus,
+  CertificateNameRequest,
+} from '@/types/seminar';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,11 +45,30 @@ import { cn } from '@/lib/utils';
 import EditSeminarDialog from './EditSeminarDialog';
 import EditRegistrationDialog from './EditRegistrationDialog';
 
-const STATUS_CONFIG: Record<SeminarStatus, { label: string; color: string; bgColor: string }> = {
-  pending: { label: 'Pending Approval', color: 'text-yellow-600', bgColor: 'bg-yellow-500/10 border-yellow-500/20' },
-  approved: { label: 'Approved', color: 'text-green-600', bgColor: 'bg-green-500/10 border-green-500/20' },
-  rejected: { label: 'Rejected', color: 'text-red-600', bgColor: 'bg-red-500/10 border-red-500/20' },
-  completed: { label: 'Completed', color: 'text-blue-600', bgColor: 'bg-blue-500/10 border-blue-500/20' },
+const STATUS_CONFIG: Record<
+  SeminarStatus,
+  { label: string; color: string; bgColor: string }
+> = {
+  pending: {
+    label: 'Pending Approval',
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-500/10 border-yellow-500/20',
+  },
+  approved: {
+    label: 'Approved',
+    color: 'text-green-600',
+    bgColor: 'bg-green-500/10 border-green-500/20',
+  },
+  rejected: {
+    label: 'Rejected',
+    color: 'text-red-600',
+    bgColor: 'bg-red-500/10 border-red-500/20',
+  },
+  completed: {
+    label: 'Completed',
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-500/10 border-blue-500/20',
+  },
 };
 
 export default function SeminarDetailPage() {
@@ -54,13 +79,18 @@ export default function SeminarDetailPage() {
   const [seminar, setSeminar] = useState<Seminar | null>(null);
   const [registrations, setRegistrations] = useState<SeminarRegistration[]>([]);
   const [feedback, setFeedback] = useState<SeminarFeedback[]>([]);
-  const [nameRequests, setNameRequests] = useState<CertificateNameRequest[]>([]);
+  const [nameRequests, setNameRequests] = useState<CertificateNameRequest[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<'details' | 'registrations' | 'feedback' | 'name-requests'>('details');
+  const [activeTab, setActiveTab] = useState<
+    'details' | 'registrations' | 'feedback' | 'name-requests'
+  >('details');
   const [showEditSeminar, setShowEditSeminar] = useState(false);
-  const [editingRegistration, setEditingRegistration] = useState<SeminarRegistration | null>(null);
+  const [editingRegistration, setEditingRegistration] =
+    useState<SeminarRegistration | null>(null);
   const [registrationEnabled, setRegistrationEnabled] = useState(false);
   const [certificateEnabled, setCertificateEnabled] = useState(false);
 
@@ -178,7 +208,10 @@ export default function SeminarDetailPage() {
   };
 
   const handleApprove = async () => {
-    if (!confirm('Approve this seminar? An email will be sent to the organizer.')) return;
+    if (
+      !confirm('Approve this seminar? An email will be sent to the organizer.')
+    )
+      return;
 
     try {
       const res = await fetch(`/api/admin/seminars/${seminarId}/approve`, {
@@ -218,13 +251,19 @@ export default function SeminarDetailPage() {
     }
   };
 
-  const toggleAttendance = async (registrationId: string, attended: boolean) => {
+  const toggleAttendance = async (
+    registrationId: string,
+    attended: boolean,
+  ) => {
     try {
-      const res = await fetch(`/api/admin/seminars/${seminarId}/registrations`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ registrationId, attended }),
-      });
+      const res = await fetch(
+        `/api/admin/seminars/${seminarId}/registrations`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ registrationId, attended }),
+        },
+      );
 
       if (res.ok) {
         fetchRegistrations();
@@ -245,12 +284,20 @@ export default function SeminarDetailPage() {
   };
 
   const handleAlertCoordinator = async () => {
-    if (!confirm(`Send certificate release alert to the coordinator (${seminar?.contact_person})?`)) return;
+    if (
+      !confirm(
+        `Send certificate release alert to the coordinator (${seminar?.contact_person})?`,
+      )
+    )
+      return;
     setAlertingCoordinator(true);
     try {
-      const res = await fetch(`/api/admin/seminars/${seminarId}/notify-coordinator`, {
-        method: 'POST',
-      });
+      const res = await fetch(
+        `/api/admin/seminars/${seminarId}/notify-coordinator`,
+        {
+          method: 'POST',
+        },
+      );
 
       const data = await res.json();
 
@@ -268,13 +315,19 @@ export default function SeminarDetailPage() {
   };
 
   const handleAlertStudents = async () => {
-    if (!confirm('Send certificate release alert to all registered participants?')) return;
+    if (
+      !confirm('Send certificate release alert to all registered participants?')
+    )
+      return;
 
     setAlertingStudents(true);
     try {
-      const res = await fetch(`/api/admin/seminars/${seminarId}/notify-students`, {
-        method: 'POST',
-      });
+      const res = await fetch(
+        `/api/admin/seminars/${seminarId}/notify-students`,
+        {
+          method: 'POST',
+        },
+      );
 
       const data = await res.json();
 
@@ -283,11 +336,18 @@ export default function SeminarDetailPage() {
       } else {
         let errorMsg = data.error || 'Failed to send alert';
         if (data.details?.sampleErrors?.length) {
-          errorMsg += '\n\nSample errors:\n' + data.details.sampleErrors
-            .map((e: { email: string; error?: string }) => {
-              const reason = e.error && String(e.error).trim().length > 0 ? e.error : 'Unknown error';
-              return `• ${e.email}: ${reason}`;
-            })
+          errorMsg +=
+            '\n\nSample errors:\n' +
+            data.details.sampleErrors
+              .map((e: { email: string; error?: string }) => {
+                const reason =
+                  e.error && String(e.error).trim().length > 0
+                    ? e.error
+                    : 'Unknown error';
+                return `• ${e.email}: ${reason}`;
+              })
+              .join('\n');
+        }
         alert(errorMsg);
       }
     } catch (error) {
@@ -334,7 +394,12 @@ export default function SeminarDetailPage() {
   };
 
   const handleCleanupOldData = async () => {
-    if (!confirm('Delete all certificate data older than 30 days? This includes certificates, feedback, name requests, promo codes, and PDF files from CDN. This action cannot be undone.')) return;
+    if (
+      !confirm(
+        'Delete all certificate data older than 30 days? This includes certificates, feedback, name requests, promo codes, and PDF files from CDN. This action cannot be undone.',
+      )
+    )
+      return;
 
     setCleaningUp(true);
     try {
@@ -345,7 +410,9 @@ export default function SeminarDetailPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(`${data.message}\n\nDeleted:\n• ${data.deleted.certificates} certificate(s)\n• ${data.deleted.feedback} feedback record(s)\n• ${data.deleted.nameRequests} name request(s)\n• ${data.deleted.promoCodes} promo code(s)\n• ${data.deleted.s3Files} PDF file(s) from CDN`);
+        alert(
+          `${data.message}\n\nDeleted:\n• ${data.deleted.certificates} certificate(s)\n• ${data.deleted.feedback} feedback record(s)\n• ${data.deleted.nameRequests} name request(s)\n• ${data.deleted.promoCodes} promo code(s)\n• ${data.deleted.s3Files} PDF file(s) from CDN`,
+        );
         fetchSeminar();
         fetchFeedback();
         fetchNameRequests();
@@ -360,12 +427,19 @@ export default function SeminarDetailPage() {
     }
   };
 
-  const downloadCSV = <T,>(data: T[], filename: string, headers: string[], mapping: (item: T) => string[]) => {
+  const downloadCSV = <T,>(
+    data: T[],
+    filename: string,
+    headers: string[],
+    mapping: (item: T) => string[],
+  ) => {
     const csvRows = [
       headers.join(','),
-      ...data.map(item => mapping(item).map(val =>
-        `"${String(val || '').replace(/"/g, '""')}"`
-      ).join(','))
+      ...data.map((item) =>
+        mapping(item)
+          .map((val) => `"${String(val || '').replace(/"/g, '""')}"`)
+          .join(','),
+      ),
     ];
 
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
@@ -381,7 +455,17 @@ export default function SeminarDetailPage() {
 
   const handleDownloadRegistrations = () => {
     if (!seminar) return;
-    const headers = ['Full Name', 'Email', 'Phone', 'College', 'Year', 'City/State', 'Verified', 'Attended', 'Registered At'];
+    const headers = [
+      'Full Name',
+      'Email',
+      'Phone',
+      'College',
+      'Year',
+      'City/State',
+      'Verified',
+      'Attended',
+      'Registered At',
+    ];
     const mapping = (reg: SeminarRegistration) => [
       reg.full_name,
       reg.email,
@@ -391,18 +475,33 @@ export default function SeminarDetailPage() {
       reg.city_state || '',
       reg.email_verified ? 'Yes' : 'No',
       reg.attended ? 'Yes' : 'No',
-      new Date(reg.registered_at).toLocaleString()
+      new Date(reg.registered_at).toLocaleString(),
     ];
-    downloadCSV(registrations, `registrations-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`, headers, mapping);
+    downloadCSV(
+      registrations,
+      `registrations-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`,
+      headers,
+      mapping,
+    );
   };
 
   const handleDownloadFeedback = () => {
     if (!seminar) return;
     const headers = [
-      'Submitted At', 'Full Name', 'Email', 'College', 'Year', 'City/State',
-      'Rating', 'Career Interests', 'Offensive Security Reason',
-      'Most Valuable Part', 'Future Suggestions', 'Interested in ZecurX',
-      'Certificate Name', 'Reminder Contact'
+      'Submitted At',
+      'Full Name',
+      'Email',
+      'College',
+      'Year',
+      'City/State',
+      'Rating',
+      'Career Interests',
+      'Offensive Security Reason',
+      'Most Valuable Part',
+      'Future Suggestions',
+      'Interested in ZecurX',
+      'Certificate Name',
+      'Reminder Contact',
     ];
     const mapping = (item: SeminarFeedback) => [
       new Date(item.submitted_at).toLocaleString(),
@@ -418,9 +517,14 @@ export default function SeminarDetailPage() {
       item.future_suggestions || '',
       item.join_zecurx ? 'Yes' : 'No',
       item.certificate_name,
-      item.reminder_contact || ''
+      item.reminder_contact || '',
     ];
-    downloadCSV(feedback, `feedback-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`, headers, mapping);
+    downloadCSV(
+      feedback,
+      `feedback-${seminar.title.toLowerCase().replace(/\s+/g, '-')}`,
+      headers,
+      mapping,
+    );
   };
 
   const formatDate = (dateStr: string) => {
@@ -428,7 +532,7 @@ export default function SeminarDetailPage() {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -446,8 +550,13 @@ export default function SeminarDetailPage() {
     return (
       <div className="text-center py-12">
         <CalendarDays className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-foreground">Seminar not found</h3>
-        <Link href="/admin/seminars" className="text-primary hover:underline mt-2 inline-block">
+        <h3 className="text-lg font-medium text-foreground">
+          Seminar not found
+        </h3>
+        <Link
+          href="/admin/seminars"
+          className="text-primary hover:underline mt-2 inline-block"
+        >
           Back to seminars
         </Link>
       </div>
@@ -467,16 +576,30 @@ export default function SeminarDetailPage() {
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{seminar.title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              {seminar.title}
+            </h1>
             {canManage && (
-              <Button size="icon" variant="ghost" onClick={() => setShowEditSeminar(true)}>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setShowEditSeminar(true)}
+              >
                 <Pencil className="w-4 h-4" />
               </Button>
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-1">{seminar.organization_name}</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {seminar.organization_name}
+          </p>
         </div>
-        <div className={cn("px-3 py-1.5 rounded-full text-sm font-medium border", statusConfig.bgColor, statusConfig.color)}>
+        <div
+          className={cn(
+            'px-3 py-1.5 rounded-full text-sm font-medium border',
+            statusConfig.bgColor,
+            statusConfig.color,
+          )}
+        >
           {statusConfig.label}
         </div>
       </div>
@@ -491,7 +614,10 @@ export default function SeminarDetailPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={handleApprove} className="bg-green-600 hover:bg-green-700">
+            <Button
+              onClick={handleApprove}
+              className="bg-green-600 hover:bg-green-700"
+            >
               <CheckCircle2 className="w-4 h-4 mr-2" />
               Approve
             </Button>
@@ -508,7 +634,9 @@ export default function SeminarDetailPage() {
           <MessageSquare className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
           <div>
             <p className="font-medium text-red-600">Rejection Reason</p>
-            <p className="text-sm text-muted-foreground mt-1">{seminar.rejection_reason}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {seminar.rejection_reason}
+            </p>
           </div>
         </div>
       )}
@@ -517,10 +645,10 @@ export default function SeminarDetailPage() {
         <button
           onClick={() => setActiveTab('details')}
           className={cn(
-            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px",
+            'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
             activeTab === 'details'
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
           Details
@@ -528,10 +656,10 @@ export default function SeminarDetailPage() {
         <button
           onClick={() => setActiveTab('registrations')}
           className={cn(
-            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2",
+            'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2',
             activeTab === 'registrations'
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
           Registrations
@@ -542,10 +670,10 @@ export default function SeminarDetailPage() {
         <button
           onClick={() => setActiveTab('feedback')}
           className={cn(
-            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2",
+            'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2',
             activeTab === 'feedback'
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
           Feedback
@@ -556,16 +684,16 @@ export default function SeminarDetailPage() {
         <button
           onClick={() => setActiveTab('name-requests')}
           className={cn(
-            "px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2",
+            'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px flex items-center gap-2',
             activeTab === 'name-requests'
-              ? "border-primary text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
           )}
         >
           Name Requests
-          {nameRequests.filter(r => r.status === 'pending').length > 0 && (
+          {nameRequests.filter((r) => r.status === 'pending').length > 0 && (
             <span className="px-1.5 py-0.5 text-xs bg-amber-500/10 text-amber-600 rounded-full font-semibold">
-              {nameRequests.filter(r => r.status === 'pending').length}
+              {nameRequests.filter((r) => r.status === 'pending').length}
             </span>
           )}
         </button>
@@ -575,13 +703,17 @@ export default function SeminarDetailPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-card/40 border border-border/50 rounded-xl p-6">
-              <h2 className="font-semibold text-foreground mb-4">Seminar Details</h2>
+              <h2 className="font-semibold text-foreground mb-4">
+                Seminar Details
+              </h2>
 
               <div className="space-y-4">
                 {seminar.description && (
                   <div>
                     <Label className="text-muted-foreground">Description</Label>
-                    <p className="mt-1 text-foreground">{seminar.description}</p>
+                    <p className="mt-1 text-foreground">
+                      {seminar.description}
+                    </p>
                   </div>
                 )}
 
@@ -591,9 +723,15 @@ export default function SeminarDetailPage() {
                       <Calendar className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Date & Time</p>
-                      <p className="font-medium text-foreground">{formatDate(seminar.date)}</p>
-                      <p className="text-sm text-muted-foreground">{seminar.time}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Date & Time
+                      </p>
+                      <p className="font-medium text-foreground">
+                        {formatDate(seminar.date)}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {seminar.time}
+                      </p>
                     </div>
                   </div>
 
@@ -603,7 +741,9 @@ export default function SeminarDetailPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Duration</p>
-                      <p className="font-medium text-foreground">{seminar.duration}</p>
+                      <p className="font-medium text-foreground">
+                        {seminar.duration}
+                      </p>
                     </div>
                   </div>
 
@@ -613,9 +753,13 @@ export default function SeminarDetailPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Location</p>
-                      <p className="font-medium text-foreground capitalize">{seminar.location_type}</p>
+                      <p className="font-medium text-foreground capitalize">
+                        {seminar.location_type}
+                      </p>
                       {seminar.venue_address && (
-                        <p className="text-sm text-muted-foreground">{seminar.venue_address}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {seminar.venue_address}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -625,8 +769,12 @@ export default function SeminarDetailPage() {
                       <Users className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">Expected Attendees</p>
-                      <p className="font-medium text-foreground">{seminar.max_attendees || 'Not specified'}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Expected Attendees
+                      </p>
+                      <p className="font-medium text-foreground">
+                        {seminar.max_attendees || 'Not specified'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -638,9 +786,13 @@ export default function SeminarDetailPage() {
                       <User className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{seminar.speaker_name}</p>
+                      <p className="font-medium text-foreground">
+                        {seminar.speaker_name}
+                      </p>
                       {seminar.speaker_title && (
-                        <p className="text-sm text-muted-foreground">{seminar.speaker_title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {seminar.speaker_title}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -649,7 +801,9 @@ export default function SeminarDetailPage() {
             </div>
 
             <div className="bg-card/40 border border-border/50 rounded-xl p-6">
-              <h2 className="font-semibold text-foreground mb-4">Contact Information</h2>
+              <h2 className="font-semibold text-foreground mb-4">
+                Contact Information
+              </h2>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -657,8 +811,12 @@ export default function SeminarDetailPage() {
                     <Building2 className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Organization</p>
-                    <p className="font-medium text-foreground">{seminar.organization_name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Organization
+                    </p>
+                    <p className="font-medium text-foreground">
+                      {seminar.organization_name}
+                    </p>
                   </div>
                 </div>
 
@@ -667,8 +825,12 @@ export default function SeminarDetailPage() {
                     <User className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Contact Person</p>
-                    <p className="font-medium text-foreground">{seminar.contact_person}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Contact Person
+                    </p>
+                    <p className="font-medium text-foreground">
+                      {seminar.contact_person}
+                    </p>
                   </div>
                 </div>
 
@@ -678,7 +840,10 @@ export default function SeminarDetailPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Email</p>
-                    <a href={`mailto:${seminar.contact_email}`} className="font-medium text-primary hover:underline">
+                    <a
+                      href={`mailto:${seminar.contact_email}`}
+                      className="font-medium text-primary hover:underline"
+                    >
                       {seminar.contact_email}
                     </a>
                   </div>
@@ -691,7 +856,10 @@ export default function SeminarDetailPage() {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Phone</p>
-                      <a href={`tel:${seminar.contact_phone}`} className="font-medium text-foreground">
+                      <a
+                        href={`tel:${seminar.contact_phone}`}
+                        className="font-medium text-foreground"
+                      >
                         {seminar.contact_phone}
                       </a>
                     </div>
@@ -700,8 +868,12 @@ export default function SeminarDetailPage() {
 
                 {seminar.additional_notes && (
                   <div className="pt-4 border-t border-border">
-                    <p className="text-xs text-muted-foreground mb-1">Additional Notes</p>
-                    <p className="text-sm text-foreground">{seminar.additional_notes}</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Additional Notes
+                    </p>
+                    <p className="text-sm text-foreground">
+                      {seminar.additional_notes}
+                    </p>
                   </div>
                 )}
               </div>
@@ -711,32 +883,46 @@ export default function SeminarDetailPage() {
           <div className="space-y-6">
             {seminar.status === 'approved' && (
               <div className="bg-card/40 border border-border/50 rounded-xl p-6">
-                <h2 className="font-semibold text-foreground mb-4">Quick Links</h2>
+                <h2 className="font-semibold text-foreground mb-4">
+                  Quick Links
+                </h2>
 
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-muted-foreground">Registration Link</Label>
+                    <Label className="text-muted-foreground">
+                      Registration Link
+                    </Label>
                     <div className="flex gap-2 mt-1">
                       <Input
                         readOnly
                         value={`${typeof window !== 'undefined' ? window.location.origin : ''}/seminars/${seminarId}/register`}
                         className="text-xs"
                       />
-                      <Button size="icon" variant="outline" onClick={copyRegistrationLink}>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={copyRegistrationLink}
+                      >
                         <Copy className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
 
                   <div>
-                    <Label className="text-muted-foreground">Certificate Link</Label>
+                    <Label className="text-muted-foreground">
+                      Certificate Link
+                    </Label>
                     <div className="flex gap-2 mt-1">
                       <Input
                         readOnly
                         value={`${typeof window !== 'undefined' ? window.location.origin : ''}/seminars/${seminarId}/certificate`}
                         className="text-xs"
                       />
-                      <Button size="icon" variant="outline" onClick={copyCertificateLink}>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={copyCertificateLink}
+                      >
                         <Copy className="w-4 h-4" />
                       </Button>
                     </div>
@@ -765,8 +951,12 @@ export default function SeminarDetailPage() {
                     <div className="flex items-center gap-3">
                       <Users className="w-5 h-5 text-muted-foreground" />
                       <div>
-                        <p className="font-medium text-foreground text-sm">Registration</p>
-                        <p className="text-xs text-muted-foreground">Allow students to register</p>
+                        <p className="font-medium text-foreground text-sm">
+                          Registration
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Allow students to register
+                        </p>
                       </div>
                     </div>
                     <input
@@ -781,8 +971,12 @@ export default function SeminarDetailPage() {
                     <div className="flex items-center gap-3">
                       <Award className="w-5 h-5 text-muted-foreground" />
                       <div>
-                        <p className="font-medium text-foreground text-sm">Certificates</p>
-                        <p className="text-xs text-muted-foreground">Allow certificate generation</p>
+                        <p className="font-medium text-foreground text-sm">
+                          Certificates
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Allow certificate generation
+                        </p>
                       </div>
                     </div>
                     <input
@@ -879,7 +1073,8 @@ export default function SeminarDetailPage() {
                       )}
                     </Button>
                     <p className="text-[10px] text-muted-foreground mt-1.5 text-center">
-                      Deletes certificates, feedback &amp; promo codes older than 30 days
+                      Deletes certificates, feedback &amp; promo codes older
+                      than 30 days
                     </p>
                   </div>
                 </div>
@@ -891,12 +1086,14 @@ export default function SeminarDetailPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
-                  <p className="text-2xl font-bold text-foreground">{registrations.length}</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {registrations.length}
+                  </p>
                   <p className="text-xs text-muted-foreground">Registered</p>
                 </div>
                 <div className="text-center p-3 bg-muted/50 rounded-lg">
                   <p className="text-2xl font-bold text-foreground">
-                    {registrations.filter(r => r.attended).length}
+                    {registrations.filter((r) => r.attended).length}
                   </p>
                   <p className="text-xs text-muted-foreground">Attended</p>
                 </div>
@@ -932,7 +1129,9 @@ export default function SeminarDetailPage() {
             {registrations.length === 0 ? (
               <div className="text-center py-12">
                 <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground">No registrations yet</h3>
+                <h3 className="text-lg font-medium text-foreground">
+                  No registrations yet
+                </h3>
                 <p className="text-muted-foreground mt-1">
                   Registrations will appear here when students sign up
                 </p>
@@ -967,12 +1166,20 @@ export default function SeminarDetailPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {registrations.map((reg) => (
-                      <tr key={reg.id} className="hover:bg-muted/30 transition-colors">
+                      <tr
+                        key={reg.id}
+                        className="hover:bg-muted/30 transition-colors"
+                      >
                         <td className="px-4 py-3">
-                          <p className="font-medium text-foreground">{reg.full_name}</p>
+                          <p className="font-medium text-foreground">
+                            {reg.full_name}
+                          </p>
                         </td>
                         <td className="px-4 py-3">
-                          <a href={`mailto:${reg.email}`} className="text-sm text-primary hover:underline">
+                          <a
+                            href={`mailto:${reg.email}`}
+                            className="text-sm text-primary hover:underline"
+                          >
                             {reg.email}
                           </a>
                         </td>
@@ -987,19 +1194,27 @@ export default function SeminarDetailPage() {
                         </td>
                         <td className="px-4 py-3 text-center">
                           <button
-                            onClick={() => toggleAttendance(reg.id, !reg.attended)}
+                            onClick={() =>
+                              toggleAttendance(reg.id, !reg.attended)
+                            }
                             className={cn(
-                              "w-6 h-6 rounded-full flex items-center justify-center mx-auto transition-colors",
+                              'w-6 h-6 rounded-full flex items-center justify-center mx-auto transition-colors',
                               reg.attended
-                                ? "bg-green-500/10 text-green-600"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                                ? 'bg-green-500/10 text-green-600'
+                                : 'bg-muted text-muted-foreground hover:bg-muted/80',
                             )}
                           >
-                            {reg.attended && <CheckCircle2 className="w-4 h-4" />}
+                            {reg.attended && (
+                              <CheckCircle2 className="w-4 h-4" />
+                            )}
                           </button>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <Button size="icon" variant="ghost" onClick={() => setEditingRegistration(reg)}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => setEditingRegistration(reg)}
+                          >
                             <Pencil className="w-4 h-4" />
                           </Button>
                         </td>
@@ -1030,52 +1245,85 @@ export default function SeminarDetailPage() {
             {feedback.length === 0 ? (
               <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
                 <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-foreground">No feedback yet</h3>
+                <h3 className="text-lg font-medium text-foreground">
+                  No feedback yet
+                </h3>
                 <p className="text-muted-foreground mt-1">
-                  Student feedback will appear here after they receive certificates
+                  Student feedback will appear here after they receive
+                  certificates
                 </p>
               </div>
             ) : (
               <div className="grid gap-4">
                 {feedback.map((item) => (
-                  <div key={item.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
+                  <div
+                    key={item.id}
+                    className="bg-card/40 border border-border/50 rounded-xl p-6"
+                  >
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-semibold text-foreground">{item.full_name}</h3>
-                        <p className="text-sm text-muted-foreground">{item.email} • {item.college_name}</p>
+                        <h3 className="font-semibold text-foreground">
+                          {item.full_name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {item.email} • {item.college_name}
+                        </p>
                       </div>
                       <div className="flex items-center gap-1 px-2 py-1 bg-primary/10 rounded-lg">
                         <Star className="w-4 h-4 text-primary fill-primary" />
-                        <span className="font-bold text-primary">{item.seminar_rating}/5</span>
+                        <span className="font-bold text-primary">
+                          {item.seminar_rating}/5
+                        </span>
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6 mt-4 pt-4 border-t border-border/50">
                       <div className="space-y-3">
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Career Interests</p>
-                          <p className="text-sm text-foreground">{item.career_interest || 'Not specified'}</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                            Career Interests
+                          </p>
+                          <p className="text-sm text-foreground">
+                            {item.career_interest || 'Not specified'}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Most Valuable Part</p>
-                          <p className="text-sm text-foreground italic">"{item.most_valuable_part}"</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                            Most Valuable Part
+                          </p>
+                          <p className="text-sm text-foreground italic">
+                            "{item.most_valuable_part}"
+                          </p>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Future Suggestions</p>
-                          <p className="text-sm text-foreground">{item.future_suggestions || 'None'}</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                            Future Suggestions
+                          </p>
+                          <p className="text-sm text-foreground">
+                            {item.future_suggestions || 'None'}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Certificate Name</p>
-                          <p className="text-sm font-medium text-primary uppercase">{item.certificate_name}</p>
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                            Certificate Name
+                          </p>
+                          <p className="text-sm font-medium text-primary uppercase">
+                            {item.certificate_name}
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className="mt-4 pt-2 text-[10px] text-muted-foreground flex justify-between items-center">
-                      <span>Submitted on {new Date(item.submitted_at).toLocaleString()}</span>
+                      <span>
+                        Submitted on{' '}
+                        {new Date(item.submitted_at).toLocaleString()}
+                      </span>
                       {item.join_zecurx && (
-                        <span className="bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-medium">Interested in ZecurX</span>
+                        <span className="bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full font-medium">
+                          Interested in ZecurX
+                        </span>
                       )}
                     </div>
                   </div>
@@ -1091,9 +1339,12 @@ export default function SeminarDetailPage() {
           {nameRequests.length === 0 ? (
             <div className="bg-card/40 border border-border/50 rounded-xl p-12 text-center">
               <AlertTriangle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground">No name change requests</h3>
+              <h3 className="text-lg font-medium text-foreground">
+                No name change requests
+              </h3>
               <p className="text-muted-foreground mt-1">
-                Name change requests will appear here when students request a different certificate name
+                Name change requests will appear here when students request a
+                different certificate name
               </p>
             </div>
           ) : (
@@ -1104,48 +1355,76 @@ export default function SeminarDetailPage() {
                 const isRejected = req.status === 'rejected';
 
                 return (
-                  <div key={req.id} className="bg-card/40 border border-border/50 rounded-xl p-6">
+                  <div
+                    key={req.id}
+                    className="bg-card/40 border border-border/50 rounded-xl p-6"
+                  >
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">{req.email}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {req.email}
+                        </p>
                       </div>
-                      <span className={cn(
-                        "px-2.5 py-1 rounded-full text-xs font-semibold border",
-                        isPending && "bg-amber-500/10 text-amber-600 border-amber-500/20",
-                        isApproved && "bg-green-500/10 text-green-600 border-green-500/20",
-                        isRejected && "bg-red-500/10 text-red-600 border-red-500/20"
-                      )}>
-                        {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                      <span
+                        className={cn(
+                          'px-2.5 py-1 rounded-full text-xs font-semibold border',
+                          isPending &&
+                            'bg-amber-500/10 text-amber-600 border-amber-500/20',
+                          isApproved &&
+                            'bg-green-500/10 text-green-600 border-green-500/20',
+                          isRejected &&
+                            'bg-red-500/10 text-red-600 border-red-500/20',
+                        )}
+                      >
+                        {req.status.charAt(0).toUpperCase() +
+                          req.status.slice(1)}
                       </span>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Registered Name</p>
-                        <p className="text-sm text-foreground">{req.registered_name}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                          Registered Name
+                        </p>
+                        <p className="text-sm text-foreground">
+                          {req.registered_name}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Requested Name</p>
-                        <p className="text-sm font-semibold text-primary">{req.requested_name}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                          Requested Name
+                        </p>
+                        <p className="text-sm font-semibold text-primary">
+                          {req.requested_name}
+                        </p>
                       </div>
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Reason</p>
-                      <p className="text-sm text-foreground italic">&ldquo;{req.reason}&rdquo;</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+                        Reason
+                      </p>
+                      <p className="text-sm text-foreground italic">
+                        &ldquo;{req.reason}&rdquo;
+                      </p>
                     </div>
 
                     {req.admin_notes && (
                       <div className="mb-4 p-3 bg-red-500/5 rounded-lg border border-red-500/10">
-                        <p className="text-xs font-medium text-red-600 mb-1">Admin Notes</p>
-                        <p className="text-sm text-foreground">{req.admin_notes}</p>
+                        <p className="text-xs font-medium text-red-600 mb-1">
+                          Admin Notes
+                        </p>
+                        <p className="text-sm text-foreground">
+                          {req.admin_notes}
+                        </p>
                       </div>
                     )}
 
                     <div className="flex items-center justify-between pt-4 border-t border-border/50">
                       <span className="text-[10px] text-muted-foreground">
                         Submitted {new Date(req.created_at).toLocaleString()}
-                        {req.reviewed_at && ` • Reviewed ${new Date(req.reviewed_at).toLocaleString()}`}
+                        {req.reviewed_at &&
+                          ` • Reviewed ${new Date(req.reviewed_at).toLocaleString()}`}
                       </span>
 
                       {isPending && canManage && (
@@ -1154,11 +1433,19 @@ export default function SeminarDetailPage() {
                             size="sm"
                             className="bg-green-600 hover:bg-green-700 text-white"
                             onClick={async () => {
-                              if (!confirm('Approve this name change? A certificate will be generated and emailed.')) return;
+                              if (
+                                !confirm(
+                                  'Approve this name change? A certificate will be generated and emailed.',
+                                )
+                              )
+                                return;
                               try {
-                                const res = await fetch(`/api/admin/seminars/${seminarId}/name-requests/${req.id}/approve`, {
-                                  method: 'POST',
-                                });
+                                const res = await fetch(
+                                  `/api/admin/seminars/${seminarId}/name-requests/${req.id}/approve`,
+                                  {
+                                    method: 'POST',
+                                  },
+                                );
                                 const data = await res.json();
                                 if (res.ok) {
                                   alert(data.message);
@@ -1179,13 +1466,20 @@ export default function SeminarDetailPage() {
                             size="sm"
                             variant="destructive"
                             onClick={async () => {
-                              const reason = prompt('Enter rejection reason (optional):');
+                              const reason = prompt(
+                                'Enter rejection reason (optional):',
+                              );
                               try {
-                                const res = await fetch(`/api/admin/seminars/${seminarId}/name-requests/${req.id}/reject`, {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ reason }),
-                                });
+                                const res = await fetch(
+                                  `/api/admin/seminars/${seminarId}/name-requests/${req.id}/reject`,
+                                  {
+                                    method: 'POST',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ reason }),
+                                  },
+                                );
                                 const data = await res.json();
                                 if (res.ok) {
                                   alert(data.message);
@@ -1239,13 +1533,19 @@ export default function SeminarDetailPage() {
           <div className="relative bg-card border border-border rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b border-border">
               <div>
-                <h2 className="text-xl font-semibold text-foreground">Notify All Participants</h2>
+                <h2 className="text-xl font-semibold text-foreground">
+                  Notify All Participants
+                </h2>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Send an email to all {registrations.filter(r => r.email_verified).length} verified participants
+                  Send an email to all{' '}
+                  {registrations.filter((r) => r.email_verified).length}{' '}
+                  verified participants
                 </p>
               </div>
               <button
-                onClick={() => !sendingNotification && setShowNotifyDialog(false)}
+                onClick={() =>
+                  !sendingNotification && setShowNotifyDialog(false)
+                }
                 className="p-2 hover:bg-muted rounded-lg transition-colors"
                 disabled={sendingNotification}
               >
@@ -1255,7 +1555,9 @@ export default function SeminarDetailPage() {
 
             <div className="p-6 space-y-4">
               <div>
-                <Label htmlFor="notify-subject" className="text-foreground">Subject</Label>
+                <Label htmlFor="notify-subject" className="text-foreground">
+                  Subject
+                </Label>
                 <Input
                   id="notify-subject"
                   value={notifySubject}
@@ -1267,7 +1569,9 @@ export default function SeminarDetailPage() {
               </div>
 
               <div>
-                <Label htmlFor="notify-message" className="text-foreground">Message</Label>
+                <Label htmlFor="notify-message" className="text-foreground">
+                  Message
+                </Label>
                 <textarea
                   id="notify-message"
                   value={notifyMessage}
@@ -1278,7 +1582,8 @@ export default function SeminarDetailPage() {
                   disabled={sendingNotification}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  This message will be sent to all verified participants along with seminar details.
+                  This message will be sent to all verified participants along
+                  with seminar details.
                 </p>
               </div>
             </div>
@@ -1293,7 +1598,11 @@ export default function SeminarDetailPage() {
               </Button>
               <Button
                 onClick={handleNotifyAll}
-                disabled={sendingNotification || !notifySubject.trim() || !notifyMessage.trim()}
+                disabled={
+                  sendingNotification ||
+                  !notifySubject.trim() ||
+                  !notifyMessage.trim()
+                }
               >
                 {sendingNotification ? (
                   <>
