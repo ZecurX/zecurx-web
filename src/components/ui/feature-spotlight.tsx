@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 import { Button, type ButtonProps } from '@/components/ui/button';
+import Link from 'next/link';
 
 // Interface for component props remains the same for easy integration.
 export interface AnimatedFeatureSpotlightProps extends React.HTMLAttributes<HTMLElement> {
@@ -9,6 +10,7 @@ export interface AnimatedFeatureSpotlightProps extends React.HTMLAttributes<HTML
     heading: React.ReactNode;
     description: string;
     buttonText: string;
+    buttonHref?: string;
     buttonProps?: ButtonProps;
     imageUrl: string;
     imageAlt?: string;
@@ -23,6 +25,7 @@ const AnimatedFeatureSpotlight = React.forwardRef<HTMLElement, AnimatedFeatureSp
             heading,
             description,
             buttonText,
+            buttonHref,
             buttonProps,
             imageUrl,
             imageAlt = 'Feature illustration',
@@ -34,15 +37,15 @@ const AnimatedFeatureSpotlight = React.forwardRef<HTMLElement, AnimatedFeatureSp
             <section
                 ref={ref}
                 className={cn(
-                    'w-full max-w-6xl mx-auto p-8 md:p-12 rounded-2xl bg-background border overflow-hidden', // Added overflow-hidden for cleaner animations
+                    'w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border overflow-hidden',
                     className
                 )}
                 aria-labelledby="feature-spotlight-heading"
                 {...props}
             >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                     {/* Left Column: Animated Text Content */}
-                    <div className="flex flex-col space-y-6 text-center md:text-left items-center md:items-start">
+                    <div className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start">
                         <div
                             className="flex items-center space-x-2 text-sm font-medium text-muted-foreground animate-in fade-in slide-in-from-top-4 duration-700"
                         >
@@ -51,7 +54,7 @@ const AnimatedFeatureSpotlight = React.forwardRef<HTMLElement, AnimatedFeatureSp
                         </div>
                         <h2
                             id="feature-spotlight-heading"
-                            className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground animate-in fade-in slide-in-from-top-4 duration-700 delay-150"
+                            className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground animate-in fade-in slide-in-from-top-4 duration-700 delay-150"
                         >
                             {heading}
                         </h2>
@@ -59,14 +62,20 @@ const AnimatedFeatureSpotlight = React.forwardRef<HTMLElement, AnimatedFeatureSp
                             {description}
                         </p>
                         <div className="animate-in fade-in slide-in-from-top-4 duration-700 delay-400">
-                            <Button size="lg" {...buttonProps}>
-                                {buttonText}
-                            </Button>
+                            {buttonHref ? (
+                                <Button size="lg" asChild {...buttonProps}>
+                                    <Link href={buttonHref}>{buttonText}</Link>
+                                </Button>
+                            ) : (
+                                <Button size="lg" {...buttonProps}>
+                                    {buttonText}
+                                </Button>
+                            )}
                         </div>
                     </div>
 
                     {/* Right Column: Animated Visual */}
-                    <div className="relative w-full min-h-[250px] md:min-h-[320px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-700 delay-200">
+                    <div className="relative w-full min-h-[200px] md:min-h-[320px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-700 delay-200">
                         {/* Main Image with both entrance and continuous animations */}
                         <img
                             src={imageUrl}

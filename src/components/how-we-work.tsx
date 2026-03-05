@@ -24,18 +24,18 @@ export function HowWeWork() {
                     transition={{ duration: 0.7 }}
                     className="text-center mb-16"
                 >
-                    <span className="text-xs font-semibold uppercase tracking-widest mb-3 block dark:text-blue-400 text-blue-600">How We Work</span>
-                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter dark:text-white text-gray-900 mb-4" style={{ letterSpacing: "-1px" }}>
+                    <span className="text-xs font-semibold uppercase tracking-widest mb-3 block text-blue-600 dark:text-blue-400">How We Work</span>
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-foreground mb-4" style={{ letterSpacing: "-1px" }}>
                         Our process. Your peace of mind.
                     </h2>
-                    <p className="dark:text-gray-400 text-gray-600 text-lg max-w-xl mx-auto">
+                    <p className="text-muted-foreground text-lg max-w-xl mx-auto">
                         A structured engagement delivering real improvements — not just a checkbox report.
                     </p>
                 </motion.div>
 
                 <div className="relative">
                     {/* Timeline line */}
-                    <div className="hidden md:block absolute top-5 left-0 right-0 h-px dark:bg-white/5 bg-gray-200" />
+                    <div className="hidden md:block absolute top-5 left-0 right-0 h-px bg-border" />
                     <motion.div
                         className="hidden md:block absolute top-5 left-0 h-px bg-blue-500"
                         initial={{ width: "0%" }}
@@ -55,15 +55,15 @@ export function HowWeWork() {
                                 {/* Timeline dot */}
                                 <div className="w-2.5 h-2.5 rounded-full bg-blue-500 mb-5 hidden md:block shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
 
-                                <div className="rounded-2xl p-5 border dark:border-white/8 border-gray-200 dark:bg-white/2 bg-gray-50">
+                                <div className="rounded-2xl p-5 border border-border bg-muted">
                                     <div className="flex items-center gap-2 mb-3">
-                                        <span className="text-lg font-black dark:text-white/20 text-gray-300">{step.step}</span>
-                                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full dark:bg-white/5 bg-gray-100 dark:text-gray-400 text-gray-500 border dark:border-white/8 border-gray-200">
+                                        <span className="text-lg font-black text-border select-none">{step.step}</span>
+                                        <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-muted/80 text-muted-foreground border border-border">
                                             {step.tag}
                                         </span>
                                     </div>
-                                    <h3 className="text-sm font-semibold dark:text-white text-gray-900 mb-2">{step.title}</h3>
-                                    <p className="text-xs dark:text-gray-400 text-gray-600 leading-relaxed">{step.description}</p>
+                                    <h3 className="text-sm font-semibold text-foreground mb-2">{step.title}</h3>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">{step.description}</p>
                                 </div>
                             </motion.div>
                         ))}
