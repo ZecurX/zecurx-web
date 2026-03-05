@@ -137,7 +137,7 @@ export async function POST(
             accent: 'success',
             body: bodyContent,
             previewText: `Registration Confirmed: ${seminar.title}`,
-            includeMarketing: true,
+            includeMarketing: false,
             marketingType: 'student',
             showAcademyPromo: false,
             showSocials: false,

@@ -65,26 +65,26 @@ export function StudentEnquiryForm() {
 
     const inputClass = cn(
         "w-full h-14 px-5 py-3 text-sm rounded-xl font-medium",
-        "bg-gray-50 border border-gray-200",
-        "text-gray-900 placeholder:text-gray-400",
-        "focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 focus:bg-white",
+        "bg-muted border border-border",
+        "text-foreground placeholder:text-muted-foreground",
+        "focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card",
         "transition-all duration-200"
     );
 
-    const labelClass = "block text-sm font-bold text-gray-700 mb-2 ml-1";
+    const labelClass = "block text-sm font-bold text-foreground/80 mb-2 ml-1";
 
     if (isSuccess) {
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-20 px-8 bg-white border border-gray-200 rounded-[2.5rem] shadow-xl"
+                className="text-center py-20 px-8 bg-card border border-border rounded-[2.5rem] shadow-xl"
             >
                 <div className="w-20 h-20 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-8 shadow-sm">
                     <CheckCircle2 className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-4 tracking-tight">Application Received</h3>
-                <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto leading-relaxed">
+                <h3 className="text-3xl font-bold text-foreground mb-4 tracking-tight">Application Received</h3>
+                <p className="text-muted-foreground font-medium mb-10 max-w-sm mx-auto leading-relaxed">
                     Thank you for your interest. Our academic counselors will review your application and contact you shortly.
                 </p>
                 <button
@@ -101,7 +101,7 @@ export function StudentEnquiryForm() {
                             message: '',
                         });
                     }}
-                    className="h-14 px-8 text-sm font-bold rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="h-14 px-8 text-sm font-bold rounded-xl bg-foreground text-background hover:bg-foreground/90 transition-all duration-300 shadow-lg hover:shadow-xl"
                 >
                     Submit Another Application
                 </button>
@@ -110,7 +110,7 @@ export function StudentEnquiryForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-white border border-gray-200 rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto space-y-12 bg-card border border-border rounded-3xl p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)]">
             {error && (
                 <div className="p-4 rounded-lg bg-red-50 text-red-600 border border-red-100 text-sm font-bold">
                     {error}
@@ -119,8 +119,8 @@ export function StudentEnquiryForm() {
 
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500">Personal Profile</h4>
+                    <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Personal Profile</h4>
                 </div>
 
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -174,11 +174,11 @@ export function StudentEnquiryForm() {
                             value={formData.current_education}
                             onChange={handleChange}
                             required
-                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                            className={cn(inputClass, "appearance-none bg-muted")}
                         >
-                            <option value="" className="text-gray-500">Select level</option>
+                            <option value="" className="text-muted-foreground">Select level</option>
                             {EDUCATION_LEVELS.map(level => (
-                                <option key={level} value={level} className="text-gray-900">{level}</option>
+                                <option key={level} value={level} className="text-foreground">{level}</option>
                             ))}
                         </select>
                     </div>
@@ -191,11 +191,11 @@ export function StudentEnquiryForm() {
                             value={formData.field_of_interest}
                             onChange={handleChange}
                             required
-                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                            className={cn(inputClass, "appearance-none bg-muted")}
                         >
-                            <option value="" className="text-gray-500">Select interest</option>
+                            <option value="" className="text-muted-foreground">Select interest</option>
                             {FIELDS_OF_INTEREST.map(field => (
-                                <option key={field} value={field} className="text-gray-900">{field}</option>
+                                <option key={field} value={field} className="text-foreground">{field}</option>
                             ))}
                         </select>
                     </div>
@@ -220,12 +220,12 @@ export function StudentEnquiryForm() {
                             name="intake_year"
                             value={formData.intake_year}
                             onChange={handleChange}
-                            className={cn(inputClass, "appearance-none bg-gray-50")}
+                            className={cn(inputClass, "appearance-none bg-muted")}
                         >
-                            <option value="" className="text-gray-500">Select year</option>
-                            <option value="2025" className="text-gray-900">2025</option>
-                            <option value="2026" className="text-gray-900">2026</option>
-                            <option value="2027" className="text-gray-900">2027</option>
+                            <option value="" className="text-muted-foreground">Select year</option>
+                            <option value="2025" className="text-foreground">2025</option>
+                            <option value="2026" className="text-foreground">2026</option>
+                            <option value="2027" className="text-foreground">2027</option>
                         </select>
                     </div>
                 </div>
@@ -249,8 +249,8 @@ export function StudentEnquiryForm() {
                 disabled={isSubmitting}
                 className={cn(
                     "w-full h-14 text-sm font-bold rounded-xl",
-                    "bg-zinc-900 text-white",
-                    "hover:bg-zinc-800 active:scale-[0.98]",
+                    "bg-foreground text-background",
+                    "hover:bg-foreground/90 active:scale-[0.98]",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
                     "transition-all duration-300",
                     "flex items-center justify-center gap-3",
@@ -267,8 +267,8 @@ export function StudentEnquiryForm() {
                 )}
             </button>
 
-            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
-                <Shield className="w-3 h-3 text-gray-400" />
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <Shield className="w-3 h-3 text-muted-foreground" />
                 <span>Secure and encrypted transmission</span>
             </div>
         </form>

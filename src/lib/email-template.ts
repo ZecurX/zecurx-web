@@ -242,6 +242,9 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                                 </tr>
                             </table>
                             ` : ''}
+                            ${includeMarketing ? `<p style="color: #b0b0b0; font-size: 11px; margin: 0 0 14px; text-align: center; line-height: 1.5;">
+                                Not seeing this email? It may have been filtered — try checking your <strong>Promotions</strong> or <strong>Spam</strong> folder.
+                            </p>` : ''}
                             <p style="color: #999; font-size: 12px; margin: 0; text-align: center; line-height: 1.6;">
                                 &copy; ${year} ZecurX Private Limited. All rights reserved.<br>
                                 <a href="${WEBSITE_URL}" style="color: #888; text-decoration: underline;">www.zecurx.com</a>

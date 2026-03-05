@@ -38,10 +38,10 @@ export function WhyUs() {
     return (
         <section
             ref={ref}
-            className="py-24 md:py-32 bg-background text-foreground"
+            className="pt-4 pb-24 md:pt-6 md:pb-32 bg-background text-foreground"
             id="why-us"
         >
-            <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -50,7 +50,7 @@ export function WhyUs() {
                     className="text-center mb-16 md:mb-24"
                 >
                     <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">Why ZecurX</span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-6">
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-6">
                         Built for teams that <br className="hidden md:block" />
                         <span className="font-newsreader italic text-muted-foreground">can&apos;t afford to get hacked</span>
                     </h2>
@@ -66,7 +66,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200"
+                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
 
@@ -90,7 +90,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200"
+                        className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
                     >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
 
@@ -113,7 +113,7 @@ export function WhyUs() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                        className="group relative flex flex-col lg:flex-row md:col-span-2 dark:bg-[#0a0a0c] bg-gray-50 rounded-3xl overflow-hidden shadow-2xl border dark:border-white/8 border-gray-200 min-h-[250px] md:min-h-[300px]"
+                        className="group relative flex flex-col lg:flex-row md:col-span-2 bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border min-h-[250px] md:min-h-[300px]"
                     >
                         {/* Gradient overlay for text readability over entire image */}
                         <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/95 via-black/70 lg:via-black/80 to-transparent lg:to-black/30 z-10 pointer-events-none" />
