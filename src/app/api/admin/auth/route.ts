@@ -54,7 +54,15 @@ export async function POST(req: NextRequest) {
             const { createOtp, sendOtpEmail } = await import('@/lib/otp');
 
             const otp = await createOtp(email, 'admin_login');
-            await sendOtpEmail(email, otp, 'admin_login', 'Admin Portal');
+            const { sent, error: emailError } = await sendOtpEmail(email, otp, 'admin_login', 'Admin Portal');
+
+            if (!sent) {
+                console.error(`Admin OTP email failed for ${email}:`, emailError);
+                return NextResponse.json(
+                    { error: 'Failed to send verification email. Please try again later.' },
+                    { status: 500 }
+                );
+            }
 
             return NextResponse.json({
                 success: true,

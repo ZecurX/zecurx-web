@@ -36,7 +36,7 @@ export function Services() {
 
     return (
         <section ref={ref} className="py-24 md:py-32 bg-background text-foreground" id="services">
-            <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
+            <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
 
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -45,12 +45,12 @@ export function Services() {
                     className="mb-16 md:mb-24"
                 >
                     <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">What We Do</span>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
                         Security across <span className="font-newsreader italic text-muted-foreground">every attack surface</span>
                     </h2>
                 </motion.div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center">
 
                     {/* Left Side: The "Perfect Image" container */}
                     <motion.div
@@ -94,23 +94,23 @@ export function Services() {
                             return (
                                 <div
                                     key={svc.title}
-                                    className="border-b dark:border-white/8 border-gray-200 last:border-0"
+                                    className="border-b border-border last:border-0"
                                 >
                                     <button
                                         onClick={() => setExpandedIndex(i)}
                                         className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
                                     >
-                                        <h3 className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${isExpanded ? 'dark:text-white text-gray-900' : 'dark:text-gray-400 text-gray-500 group-hover:dark:text-gray-300 group-hover:text-gray-700'
+                                        <h3 className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${isExpanded ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground/80'
                                             }`}>
                                             {svc.title}
                                         </h3>
                                         <motion.div
                                             animate={{ rotate: isExpanded ? 180 : 0 }}
                                             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                                            className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${isExpanded ? 'dark:bg-white/10 bg-gray-100' : 'dark:bg-transparent bg-transparent'
+                                            className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${isExpanded ? 'bg-muted' : 'bg-transparent'
                                                 }`}
                                         >
-                                            <ChevronDown className={`w-5 h-5 transition-colors duration-300 ${isExpanded ? 'dark:text-white text-black' : 'dark:text-gray-500 text-gray-400'
+                                            <ChevronDown className={`w-5 h-5 transition-colors duration-300 ${isExpanded ? 'text-foreground' : 'text-muted-foreground'
                                                 }`} />
                                         </motion.div>
                                     </button>
@@ -123,8 +123,8 @@ export function Services() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                                             >
-                                                <div className="pb-8 pr-12">
-                                                    <p className="text-lg leading-relaxed dark:text-gray-400 text-gray-600">
+                                                <div className="pb-8 pr-4 md:pr-12">
+                                                    <p className="text-lg leading-relaxed text-muted-foreground">
                                                         {svc.description}
                                                     </p>
                                                 </div>
