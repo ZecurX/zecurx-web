@@ -85,7 +85,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                         "rounded-2xl",
                         forceDark
                             ? "bg-black border border-white/10 shadow-2xl shadow-black/50"
-                            : "bg-white dark:bg-black border border-gray-100 dark:border-white/10",
+                            : "bg-card border border-border",
                         !forceDark && "shadow-lg",
                     )}
                     onMouseLeave={handleMouseLeave}

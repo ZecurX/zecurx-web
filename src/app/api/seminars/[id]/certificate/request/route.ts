@@ -73,16 +73,17 @@ export async function POST(
 
         const otp = await createOtp(normalizedEmail, 'certificate', seminarId);
 
-        const emailSent = await sendOtpEmail(
+        const { sent, error: emailError } = await sendOtpEmail(
             email.trim(),
             otp,
             'certificate',
             seminar.title
         );
 
-        if (!emailSent) {
+        if (!sent) {
+            console.error(`Certificate OTP email failed for ${email} at seminar ${seminarId}:`, emailError);
             return NextResponse.json(
-                { error: 'Failed to send verification email' },
+                { error: 'Failed to send verification email. Please try again later.' },
                 { status: 500 }
             );
         }
