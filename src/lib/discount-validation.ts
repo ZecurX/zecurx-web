@@ -37,7 +37,7 @@ export async function validateDiscount(
             SELECT discount_type, discount_value, max_discount, min_order_amount
             FROM public.referral_codes
             WHERE code = $1 AND is_active = true
-            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (valid_until IS NULL OR valid_until + INTERVAL '1 day' > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
         `, [referralCode]);
 
@@ -60,7 +60,7 @@ export async function validateDiscount(
             SELECT user_discount_type, user_discount_value, max_user_discount, min_order_amount
             FROM public.partner_referrals
             WHERE code = $1 AND is_active = true
-            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (valid_until IS NULL OR valid_until + INTERVAL '1 day' > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
         `, [partnerReferralCode]);
 
@@ -108,7 +108,7 @@ export async function incrementReferralCodeUsage(
             SET current_uses = current_uses + 1, updated_at = NOW()
             WHERE code = $1
             AND is_active = true
-            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (valid_until IS NULL OR valid_until + INTERVAL '1 day' > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
             RETURNING id
         `, [referralCode]);
@@ -122,7 +122,7 @@ export async function incrementReferralCodeUsage(
             SET current_uses = current_uses + 1, updated_at = NOW()
             WHERE code = $1
             AND is_active = true
-            AND (valid_until IS NULL OR valid_until > NOW())
+            AND (valid_until IS NULL OR valid_until + INTERVAL '1 day' > NOW())
             AND (max_uses IS NULL OR current_uses < max_uses)
             RETURNING id
         `, [partnerReferralCode]);
