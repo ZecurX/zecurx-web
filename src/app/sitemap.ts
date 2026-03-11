@@ -52,6 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Resources pages
     { url: '/resources/blog', priority: 0.7, changeFrequency: 'daily' as const },
     { url: '/resources/whitepapers', priority: 0.7, changeFrequency: 'weekly' as const },
+    { url: '/resources/case-studies', priority: 0.7, changeFrequency: 'weekly' as const },
     { url: '/resources/guides', priority: 0.7, changeFrequency: 'weekly' as const },
     { url: '/resources/seminars', priority: 0.7, changeFrequency: 'weekly' as const },
     { url: '/resources/research', priority: 0.7, changeFrequency: 'weekly' as const },

@@ -95,12 +95,16 @@ interface PartnerCodeRow {
 
 // Validate regular referral code from referral_codes table
 function validateRegularReferralCode(referralCode: ReferralCodeRow, orderAmount: number) {
-    // Check if expired
-    if (referralCode.valid_until && new Date(referralCode.valid_until) < new Date()) {
-        return NextResponse.json<ValidateReferralCodeResponse>({
-            valid: false,
-            error: 'This code has expired'
-        });
+    // Check if expired (1 day grace period beyond valid_until)
+    if (referralCode.valid_until) {
+        const expiryWithGrace = new Date(referralCode.valid_until);
+        expiryWithGrace.setDate(expiryWithGrace.getDate() + 1);
+        if (expiryWithGrace < new Date()) {
+            return NextResponse.json<ValidateReferralCodeResponse>({
+                valid: false,
+                error: 'This code has expired'
+            });
+        }
     }
 
     // Check if not yet valid
@@ -156,12 +160,16 @@ function validateRegularReferralCode(referralCode: ReferralCodeRow, orderAmount:
 
 // Validate partner referral code from partner_referrals table
 function validatePartnerReferralCode(partnerCode: PartnerCodeRow, orderAmount: number) {
-    // Check if expired
-    if (partnerCode.valid_until && new Date(partnerCode.valid_until) < new Date()) {
-        return NextResponse.json<ValidateReferralCodeResponse>({
-            valid: false,
-            error: 'This code has expired'
-        });
+    // Check if expired (1 day grace period beyond valid_until)
+    if (partnerCode.valid_until) {
+        const expiryWithGrace = new Date(partnerCode.valid_until);
+        expiryWithGrace.setDate(expiryWithGrace.getDate() + 1);
+        if (expiryWithGrace < new Date()) {
+            return NextResponse.json<ValidateReferralCodeResponse>({
+                valid: false,
+                error: 'This code has expired'
+            });
+        }
     }
 
     // Check if not yet valid

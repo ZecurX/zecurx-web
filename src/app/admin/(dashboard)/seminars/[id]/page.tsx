@@ -336,17 +336,12 @@ export default function SeminarDetailPage() {
       } else {
         let errorMsg = data.error || 'Failed to send alert';
         if (data.details?.sampleErrors?.length) {
-          errorMsg +=
-            '\n\nSample errors:\n' +
-            data.details.sampleErrors
-              .map((e: { email: string; error?: string }) => {
-                const reason =
-                  e.error && String(e.error).trim().length > 0
-                    ? e.error
-                    : 'Unknown error';
-                return `• ${e.email}: ${reason}`;
-              })
-              .join('\n');
+          errorMsg += '\n\nSample errors:\n' + data.details.sampleErrors
+            .map((e: { email: string; error?: string }) => {
+              const reason = e.error && String(e.error).trim().length > 0 ? e.error : 'Unknown error';
+              return `• ${e.email}: ${reason}`;
+            })
+            .join('\n');
         }
         alert(errorMsg);
       }
