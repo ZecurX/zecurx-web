@@ -23,12 +23,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const isPdf = fileType === 'pdf' || ALLOWED_PDF_TYPES.includes(file.type);
-    const isImage = fileType === 'image' || ALLOWED_IMAGE_TYPES.includes(file.type);
+    const isPdf = ALLOWED_PDF_TYPES.includes(file.type);
+    const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
 
     if (!isPdf && !isImage) {
       return NextResponse.json({ 
         error: 'Invalid file type. Allowed types: PDF, JPEG, PNG, GIF, WebP' 
+      }, { status: 400 });
+    }
+
+    if ((fileType === 'pdf' && !isPdf) || (fileType === 'image' && !isImage)) {
+      return NextResponse.json({ 
+        error: 'File MIME type does not match declared type' 
       }, { status: 400 });
     }
 
@@ -85,9 +91,15 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    const key = url.replace(S3_BASE_URL + '/', '');
+    const baseWithSlash = S3_BASE_URL + '/';
 
-    if (!key) {
+    if (typeof url !== 'string' || !url.startsWith(baseWithSlash)) {
+      return NextResponse.json({ error: 'Invalid file URL' }, { status: 400 });
+    }
+
+    const key = url.substring(baseWithSlash.length);
+
+    if (!key || !key.startsWith('case-studies/')) {
       return NextResponse.json({ error: 'Invalid file URL' }, { status: 400 });
     }
 
