@@ -58,6 +58,7 @@ GSD-STYLE.md
 MCP_GUIDE.md
 PROJECT_RULES.md
 model_capabilities.yaml
+*.md
 
 # debug / temp files
 clear-data-*.js

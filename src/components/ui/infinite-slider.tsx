@@ -12,8 +12,8 @@ type InfiniteSliderProps = {
     direction?: 'horizontal' | 'vertical';
     reverse?: boolean;
     className?: string;
-    speed?: number; // Added speed prop matching usage
-    speedOnHover?: number; // Added speedOnHover prop matching usage
+    speed?: number;
+    speedOnHover?: number;
 };
 
 export function InfiniteSlider({
@@ -27,19 +27,20 @@ export function InfiniteSlider({
     speed,
     speedOnHover,
 }: InfiniteSliderProps) {
-    const [currentDuration, setCurrentDuration] = useState(duration);
+    const effectiveDuration = speed ? 1000 / speed : duration;
+    const effectiveHoverDuration = speedOnHover
+        ? 1000 / speedOnHover
+        : durationOnHover;
+
+    const [currentDuration, setCurrentDuration] = useState(effectiveDuration);
     const [ref, { width, height }] = useMeasure();
     const translation = useMotionValue(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [key, setKey] = useState(0);
 
-    // Allow speed to override duration if provided (rough conversion)
     useEffect(() => {
-        if (speed) {
-            setCurrentDuration(speed > 0 ? 1000 / speed : 25);
-        }
-    }, [speed]);
-
+        setCurrentDuration(effectiveDuration);
+    }, [effectiveDuration]);
 
     useEffect(() => {
         let controls;
@@ -84,25 +85,15 @@ export function InfiniteSlider({
         reverse,
     ]);
 
-    const hoverProps = durationOnHover || speedOnHover
+    const hoverProps = effectiveHoverDuration
         ? {
             onHoverStart: () => {
                 setIsTransitioning(true);
-                // If speedOnHover is used, convert to duration (approximate logic, or just use durationOnHover)
-                // For now, let's assume usage passes durationOnHover or we mapping speed to it if needed.
-                // The snippet provided used `speed` and `speedOnHover`.
-                // Let's defer to the user's snippet logic.
-                // Actually, the user snippet for `LogoCloud` passes `speed` and `speedOnHover`.
-                // The implementation of `InfiniteSlider` provided by the user uses `duration`.
-                // This is a mismatch in the user's prompt (usage vs implementation).
-                // I will adapt the implementation to accept partial speed or mapping.
-                if (speedOnHover) setCurrentDuration(1000 / speedOnHover);
-                else if (durationOnHover) setCurrentDuration(durationOnHover);
+                setCurrentDuration(effectiveHoverDuration);
             },
             onHoverEnd: () => {
                 setIsTransitioning(true);
-                if (speed) setCurrentDuration(1000 / speed);
-                else setCurrentDuration(duration);
+                setCurrentDuration(effectiveDuration);
             },
         }
         : {};

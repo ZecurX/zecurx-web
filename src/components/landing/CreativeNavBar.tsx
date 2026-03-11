@@ -31,6 +31,7 @@ const navData = {
             { title: "Security Research", href: "/resources/research", desc: "Vulnerability research & advisories" },
             { title: "Security Blog", href: "/blog", desc: "Latest insights & technical articles" },
             { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research" },
+            { title: "Case Studies", href: "/resources/case-studies", desc: "Real-world security solutions" },
         ]
     },
     academy: {
