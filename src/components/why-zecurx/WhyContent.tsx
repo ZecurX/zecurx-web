@@ -1,29 +1,9 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { 
-    ChevronLeft, ChevronRight, Quote, ArrowRight
-} from "lucide-react";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-const testimonials = [
-    {
-        quote: "ZecurX delivered exceptional quality from UI/UX design to full-stack development. Their VAPT assessment gave us confidence in our platform's security. Truly enterprise-grade service.",
-        name: "Gurudev Engicon Pvt. Ltd.",
-        role: "Enterprise Client",
-    },
-    {
-        quote: "The team transformed our online presence with a beautiful, mobile-first website. Their security hardening and 24/7 support gives us peace of mind.",
-        name: "Honey Herbal Beauty Parlour",
-        role: "Business Client",
-    },
-    {
-        quote: "Their threat-driven approach identified vulnerabilities our previous auditors missed. Professional, thorough, and truly security-focused.",
-        name: "Technology Startup",
-        role: "CTO",
-    }
-];
 
 const engagementPhases = [
     {
@@ -99,23 +79,6 @@ export default function WhyContent() {
     });
 
     const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPaused, _setIsPaused] = useState(false);
-
-    const nextTestimonial = useCallback(() => {
-        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, []);
-
-    const prevTestimonial = useCallback(() => {
-        setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-    }, []);
-
-    useEffect(() => {
-        if (isPaused) return;
-        const interval = setInterval(nextTestimonial, 5000);
-        return () => clearInterval(interval);
-    }, [isPaused, nextTestimonial]);
 
     return (
         <section ref={containerRef} className="relative w-full py-24 overflow-hidden bg-background text-foreground">
@@ -251,58 +214,6 @@ export default function WhyContent() {
                             <Link href="/services" className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-2">
                                 Explore Our Services <ArrowRight className="w-4 h-4" />
                             </Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="testimonials" className="scroll-mt-24 pb-24 border-t border-white/5 pt-24">
-                    <div className="relative overflow-hidden bg-gradient-to-br from-muted/10 to-background border border-white/10 rounded-3xl p-8 md:p-12">
-                        <Quote className="absolute top-8 right-8 w-24 h-24 text-foreground/5 -rotate-12 pointer-events-none" />
-
-                        <div className="relative z-10">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Client Stories</h3>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={prevTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background/50 hover:bg-background border border-white/10 flex items-center justify-center text-foreground transition-colors"
-                                    >
-                                        <ChevronLeft className="w-5 h-5" />
-                                    </button>
-                                    <button
-                                        onClick={nextTestimonial}
-                                        className="w-10 h-10 rounded-full bg-background/50 hover:bg-background border border-white/10 flex items-center justify-center text-foreground transition-colors"
-                                    >
-                                        <ChevronRight className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="min-h-[180px]">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={currentIndex}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.4 }}
-                                    >
-                                        <p className="text-xl md:text-3xl font-light text-foreground mb-8 leading-relaxed">
-                                            &quot;{testimonials[currentIndex].quote}&quot;
-                                        </p>
-
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
-                                                {testimonials[currentIndex].name.charAt(0)}
-                                            </div>
-                                            <div>
-                                                <div className="font-bold text-foreground text-lg">{testimonials[currentIndex].name}</div>
-                                                <div className="text-sm text-muted-foreground">{testimonials[currentIndex].role}</div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
                         </div>
                     </div>
                 </div>
