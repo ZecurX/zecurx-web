@@ -10,7 +10,7 @@ const logos = [
     { src: `${CDN_URL}/logos/HONEY%20HERBAL.webp`, alt: "Honey Herbal" },
     { src: `${CDN_URL}/logos/IBM.webp`, alt: "IBM" },
     { src: `${CDN_URL}/logos/KANTI.webp`, alt: "Kanti" },
-    { src: `${CDN_URL}/logos/MATEX.webp`, alt: "Matex" },
+    { src: `${CDN_URL}/logos/MATEX.webp`, darkSrc: `${CDN_URL}/logos/MATEX-dark.webp`, alt: "Matex" },
     { src: `${CDN_URL}/logos/MY%20GARDEN.webp`, alt: "My Garden" },
 ];
 
