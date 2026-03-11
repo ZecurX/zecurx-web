@@ -14,10 +14,11 @@ type LogoCloudProps = React.ComponentProps<"div"> & {
 
 export function LogoCloud({ logos }: LogoCloudProps) {
     return (
-        <div className="relative mx-auto max-w-3xl bg-gradient-to-r from-secondary via-transparent to-secondary py-6 md:border-x">
-            <div className="-translate-x-1/2 -top-px pointer-events-none absolute left-1/2 w-screen border-t" />
+        <div className="relative mx-auto max-w-3xl overflow-hidden py-6">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-40 bg-gradient-to-r from-background via-background/80 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-40 bg-gradient-to-l from-background via-background/80 to-transparent" />
 
-            <InfiniteSlider gap={42} reverse speed={60} speedOnHover={20}>
+            <InfiniteSlider gap={42} reverse speed={28} speedOnHover={10}>
                 {logos.map((logo) =>
                     logo.darkSrc ? (
                         <span key={`logo-${logo.alt}`} className="pointer-events-none select-none">
@@ -52,7 +53,7 @@ export function LogoCloud({ logos }: LogoCloudProps) {
                 )}
             </InfiniteSlider>
 
-            <div className="-translate-x-1/2 -bottom-px pointer-events-none absolute left-1/2 w-screen border-b" />
+
         </div>
     );
 }
