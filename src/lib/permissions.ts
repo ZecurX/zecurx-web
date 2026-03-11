@@ -23,8 +23,8 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   [ROLES.SUPER_ADMIN]: 'Full system access including all features and analytics',
   [ROLES.ADMIN]: 'Full business operations access with dashboard and analytics',
   [ROLES.SALES]: 'Customers, sales, and products management with analytics access',
-  [ROLES.MARKETING]: 'Plans and whitepapers management (no dashboard or analytics)',
-  [ROLES.MEDIA]: 'Exclusive blog and whitepapers management (no dashboard or analytics)',
+  [ROLES.MARKETING]: 'Plans, whitepapers, case studies, and blog management (no dashboard or analytics)',
+  [ROLES.MEDIA]: 'Blog, whitepapers, and case studies management (no dashboard or analytics)',
 };
 
 // Permissions for each role
@@ -38,13 +38,13 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'referral_codes:*',
     'blog:*',
     'whitepapers:*',
+    'case_studies:*',
     'seminars:*',
     'plans:*',
     'audit:*',
     'system_test:*',
     'users:*',
     'settings:*',
-    // NO Dashboard, NO Sales
   ],
 
   [ROLES.SALES]: [
@@ -60,6 +60,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'plans:*',
     'leads:*',
     'whitepapers:*',
+    'case_studies:*',
     'referral_codes:*',
     'blog:*',
   ],
@@ -67,6 +68,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.MEDIA]: [
     'blog:*',
     'whitepapers:*',
+    'case_studies:*',
   ],
 };
 
@@ -196,6 +198,7 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Seminars', href: '/admin/seminars', icon: 'CalendarDays', resource: RESOURCES.SEMINARS },
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
     { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
+    { name: 'Case Studies', href: '/admin/case-studies', icon: 'Briefcase', resource: RESOURCES.CASE_STUDIES },
     { name: 'Audit Logs', href: '/admin/audit', icon: 'ScrollText', resource: RESOURCES.AUDIT },
     { name: 'System Test', href: '/admin/system-test', icon: 'FlaskConical', resource: RESOURCES.SYSTEM_TEST },
   ];
