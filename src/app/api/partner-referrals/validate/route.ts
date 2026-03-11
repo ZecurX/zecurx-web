@@ -45,12 +45,17 @@ export async function POST(request: NextRequest) {
 
         const partnerReferral = result.rows[0];
 
-        if (partnerReferral.valid_until && new Date(partnerReferral.valid_until) < new Date()) {
-            return NextResponse.json<ValidatePartnerReferralResponse>({
-                valid: false,
-                is_partner_referral: true,
-                error: 'This code has expired'
-            });
+        // 1 day grace period beyond valid_until
+        if (partnerReferral.valid_until) {
+            const expiryWithGrace = new Date(partnerReferral.valid_until);
+            expiryWithGrace.setDate(expiryWithGrace.getDate() + 1);
+            if (expiryWithGrace < new Date()) {
+                return NextResponse.json<ValidatePartnerReferralResponse>({
+                    valid: false,
+                    is_partner_referral: true,
+                    error: 'This code has expired'
+                });
+            }
         }
 
         if (new Date(partnerReferral.valid_from) > new Date()) {

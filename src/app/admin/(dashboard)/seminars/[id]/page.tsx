@@ -288,6 +288,8 @@ export default function SeminarDetailPage() {
               const reason = e.error && String(e.error).trim().length > 0 ? e.error : 'Unknown error';
               return `• ${e.email}: ${reason}`;
             })
+            .join('\n');
+        }
         alert(errorMsg);
       }
     } catch (error) {

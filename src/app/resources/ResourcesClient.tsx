@@ -4,7 +4,7 @@ import React from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import {
-    ArrowUpRight, BookOpen, FileText, Lightbulb, Shield, Video,
+    ArrowUpRight, BookOpen, Briefcase, FileText, Lightbulb, Shield, Video,
     TrendingUp, Search, Cloud, Scale, Bot, ArrowRight
 } from 'lucide-react';
 import { motion } from "framer-motion";
@@ -56,6 +56,14 @@ const featuredResources = [
         shortDesc: "Deep-dive reports",
         description: "Deep-dive technical documents and strategic reports that provide comprehensive insights into complex security challenges.",
         href: "/resources/whitepapers",
+    },
+    {
+        type: "Case Studies",
+        icon: Briefcase,
+        title: "Case Studies",
+        shortDesc: "Success stories",
+        description: "Real-world success stories showcasing how organizations across industries have strengthened their security posture with ZecurX.",
+        href: "/resources/case-studies",
     },
     {
         type: "Research",
