@@ -116,7 +116,7 @@ function IndustryCard({ ind, index }: { ind: (typeof INDUSTRIES)[0]; index: numb
         <Link
             href={ind.link}
             className="block focus:outline-none relative"
-            style={{ perspective: 1200 }}
+            style={{ perspective: "1200px" }}
             onMouseEnter={() => setHovered(true)}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}

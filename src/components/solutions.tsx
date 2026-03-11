@@ -181,14 +181,14 @@ function ScrollImage({
             style={{ opacity }}
             transition={{ duration: 0.4 }}
         >
-            <div className="relative w-full h-full">
+            <div className="relative w-full h-full" style={{ isolation: "isolate" }}>
                 <Image
                     src={sol.image}
                     alt={sol.imageAlt}
                     fill
                     quality={100}
                     unoptimized
-                    className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+                    className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180 will-change-transform"
                     priority={index === 0}
                 />
             </div>
@@ -220,16 +220,19 @@ function ScrollListItem({
                 : "var(--color-border)"
     )
 
-    // Title color — inactive titles still readable
     const titleColor = useTransform(
         activeIndex,
         (v) =>
             Math.round(v) === index
                 ? "var(--color-foreground)"
-                : "color-mix(in srgb, var(--color-foreground) 50%, transparent)"
+                : "var(--color-muted-foreground)"
     )
 
-    // Title font weight — bold when active
+    const titleOpacity = useTransform(
+        activeIndex,
+        (v) => (Math.round(v) === index ? 1 : 0.55)
+    )
+
     const titleWeight = useTransform(
         activeIndex,
         (v) => (Math.round(v) === index ? 600 : 400)
@@ -261,7 +264,7 @@ function ScrollListItem({
         >
             <motion.h3
                 className="text-xl font-manrope leading-snug"
-                style={{ color: titleColor, fontWeight: titleWeight }}
+                style={{ color: titleColor, fontWeight: titleWeight, opacity: titleOpacity }}
             >
                 {sol.title}
             </motion.h3>
