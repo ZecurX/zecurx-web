@@ -25,7 +25,8 @@ import {
     Building2,
     ScrollText,
     Handshake,
-    CalendarDays
+    CalendarDays,
+    Briefcase
 } from "lucide-react";
 import { Role } from "@/types/auth";
 import { RoleBadge } from "@/components/admin/RoleBadge";
@@ -64,7 +65,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
     Building2,
     ScrollText,
     Handshake,
-    CalendarDays
+    CalendarDays,
+    Briefcase
 };
 
 export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
