@@ -105,6 +105,7 @@ export function Hero() {
                             animate={{ y: [0, -10, 0] }}
                             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                             className="relative w-[115%] sm:w-[125%] lg:w-[140%] aspect-square md:aspect-[4/3]"
+                            style={{ isolation: "isolate" }}
                         >
                             <Image
                                 src="https://zecurx-web.fsn1.your-objectstorage.com/hero-graphic.png"
@@ -112,7 +113,7 @@ export function Hero() {
                                 fill
                                 quality={100}
                                 unoptimized
-                                className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+                                className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180 will-change-transform"
                                 priority
                             />
                         </motion.div>
