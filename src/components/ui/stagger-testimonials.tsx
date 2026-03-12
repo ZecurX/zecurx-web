@@ -48,14 +48,15 @@ const testimonials: Testimonial[] = [
     testimonial:
       "From web application development to penetration testing, ZecurX handled everything with precision. Their team understands both the development and security sides deeply.",
     by: "MateX, Business Client",
-    imgSrc: `${CDN_URL}/logos/MATEX-dark.webp`,
+    imgSrc: `${CDN_URL}/logos/MATEX.webp`,
+    darkImgSrc: `${CDN_URL}/logos/MATEX-dark.webp`,
   },
   {
     tempId: 5,
     testimonial:
       "ZecurX redesigned our digital storefront and secured our payment systems end-to-end. The attention to detail in both design and security was impressive.",
     by: "My Garden, Business Client",
-    imgSrc: `${CDN_URL}/logos/MY%20GARDEN.webp`,
+    imgSrc: `${CDN_URL}/logos/my-garden-v3.webp`,
   },
 ];
 
