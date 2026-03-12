@@ -3,9 +3,12 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000, // Increased from 3000
+    max: 5,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 10000,
+    keepAlive: true,
+    keepAliveInitialDelayMillis: 10000,
+    allowExitOnIdle: true,
 });
 
 pool.on('connect', (client) => {
@@ -17,19 +20,45 @@ pool.on('error', (err) => {
     console.error('Unexpected error on idle client', err);
 });
 
+function isConnectionError(err: any): boolean {
+    const code = err?.code || '';
+    const message = err?.message || '';
+    return code === 'ECONNRESET' || code === 'ETIMEDOUT' || code === 'EPIPE' ||
+           code === 'ECONNREFUSED' || code === '57P01' ||
+           message.includes('terminated') || message.includes('Connection terminated') ||
+           message.includes('ECONNRESET');
+}
+
+async function queryWithRetry<T extends QueryResultRow>(
+    text: string,
+    params?: (string | number | boolean | null | undefined)[],
+    retries = 2
+): Promise<QueryResult<T>> {
+    try {
+        return await pool.query<T>(text, params);
+    } catch (err: any) {
+        if (retries > 0 && isConnectionError(err)) {
+            console.warn(`DB connection error, retrying (${retries} left):`, err.message || err.code);
+            await new Promise(r => setTimeout(r, 200));
+            return queryWithRetry<T>(text, params, retries - 1);
+        }
+        throw err;
+    }
+}
+
 export async function query<T extends QueryResultRow = QueryResultRow>(
     text: string,
     params?: unknown[]
 ): Promise<QueryResult<T>> {
+    const castParams = params as (string | number | boolean | null | undefined)[];
     if (process.env.NODE_ENV === 'development') {
         const start = Date.now();
-        const res = await pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
+        const res = await queryWithRetry<T>(text, castParams);
         const duration = Date.now() - start;
         console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
         return res;
     }
-
-    return pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
+    return queryWithRetry<T>(text, castParams);
 }
 
 export async function getClient() {

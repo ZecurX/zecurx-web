@@ -27,7 +27,7 @@ const testimonials: Testimonial[] = [
     testimonial:
       "The team transformed our online presence with a beautiful, mobile-first website. Their security hardening and 24/7 support gives us peace of mind.",
     by: "Honey Herbal Beauty Parlour, Business Client",
-    imgSrc: `${CDN_URL}/logos/HONEY%20HERBAL.webp`,
+    imgSrc: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=3`,
   },
   {
     tempId: 2,
