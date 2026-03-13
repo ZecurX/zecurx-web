@@ -7,7 +7,7 @@ const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
 const logos = [
   { src: `${CDN_URL}/logos/GURUDEV.webp`, alt: "Gurudev" },
-  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=3`, alt: "Honey Herbal" },
+  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`, alt: "Honey Herbal" },
   { src: `${CDN_URL}/logos/IBM.webp`, alt: "IBM" },
   { src: `${CDN_URL}/logos/KANTI.webp`, alt: "Kanti" },
   {
