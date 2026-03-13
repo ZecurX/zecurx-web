@@ -84,11 +84,11 @@ export function Solutions() {
         <div
             ref={outerRef}
             id="solutions"
-            style={{ height: `${N * 70}vh` }}
+            style={{ height: `${N * 50}vh` }}
         >
             {/* Inner: sticks to the top of the viewport */}
             <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden bg-background text-foreground">
-                <div className="container mx-auto px-6 lg:px-8 max-w-7xl w-full">
+                <div className="container mx-auto px-6 lg:px-8 max-w-[90rem] w-full">
 
                     {/* Section header */}
                     <div className="mb-10">
@@ -129,6 +129,7 @@ export function Solutions() {
                                     </div>
                                 </div>
                             </div>
+                            <ActiveCaption activeIndex={displayIndex} asCaption />
                         </div>
 
                         {/* ─── RIGHT: Feature list with Graphite border-l treatment ─── */}
@@ -180,14 +181,14 @@ function ScrollImage({
             style={{ opacity }}
             transition={{ duration: 0.4 }}
         >
-            <div className="relative w-full h-full max-w-[85%] max-h-[85%]">
+            <div className="relative w-full h-full" style={{ isolation: "isolate" }}>
                 <Image
                     src={sol.image}
                     alt={sol.imageAlt}
                     fill
                     quality={100}
                     unoptimized
-                    className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180"
+                    className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180 will-change-transform"
                     priority={index === 0}
                 />
             </div>
@@ -219,13 +220,22 @@ function ScrollListItem({
                 : "var(--color-border)"
     )
 
-    // Title color
     const titleColor = useTransform(
         activeIndex,
         (v) =>
             Math.round(v) === index
                 ? "var(--color-foreground)"
                 : "var(--color-muted-foreground)"
+    )
+
+    const titleOpacity = useTransform(
+        activeIndex,
+        (v) => (Math.round(v) === index ? 1 : 0.55)
+    )
+
+    const titleWeight = useTransform(
+        activeIndex,
+        (v) => (Math.round(v) === index ? 600 : 400)
     )
 
     // Description + CTA opacity
@@ -238,7 +248,7 @@ function ScrollListItem({
 
     return (
         <motion.div
-            className="relative py-6 pr-2"
+            className="relative py-5 pr-2"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             style={{
@@ -253,8 +263,8 @@ function ScrollListItem({
             }}
         >
             <motion.h3
-                className="text-xl font-manrope font-semibold leading-snug"
-                style={{ color: titleColor }}
+                className="text-xl font-manrope leading-snug"
+                style={{ color: titleColor, fontWeight: titleWeight, opacity: titleOpacity }}
             >
                 {sol.title}
             </motion.h3>

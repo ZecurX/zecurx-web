@@ -24,6 +24,7 @@ export const RESOURCES = {
   SYSTEM_TEST: 'system_test',
   WHITEPAPERS: 'whitepapers',
   SEMINARS: 'seminars',
+  CASE_STUDIES: 'case_studies',
   SETTINGS: 'settings',
 } as const;
 
@@ -237,4 +238,47 @@ export interface UpdateWhitepaperRequest {
   cover_image_url?: string;
   pdf_url?: string;
   status?: WhitepaperStatus;
+}
+
+// Case Study types
+export type CaseStudyStatus = 'draft' | 'published';
+
+export interface CaseStudy {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  category: string;
+  pages: number;
+  cover_image_url: string | null;
+  pdf_url: string;
+  author_id: string;
+  author_name?: string;
+  author_email?: string;
+  status: CaseStudyStatus;
+  published_at: string | null;
+  download_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateCaseStudyRequest {
+  title: string;
+  slug?: string;
+  summary: string;
+  category?: string;
+  pages?: number;
+  cover_image_url?: string;
+  pdf_url: string;
+  status: CaseStudyStatus;
+}
+
+export interface UpdateCaseStudyRequest {
+  title?: string;
+  summary?: string;
+  category?: string;
+  pages?: number;
+  cover_image_url?: string;
+  pdf_url?: string;
+  status?: CaseStudyStatus;
 }

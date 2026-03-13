@@ -114,6 +114,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             visible: hasPermission(userInfo.role, RESOURCES.WHITEPAPERS, ACTIONS.READ)
         },
         {
+            href: "/admin/case-studies",
+            label: "Case Studies",
+            icon: "Briefcase",
+            visible: hasPermission(userInfo.role, RESOURCES.CASE_STUDIES, ACTIONS.READ)
+        },
+        {
             href: "/admin/seminars",
             label: "Seminars",
             icon: "CalendarDays",

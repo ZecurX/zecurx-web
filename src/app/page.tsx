@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 };
 
 import { LogoCarouselBasic } from "@/components/ui/logo-carousel-demo";
+import { StaggerTestimonials } from "@/components/ui/stagger-testimonials";
 
 export default function Home() {
   return (
@@ -33,6 +34,7 @@ export default function Home() {
       <Solutions />
       <Industries />
       <LogoCarouselBasic />
+      <StaggerTestimonials />
       <WhyUs />
       <Footer />
     </main>
