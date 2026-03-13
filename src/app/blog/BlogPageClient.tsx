@@ -1,12 +1,20 @@
 "use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { Calendar, Clock, ArrowRight, Search, TrendingUp, Sparkles } from 'lucide-react';
-import { calculateReadingTime, formatBlogDate } from '@/lib/blog-utils';
-import { motion } from 'framer-motion';
-import { ScrollAnimation } from '@/components/ui/scroll-animation';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Calendar,
+  Clock,
+  ArrowRight,
+  Search,
+  TrendingUp,
+  Sparkles,
+} from "lucide-react";
+import { calculateReadingTime, formatBlogDate } from "@/lib/blog-utils";
+import { motion } from "framer-motion";
+import { ScrollAnimation } from "@/components/ui/scroll-animation";
+import { HeroWords, heroEnd } from "@/components/ui/hero-words";
+import { cn } from "@/lib/utils";
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -16,8 +24,10 @@ function AnimatedGridPattern({ className }: { className?: string }) {
       <div
         className="absolute inset-0 h-full w-full bg-[linear-gradient(to_right,rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem]"
         style={{
-          maskImage: "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
-          WebkitMaskImage: "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
+          maskImage:
+            "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 50% at 50% 0%, black 40%, transparent 100%)",
         }}
       />
     </div>
@@ -55,7 +65,7 @@ interface BlogPageClientProps {
   totalPages?: number;
   search?: string;
   labelSlug?: string;
-  error?: 'label_not_found' | 'fetch_failed';
+  error?: "label_not_found" | "fetch_failed";
 }
 
 export function BlogPageClient({
@@ -63,11 +73,11 @@ export function BlogPageClient({
   allLabels,
   page = 1,
   totalPages = 1,
-  search = '',
-  labelSlug = '',
-  error
+  search = "",
+  labelSlug = "",
+  error,
 }: BlogPageClientProps) {
-  if (error === 'label_not_found') {
+  if (error === "label_not_found") {
     return (
       <div className="relative w-full min-h-[60vh] flex items-center justify-center">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -80,7 +90,9 @@ export function BlogPageClient({
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-6">
               <Search className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-2xl lg:text-3xl font-bold font-manrope mb-3 text-foreground">No posts found</h3>
+            <h3 className="text-2xl lg:text-3xl font-bold font-manrope mb-3 text-foreground">
+              No posts found
+            </h3>
             <p className="text-muted-foreground text-lg">Label not found.</p>
           </div>
         </ScrollAnimation>
@@ -88,7 +100,7 @@ export function BlogPageClient({
     );
   }
 
-  if (error === 'fetch_failed') {
+  if (error === "fetch_failed") {
     return (
       <div className="relative w-full min-h-[60vh] flex items-center justify-center">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -105,7 +117,8 @@ export function BlogPageClient({
               Temporarily Unavailable
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              We're currently unable to load the blog posts. Please try again later.
+              We're currently unable to load the blog posts. Please try again
+              later.
             </p>
           </div>
         </ScrollAnimation>
@@ -136,14 +149,19 @@ export function BlogPageClient({
           </motion.div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-manrope tracking-tighter leading-tight mb-6">
-            <span className="block text-foreground">Security</span>
+            <span className="block text-foreground">
+              <HeroWords>Security</HeroWords>
+            </span>
             <span className="block bg-gradient-to-r from-foreground via-foreground/80 to-foreground/50 bg-clip-text text-transparent">
-              Intelligence Hub
+              <HeroWords delay={heroEnd(1)}>Intelligence Hub</HeroWords>
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Expert analysis, threat intelligence, and industry insights from the ZecurX security team.
+            <HeroWords delay={heroEnd(3)}>
+              Expert analysis, threat intelligence, and industry insights from
+              the ZecurX security team.
+            </HeroWords>
           </p>
         </div>
       </ScrollAnimation>
@@ -159,21 +177,21 @@ export function BlogPageClient({
                   className={cn(
                     "px-4 lg:px-5 py-2 lg:py-2.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap",
                     !labelSlug
-                      ? 'bg-foreground text-background shadow-lg'
-                      : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/50'
+                      ? "bg-foreground text-background shadow-lg"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/50",
                   )}
                 >
                   All Posts
                 </Link>
-                {allLabels?.map(label => (
+                {allLabels?.map((label) => (
                   <Link
                     key={label.id}
-                    href={`/blog?label=${label.slug}${search ? `&search=${search}` : ''}`}
+                    href={`/blog?label=${label.slug}${search ? `&search=${search}` : ""}`}
                     className={cn(
                       "px-4 lg:px-5 py-2 lg:py-2.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap",
                       labelSlug === label.slug
-                        ? 'bg-foreground text-background shadow-lg'
-                        : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/50'
+                        ? "bg-foreground text-background shadow-lg"
+                        : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground border border-border/50",
                     )}
                   >
                     {label.name}
@@ -190,7 +208,9 @@ export function BlogPageClient({
                 placeholder="Search articles..."
                 className="w-full pl-11 pr-4 py-3 bg-background border border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary text-sm placeholder:text-muted-foreground"
               />
-              {labelSlug && <input type="hidden" name="label" value={labelSlug} />}
+              {labelSlug && (
+                <input type="hidden" name="label" value={labelSlug} />
+              )}
             </form>
           </div>
         </div>
@@ -240,7 +260,11 @@ export function BlogPageClient({
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span>{post.published_at ? formatBlogDate(post.published_at) : ''}</span>
+                      <span>
+                        {post.published_at
+                          ? formatBlogDate(post.published_at)
+                          : ""}
+                      </span>
                     </div>
                     <div className="h-1 w-1 rounded-full bg-border" />
                     <div className="flex items-center gap-1.5">
@@ -254,7 +278,9 @@ export function BlogPageClient({
                   </h3>
 
                   <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 flex-grow">
-                    {post.excerpt || post.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'}
+                    {post.excerpt ||
+                      post.content.replace(/<[^>]*>?/gm, "").substring(0, 150) +
+                        "..."}
                   </p>
 
                   <div className="pt-4 mt-auto flex items-center justify-end border-t border-border/50">
@@ -274,8 +300,12 @@ export function BlogPageClient({
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-6">
               <Search className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-2xl lg:text-3xl font-bold font-manrope mb-3 text-foreground">No posts found</h3>
-            <p className="text-muted-foreground text-lg">Try adjusting your search or filters.</p>
+            <h3 className="text-2xl lg:text-3xl font-bold font-manrope mb-3 text-foreground">
+              No posts found
+            </h3>
+            <p className="text-muted-foreground text-lg">
+              Try adjusting your search or filters.
+            </p>
           </div>
         </ScrollAnimation>
       )}
@@ -285,7 +315,7 @@ export function BlogPageClient({
           <div className="relative z-10 flex flex-wrap justify-center gap-3 pt-16">
             {page > 1 && (
               <Link
-                href={`/blog?page=${page - 1}${search ? `&search=${search}` : ''}${labelSlug ? `&label=${labelSlug}` : ''}`}
+                href={`/blog?page=${page - 1}${search ? `&search=${search}` : ""}${labelSlug ? `&label=${labelSlug}` : ""}`}
                 className="px-6 py-3 border border-border rounded-full hover:bg-muted hover:border-foreground/20 transition-all duration-300 text-sm font-medium"
               >
                 Previous
@@ -306,12 +336,12 @@ export function BlogPageClient({
                 return (
                   <Link
                     key={pageNum}
-                    href={`/blog?page=${pageNum}${search ? `&search=${search}` : ''}${labelSlug ? `&label=${labelSlug}` : ''}`}
+                    href={`/blog?page=${pageNum}${search ? `&search=${search}` : ""}${labelSlug ? `&label=${labelSlug}` : ""}`}
                     className={cn(
                       "w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 text-sm font-medium",
                       pageNum === page
-                        ? 'bg-foreground text-background shadow-lg'
-                        : 'border border-border hover:bg-muted hover:border-foreground/20'
+                        ? "bg-foreground text-background shadow-lg"
+                        : "border border-border hover:bg-muted hover:border-foreground/20",
                     )}
                   >
                     {pageNum}
@@ -321,7 +351,7 @@ export function BlogPageClient({
             </div>
             {page < totalPages && (
               <Link
-                href={`/blog?page=${page + 1}${search ? `&search=${search}` : ''}${labelSlug ? `&label=${labelSlug}` : ''}`}
+                href={`/blog?page=${page + 1}${search ? `&search=${search}` : ""}${labelSlug ? `&label=${labelSlug}` : ""}`}
                 className="px-6 py-3 border border-border rounded-full hover:bg-muted hover:border-foreground/20 transition-all duration-300 text-sm font-medium"
               >
                 Next

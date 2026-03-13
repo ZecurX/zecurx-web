@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Manrope, Inter, Space_Grotesk, Newsreader } from "next/font/google";
+import {
+  Manrope,
+  Inter,
+  Space_Grotesk,
+  Newsreader,
+  Caveat,
+} from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
@@ -33,14 +39,32 @@ const newsreader = Newsreader({
   style: ["italic", "normal"],
 });
 
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-caveat",
+});
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://zecurx.com'),
+  metadataBase: new URL("https://zecurx.com"),
   title: {
     default: "ZecurX - Cybersecurity Services for Startups, SMEs & AI Teams",
-    template: "%s | ZecurX"
+    template: "%s | ZecurX",
   },
-  description: "Security that helps you ship faster. We help startups, SMEs, and AI teams secure applications, cloud infrastructure, and AI systems with practical, real-world security testing.",
-  keywords: ["cybersecurity services", "penetration testing", "application security", "cloud security", "AI security", "DevSecOps", "compliance", "VAPT", "cybersecurity training", "ethical hacking certification", "security assessment"],
+  description:
+    "Security that helps you ship faster. We help startups, SMEs, and AI teams secure applications, cloud infrastructure, and AI systems with practical, real-world security testing.",
+  keywords: [
+    "cybersecurity services",
+    "penetration testing",
+    "application security",
+    "cloud security",
+    "AI security",
+    "DevSecOps",
+    "compliance",
+    "VAPT",
+    "cybersecurity training",
+    "ethical hacking certification",
+    "security assessment",
+  ],
   authors: [{ name: "ZecurX Security Team" }],
   creator: "ZecurX",
   publisher: "ZecurX",
@@ -55,7 +79,8 @@ export const metadata: Metadata = {
     url: "https://zecurx.com",
     siteName: "ZecurX",
     title: "ZecurX - Cybersecurity Services for Startups, SMEs & AI Teams",
-    description: "Security that helps you ship faster. Practical security testing for applications, cloud infrastructure, and AI systems.",
+    description:
+      "Security that helps you ship faster. Practical security testing for applications, cloud infrastructure, and AI systems.",
     images: [
       {
         url: "/og-image.png",
@@ -68,7 +93,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ZecurX - Cybersecurity Services for Startups, SMEs & AI Teams",
-    description: "Security that helps you ship faster. Practical security testing for applications, cloud infrastructure, and AI systems.",
+    description:
+      "Security that helps you ship faster. Practical security testing for applications, cloud infrastructure, and AI systems.",
     images: ["/og-image.png"],
     creator: "@zecurx",
   },
@@ -78,9 +104,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   manifest: "/site.webmanifest",
@@ -89,8 +115,12 @@ export const metadata: Metadata = {
   },
 };
 
-import NextTopLoader from 'nextjs-toploader';
-import { StructuredData, getOrganizationSchema, getWebSiteSchema } from '@/components/seo/StructuredData';
+import NextTopLoader from "nextjs-toploader";
+import {
+  StructuredData,
+  getOrganizationSchema,
+  getWebSiteSchema,
+} from "@/components/seo/StructuredData";
 
 export default function RootLayout({
   children,
@@ -100,11 +130,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link
+          rel="preconnect"
+          href="https://zecurx-web.fsn1.your-objectstorage.com"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://zecurx-web.fsn1.your-objectstorage.com"
+        />
         <StructuredData data={getOrganizationSchema()} />
         <StructuredData data={getWebSiteSchema()} />
       </head>
       <body
-        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} antialiased`}
+        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} ${caveat.variable} antialiased`}
       >
         <NextTopLoader
           color="var(--primary)"
@@ -124,13 +162,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CartProvider>
-            <SmoothScrollProvider>
-              {children}
-            </SmoothScrollProvider>
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
           </CartProvider>
         </ThemeProvider>
       </body>
     </html>
   );
 }
-
