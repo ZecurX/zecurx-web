@@ -13,7 +13,8 @@ import {
   HoverCard,
   ScaleInScroll,
 } from "@/components/services/ServicePageAnimations";
-import { HeroWords, heroEnd } from "@/components/ui/hero-words";
+import { HeroWords } from "@/components/ui/hero-words";
+import { heroEnd } from "@/lib/hero-timing";
 
 export const metadata: Metadata = {
   title: "Cloud & DevSecOps Security | ZecurX",
