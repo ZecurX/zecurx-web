@@ -83,7 +83,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         "motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-in-out",
         isCenter
           ? "z-10 bg-card text-card-foreground border-primary"
-          : "z-0 bg-card text-card-foreground border-border hover:border-primary/50"
+          : "z-0 bg-card text-card-foreground border-border hover:border-primary/50",
       )}
       style={{
         width: cardSize,
@@ -99,13 +99,17 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
           <img
             src={testimonial.imgSrc}
             alt={testimonial.by.split(",")[0]}
-            className="mb-4 h-14 max-w-[120px] rounded-sm object-contain dark:hidden"
+            loading="lazy"
+            decoding="async"
+            className="mb-4 h-14 w-auto max-w-[120px] rounded-sm object-contain dark:hidden"
             style={{ boxShadow: "3px 3px 0px var(--background)" }}
           />
           <img
             src={testimonial.darkImgSrc}
             alt={testimonial.by.split(",")[0]}
-            className="mb-4 hidden h-14 max-w-[120px] rounded-sm object-contain dark:block"
+            loading="lazy"
+            decoding="async"
+            className="mb-4 hidden h-14 w-auto max-w-[120px] rounded-sm object-contain dark:block"
             style={{ boxShadow: "3px 3px 0px var(--background)" }}
           />
         </>
@@ -113,18 +117,16 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         <img
           src={testimonial.imgSrc}
           alt={testimonial.by.split(",")[0]}
-          className="mb-4 h-14 max-w-[120px] rounded-sm object-contain"
+          loading="lazy"
+          decoding="async"
+          className="mb-4 h-14 w-auto max-w-[120px] rounded-sm object-contain"
           style={{ boxShadow: "3px 3px 0px var(--background)" }}
         />
       )}
-      <h3
-        className="font-newsreader text-base font-medium italic text-foreground sm:text-xl"
-      >
+      <h3 className="font-newsreader text-base font-bold italic text-foreground/90 sm:text-lg leading-relaxed">
         &ldquo;{testimonial.testimonial}&rdquo;
       </h3>
-      <p
-        className="absolute bottom-8 left-8 right-8 mt-2 font-space-grotesk text-sm text-muted-foreground"
-      >
+      <p className="absolute bottom-8 left-8 right-8 mt-2 font-space-grotesk text-sm text-muted-foreground">
         - {testimonial.by}
       </p>
     </div>
@@ -175,7 +177,7 @@ export function StaggerTestimonials() {
       handleMove(steps);
       resetAutoScroll();
     },
-    [handleMove, resetAutoScroll]
+    [handleMove, resetAutoScroll],
   );
 
   useEffect(() => {
@@ -201,9 +203,12 @@ export function StaggerTestimonials() {
           </span>
         </h2>
         <div
-          className="relative w-full overflow-hidden rounded-2xl bg-muted/30"
+          className="relative w-full overflow-hidden"
           style={{ height: 680 }}
         >
+          {/* Feathered edge fades */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-32 bg-gradient-to-r from-background to-transparent sm:w-48" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-32 bg-gradient-to-l from-background to-transparent sm:w-48" />
           {testimonialsList.map((testimonial, index) => {
             const position =
               testimonialsList.length % 2
@@ -226,7 +231,7 @@ export function StaggerTestimonials() {
                 "flex h-14 w-14 items-center justify-center text-2xl",
                 "motion-safe:transition-colors",
                 "border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               )}
               aria-label="Previous testimonial"
             >
@@ -238,7 +243,7 @@ export function StaggerTestimonials() {
                 "flex h-14 w-14 items-center justify-center text-2xl",
                 "motion-safe:transition-colors",
                 "border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               )}
               aria-label="Next testimonial"
             >
