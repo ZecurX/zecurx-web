@@ -7,7 +7,8 @@ import ProductGrid from "@/components/shop/ProductGrid";
 import CartIcon from "@/components/shop/CartIcon";
 import { query } from "@/lib/db";
 import { CartAnimationProvider } from "@/context/CartAnimationContext";
-import { HeroWords, heroEnd } from "@/components/ui/hero-words";
+import { HeroWords } from "@/components/ui/hero-words";
+import { heroEnd } from "@/lib/hero-timing";
 
 export const metadata: Metadata = {
   title: "Security Hardware Store",
