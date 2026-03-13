@@ -12,6 +12,7 @@ const logos = [
     { src: `${CDN_URL}/logos/KANTI.webp`, alt: "Kanti" },
     { src: `${CDN_URL}/logos/MATEX.webp`, darkSrc: `${CDN_URL}/logos/MATEX-dark.webp`, alt: "Matex" },
     { src: `${CDN_URL}/logos/my-garden-v3.webp`, alt: "My Garden" },
+    { src: `${CDN_URL}/logos/st-claret-college.webp`, darkSrc: `${CDN_URL}/logos/st-claret-college-dark.webp`, alt: "St. Claret College" },
 ];
 
 export function LogoCarouselBasic() {

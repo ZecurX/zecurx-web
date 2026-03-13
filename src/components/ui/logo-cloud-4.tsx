@@ -24,30 +24,24 @@ export function LogoCloud({ logos }: LogoCloudProps) {
                         <span key={`logo-${logo.alt}`} className="pointer-events-none select-none">
                             <img
                                 alt={logo.alt}
-                                className="h-20 md:h-28 dark:hidden"
-                                height="auto"
+                                className="h-16 md:h-24 dark:hidden"
                                 loading="lazy"
                                 src={logo.src}
-                                width="auto"
                             />
                             <img
                                 alt={logo.alt}
-                                className="h-20 md:h-28 hidden dark:block"
-                                height="auto"
+                                className="h-16 md:h-24 hidden dark:block"
                                 loading="lazy"
                                 src={logo.darkSrc}
-                                width="auto"
                             />
                         </span>
                     ) : (
                         <img
                             alt={logo.alt}
-                            className="pointer-events-none h-20 select-none md:h-28"
-                            height="auto"
+                            className="pointer-events-none h-16 select-none md:h-24"
                             key={`logo-${logo.alt}`}
                             loading="lazy"
                             src={logo.src}
-                            width="auto"
                         />
                     )
                 )}
