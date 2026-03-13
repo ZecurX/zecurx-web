@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef } from "react";
 
-// Interval between words (ms). Kept tight for a snappy feel.
-const GAP = 80;
+import { GAP } from "@/lib/hero-timing";
+
+export { heroEnd } from "@/lib/hero-timing";
 
 interface HeroWordsProps {
   children: React.ReactNode;
@@ -83,13 +84,4 @@ export function HeroWords({ children, className, delay = 0 }: HeroWordsProps) {
       {process(children)}
     </span>
   );
-}
-
-/**
- * Returns the total estimated animation duration (ms) for N words
- * starting at `delay`. Useful for scheduling elements that follow
- * the hero text (CTAs, badges, etc.).
- */
-export function heroEnd(words: number, delay = 0) {
-  return delay + (words - 1) * GAP + 500; // 500 = animation duration
 }
