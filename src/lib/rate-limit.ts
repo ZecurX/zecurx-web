@@ -76,9 +76,7 @@ if (isUpstashConfigured) {
         prefix: 'ratelimit:orders',
     });
 } else {
-    if (process.env.NODE_ENV === 'development') {
-        console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
-    }
+    console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
 }
 
 export async function checkPaymentRateLimit(ip: string): Promise<RateLimitResult> {

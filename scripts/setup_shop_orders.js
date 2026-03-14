@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://zecurx:zecurxdb2026@209.38.155.227:5432/zecurx_platform?schema=zecurx_admin',
+    connectionString: process.env.DATABASE_URL,
     ssl: false,
 });
 

@@ -7,6 +7,7 @@ import { calculateReadingTime, formatBlogDate } from '@/lib/blog';
 import ViewIncrement from '@/components/blog/ViewIncrement';
 import ShareButtons from '@/components/blog/ShareButtons';
 import { Metadata } from 'next';
+import { sanitizeBlogContent } from '@/lib/sanitize';
 
 interface RelatedPost {
   id: string;
@@ -190,7 +191,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Content */}
         <article className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) }} />
         </article>
 
         {/* Tags & Share */}

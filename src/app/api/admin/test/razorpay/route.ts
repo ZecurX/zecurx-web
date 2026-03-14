@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
+import { verifySession } from '@/lib/auth';
 
 export async function POST() {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const keyId = process.env.RAZORPAY_KEY_ID;
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
