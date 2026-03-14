@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { EnterpriseLead, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
 import { checkLeadsRateLimit, getClientIp } from '@/lib/rate-limit';
+import { verifySession } from '@/lib/auth';
 
 export async function GET(request: Request) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { searchParams } = new URL(request.url);
 
         const status = searchParams.get('status');

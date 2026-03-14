@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSignedUploadUrl, generateS3Key } from '@/lib/s3';
+import { verifySessionFromRequest } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await verifySessionFromRequest(req);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json().catch(() => null);
     
     if (!body) {
@@ -31,12 +37,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data);
   } catch (error: unknown) {
     console.error('Presigned URL error:', error);
-    const errMsg = error instanceof Error ? error.message : 'An error occurred';
-    const errCode = error instanceof Error ? ('code' in error ? (error as NodeJS.ErrnoException).code : error.name) : undefined;
     return NextResponse.json({ 
-      error: 'Failed to generate upload URL',
-      details: errMsg,
-      code: errCode
+      error: 'Failed to generate upload URL'
     }, { status: 500 });
   }
 }

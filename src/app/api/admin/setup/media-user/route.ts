@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       }, { status: 409 });
     }
 
-    const password = 'media123';
+    const password = crypto.randomUUID().slice(0, 16);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await db.query(
@@ -55,8 +56,8 @@ export async function POST(req: NextRequest) {
       user: newUser,
       credentials: {
         email: 'media@zecurx.com',
-        password: 'media123',
-        warning: 'CHANGE THIS PASSWORD IMMEDIATELY AFTER FIRST LOGIN',
+        password: password,
+        warning: 'Save this password now. It will not be shown again. Change it after first login.',
       },
       permissions: {
         'blog:create': true,

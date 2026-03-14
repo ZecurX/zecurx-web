@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import { query } from '@/lib/db';
 import { sendEmail } from '@/lib/sendgrid';
 import { OtpPurpose, OtpVerification } from '@/types/seminar';
@@ -7,7 +8,7 @@ const OTP_EXPIRY_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
 
 export function generateOtp(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return randomInt(100000, 1000000).toString();
 }
 
 export async function createOtp(

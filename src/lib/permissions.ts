@@ -32,7 +32,9 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
 
   [ROLES.ADMIN]: [
+    'dashboard:*',
     'customers:*',
+    'sales:*',
     'products:*',
     'leads:*',
     'referral_codes:*',

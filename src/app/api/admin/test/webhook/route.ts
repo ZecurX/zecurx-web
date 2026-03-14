@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
+import { verifySession } from '@/lib/auth';
 
 export async function POST() {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.zecurx.com';
 
