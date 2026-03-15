@@ -1,225 +1,93 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import { MagicCard } from "@/components/ui/magic-card";
+import { BorderBeam } from "@/components/ui/border-beam";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const INDUSTRIES = [
   {
-    title: "FinTech\n& Payments",
-    displayTitle: "FinTech & Payments",
+    title: "FinTech & Payments",
     tag: "PCI-DSS · RBI Ready",
-    link: "/industries",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/industries/fintech.png",
+    href: "/industries",
+    borderColors: { colorFrom: "#3b82f6", colorTo: "#06b6d4" },
   },
   {
-    title: "AI & ML\nStartups",
-    displayTitle: "AI & ML Startups",
+    title: "AI & ML Startups",
     tag: "LLM · MLOps Security",
-    link: "/industries",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/industries/ai-ml.png",
+    href: "/industries",
+    borderColors: { colorFrom: "#8b5cf6", colorTo: "#ec4899" },
   },
   {
-    title: "HealthTech\n& MedTech",
-    displayTitle: "HealthTech & MedTech",
+    title: "HealthTech & MedTech",
     tag: "DPDP Act · HIPAA Ready",
-    link: "/industries",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/industries/healthtech.png",
+    href: "/industries",
+    borderColors: { colorFrom: "#14b8a6", colorTo: "#22d3ee" },
   },
   {
-    title: "SaaS &\nDeveloper Tools",
-    displayTitle: "SaaS & Developer Tools",
+    title: "SaaS & Developer Tools",
     tag: "CI/CD · OWASP Covered",
-    link: "/industries",
-    image: "https://zecurx-web.fsn1.your-objectstorage.com/industries/saas.png",
+    href: "/industries",
+    borderColors: { colorFrom: "#6366f1", colorTo: "#818cf8" },
   },
 ];
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
 export function Industries() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-
   return (
-    <section
-      ref={ref}
-      className="pt-24 pb-4 md:pt-32 md:pb-6 bg-background text-foreground"
-      id="industries"
-    >
-      {/* Header */}
+    <section className="py-24 md:py-32 bg-background" id="industries">
       <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="flex flex-col items-center text-center mb-16 md:mb-24"
-        >
-          <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
-            Industries
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground">
-            Who we&apos;re{" "}
-            <span className="font-newsreader italic text-muted-foreground">
-              built for
+        {/* Header */}
+        <BlurFade inView={true} delay={0}>
+          <div className="flex flex-col items-center text-center mb-16 md:mb-24">
+            <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
+              Industries
             </span>
-          </h2>
-        </motion.div>
-      </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground">
+              Who we&apos;re{" "}
+              <span className="font-newsreader italic text-muted-foreground">
+                built for
+              </span>
+            </h2>
+          </div>
+        </BlurFade>
 
-      {/* Grid layout instead of horizontal scroll */}
-      <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {INDUSTRIES.map((ind, i) => (
-            <IndustryCard key={ind.displayTitle} ind={ind} index={i} />
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {INDUSTRIES.map((ind, index) => (
+            <BlurFade key={ind.title} inView={true} delay={0.1 * index}>
+              <Link href={ind.href} className="block group">
+                <MagicCard
+                  className="rounded-2xl min-h-[280px] flex flex-col justify-end"
+                  gradientFrom={ind.borderColors.colorFrom}
+                  gradientTo={ind.borderColors.colorTo}
+                >
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-foreground">
+                      {ind.title}
+                    </h3>
+                    <span className="text-xs text-muted-foreground uppercase tracking-widest">
+                      {ind.tag}
+                    </span>
+                    <span className="block mt-2 text-sm font-medium text-primary group-hover:underline transition-colors">
+                      Explore →
+                    </span>
+                  </div>
+                  <BorderBeam
+                    colorFrom={ind.borderColors.colorFrom}
+                    colorTo={ind.borderColors.colorTo}
+                    size={80}
+                    duration={8}
+                  />
+                </MagicCard>
+              </Link>
+            </BlurFade>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
-  );
-}
-
-// ─── Industry Card ─────────────────────────────────────────────────────────────
-
-function IndustryCard({
-  ind,
-  index,
-}: {
-  ind: (typeof INDUSTRIES)[0];
-  index: number;
-}) {
-  const [hovered, setHovered] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    // Max rotation of 10 degrees at edges
-    const rY = (mouseX / width - 0.5) * 20;
-    const rX = (mouseY / height - 0.5) * -20;
-
-    setRotateX(rX);
-    setRotateY(rY);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-    setRotateX(0);
-    setRotateY(0);
-  };
-
-  return (
-    <Link
-      href={ind.link}
-      className="block focus:outline-none relative"
-      style={{ perspective: "1200px" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-    >
-      <motion.div
-        ref={cardRef}
-        className="relative rounded-[20px] overflow-hidden"
-        style={{
-          height: "480px",
-          width: "100%",
-          transformStyle: "preserve-3d",
-          /* Fix for image/border leaking bleeding issues */
-          WebkitMaskImage: "-webkit-radial-gradient(white, black)",
-          transform: "translateZ(0)",
-          boxShadow: hovered
-            ? "0 0 0 1px rgba(255,255,255,0.12), 0 32px 64px rgba(0,0,0,0.5)"
-            : "0 0 0 1px rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.35)",
-        }}
-        animate={{
-          scale: hovered ? 1.02 : 1,
-          rotateX: hovered ? rotateX : 0,
-          rotateY: hovered ? rotateY : 0,
-        }}
-        transition={{
-          duration: hovered ? 0.1 : 0.6,
-          ease: hovered ? "linear" : [0.16, 1, 0.3, 1],
-        }}
-      >
-        {/* Background photo */}
-        <Image
-          src={ind.image}
-          alt={ind.displayTitle}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          quality={75}
-          className="object-cover object-center"
-          placeholder="blur"
-          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExODI3Ii8+PC9zdmc+"
-          style={{
-            transition: "transform 0.6s ease",
-            transform: hovered
-              ? "scale(1.1) translateZ(0)"
-              : "scale(1.0) translateZ(0)",
-            filter: "brightness(0.75)",
-          }}
-        />
-
-        {/* Top gradient for text legibility */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.10) 40%, rgba(0,0,0,0.55) 100%)",
-            transform: "translateZ(1px)",
-          }}
-        />
-
-        {/* ── Industry name — top-left ── */}
-        <div
-          className="absolute top-6 left-6"
-          style={{ transform: "translateZ(30px)" }}
-        >
-          <motion.h3
-            className="text-[22px] font-bold text-white leading-tight"
-            style={{ whiteSpace: "pre-line" }}
-            animate={{ x: hovered ? 4 : 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            {ind.title}
-          </motion.h3>
-        </div>
-
-        {/* ── Bottom Link ── */}
-        <div
-          className="absolute bottom-6 left-6 right-6 flex items-center justify-between"
-          style={{ transform: "translateZ(30px)" }}
-        >
-          <span className="text-[10px] uppercase tracking-widest text-white/50 font-semibold">
-            {ind.tag}
-          </span>
-          <motion.span
-            className="text-[13px] font-semibold text-white/90 flex items-center gap-1"
-            animate={{ x: hovered ? 4 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            Explore <span className="text-white/50">→</span>
-          </motion.span>
-        </div>
-      </motion.div>
-    </Link>
   );
 }
