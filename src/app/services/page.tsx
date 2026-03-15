@@ -118,7 +118,7 @@ export default function ServicesPage() {
       </section>
 
       {/* --- GUIDING PHILOSOPHY --- */}
-      <section className="py-20 md:py-32 px-4 md:px-6 relative overflow-hidden">
+      <section className="py-12 md:py-16 px-4 md:px-6 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -140,8 +140,8 @@ export default function ServicesPage() {
       </section>
 
       {/* --- THREAT ARCHITECTURE SECTION --- */}
-      <section className="py-16 px-6 relative overflow-hidden">
-        <div className="max-w-5xl mx-auto flex flex-col items-center justify-center">
+      <section className="py-8 px-6 relative overflow-hidden">
+        <div className="max-w-3xl mx-auto flex flex-col items-center justify-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
