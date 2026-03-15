@@ -42,45 +42,12 @@ export function ServicesHeroSection() {
       });
     });
 
-    // Click ripple effect
-    function onClick(e: MouseEvent) {
-      const ripple = document.createElement("div");
-      ripple.style.position = "fixed";
-      ripple.style.left = e.clientX + "px";
-      ripple.style.top = e.clientY + "px";
-      ripple.style.width = "4px";
-      ripple.style.height = "4px";
-      ripple.style.background = "oklch(0.6 0.1 260 / 0.6)";
-      ripple.style.borderRadius = "50%";
-      ripple.style.transform = "translate(-50%, -50%)";
-      ripple.style.pointerEvents = "none";
-      ripple.style.animation = "pulse-glow 1s ease-out forwards";
-      document.body.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 1000);
-    }
-    document.addEventListener("click", onClick);
 
-    // Floating elements on scroll
-    let scrolled = false;
-    function onScroll() {
-      if (!scrolled) {
-        scrolled = true;
-        document
-          .querySelectorAll<HTMLElement>(".floating-element")
-          .forEach((el, index) => {
-            setTimeout(() => {
-              el.style.animationPlayState = "running";
-            }, index * 200);
-          });
-      }
-    }
-    window.addEventListener("scroll", onScroll);
+
 
     return () => {
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeave);
-      document.removeEventListener("click", onClick);
-      window.removeEventListener("scroll", onScroll);
     };
   }, []);
 
@@ -156,86 +123,9 @@ export function ServicesHeroSection() {
           className="grid-line text-foreground"
           style={{ animationDelay: "3s", opacity: 0.05 }}
         />
-        <circle
-          cx="20%"
-          cy="20%"
-          r="2"
-          className="detail-dot"
-          style={{ animationDelay: "3s" }}
-        />
-        <circle
-          cx="80%"
-          cy="20%"
-          r="2"
-          className="detail-dot"
-          style={{ animationDelay: "3.2s" }}
-        />
-        <circle
-          cx="20%"
-          cy="80%"
-          r="2"
-          className="detail-dot"
-          style={{ animationDelay: "3.4s" }}
-        />
-        <circle
-          cx="80%"
-          cy="80%"
-          r="2"
-          className="detail-dot"
-          style={{ animationDelay: "3.6s" }}
-        />
-        <circle
-          cx="50%"
-          cy="50%"
-          r="1.5"
-          className="detail-dot"
-          style={{ animationDelay: "4s" }}
-        />
       </svg>
 
-      {/* Corner elements */}
-      <div
-        className="corner-element top-8 left-8"
-        style={{ animationDelay: "2s" }}
-      >
-        <div className="absolute top-0 left-0 w-2 h-2 opacity-30 bg-primary" />
-      </div>
-      <div
-        className="corner-element top-8 right-8"
-        style={{ animationDelay: "2.1s" }}
-      >
-        <div className="absolute top-0 right-0 w-2 h-2 opacity-30 bg-primary" />
-      </div>
-      <div
-        className="corner-element bottom-8 left-8"
-        style={{ animationDelay: "2.2s" }}
-      >
-        <div className="absolute bottom-0 left-0 w-2 h-2 opacity-30 bg-primary" />
-      </div>
-      <div
-        className="corner-element bottom-8 right-8"
-        style={{ animationDelay: "2.3s" }}
-      >
-        <div className="absolute bottom-0 right-0 w-2 h-2 opacity-30 bg-primary" />
-      </div>
 
-      {/* Floating elements */}
-      <div
-        className="floating-element"
-        style={{ top: "25%", left: "15%", animationDelay: "2.5s" }}
-      />
-      <div
-        className="floating-element"
-        style={{ top: "60%", left: "85%", animationDelay: "2.8s" }}
-      />
-      <div
-        className="floating-element"
-        style={{ top: "40%", left: "10%", animationDelay: "3.1s" }}
-      />
-      <div
-        className="floating-element"
-        style={{ top: "75%", left: "90%", animationDelay: "3.4s" }}
-      />
 
       <div className="relative z-10 min-h-screen flex flex-col justify-between items-center px-8 py-12 md:px-16 md:py-20">
         {/* Top tagline */}
