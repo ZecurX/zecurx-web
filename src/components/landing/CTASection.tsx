@@ -1,74 +1,76 @@
 "use client";
 
-import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
+import Link from "next/link";
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { Ripple } from "@/components/ui/ripple";
+import { BlurFade } from "@/components/ui/blur-fade";
 
-interface CTASectionProps {
-    title?: string;
-    description?: string;
-    primaryLabel?: string;
-    primaryHref?: string;
-    secondaryLabel?: string;
-    secondaryHref?: string;
-    className?: string;
-}
+export default function CTASection() {
+  return (
+    <section className="relative py-24 md:py-32 overflow-hidden bg-card">
+      {/* Animated grid pattern overlay */}
+      <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={0.1}
+        duration={3}
+        className="absolute inset-0 h-full w-full fill-primary/20 stroke-primary/20 [mask-image:radial-gradient(500px_circle_at_center,white,transparent)]"
+      />
 
-export default function CTASection({
-    title = "Ready to secure your future?",
-    description = "Schedule a consultation with our security architects and see how ZecurX can transform your defense posture.",
-    primaryLabel = "Book a Demo",
-    primaryHref = "/book-demo",
-    secondaryLabel = "Contact Sales",
-    secondaryHref = "/contact",
-    className
-}: CTASectionProps) {
-    return (
-        <section className={cn("py-32 relative overflow-hidden px-6", className)}>
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="max-w-5xl mx-auto"
-            >
-                <div className="relative overflow-hidden rounded-[2.5rem] bg-foreground text-background px-8 py-16 md:p-20 text-center">
-                    {/* Abstract Background Shapes */}
-                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-20">
-                        <div className="absolute top-[-50%] left-[-20%] w-[800px] h-[800px] bg-background/30 rounded-full blur-[100px]" />
-                        <div className="absolute bottom-[-50%] right-[-20%] w-[600px] h-[600px] bg-primary/40 rounded-full blur-[80px]" />
-                    </div>
+      {/* Subtle radial glow */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/4 w-[500px] h-[300px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse, oklch(0.70 0.14 230 / 0.08) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
 
-                    <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-                        <h2 className="text-3xl md:text-5xl font-manrope font-bold mb-6 tracking-tight">
-                            {title}
-                        </h2>
-                        <p className="text-xl md:text-2xl text-background/80 font-light leading-relaxed max-w-2xl mx-auto">
-                            {description}
-                        </p>
+      {/* Ripple effect behind CTA content */}
+      <Ripple
+        mainCircleSize={180}
+        mainCircleOpacity={0.1}
+        numCircles={6}
+        className="absolute inset-0 pointer-events-none"
+      />
 
-                        <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button asChild size="lg" className="h-14 px-8 rounded-full bg-background text-foreground hover:bg-background/90 text-lg font-semibold shadow-xl">
-                                <Link href={primaryHref}>
-                                    {primaryLabel}
-                                    <ArrowUpRight className="ml-2 w-5 h-5" />
-                                </Link>
-                            </Button>
-                            
-                            {secondaryLabel && secondaryHref && (
-                                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-full border-background/20 bg-transparent text-background hover:bg-background/10 hover:text-background text-lg font-medium">
-                                    <Link href={secondaryHref}>
-                                        {secondaryLabel}
-                                    </Link>
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
-        </section>
-    );
+      <div className="relative max-w-3xl mx-auto text-center px-6">
+        <BlurFade delay={0} inView>
+          <h2 className="text-3xl md:text-5xl font-manrope font-semibold text-foreground tracking-tight">
+            Ready to ship securely?
+          </h2>
+        </BlurFade>
+
+        <BlurFade delay={0.1} inView>
+          <p className="mt-6 text-lg text-muted-foreground font-inter max-w-xl mx-auto">
+            Get a free security assessment. We&apos;ll identify your top
+            vulnerabilities in 72 hours.
+          </p>
+        </BlurFade>
+
+        <BlurFade delay={0.2} inView>
+          <div className="mt-10">
+            <Link href="/contact" className="inline-block">
+              <ShimmerButton
+                background="oklch(0.70 0.14 230)"
+                shimmerColor="#38bdf8"
+                borderRadius="100px"
+                className="px-8 py-4 text-base font-semibold"
+              >
+                Get Your Free Assessment
+              </ShimmerButton>
+            </Link>
+          </div>
+        </BlurFade>
+
+        <BlurFade delay={0.3} inView>
+          <p className="mt-4 text-sm text-muted-foreground">
+            No credit card required. No obligation.
+          </p>
+        </BlurFade>
+      </div>
+    </section>
+  );
 }
