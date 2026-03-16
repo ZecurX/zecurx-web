@@ -6,9 +6,9 @@ import validator from 'validator';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, dev_mode, metadata } = body;
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, metadata } = body;
 
-        const isDevMode = dev_mode === true && process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+        const isDevMode = process.env.NODE_ENV === 'development';
 
         if (!isDevMode && (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature)) {
             return NextResponse.json(
