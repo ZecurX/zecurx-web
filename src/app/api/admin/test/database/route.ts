@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifySession } from '@/lib/auth';
 
 export async function POST() {
     const startTime = Date.now();
 
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const versionResult = await query('SELECT version()');
         const version = versionResult.rows[0]?.version || 'Unknown';
 
