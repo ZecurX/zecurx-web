@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { StudentLead } from '@/types/lead-types';
+import { verifySession } from '@/lib/auth';
 
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { id } = await params;
 
         const leadResult = await query<StudentLead>(
@@ -57,6 +63,11 @@ export async function PATCH(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { id } = await params;
         const body = await request.json();
         const adminId = body._adminId;
@@ -159,6 +170,11 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const { id } = await params;
 
         await query(`DELETE FROM student_leads WHERE id = $1`, [id]);

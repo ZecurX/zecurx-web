@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -19,43 +19,36 @@ const testimonials: Testimonial[] = [
     tempId: 0,
     testimonial:
       "ZecurX delivered exceptional quality from UI/UX design to full-stack development. Their VAPT assessment gave us confidence in our platform's security. Truly enterprise-grade service.",
-    by: "Gurudev Engicon Pvt. Ltd., Enterprise Client",
+    by: 'Gurudev Engicon Pvt. Ltd., Enterprise Client',
     imgSrc: `${CDN_URL}/logos/GURUDEV.webp`,
   },
   {
     tempId: 1,
     testimonial:
-      "The team transformed our online presence with a beautiful, mobile-first website. Their security hardening and 24/7 support gives us peace of mind.",
-    by: "Honey Herbal Beauty Parlour, Business Client",
+      'The team transformed our online presence with a beautiful, mobile-first website. Their security hardening and 24/7 support gives us peace of mind.',
+    by: 'Honey Herbal Beauty Parlour, Business Client',
     imgSrc: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`,
   },
   {
     tempId: 2,
     testimonial:
-      "Working with ZecurX on our security assessment was seamless. They identified critical gaps in our infrastructure and provided clear, actionable remediation steps.",
-    by: "IBM, Technology Partner",
+      'Working with ZecurX on our security assessment was seamless. They identified critical gaps in our infrastructure and provided clear, actionable remediation steps.',
+    by: 'IBM, Technology Partner',
     imgSrc: `${CDN_URL}/logos/IBM.webp`,
-  },
-  {
-    tempId: 3,
-    testimonial:
-      "ZecurX built us a modern e-commerce platform that handles our peak festival season traffic without breaking a sweat. Their ongoing security monitoring keeps our customer data safe.",
-    by: "Kanti Sweets, Business Client",
-    imgSrc: `${CDN_URL}/logos/KANTI.webp`,
   },
   {
     tempId: 4,
     testimonial:
-      "From web application development to penetration testing, ZecurX handled everything with precision. Their team understands both the development and security sides deeply.",
-    by: "MateX, Business Client",
+      'From web application development to penetration testing, ZecurX handled everything with precision. Their team understands both the development and security sides deeply.',
+    by: 'MateX, Business Client',
     imgSrc: `${CDN_URL}/logos/MATEX.webp`,
     darkImgSrc: `${CDN_URL}/logos/MATEX-dark.webp`,
   },
   {
     tempId: 5,
     testimonial:
-      "ZecurX redesigned our digital storefront and secured our payment systems end-to-end. The attention to detail in both design and security was impressive.",
-    by: "My Garden, Business Client",
+      'ZecurX redesigned our digital storefront and secured our payment systems end-to-end. The attention to detail in both design and security was impressive.',
+    by: 'My Garden, Business Client',
     imgSrc: `${CDN_URL}/logos/my-garden-v3.webp`,
   },
 ];
@@ -79,48 +72,48 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
     <div
       onClick={() => handleMove(position)}
       className={cn(
-        "absolute left-1/2 top-1/2 cursor-pointer overflow-hidden rounded-xl border-2 p-8",
-        "motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-in-out",
+        'absolute left-1/2 top-1/2 cursor-pointer overflow-hidden rounded-xl border-2 p-8',
+        'motion-safe:transition-all motion-safe:duration-500 motion-safe:ease-in-out',
         isCenter
-          ? "z-10 bg-card text-card-foreground border-primary"
-          : "z-0 bg-card text-card-foreground border-border hover:border-primary/50",
+          ? 'z-10 bg-card text-card-foreground border-primary'
+          : 'z-0 bg-card text-card-foreground border-border hover:border-primary/50',
       )}
       style={{
         width: cardSize,
         height: cardSize * 1.25,
         transform: `translate(-50%, -50%) translateX(${cardSize * 0.8 * position}px) translateY(${isCenter ? -40 : position % 2 ? 15 : -15}px) rotate(${isCenter ? 0 : position % 2 ? 2.5 : -2.5}deg)`,
         boxShadow: isCenter
-          ? "0px 8px 0px 4px var(--border)"
-          : "0px 0px 0px 0px transparent",
+          ? '0px 8px 0px 4px var(--border)'
+          : '0px 0px 0px 0px transparent',
       }}
     >
       {testimonial.darkImgSrc ? (
         <>
           <img
             src={testimonial.imgSrc}
-            alt={testimonial.by.split(",")[0]}
+            alt={testimonial.by.split(',')[0]}
             loading="lazy"
             decoding="async"
             className="mb-4 h-14 w-auto max-w-[120px] rounded-sm object-contain dark:hidden"
-            style={{ boxShadow: "3px 3px 0px var(--background)" }}
+            style={{ boxShadow: '3px 3px 0px var(--background)' }}
           />
           <img
             src={testimonial.darkImgSrc}
-            alt={testimonial.by.split(",")[0]}
+            alt={testimonial.by.split(',')[0]}
             loading="lazy"
             decoding="async"
             className="mb-4 hidden h-14 w-auto max-w-[120px] rounded-sm object-contain dark:block"
-            style={{ boxShadow: "3px 3px 0px var(--background)" }}
+            style={{ boxShadow: '3px 3px 0px var(--background)' }}
           />
         </>
       ) : (
         <img
           src={testimonial.imgSrc}
-          alt={testimonial.by.split(",")[0]}
+          alt={testimonial.by.split(',')[0]}
           loading="lazy"
           decoding="async"
           className="mb-4 h-14 w-auto max-w-[120px] rounded-sm object-contain"
-          style={{ boxShadow: "3px 3px 0px var(--background)" }}
+          style={{ boxShadow: '3px 3px 0px var(--background)' }}
         />
       )}
       <h3 className="font-newsreader text-base font-bold italic text-foreground/90 sm:text-lg leading-relaxed">
@@ -182,13 +175,13 @@ export function StaggerTestimonials() {
 
   useEffect(() => {
     const updateSize = () => {
-      const { matches } = window.matchMedia("(min-width: 640px)");
+      const { matches } = window.matchMedia('(min-width: 640px)');
       setCardSize(matches ? 365 : 290);
     };
 
     updateSize();
-    window.addEventListener("resize", updateSize);
-    return () => window.removeEventListener("resize", updateSize);
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
   }, []);
 
   return (
@@ -228,10 +221,10 @@ export function StaggerTestimonials() {
             <button
               onClick={() => handleUserMove(-1)}
               className={cn(
-                "flex h-14 w-14 items-center justify-center text-2xl",
-                "motion-safe:transition-colors",
-                "border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                'flex h-14 w-14 items-center justify-center text-2xl',
+                'motion-safe:transition-colors',
+                'border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               )}
               aria-label="Previous testimonial"
             >
@@ -240,10 +233,10 @@ export function StaggerTestimonials() {
             <button
               onClick={() => handleUserMove(1)}
               className={cn(
-                "flex h-14 w-14 items-center justify-center text-2xl",
-                "motion-safe:transition-colors",
-                "border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                'flex h-14 w-14 items-center justify-center text-2xl',
+                'motion-safe:transition-colors',
+                'border-2 border-border bg-background hover:bg-primary hover:text-primary-foreground',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               )}
               aria-label="Next testimonial"
             >

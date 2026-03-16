@@ -5,6 +5,7 @@ import { fetchFromCdn } from '@/lib/cdn';
 import { query } from '@/lib/db';
 import { checkEmailRateLimit, getClientIp } from '@/lib/rate-limit';
 import { brandedEmailTemplate } from '@/lib/email-template';
+import { escapeHtml } from '@/lib/html-escape';
 
 async function saveStudentLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
     try {
@@ -202,19 +203,19 @@ export async function POST(request: NextRequest) {
             </h2>
             
             <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0 0 10px 0;"><strong>Contact Person:</strong> ${name}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Organization:</strong> ${body.organization}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Seminar Type:</strong> ${seminarTypeLabels[body.seminarType] || body.seminarType}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Topic:</strong> ${body.topic}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Expected Attendees:</strong> ${body.attendees}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Contact Person:</strong> ${escapeHtml(name)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Organization:</strong> ${escapeHtml(body.organization)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Seminar Type:</strong> ${seminarTypeLabels[body.seminarType] || escapeHtml(body.seminarType)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Topic:</strong> ${escapeHtml(body.topic)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Expected Attendees:</strong> ${escapeHtml(body.attendees)}</p>
                 <p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'Not specified'}</p>
             </div>
 
             ${body.message ? `
             <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                 <h3 style="margin-top: 0; color: #333;">Additional Requirements:</h3>
-                <p style="color: #555; line-height: 1.6;">${body.message.replace(/\n/g, '<br>')}</p>
+                <p style="color: #555; line-height: 1.6;">${escapeHtml(body.message).replace(/\n/g, '<br>')}</p>
             </div>` : ''}
         ` : `
             <h2 style="color: #1a1a1a; border-bottom: 2px solid #333; padding-bottom: 10px;">
@@ -222,31 +223,31 @@ export async function POST(request: NextRequest) {
             </h2>
             
             <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${name}</p>
-                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${email}</p>
-                ${body.mobile ? `<p style="margin: 0 0 10px 0;"><strong>Mobile:</strong> ${body.mobile}</p>` : ''}
-                ${body.college ? `<p style="margin: 0 0 10px 0;"><strong>College:</strong> ${body.college}</p>` : ''}
+                <p style="margin: 0 0 10px 0;"><strong>Name:</strong> ${escapeHtml(name)}</p>
+                <p style="margin: 0 0 10px 0;"><strong>Email:</strong> ${escapeHtml(email)}</p>
+                ${body.mobile ? `<p style="margin: 0 0 10px 0;"><strong>Mobile:</strong> ${escapeHtml(body.mobile)}</p>` : ''}
+                ${body.college ? `<p style="margin: 0 0 10px 0;"><strong>College:</strong> ${escapeHtml(body.college)}</p>` : ''}
                 
-                ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${body.courseTitle}</p>` : ''}
-                ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${body.itemName}</p>` : ''}
+                ${isBrochure && body.courseTitle ? `<p style="margin: 0 0 10px 0;"><strong>Course:</strong> ${escapeHtml(body.courseTitle)}</p>` : ''}
+                ${isPurchase && body.itemName ? `<p style="margin: 0 0 10px 0;"><strong>Item:</strong> ${escapeHtml(body.itemName)}</p>` : ''}
                 
-                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0;"><strong>Original Price:</strong> ₹${body.originalPrice}</p>` : ''}
-                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0; color: green;"><strong>Discount:</strong> -₹${body.discountAmount}</p>` : ''}
+                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0;"><strong>Original Price:</strong> ₹${escapeHtml(body.originalPrice)}</p>` : ''}
+                ${isPurchase && body.discountAmount > 0 ? `<p style="margin: 0 0 10px 0; color: green;"><strong>Discount:</strong> -₹${escapeHtml(body.discountAmount)}</p>` : ''}
                 
-                ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>${body.discountAmount > 0 ? 'Total Paid' : 'Price'}:</strong> ₹${body.price}</p>` : ''}
-                ${isPurchase && body.paymentId ? `<p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${body.paymentId}</p>` : ''}
+                ${isPurchase && body.price ? `<p style="margin: 0 0 10px 0;"><strong>${body.discountAmount > 0 ? 'Total Paid' : 'Price'}:</strong> ₹${escapeHtml(body.price)}</p>` : ''}
+                ${isPurchase && body.paymentId ? `<p style="margin: 0 0 10px 0;"><strong>Payment ID:</strong> ${escapeHtml(body.paymentId)}</p>` : ''}
                 
-                ${body.company ? `<p style="margin: 0 0 10px 0;"><strong>Company:</strong> ${body.company}</p>` : ''}
-                ${body.role ? `<p style="margin: 0 0 10px 0;"><strong>Role:</strong> ${body.role}</p>` : ''}
+                ${body.company ? `<p style="margin: 0 0 10px 0;"><strong>Company:</strong> ${escapeHtml(body.company)}</p>` : ''}
+                ${body.role ? `<p style="margin: 0 0 10px 0;"><strong>Role:</strong> ${escapeHtml(body.role)}</p>` : ''}
                 ${preferredDate ? `<p style="margin: 0 0 10px 0;"><strong>Preferred Date:</strong> ${new Date(preferredDate).toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })}</p>` : ''}
-                ${body.service ? `<p style="margin: 0 0 10px 0;"><strong>Service Interest:</strong> ${body.service}</p>` : ''}
-                ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
+                ${body.service ? `<p style="margin: 0 0 10px 0;"><strong>Service Interest:</strong> ${escapeHtml(body.service)}</p>` : ''}
+                ${subject ? `<p style="margin: 0 0 10px 0;"><strong>Subject:</strong> ${escapeHtml(subject)}</p>` : ''}
             </div>
 
             ${!isBrochure && !isPurchase ? `
             <div style="background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
                 <h3 style="margin-top: 0; color: #333;">Message:</h3>
-                <p style="color: #555; line-height: 1.6;">${message ? message.replace(/\n/g, '<br>') : 'No message provided'}</p>
+                <p style="color: #555; line-height: 1.6;">${message ? escapeHtml(message).replace(/\n/g, '<br>') : 'No message provided'}</p>
             </div>` : ''}
         `;
 
@@ -330,17 +331,17 @@ export async function POST(request: NextRequest) {
         if (isDemo) {
             userMessage = 'We have received your demo request and our team will get back to you within 24 hours to schedule a personalized demo.';
         } else if (isBrochure) {
-            userMessage = `Thank you for your interest in <strong>${body.courseTitle}</strong>. We've attached the course brochure to this email for your convenience. You can also view it directly in your browser.`;
+            userMessage = `Thank you for your interest in <strong>${escapeHtml(body.courseTitle)}</strong>. We've attached the course brochure to this email for your convenience. You can also view it directly in your browser.`;
         } else if (isInternship) {
-            userMessage = `Congratulations! You have successfully enrolled in the <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> Our team will contact you shortly with onboarding details, schedule, and access credentials. Welcome to ZecurX!`;
+            userMessage = `Congratulations! You have successfully enrolled in the <strong>${escapeHtml(body.itemName)}</strong>. <br><br> Your payment of <strong>₹${escapeHtml(body.price)}</strong> was successful (ID: ${escapeHtml(body.paymentId)}). <br><br> Our team will contact you shortly with onboarding details, schedule, and access credentials. Welcome to ZecurX!`;
         } else if (isPurchase) {
-            userMessage = `Thank you for your purchase of <strong>${body.itemName}</strong>. <br><br> Your payment of <strong>₹${body.price}</strong> was successful (ID: ${body.paymentId}). <br><br> You will receive further instructions shortly regarding access/shipping.`;
+            userMessage = `Thank you for your purchase of <strong>${escapeHtml(body.itemName)}</strong>. <br><br> Your payment of <strong>₹${escapeHtml(body.price)}</strong> was successful (ID: ${escapeHtml(body.paymentId)}). <br><br> You will receive further instructions shortly regarding access/shipping.`;
         } else if (isSeminarBooking) {
-            userMessage = `Thank you for your interest in hosting a ZecurX seminar at <strong>${body.organization}</strong>!<br><br>
+            userMessage = `Thank you for your interest in hosting a ZecurX seminar at <strong>${escapeHtml(body.organization)}</strong>!<br><br>
             <strong>Booking Details:</strong><br>
-            • Topic: ${body.topic}<br>
-            • Type: ${seminarTypeLabels[body.seminarType] || body.seminarType}<br>
-            • Expected Attendees: ${body.attendees}<br>
+            • Topic: ${escapeHtml(body.topic)}<br>
+            • Type: ${seminarTypeLabels[body.seminarType] || escapeHtml(body.seminarType)}<br>
+            • Expected Attendees: ${escapeHtml(body.attendees)}<br>
             • Preferred Date: ${preferredDate ? new Date(preferredDate).toLocaleDateString('en-US', { dateStyle: 'full' }) : 'To be confirmed'}<br><br>
             Our training coordinators will review your requirements and send a customized proposal within 24-48 hours.`;
         } else if (isContact && preferredDate) {
@@ -355,8 +356,8 @@ export async function POST(request: NextRequest) {
             </p>
             
             ${(isDemo || (isContact && preferredDate)) ? calendarHtml : ''}
-            ${isDemo && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${body.service || 'service'} brochure for your reference.</strong></p>` : ''}
-            ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${body.courseTitle} brochure is attached to this email.</strong></p>` : ''}
+            ${isDemo && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 We have attached our ${escapeHtml(body.service) || 'service'} brochure for your reference.</strong></p>` : ''}
+            ${isBrochure && attachments.length > 0 ? `<p style="color: #555; margin-top: 20px;"><strong>📎 Your ${escapeHtml(body.courseTitle)} brochure is attached to this email.</strong></p>` : ''}
         `;
 
         const userEmailHtml = brandedEmailTemplate({

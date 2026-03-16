@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { verifySession } from '@/lib/auth';
 
 export async function POST() {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const accessKeyId = process.env.LINODE_ACCESS_KEY_ID;
         const secretAccessKey = process.env.LINODE_SECRET_ACCESS_KEY;
         const endpoint = process.env.LINODE_S3_ENDPOINT;
@@ -55,7 +61,7 @@ export async function POST() {
         return NextResponse.json(
             {
                 success: false,
-                error: error instanceof Error ? error.message : 'Failed to connect to S3 storage',
+                error: 'Failed to connect to S3 storage',
             },
             { status: 500 }
         );
