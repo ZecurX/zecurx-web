@@ -2,6 +2,8 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    // TODO: Enable SSL verification once the Hetzner PG server has a CA-signed cert
+    // Currently self-hosted PG at 65.21.191.184 likely uses a self-signed cert
     ssl: { rejectUnauthorized: false },
     max: 20,
     idleTimeoutMillis: 30000,
@@ -39,17 +41,64 @@ export async function getClient() {
 
 export { pool };
 
+// Allowlist of valid table names (add new tables here as they're created)
+const VALID_TABLES = new Set([
+    // Core admin tables
+    'admins', 'admin_sessions', 'admin_invitations',
+    // Lead management
+    'student_leads', 'student_lead_activities', 'student_lead_emails', 'student_lead_notes',
+    'enterprise_leads', 'enterprise_lead_activities', 'enterprise_lead_emails', 'enterprise_lead_notes',
+    // Blog
+    'blog_posts', 'blog_labels', 'blog_post_labels',
+    // Resources
+    'certificates', 'whitepapers', 'case_studies',
+    // Commerce
+    'customers', 'plans', 'products', 'orders', 'order_items', 'transactions',
+    'shop_orders', 'shop_order_items', 'shop_inventory',
+    // Referrals and partners
+    'referral_codes', 'referral_code_usages', 'partner_referrals', 'partner_referral_usages', 'partner_payouts',
+    // Media
+    'media', 'media_tags',
+    // Audit
+    'audit_log', 'audit_logs',
+    // Public schema qualified tables
+    'public.users', 'public.enrollments', 'public.internships',
+    'public.referral_codes', 'public.partner_referrals', 'public.partner_referral_usages',
+    'public.password_reset_tokens',
+    // Seminar schema qualified tables
+    'seminar.seminars', 'seminar.registrations', 'seminar.attendance',
+    'seminar.certificates', 'seminar.certificate_name_requests', 'seminar.otp_verifications', 'seminar.feedback',
+    // zecurx_admin schema qualified tables
+    'zecurx_admin.plans', 'zecurx_admin.promo_prices', 'zecurx_admin.settings', 'zecurx_admin.course_mapping',
+]);
+
+// Validate identifiers (table names, column names) to prevent SQL injection
+const VALID_IDENTIFIER = /^[a-zA-Z_][a-zA-Z0-9_.]*$/;
+
+function validateIdentifier(value: string, type: 'table' | 'column'): string {
+    if (!VALID_IDENTIFIER.test(value)) {
+        throw new Error(`Invalid ${type} name: ${value}`);
+    }
+    if (type === 'table' && !VALID_TABLES.has(value)) {
+        throw new Error(`Table not in allowlist: ${value}`);
+    }
+    return value;
+}
+
 export const db = {
     query,
     pool,
     getClient,
 
     async select<T extends QueryResultRow>(table: string, where?: Record<string, unknown>, columns = '*'): Promise<T[]> {
-        let sql = `SELECT ${columns} FROM ${table}`;
+        validateIdentifier(table, 'table');
+        const safeColumns = columns === '*' ? '*' : columns.split(',').map(c => validateIdentifier(c.trim(), 'column')).join(', ');
+        let sql = `SELECT ${safeColumns} FROM ${table}`;
         const values: unknown[] = [];
 
         if (where && Object.keys(where).length > 0) {
             const conditions = Object.entries(where).map(([key, val], i) => {
+                validateIdentifier(key, 'column');
                 values.push(val);
                 return `${key} = $${i + 1}`;
             });
@@ -61,12 +110,15 @@ export const db = {
     },
 
     async selectOne<T extends QueryResultRow>(table: string, where: Record<string, unknown>, columns = '*'): Promise<T | null> {
+        validateIdentifier(table, 'table');
         const rows = await this.select<T>(table, where, columns);
         return rows[0] || null;
     },
 
     async insert<T extends QueryResultRow>(table: string, data: Record<string, unknown>): Promise<T | null> {
+        validateIdentifier(table, 'table');
         const keys = Object.keys(data);
+        keys.forEach(key => validateIdentifier(key, 'column'));
         const values = Object.values(data);
         const placeholders = keys.map((_, i) => `$${i + 1}`);
 
@@ -76,9 +128,12 @@ export const db = {
     },
 
     async update<T extends QueryResultRow>(table: string, data: Record<string, unknown>, where: Record<string, unknown>): Promise<T | null> {
+        validateIdentifier(table, 'table');
         const dataKeys = Object.keys(data);
+        dataKeys.forEach(key => validateIdentifier(key, 'column'));
         const dataValues = Object.values(data);
         const whereKeys = Object.keys(where);
+        whereKeys.forEach(key => validateIdentifier(key, 'column'));
         const whereValues = Object.values(where);
 
         const setClause = dataKeys.map((key, i) => `${key} = $${i + 1}`).join(', ');
@@ -90,7 +145,9 @@ export const db = {
     },
 
     async delete(table: string, where: Record<string, unknown>): Promise<number> {
+        validateIdentifier(table, 'table');
         const keys = Object.keys(where);
+        keys.forEach(key => validateIdentifier(key, 'column'));
         const values = Object.values(where);
         const conditions = keys.map((key, i) => `${key} = $${i + 1}`).join(' AND ');
 
@@ -104,7 +161,10 @@ export const db = {
         data: Record<string, unknown>,
         conflictColumn: string
     ): Promise<T | null> {
+        validateIdentifier(table, 'table');
+        validateIdentifier(conflictColumn, 'column');
         const keys = Object.keys(data);
+        keys.forEach(key => validateIdentifier(key, 'column'));
         const values = Object.values(data);
         const placeholders = keys.map((_, i) => `$${i + 1}`);
         const updateClause = keys

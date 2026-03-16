@@ -263,6 +263,7 @@ export default function NewBlogPostPage() {
                 )}
                 <h1>{title || 'Untitled Post'}</h1>
                 {excerpt && <p className="lead">{excerpt}</p>}
+                {/* Admin preview: not sanitized since this is client-side, admin-only, self-authored content */}
                 <div dangerouslySetInnerHTML={{ __html: content }} />
               </article>
             </motion.div>

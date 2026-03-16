@@ -7,9 +7,9 @@ import { hasPermission as checkPermission } from './permissions';
 const JWT_EXPIRATION = '24h';
 
 export function getJwtSecret(): Uint8Array {
-    const secret = process.env.JWT_SECRET || process.env.ADMIN_PASSWORD;
+    const secret = process.env.JWT_SECRET;
     if (!secret) {
-        throw new Error('JWT_SECRET or ADMIN_PASSWORD environment variable is required');
+        throw new Error('JWT_SECRET environment variable is required');
     }
     return new TextEncoder().encode(secret);
 }
