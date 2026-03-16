@@ -1,25 +1,24 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { LogoCloud } from "@/components/ui/logo-cloud-4";
+import { cn } from '@/lib/utils';
+import { LogoCloud } from '@/components/ui/logo-cloud-4';
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
 const logos = [
-  { src: `${CDN_URL}/logos/GURUDEV.webp`, alt: "Gurudev" },
-  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`, alt: "Honey Herbal" },
-  { src: `${CDN_URL}/logos/IBM.webp`, alt: "IBM" },
-  { src: `${CDN_URL}/logos/KANTI.webp`, alt: "Kanti" },
+  { src: `${CDN_URL}/logos/GURUDEV.webp`, alt: 'Gurudev' },
+  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`, alt: 'Honey Herbal' },
+  { src: `${CDN_URL}/logos/IBM.webp`, alt: 'IBM' },
   {
     src: `${CDN_URL}/logos/MATEX.webp`,
     darkSrc: `${CDN_URL}/logos/MATEX-dark.webp`,
-    alt: "Matex",
+    alt: 'Matex',
   },
-  { src: `${CDN_URL}/logos/my-garden-v3.webp`, alt: "My Garden" },
+  { src: `${CDN_URL}/logos/my-garden-v3.webp`, alt: 'My Garden' },
   {
     src: `${CDN_URL}/logos/st-claret-college.webp`,
     darkSrc: `${CDN_URL}/logos/st-claret-college-dark.webp`,
-    alt: "St. Claret College",
+    alt: 'St. Claret College',
   },
 ];
 
@@ -29,9 +28,9 @@ export function LogoCarouselBasic() {
       <div
         aria-hidden="true"
         className={cn(
-          "-top-1/2 -translate-x-1/2 pointer-events-none absolute left-1/2 h-[120vmin] w-[120vmin] rounded-b-full",
-          "bg-[radial-gradient(ellipse_at_center,--theme(--color-foreground/.1),transparent_50%)]",
-          "blur-[30px]",
+          '-top-1/2 -translate-x-1/2 pointer-events-none absolute left-1/2 h-[120vmin] w-[120vmin] rounded-b-full',
+          'bg-[radial-gradient(ellipse_at_center,--theme(--color-foreground/.1),transparent_50%)]',
+          'blur-[30px]',
         )}
       />
       <div className="max-w-7xl mx-auto">
