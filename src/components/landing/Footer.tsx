@@ -1,95 +1,117 @@
 "use client";
-import React from 'react';
-import Image from 'next/image';
+
+import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
 
+const footerLinks = {
+  Services: [
+    { label: "Application Security", href: "/services/application-security" },
+    { label: "Cloud & DevSecOps", href: "/services/cloud-devsecops" },
+    {
+      label: "Secure AI Development",
+      href: "/services/secure-ai-development",
+    },
+    { label: "Compliance Readiness", href: "/services/compliance-readiness" },
+  ],
+  Industries: [
+    { label: "SaaS & Startups", href: "/industries" },
+    { label: "AI Companies", href: "/industries" },
+    { label: "SMEs", href: "/industries" },
+    { label: "EdTech & Colleges", href: "/industries" },
+  ],
+  Resources: [
+    { label: "Blog", href: "/blog" },
+    { label: "Guides & Checklists", href: "/resources/guides" },
+    { label: "Free Tools", href: "/tools" },
+    { label: "Academy", href: "/academy" },
+  ],
+  Company: [
+    { label: "How We Work", href: "/how-we-work" },
+    { label: "Contact", href: "/contact" },
+  ],
+} as const;
+
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Sitemap", href: "/sitemap" },
+] as const;
+
 export default function Footer() {
-    return (
-        <footer className="relative mt-20 border-t border-white/10 bg-background/50 backdrop-blur-xl">
-            {/* Ambient Background */}
-            <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-primary/5 blur-[100px] -z-10 rounded-full pointer-events-none" />
+  return (
+    <footer className="relative mt-0 overflow-hidden border-t border-blue-200/70 bg-[linear-gradient(180deg,#dbeafe_0%,#eaf3ff_42%,#f4f8ff_100%)]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(74,111,250,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(74,111,250,0.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35 [mask-image:radial-gradient(65%_55%_at_50%_30%,black,transparent)]" />
+      <div className="relative max-w-[1320px] mx-auto px-6 py-14 md:py-16">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 gap-12 rounded-3xl border border-white/75 bg-white/55 p-8 shadow-[0_20px_55px_rgba(30,58,95,0.12)] backdrop-blur-md xl:grid-cols-4 md:p-10">
+          {/* Brand Column */}
+          <div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-3"
+              aria-label="ZecurX Home"
+            >
+              <div className="relative w-14 h-14">
+                <Image
+                  src={CDN_ASSETS.brand.logo}
+                  alt="ZecurX"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <span className="font-manrope text-2xl font-semibold text-slate-900">
+                ZecurX
+              </span>
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-600">
+              Security &amp; Technology That Grows With You.
+            </p>
+          </div>
 
-            <div className="max-w-7xl mx-auto w-full px-6 py-16 md:py-20">
-                <div className="grid grid-cols-1 xl:grid-cols-4 gap-12 xl:gap-8 mb-16">
+          {/* Links Grid */}
+          <div className="xl:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8">
+            {Object.entries(footerLinks).map(([heading, links]) => (
+              <div key={heading}>
+                <h4 className="mb-4 font-space-grotesk text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  {heading}
+                </h4>
+                <ul className="space-y-2.5" role="list">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                    {/* Brand Column */}
-                    <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-3 group" aria-label="ZecurX Home">
-                            <div className="relative w-10 h-10 transition-transform group-hover:scale-110 duration-300">
-                                <Image
-                                    src={CDN_ASSETS.brand.logo}
-                                    alt="ZecurX"
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
-                            <span className="font-manrope font-bold text-2xl tracking-tight text-foreground">ZecurX</span>
-                        </Link>
-                        <p className="text-muted-foreground text-sm leading-relaxed max-w-xs font-light">
-                            Security & Technology That Grows With You. Enterprise-grade protection for the modern era.
-                        </p>
-                    </div>
-
-                    {/* Links Grid */}
-                    <div className="xl:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-                        {/* Column 1 - Services */}
-                        <div className="space-y-4">
-                            <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Services</h4>
-                            <ul className="space-y-2.5" role="list">
-                                <li><Link href="/services/application-security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Application Security</Link></li>
-                                <li><Link href="/services/cloud-devsecops" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Cloud & DevSecOps</Link></li>
-                                <li><Link href="/services/secure-ai-development" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Secure AI Development</Link></li>
-                                <li><Link href="/services/compliance-readiness" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Compliance Readiness</Link></li>
-                            </ul>
-                        </div>
-
-                        {/* Column 2 - Industries */}
-                        <div className="space-y-4">
-                            <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Industries</h4>
-                            <ul className="space-y-2.5" role="list">
-                                <li><Link href="/industries" className="text-sm text-muted-foreground hover:text-foreground transition-colors">SaaS & Startups</Link></li>
-                                <li><Link href="/industries" className="text-sm text-muted-foreground hover:text-foreground transition-colors">AI Companies</Link></li>
-                                <li><Link href="/industries" className="text-sm text-muted-foreground hover:text-foreground transition-colors">SMEs</Link></li>
-                                <li><Link href="/industries" className="text-sm text-muted-foreground hover:text-foreground transition-colors">EdTech & Colleges</Link></li>
-                            </ul>
-                        </div>
-
-                        {/* Column 3 - Resources */}
-                        <div className="space-y-4">
-                            <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Resources</h4>
-                            <ul className="space-y-2.5" role="list">
-                                <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link></li>
-                                <li><Link href="/resources/guides" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Guides & Checklists</Link></li>
-                                <li><Link href="/tools" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Free Tools</Link></li>
-                                <li><Link href="/academy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Academy</Link></li>
-                            </ul>
-                        </div>
-
-                        {/* Column 4 - Company */}
-                        <div className="space-y-4">
-                            <h4 className="font-manrope font-semibold text-sm text-foreground tracking-wide">Company</h4>
-                            <ul className="space-y-2.5" role="list">
-                                <li><Link href="/how-we-work" className="text-sm text-muted-foreground hover:text-foreground transition-colors">How We Work</Link></li>
-                                <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Section */}
-                <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-muted-foreground/60">
-                        &copy; 2026 ZecurX Inc. All rights reserved.
-                    </p>
-                    <div className="flex gap-8">
-                        <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link>
-                        <Link href="/terms-of-service" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
-                        <Link href="/sitemap" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Sitemap</Link>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    );
+        {/* Bottom Section */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-blue-200/80 pt-7 md:flex-row">
+          <p className="text-xs text-slate-500">
+            &copy; 2026 ZecurX Inc. All rights reserved.
+          </p>
+          <div className="flex gap-8">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-xs text-slate-500 transition-colors hover:text-[#3658d8]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

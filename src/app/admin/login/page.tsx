@@ -111,7 +111,7 @@ export default function AdminLoginPage() {
                 )}>
                     <div className="space-y-4 text-center">
                         <div className="flex justify-center">
-                            <div className="relative w-12 h-12">
+                            <div className="relative w-20 h-20">
                                 <Image
                                     src={CDN_ASSETS.brand.logo}
                                     alt="ZecurX"

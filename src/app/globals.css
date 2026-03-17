@@ -218,9 +218,8 @@
   50% {
     transform: translate(-50%, -50%) scale(0.9);}}}
 
-html {
-  scroll-behavior: smooth;
-}
+/* scroll-behavior: smooth removed — Lenis handles smooth scrolling.
+   Having both causes scroll fighting and jank. */
 
 body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -232,11 +231,11 @@ body {
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.375rem;
 
   /* ── Light, premium palette — white + light blue + navy ─── */
-  /* Background: pure white */
-  --background: oklch(1 0 0);
+  /* Background: barely-blue white #f0f8ff */
+  --background: oklch(0.9751 0.0127 244.38);
   --foreground: oklch(0.15 0.03 260);
 
   /* Cards: white, clean */
@@ -293,6 +292,11 @@ body {
 }
 
 @layer utilities {
+  /* GPU-promote sections with heavy animations to isolate paint */
+  .contain-paint {
+    contain: layout style paint;
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -421,4 +425,38 @@ body {
   background: oklch(0.80 0 0);
   animation: hero-float 8s ease-in-out infinite;
   animation-play-state: paused;
+}
+
+/* Brush-stroke highlighter effect */
+.highlight-brush {
+  position: relative;
+  display: inline;
+  white-space: nowrap;
+}
+
+.highlight-brush::before {
+  content: "";
+  position: absolute;
+  inset: -2px -6px;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath d='M2 28 C10 32, 30 36, 60 34 C90 32, 120 28, 150 30 C170 31, 185 34, 198 30 C200 24, 198 18, 196 14 C190 10, 170 6, 140 8 C110 10, 80 12, 50 10 C30 9, 12 6, 4 10 C0 14, 0 22, 2 28Z' fill='%23dbeafe'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: opacity 0.3s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.highlight-brush.animate::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+.glass-card {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }

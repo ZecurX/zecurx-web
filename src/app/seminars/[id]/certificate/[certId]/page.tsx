@@ -90,7 +90,7 @@ export default async function CertificatePage({ params }: Props) {
             <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
-                        <div className="relative w-8 h-8">
+                        <div className="relative w-12 h-12">
                             <Image src={CDN_ASSETS.brand.logo} alt="ZecurX" fill className="object-contain" />
                         </div>
                         <span className="font-bold text-lg tracking-tight text-foreground">ZecurX</span>

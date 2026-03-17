@@ -86,9 +86,10 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                         "rounded-2xl",
                         forceDark
                             ? "bg-black border border-white/10 shadow-2xl shadow-black/50"
-                            : "bg-card border border-border",
+                            : "border border-border",
                         !forceDark && "shadow-lg",
                     )}
+                    style={!forceDark ? { backgroundColor: 'rgba(237, 244, 255, 0.85)', backdropFilter: 'blur(12px)' } : undefined}
                     onMouseLeave={handleMouseLeave}
                 >
                     <div className="flex items-center justify-between h-16 px-6">
@@ -96,7 +97,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
                             <motion.div
-                                className="relative w-8 h-8"
+                                className="relative w-12 h-12"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
@@ -108,7 +109,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     priority
                                 />
                             </motion.div>
-                            <span className={cn("font-semibold text-base tracking-tight", forceDark ? "text-white" : "text-foreground")}>
+                            <span className={cn("font-manrope font-semibold text-[1.5rem] leading-none tracking-tight", forceDark ? "text-white" : "text-foreground")}>
                                 ZecurX
                             </span>
                         </Link>
@@ -190,26 +191,28 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 </Link>
                             </div>
 
-                            <div className="mx-3 flex items-center gap-3">
-                                <ThemeToggle />
+                            <div className="mx-1 flex items-center gap-3">
                                 {showCart && <CartIcon />}
                             </div>
 
-                            <Button
-                                asChild
-                                className={cn(
-                                    "relative ml-2 px-6 py-2.5 h-auto rounded-full overflow-hidden",
-                                    "bg-foreground text-background",
-                                    "hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300",
-                                    "group"
-                                )}
-                            >
-                                <Link href="/contact">
-                                    <span className="relative z-10">Contact</span>
-                                    {/* Shimmer effect */}
-                                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                                </Link>
-                            </Button>
+                            <div className="relative ml-2">
+                                <Button
+                                    asChild
+                                    className={cn(
+                                        "relative px-6 py-2.5 h-auto rounded-full",
+                                        "border border-transparent bg-[#4a6ffa] text-white",
+                                        "hover:bg-[#4a6ffa]",
+                                        "shadow-[0px_0px_0px_0px_#92c4fd]",
+                                        "hover:translate-y-[-3px] hover:shadow-[0px_3px_0px_0px_#92c4fd]",
+                                        "active:translate-y-[-2px] active:shadow-[0px_2px_0px_0px_#92c4fd]",
+                                        "transition-transform duration-200"
+                                    )}
+                                >
+                                    <Link href="/contact">
+                                        <span>Contact</span>
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
 
                         {/* Mobile Toggle */}
@@ -239,55 +242,110 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                                className="overflow-hidden border-t border-white/[0.06]"
+                                className={cn(
+                                    "overflow-hidden border-t",
+                                    forceDark ? "border-white/10" : "border-border/60"
+                                )}
                                 onMouseEnter={() => {
                                     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
                                 }}
                                 onMouseLeave={handleMouseLeave}
                             >
-                                <div className="p-4">
+                                <div className="p-4 md:p-5">
                                     <motion.div
                                         className={cn(
-                                            "grid gap-2",
-                                            activeDropdown === "services" ? "grid-cols-2 min-w-[500px]" : "grid-cols-2 min-w-[400px]"
+                                            "grid gap-3 items-stretch",
+                                            activeDropdown === "academy"
+                                                ? "min-w-[420px] grid-cols-1 md:grid-cols-[1fr_1.1fr]"
+                                                : "min-w-[620px] grid-cols-1 md:grid-cols-[1.05fr_1.5fr]"
                                         )}
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.2, delay: 0.05 }}
                                     >
-                                        {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
-                                            <motion.div
-                                                key={item.title}
-                                                initial={{ opacity: 0, y: 5 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.15, delay: i * 0.02 }}
-                                            >
-                                                <Link
-                                                    href={item.href}
-                                                    onClick={() => setActiveDropdown(null)}
-                                                    className="group block p-3 rounded-xl hover:bg-white/[0.04] transition-colors"
-                                                >
-                                                    <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors mb-0.5">
-                                                        {item.title}
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground/70 group-hover:text-muted-foreground transition-colors line-clamp-1">
-                                                        {item.desc}
-                                                    </div>
-                                                </Link>
-                                            </motion.div>
-                                        ))}
-                                    </motion.div>
-
-                                    <div className="mt-3 pt-3 border-t border-white/[0.06]">
                                         <Link
                                             href={navData[activeDropdown as keyof typeof navData].href}
                                             onClick={() => setActiveDropdown(null)}
-                                            className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors px-3"
+                                            className={cn(
+                                                "group flex flex-col justify-between rounded-2xl border p-4 md:p-5 transition-all",
+                                                forceDark
+                                                    ? "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
+                                                    : "border-sky-100 bg-gradient-to-br from-white/90 via-sky-50/80 to-white/90 hover:border-sky-200"
+                                            )}
                                         >
-                                            View all {navData[activeDropdown as keyof typeof navData].label}
-                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                                            <div>
+                                                <p className={cn(
+                                                    "text-[11px] font-semibold uppercase tracking-[0.1em]",
+                                                    forceDark ? "text-white/60" : "text-sky-700/75"
+                                                )}>
+                                                    {navData[activeDropdown as keyof typeof navData].label}
+                                                </p>
+                                                <h4 className={cn(
+                                                    "mt-2 text-base font-semibold",
+                                                    forceDark ? "text-white" : "text-slate-900"
+                                                )}>
+                                                    Explore {navData[activeDropdown as keyof typeof navData].label}
+                                                </h4>
+                                                <p className={cn(
+                                                    "mt-1.5 text-sm leading-relaxed",
+                                                    forceDark ? "text-white/70" : "text-slate-600"
+                                                )}>
+                                                    {navData[activeDropdown as keyof typeof navData].description}
+                                                </p>
+                                            </div>
+                                            <span className={cn(
+                                                "mt-4 inline-flex items-center gap-1.5 text-sm font-medium",
+                                                forceDark ? "text-white/85" : "text-[#4a6ffa]"
+                                            )}>
+                                                View all {navData[activeDropdown as keyof typeof navData].label}
+                                                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                                            </span>
                                         </Link>
-                                    </div>
+
+                                        <div className={cn(
+                                            "grid gap-2",
+                                            activeDropdown === "academy" ? "grid-cols-1" : "grid-cols-2"
+                                        )}>
+                                            {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
+                                                <motion.div
+                                                    key={item.title}
+                                                    initial={{ opacity: 0, y: 5 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    transition={{ duration: 0.15, delay: i * 0.02 }}
+                                                >
+                                                    <Link
+                                                        href={item.href}
+                                                        onClick={() => setActiveDropdown(null)}
+                                                        className={cn(
+                                                            "group block rounded-xl border p-3 transition-all",
+                                                            forceDark
+                                                                ? "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
+                                                                : "border-sky-100/80 bg-white/80 hover:border-sky-200 hover:bg-white"
+                                                        )}
+                                                    >
+                                                        <div className="mb-1.5 flex items-center justify-between gap-2">
+                                                            <div className={cn(
+                                                                "text-sm font-semibold transition-colors",
+                                                                forceDark ? "text-white group-hover:text-sky-200" : "text-slate-900 group-hover:text-[#3d5fd9]"
+                                                            )}>
+                                                                {item.title}
+                                                            </div>
+                                                            <ArrowRight className={cn(
+                                                                "h-3.5 w-3.5 transition-all opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5",
+                                                                forceDark ? "text-white/70" : "text-slate-500"
+                                                            )} />
+                                                        </div>
+                                                        <div className={cn(
+                                                            "text-xs leading-relaxed",
+                                                            forceDark ? "text-white/65" : "text-slate-600"
+                                                        )}>
+                                                            {item.desc}
+                                                        </div>
+                                                    </Link>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </motion.div>
                                 </div>
                             </motion.div>
                         )}
@@ -315,8 +373,8 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background lg:hidden border-l border-border/50 shadow-2xl flex flex-col h-full"
                         >
                             <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">
-                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-                                    <div className="relative w-8 h-8">
+                                <Link href="/" className="flex items-center gap-2.5" onClick={() => setMobileMenuOpen(false)}>
+                                    <div className="relative w-12 h-12">
                                         <Image
                                             src={CDN_ASSETS.brand.logo}
                                             alt="ZecurX"
@@ -324,7 +382,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             className="object-contain"
                                         />
                                     </div>
-                                    <span className="font-semibold text-lg">ZecurX</span>
+                                    <span className="font-manrope font-semibold text-[1.5rem] leading-none tracking-tight">ZecurX</span>
                                 </Link>
                                 <button
                                     onClick={() => setMobileMenuOpen(false)}

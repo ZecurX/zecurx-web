@@ -1,329 +1,148 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValue,
-  MotionValue,
-} from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-
-const SOLUTIONS = [
+import { BlurFade } from "@/components/ui/blur-fade";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
+import {
+  HighlightText,
+  type DescriptionPart,
+} from "@/components/ui/highlight-text";
+const SOLUTIONS: {
+  id: string;
+  title: string;
+  description: DescriptionPart[];
+  href: string;
+  lottie: string;
+}[] = [
   {
-    id: 0,
+    id: "vulnerability-management",
     title: "Vulnerability Management",
-    description:
-      "Continuous discovery, prioritization, and remediation tracking across your entire attack surface — not just a quarterly scan. Every CVE, every dependency, every misconfiguration — surfaced and tracked.",
-    image: "https://zecurx-web.fsn1.your-objectstorage.com/solutions/sol-1.png",
-    imageAlt: "Vulnerability management dashboard",
-    caption: "Vulnerability Dashboard",
+    description: [
+      "A quarterly pen test finds 40 issues. Your team fixes 12. Next quarter, there are 60. The backlog ",
+      { text: "only grows", highlight: true },
+      ". You need a system that triages, tracks, and closes the loop — ",
+      { text: "continuously", highlight: true },
+      ".",
+    ],
+    href: "/solutions/vulnerability-management",
+    lottie: getCdnUrl("lottie/vulnman.json"),
   },
   {
-    id: 1,
+    id: "secure-sdlc",
     title: "Secure SDLC",
-    description:
-      "Shift-left security with automated gates in your GitHub/GitLab CI pipeline. Block vulnerabilities before they ever reach production — zero friction for your engineering team.",
-    image: "https://zecurx-web.fsn1.your-objectstorage.com/solutions/sol-2.png",
-    imageAlt: "CI/CD security gate pipeline",
-    caption: "CI/CD Security Gate",
+    description: [
+      "Developers push 50 commits a day. Security reviews happen once a sprint. That gap is where ",
+      { text: "vulnerabilities live", highlight: true },
+      ". Build the gates into the pipeline — not around it.",
+    ],
+    href: "/solutions/secure-sdlc",
+    lottie: getCdnUrl("lottie/sdlc.json"),
   },
   {
-    id: 2,
+    id: "zero-trust-architecture",
     title: "Zero Trust Architecture",
-    description:
-      "Identity-first micro-segmentation, least-privilege access, and BeyondCorp principles enforced across every user, device, and application in your infrastructure.",
-    image: "https://zecurx-web.fsn1.your-objectstorage.com/solutions/sol-3.png",
-    imageAlt: "Zero trust network policy editor",
-    caption: "Zero Trust Policy Editor",
+    description: [
+      "The perimeter disappeared the day your team went remote. VPNs don't cut it when every device, identity, and API call is a ",
+      { text: "potential entry point", highlight: true },
+      ". Trust nothing. Verify everything.",
+    ],
+    href: "/solutions/zero-trust-architecture",
+    lottie: getCdnUrl("lottie/zerotrust.json"),
   },
   {
-    id: 3,
+    id: "security-observability",
     title: "Security Observability",
-    description:
-      "Real-time event streams, SIEM integration, custom detection rules, and centralized dashboards — complete visibility into your threat landscape the moment incidents occur.",
-    image: "https://zecurx-web.fsn1.your-objectstorage.com/solutions/sol-4.png",
-    imageAlt: "Security observability SIEM dashboard",
-    caption: "Threat Intelligence Dashboard",
+    description: [
+      "Something happened at 3 AM. Your SIEM has 10,000 alerts. None of them are useful. The signal is there — buried under ",
+      { text: "noise nobody reads", highlight: true },
+      ". See what matters, when it matters.",
+    ],
+    href: "/solutions/security-observability",
+    lottie: getCdnUrl("lottie/obsv.json"),
   },
 ];
 
-const N = SOLUTIONS.length;
-
 export function Solutions() {
-  // Outer tall scroll container
-  const outerRef = useRef<HTMLDivElement>(null);
-
-  // Track scroll progress through the full outer container
-  const { scrollYProgress } = useScroll({
-    target: outerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Map scroll progress to active index (0 → N-1)
-  // Each item owns 1/N of the scroll range
-  const activeIndex = useTransform(scrollYProgress, (v) =>
-    Math.min(N - 1, Math.floor(v * N)),
-  );
-
-  // ── Hover override ──────────────────────────────────────────────
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
-  // displayIndex = hover takes priority over scroll
-  const displayIndex = useMotionValue<number>(0);
-
-  useEffect(() => {
-    if (hoveredIndex !== null) {
-      displayIndex.set(hoveredIndex);
-      return;
-    }
-    // When not hovering, keep displayIndex in sync with scroll
-    const unsub = activeIndex.on("change", (v) => displayIndex.set(v));
-    displayIndex.set(activeIndex.get());
-    return unsub;
-  }, [hoveredIndex, activeIndex, displayIndex]);
-
   return (
-    // Outer: tall enough for the scroll to drive through all items
-    <div ref={outerRef} id="solutions" style={{ height: `${N * 50}vh` }}>
-      {/* Inner: sticks to the top of the viewport */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden bg-background text-foreground">
-        <div className="container mx-auto px-6 lg:px-8 max-w-[90rem] w-full">
-          {/* Section header */}
-          <div className="mb-10">
-            <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
-              Solutions
-            </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground">
-              One platform.{" "}
-              <span className="font-newsreader italic text-muted-foreground">
-                Every layer secured.
-              </span>
-            </h2>
-          </div>
-
-          {/* Main two-column layout */}
-          <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-center">
-            {/* ─── LEFT: Image panel ─── */}
-            <div className="lg:w-[60%] w-full flex-shrink-0">
-              <div className="relative">
-                {/* + corner decorators */}
-                <span className="absolute -top-2 -left-2 text-sm leading-none text-border select-none pointer-events-none z-20">
-                  +
-                </span>
-                <span className="absolute -top-2 -right-2 text-sm leading-none text-border select-none pointer-events-none z-20">
-                  +
-                </span>
-                <span className="absolute -bottom-2 -left-2 text-sm leading-none text-border select-none pointer-events-none z-20">
-                  +
-                </span>
-                <span className="absolute -bottom-2 -right-2 text-sm leading-none text-border select-none pointer-events-none z-20">
-                  +
-                </span>
-
-                {/* Image container (transparent, no window chrome) */}
-                <div className="relative w-full rounded-2xl overflow-hidden bg-transparent">
-                  {/* Image area — cross-fade driven by scroll */}
-                  <div
-                    className="relative w-full flex items-center justify-center p-8"
-                    style={{ aspectRatio: "16/10" }}
-                  >
-                    {SOLUTIONS.map((sol, i) => (
-                      <ScrollImage
-                        key={sol.id}
-                        sol={sol}
-                        index={i}
-                        activeIndex={displayIndex}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <ActiveCaption activeIndex={displayIndex} asCaption />
-            </div>
-
-            {/* ─── RIGHT: Feature list with Graphite border-l treatment ─── */}
-            <div className="lg:w-[40%] w-full flex flex-col">
-              {SOLUTIONS.map((sol, i) => (
-                <ScrollListItem
-                  key={sol.id}
-                  sol={sol}
-                  index={i}
-                  activeIndex={displayIndex}
-                  totalItems={N}
-                  onMouseEnter={() => setHoveredIndex(i)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Sub-components ───────────────────────────────────────────────
-
-interface SolItem {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
-  imageAlt: string;
-  caption: string;
-}
-
-function ScrollImage({
-  sol,
-  index,
-  activeIndex,
-}: {
-  sol: SolItem;
-  index: number;
-  activeIndex: MotionValue<number>;
-}) {
-  const opacity = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? 1 : 0,
-  );
-
-  return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center"
-      style={{ opacity }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="relative w-full h-full" style={{ isolation: "isolate" }}>
-        <Image
-          src={sol.image}
-          alt={sol.imageAlt}
-          fill
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          quality={75}
-          className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180 will-change-transform"
-          priority={index === 0}
-          placeholder="blur"
-          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PC9zdmc+"
-        />
-      </div>
-    </motion.div>
-  );
-}
-
-function ScrollListItem({
-  sol,
-  index,
-  activeIndex,
-  totalItems,
-  onMouseEnter,
-  onMouseLeave,
-}: {
-  sol: SolItem;
-  index: number;
-  activeIndex: MotionValue<number>;
-  totalItems: number;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-}) {
-  // Border color: bright when active, barely visible when not
-  const borderColor = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? "var(--color-foreground)" : "var(--color-border)",
-  );
-
-  const titleColor = useTransform(activeIndex, (v) =>
-    Math.round(v) === index
-      ? "var(--color-foreground)"
-      : "var(--color-muted-foreground)",
-  );
-
-  const titleOpacity = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? 1 : 0.55,
-  );
-
-  const titleWeight = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? 600 : 400,
-  );
-
-  // Description + CTA opacity
-  const contentOpacity = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? 1 : 0,
-  );
-  const contentHeight = useTransform(activeIndex, (v) =>
-    Math.round(v) === index ? "auto" : "0px",
-  );
-
-  return (
-    <motion.div
-      className="relative py-5 pr-2"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+    <section
+      id="solutions"
+      className="relative py-20 md:py-24 overflow-hidden"
       style={{
-        borderLeft: "1.5px solid",
-        borderLeftColor: borderColor,
-        paddingLeft: "20px",
-        borderBottom:
-          index < totalItems - 1 ? "1px solid var(--color-border)" : "none",
-        cursor: "pointer",
+        background: "linear-gradient(180deg, #f0f8ff 0%, #E8F2FE 10%, #DBEAFE 25%, #BFDBFE 40%, #BFDBFE 100%)",
       }}
     >
-      <motion.h3
-        className="text-xl font-manrope leading-snug"
+
+      {/* Decorative blurred orb — top left like reference */}
+      <div
+        className="absolute -left-20 top-1/3 w-72 h-72 md:w-96 md:h-96 rounded-full pointer-events-none"
         style={{
-          color: titleColor,
-          fontWeight: titleWeight,
-          opacity: titleOpacity,
+          background: "radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%)",
+          filter: "blur(40px)",
         }}
-      >
-        {sol.title}
-      </motion.h3>
+      />
 
-      <motion.div
-        className="overflow-hidden"
-        style={{ opacity: contentOpacity, height: contentHeight }}
-      >
-        <p className="mt-2.5 text-sm text-muted-foreground leading-relaxed">
-          {sol.description}
-        </p>
-        <Link href="/book-demo">
-          <span className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-primary hover:underline transition-all">
-            Learn more →
-          </span>
-        </Link>
-      </motion.div>
-    </motion.div>
-  );
-}
+      <div className="container relative mx-auto px-4 md:px-6 lg:px-8 max-w-[1320px]">
+        {/* Header */}
+        <BlurFade inView={true} delay={0} className="mb-12 md:mb-14 text-center">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-manrope font-semibold text-slate-900"
+            style={{ letterSpacing: "-0.02em" }}
+          >
+            One platform. Every <span className="text-[#4b6ffa]">layer</span> secured.
+          </h2>
+          <p className="mt-4 text-base md:text-lg text-slate-700/80 max-w-2xl mx-auto leading-relaxed">
+            End-to-end security solutions that scale with your team.
+            Proactive protection across your entire stack — from code to cloud.
+          </p>
+          <div className="mt-5">
+            <Link
+              href="#contact"
+              className="inline-flex items-center px-6 py-2.5 rounded-full border-2 border-slate-800 text-slate-800 font-semibold text-sm hover:bg-slate-800 hover:text-white transition-colors duration-200"
+            >
+              Get Started
+            </Link>
+          </div>
+        </BlurFade>
 
-function ActiveCaption({
-  activeIndex,
-  asCaption = false,
-}: {
-  activeIndex: MotionValue<number>;
-  asCaption?: boolean;
-}) {
-  const text = useTransform(activeIndex, (v) => {
-    const i = Math.min(SOLUTIONS.length - 1, Math.round(v));
-    return asCaption
-      ? SOLUTIONS[i].caption
-      : `zecurx://security/${SOLUTIONS[i].caption.toLowerCase().replace(/\s+/g, "-")}`;
-  });
+        {/* 2x2 Glass Cards Grid — fills remaining viewport space */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5">
+          {SOLUTIONS.map((solution, i) => {
+            const isEven = i % 2 === 0;
+            return (
+              <BlurFade key={solution.id} inView={true} delay={i * 0.15} duration={0.6}>
+                <Link
+                  href={solution.href}
+                  className={`group glass-card relative flex flex-row items-center gap-5 p-5 lg:p-6 rounded-2xl transition-all duration-300 hover:translate-y-[-2px] h-full ${isEven ? "" : "md:flex-row-reverse"}`}
+                >
+                  {/* Lottie — takes up half the card */}
+                  <div className="flex-shrink-0 w-[45%] aspect-square flex items-center justify-center">
+                    <LottieAnimation
+                      src={solution.lottie}
+                      className="w-full h-full"
+                      speed={0.5}
+                    />
+                  </div>
 
-  if (asCaption) {
-    return (
-      <motion.p className="mt-3 text-center text-xs font-medium text-muted-foreground">
-        {text}
-      </motion.p>
-    );
-  }
-
-  return (
-    <motion.span
-      className="ml-3 text-[10px] font-mono"
-      style={{ color: "rgba(255,255,255,0.3)" }}
-    >
-      {text}
-    </motion.span>
+                  {/* Text — takes up the other half */}
+                  <div className="flex-1 min-w-0">
+                    <h3
+                      className="text-lg md:text-xl lg:text-2xl font-manrope font-bold text-blue-600 leading-tight"
+                      style={{ letterSpacing: "-0.01em" }}
+                    >
+                      {solution.title}
+                    </h3>
+                    <HighlightText
+                      parts={solution.description}
+                      className="text-sm md:text-[15px] text-slate-700/80 leading-relaxed mt-2"
+                    />
+                  </div>
+                </Link>
+              </BlurFade>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
