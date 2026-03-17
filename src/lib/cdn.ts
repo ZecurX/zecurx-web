@@ -19,8 +19,8 @@ export function getCdnUrl(path: string): string {
  */
 export const CDN_ASSETS = {
   brand: {
-    logo: getCdnUrl('images/zecurx-logo.png'),
-    logoWhite: getCdnUrl('images/zecurx-logo.png'), // Fallback to main logo if white version not found
+    logo: `${getCdnUrl('images/whatsapp-nobg.svg')}?v=1`,
+    logoWhite: `${getCdnUrl('images/whatsapp-nobg.svg')}?v=1`,
   },
   courses: {
     // Used by email template system to resolve course logos
