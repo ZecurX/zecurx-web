@@ -21,6 +21,13 @@ interface FallState {
     rotation: number;   // Rotational momentum
 }
 
+interface DebrisChunkProps {
+    x: number;
+    y: number;
+    rot: number;
+    path: string;
+}
+
 interface DebrisData {
     id: number;
     x: number;       // X position (%)
@@ -316,8 +323,7 @@ const useBreakableCard = (onBreak?: () => void) => {
         debrisChunks,
         handleDragStart,
         respawnProgress,
-        isFlashing,
-        setIsDragging // Add this inside the hook to allow manual trigger logic if needed 
+        isFlashing
     };
 };
 
@@ -331,13 +337,6 @@ const useBreakableCard = (onBreak?: () => void) => {
  * A visual shard that detaches from the card.
  * Handles its own fade-out lifecycle.
  */
-interface DebrisChunkProps {
-    x: number;
-    y: number;
-    rot: number;
-    path: string;
-    [key: string]: any; // Allow React special props in object literals
-}
 const DebrisChunk = ({ x, y, rot, path }: DebrisChunkProps) => {
     const [visible, setVisible] = useState(true);
 

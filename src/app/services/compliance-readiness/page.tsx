@@ -7,10 +7,6 @@ import CaseStudies, { CaseStudy } from "@/components/ui/case-studies";
 import ServiceBentoFeatures from "@/components/ui/service-bento-features";
 import {
   FadeUp,
-  FadeUpScroll,
-  StaggerGrid,
-  StaggerItem,
-  HoverCard,
   ScaleInScroll,
 } from "@/components/services/ServicePageAnimations";
 import { HeroWords } from "@/components/ui/hero-words";
@@ -256,7 +252,7 @@ export default function ComplianceReadinessPage() {
         title="Frameworks We"
         titleAccent="Support"
         subtitle="Whether you are targeting enterprise deals or regulatory alignment, we have you covered."
-        items={frameworks as any}
+        items={frameworks as unknown}
       />
 
       {/* ── HOW WE HELP (BENTO GRID) ─────────────────────────── */}
@@ -266,7 +262,7 @@ export default function ComplianceReadinessPage() {
           title="How We"
           titleAccent="Help"
           subtitle="We are not auditors. We are your partners in preparing for the audit, doing the heavy lifting on documentation and tech."
-          items={scope as any}
+          items={scope as unknown}
         />
       </div>
 

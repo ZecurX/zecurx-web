@@ -8,9 +8,6 @@ import ServiceBentoFeatures from "@/components/ui/service-bento-features";
 import {
   FadeUp,
   FadeUpScroll,
-  StaggerGrid,
-  StaggerItem,
-  HoverCard,
   ScaleInScroll,
 } from "@/components/services/ServicePageAnimations";
 import { HeroWords } from "@/components/ui/hero-words";
@@ -285,7 +282,7 @@ export default function CloudDevSecOpsPage() {
         title="What We"
         titleAccent="Review"
         subtitle="From your cloud console to your deployment scripts, we secure the entire infrastructure stack."
-        items={scope as any}
+        items={scope as unknown}
       />
 
       {/* ── WHAT YOU GET ─────────────────────────────────────── */}

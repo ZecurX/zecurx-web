@@ -8,9 +8,6 @@ import ServiceBentoFeatures from "@/components/ui/service-bento-features";
 import {
   FadeUp,
   FadeUpScroll,
-  StaggerGrid,
-  StaggerItem,
-  HoverCard,
   ScaleInScroll,
 } from "@/components/services/ServicePageAnimations";
 import { HeroWords } from "@/components/ui/hero-words";
@@ -282,7 +279,7 @@ export default function ApplicationSecurityPage() {
         title="What We"
         titleAccent="Test"
         subtitle="Comprehensive coverage across your application attack surface. We go beyond automated scanners."
-        items={capabilities as any}
+        items={capabilities as unknown}
       />
 
       {/* ── WHAT YOU GET ─────────────────────────────────────── */}

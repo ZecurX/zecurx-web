@@ -79,7 +79,7 @@ const CapabilityCard: React.FC<{
     icon: React.ElementType
     href: string
     visual?: React.ReactNode
-}> = ({ className = "", title, description, icon: Icon, href, visual }) => {
+}> = ({ className = "", title, description, icon: _Icon, href, visual }) => {
     return (
         <div
             className={cn(
