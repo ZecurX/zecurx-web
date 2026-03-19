@@ -27,14 +27,18 @@ import CaseStudies from "@/components/industries/CaseStudies";
 export default function IndustriesPage() {
   return (
     <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
-      <CreativeNavBar />
-      <IndustryHero />
-      <Suspense>
-        <IndustryTabs />
-      </Suspense>
-      <CaseStudies />
-      <ReadyToSecureSection />
-      <Footer />
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
+        <CreativeNavBar />
+        <IndustryHero />
+        <Suspense>
+          <IndustryTabs />
+        </Suspense>
+        <CaseStudies />
+        <ReadyToSecureSection />
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }
