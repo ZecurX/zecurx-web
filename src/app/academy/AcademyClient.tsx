@@ -33,7 +33,8 @@ export default function AcademyClient({
 }) {
   const [courses] = useState(initialCourses);
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background relative overflow-hidden">
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
       <CreativeNavBar />
 
       {/* HERO SECTION */}
@@ -212,7 +213,11 @@ export default function AcademyClient({
 
       <TrustedPartners />
 
-      <Footer />
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }

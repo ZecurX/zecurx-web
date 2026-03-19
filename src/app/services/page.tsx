@@ -43,6 +43,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
       <CreativeNavBar />
 
       {/* --- HERO SECTION --- */}
@@ -255,7 +256,10 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <Footer />
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }

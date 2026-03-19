@@ -278,7 +278,6 @@ export default function ToolsClient() {
         </div>
       </section>
       </div>
-
       <div className="fixed inset-x-0 bottom-0 z-0">
         <Footer />
       </div>
