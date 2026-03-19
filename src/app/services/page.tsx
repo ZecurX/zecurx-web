@@ -13,6 +13,9 @@ import {
 import Image from "next/image";
 import { ServicesHeroSection } from "@/components/ui/hero-section";
 import CapabilitiesBento from "@/components/ui/capabilities-bento";
+import { AppDiagramLottie } from "@/components/ui/app-diagram-lottie";
+import { CallingLottie } from "@/components/ui/calling-lottie";
+import { ToolsPackLottie } from "@/components/ui/tools-pack-lottie";
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
@@ -55,7 +58,7 @@ export default function ServicesPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               Efficient security recovery
             </h2>
-            <p className="text-muted-foreground mt-4 text-lg">
+            <p className="text-[#496ae8] mt-4 text-lg">
               Measurable impact across our entire portfolio.
             </p>
           </div>
@@ -73,7 +76,7 @@ export default function ServicesPage() {
               <p className="text-xl font-medium text-foreground mb-2">
                 Faster Compliance
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-[#496ae8]">
                 Reduction in time-to-certification.
               </p>
             </motion.div>
@@ -91,7 +94,7 @@ export default function ServicesPage() {
               <p className="text-xl font-medium text-foreground mb-2">
                 Continuous Protection
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-[#496ae8]">
                 Always-on DevSecOps integration.
               </p>
             </motion.div>
@@ -109,7 +112,7 @@ export default function ServicesPage() {
               <p className="text-xl font-medium text-foreground mb-2">
                 Critical Leaks
               </p>
-              <p className="text-muted-foreground">
+              <p className="text-[#496ae8]">
                 Zero high-severity breaches reported for managed clients.
               </p>
             </motion.div>
@@ -118,7 +121,7 @@ export default function ServicesPage() {
       </section>
 
       {/* --- GUIDING PHILOSOPHY --- */}
-      <section className="py-20 md:py-32 px-4 md:px-6 relative overflow-hidden">
+      <section className="py-10 md:py-16 px-4 md:px-6 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -130,7 +133,7 @@ export default function ServicesPage() {
               Hands-on guidance with 24/7/365 support from the team that never
               sleeps.
             </h2>
-            <p className="text-base md:text-xl text-muted-foreground leading-relaxed">
+            <p className="text-base md:text-xl text-[#496ae8] leading-relaxed">
               Always-on support prepares, matures, and fortifies all facets of
               your security program. We don't just hand you a PDF report; we
               work alongside your engineers to fix flaws and ship secure code.
@@ -147,19 +150,9 @@ export default function ServicesPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="w-full relative drop-shadow-[0_0_50px_rgba(220,38,38,0.15)]"
+            className="w-full relative"
           >
-            <Image
-              src={`${CDN_URL}/diagram.png`}
-              alt="Threat Architecture Diagram"
-              width={1200}
-              height={1200}
-              className="w-full h-auto object-contain pointer-events-none mix-blend-screen"
-              priority
-              unoptimized
-              placeholder="blur"
-              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgaGVpZ2h0PSIxMjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwYTBhMGEiLz48L3N2Zz4="
-            />
+            <AppDiagramLottie />
           </motion.div>
         </div>
       </section>
@@ -168,7 +161,7 @@ export default function ServicesPage() {
       <CapabilitiesBento />
 
       {/* --- EXPANDED REACH / TOOLS --- */}
-      <section className="py-16 md:py-32 px-4 md:px-6">
+      <section className="py-10 md:py-16 px-4 md:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
             <motion.div
@@ -182,7 +175,12 @@ export default function ServicesPage() {
               </h2>
               <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                 We believe in giving back to the community. The{" "}
-                <strong className="text-foreground">VulnHunter Suite</strong>{" "}
+                <span
+                  className="font-bold text-[#496ae8]"
+                  style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2rem" }}
+                >
+                  VulnHunter Suite
+                </span>{" "}
                 provides security teams and developers with reconnaissance and
                 testing tools to identify exposure before an adversary does.
               </p>
@@ -195,9 +193,9 @@ export default function ServicesPage() {
                 ].map((feature, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center text-base md:text-lg text-foreground"
+                    className="flex items-center text-base md:text-lg text-[#496ae8]"
                   >
-                    <CheckCircle2 className="w-6 h-6 text-primary mr-4 shrink-0" />
+                    <CheckCircle2 className="w-6 h-6 text-[#496ae8] mr-4 shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -215,18 +213,11 @@ export default function ServicesPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="order-1 md:order-2 relative aspect-square md:aspect-auto md:h-[600px] w-full bg-transparent overflow-hidden flex items-center justify-center p-4 md:p-8"
+              className="order-1 md:order-2 relative aspect-square md:aspect-auto w-full bg-transparent overflow-hidden flex items-center justify-center p-4 md:p-8"
             >
-              {/* VulnHunter Image */}
+              {/* VulnHunter Lottie */}
               <div className="relative w-full max-w-md">
-                <Image
-                  src={`${CDN_URL}/vulnhunter.png`}
-                  alt="VulnHunter Suite"
-                  width={800}
-                  height={800}
-                  unoptimized
-                  className="w-full h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-                />
+                <ToolsPackLottie />
               </div>
             </motion.div>
           </div>
@@ -234,8 +225,8 @@ export default function ServicesPage() {
       </section>
 
       {/* --- FINAL CTA --- */}
-      <section className="py-16 md:py-24 px-4 md:px-6 border-t border-border/40 bg-background">
-        <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border overflow-hidden">
+      <section className="py-10 md:py-16 px-4 md:px-6 bg-background">
+        <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border border-[#496ae8]/30 overflow-hidden shadow-lg shadow-[#496ae8]/5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start">
               <div className="flex items-center space-x-2 text-sm font-medium text-muted-foreground">
@@ -261,14 +252,7 @@ export default function ServicesPage() {
               </div>
             </div>
             <div className="relative w-full min-h-[200px] md:min-h-[320px] flex items-center justify-center">
-              <Image
-                src={`${CDN_URL}/image.png`}
-                alt="ZecurX Security"
-                width={500}
-                height={500}
-                unoptimized
-                className="w-full max-w-md object-contain"
-              />
+              <CallingLottie />
             </div>
           </div>
         </div>

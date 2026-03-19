@@ -1,17 +1,16 @@
 "use client";
 
 import Image from "next/image";
-
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
+import { getCdnUrl } from "@/lib/cdn";
 
 const logos = [
-  { src: `${CDN_URL}/logos/GURUDEV.webp`, alt: "Gurudev", size: "" },
-  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`, alt: "Honey Herbal", size: "large" },
-  { src: `${CDN_URL}/logos/IBM.webp`, alt: "IBM", size: "large" },
-  { src: `${CDN_URL}/logos/KANTI.webp`, alt: "Kanti", size: "" },
-  { src: `${CDN_URL}/logos/MATEX.webp`, alt: "Matex", size: "large" },
-  { src: `${CDN_URL}/logos/my-garden-v3.webp`, alt: "My Garden", size: "" },
-  { src: `${CDN_URL}/logos/st-claret-college.webp`, alt: "St. Claret College", size: "" },
+  { src: getCdnUrl("logos/GURUDEV.webp"), alt: "Gurudev", size: "" },
+  { src: `${getCdnUrl("logos/HONEY-HERBAL.webp")}?v=4`, alt: "Honey Herbal", size: "large" },
+  { src: getCdnUrl("logos/IBM.webp"), alt: "IBM", size: "large" },
+  { src: getCdnUrl("logos/KANTI.webp"), alt: "Kanti", size: "" },
+  { src: getCdnUrl("logos/MATEX.webp"), alt: "Matex", size: "large" },
+  { src: getCdnUrl("logos/my-garden-v3.webp"), alt: "My Garden", size: "" },
+  { src: getCdnUrl("logos/st-claret-college.webp"), alt: "St. Claret College", size: "" },
 ];
 
 export function LogoCarouselBasic() {
