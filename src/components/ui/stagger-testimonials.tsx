@@ -12,7 +12,7 @@ interface Testimonial {
   stars: number;
 }
 
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://zecurx-web.fsn1.your-objectstorage.com";
 
 const testimonials: Testimonial[] = [
   {

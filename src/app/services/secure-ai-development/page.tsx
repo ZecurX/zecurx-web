@@ -8,9 +8,6 @@ import ServiceBentoFeatures from "@/components/ui/service-bento-features";
 import {
   FadeUp,
   FadeUpScroll,
-  StaggerGrid,
-  StaggerItem,
-  HoverCard,
   ScaleInScroll,
 } from "@/components/services/ServicePageAnimations";
 import { HeroWords } from "@/components/ui/hero-words";
@@ -299,7 +296,7 @@ export default function SecureAIDevelopmentPage() {
           title="Why AI Security"
           titleAccent="Is Different"
           subtitle="Traditional application security isn't enough. Generative AI introduces probabilistic risks that standard firewalls and scanners miss."
-          items={challenges as any}
+          items={challenges as unknown}
         />
       </div>
 
@@ -310,7 +307,7 @@ export default function SecureAIDevelopmentPage() {
         title="Our AI Security"
         titleAccent="Capabilities"
         subtitle="From red teaming foundation models to securing RAG pipelines, we cover the entire AI lifecycle."
-        items={capabilities as any}
+        items={capabilities as unknown}
       />
 
       {/* ── METHODOLOGY / HOW WE SECURE YOUR AI ──────────────── */}
