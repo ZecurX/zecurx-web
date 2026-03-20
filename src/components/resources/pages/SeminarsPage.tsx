@@ -9,6 +9,7 @@ import {
     Loader2,
     Calendar,
     ArrowRight,
+    ArrowLeft,
     ChevronDown,
     Building2,
     Award,
@@ -21,6 +22,8 @@ import Link from "next/link";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import SeminarTestimonials from "./SeminarTestimonials";
 import { PublicSeminar } from "@/types/seminar";
+
+import { BlurFade } from "@/components/ui/blur-fade";
 
 // ─── Utility ───────────────────────────────────────────────
 function formatDate(dateStr: string) {
@@ -134,96 +137,92 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
     const showCertificate = seminar.certificate_enabled;
 
     return (
-        <Card className={`group bg-card border-border hover:border-foreground/20 transition-all duration-300 ${past && !showCertificate ? "opacity-50" : ""}`}>
-            <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row">
-                    {/* Date Block */}
-                    <div className="flex md:flex-col items-center justify-center gap-2 md:gap-0 px-6 py-4 md:py-6 md:w-28 shrink-0 md:border-r border-b md:border-b-0 border-border bg-muted/30">
-                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{dateInfo.weekday}</span>
-                        <span className="text-2xl font-manrope font-semibold text-foreground leading-none">{dateInfo.day}</span>
-                        <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{dateInfo.month}</span>
-                    </div>
+        <div className={`group glass-card relative rounded-3xl p-1.5 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] bg-white/50 hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 overflow-hidden ${past && !showCertificate ? "opacity-60" : ""}`}>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+            <div className="relative z-10 flex flex-col md:flex-row">
+                {/* Date Block */}
+                <div className="flex md:flex-col items-center justify-center gap-2 md:gap-1 px-6 py-6 md:w-32 shrink-0 md:border-r border-b md:border-b-0 border-slate-100 bg-[#f8fbff]/50 rounded-2xl md:rounded-r-none m-1.5">
+                    <span className="text-[11px] font-space-grotesk text-[#4a6ffa] uppercase tracking-widest font-semibold">{dateInfo.weekday}</span>
+                    <span className="text-3xl font-manrope font-bold text-[#0c1a2e] leading-none">{dateInfo.day}</span>
+                    <span className="text-[11px] font-space-grotesk text-slate-500 uppercase tracking-widest font-medium">{dateInfo.month}</span>
+                </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0 p-5 md:p-6">
-                        <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-8">
-                            {/* Details */}
-                            <div className="flex-1 min-w-0">
-                                {/* Type + Duration */}
-                                <div className="flex items-center gap-3 mb-2">
-                                    <span className="text-[10px] font-mono uppercase tracking-widest text-primary">
-                                        {seminar.seminar_type || "Workshop"}
+                {/* Content */}
+                <div className="flex-1 min-w-0 p-5 md:p-6 lg:p-8">
+                    <div className="flex flex-col lg:flex-row lg:items-start gap-6 lg:gap-8">
+                        {/* Details */}
+                        <div className="flex-1 min-w-0">
+                            {/* Type + Duration */}
+                            <div className="flex items-center gap-3 mb-3">
+                                <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a6ffa] uppercase bg-blue-50 px-3 py-1 rounded-full">
+                                    {seminar.seminar_type || "Workshop"}
+                                </span>
+                                <span className="text-slate-300">·</span>
+                                <span className="text-[12px] font-inter text-slate-500 font-medium">{seminar.duration}</span>
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="text-xl md:text-2xl font-manrope font-bold text-[#0c1a2e] leading-tight mb-4 group-hover:text-[#4a6ffa] transition-colors">
+                                {seminar.title}
+                            </h3>
+
+                            {/* Meta */}
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] text-slate-600 font-inter">
+                                <span className="flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-[#4a6ffa]" />
+                                    {seminar.speaker_name}
+                                </span>
+                                <span className="flex items-center gap-2">
+                                    <Building2 className="w-4 h-4 text-[#4a6ffa]" />
+                                    {seminar.organization_name}
+                                </span>
+                                {seminar.location_type === "onsite" && seminar.venue_address && (
+                                    <span className="flex items-center gap-2">
+                                        <MapPin className="w-4 h-4 text-[#4a6ffa]" />
+                                        {seminar.venue_address}
                                     </span>
-                                    <span className="text-muted-foreground/30">·</span>
-                                    <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">{seminar.duration}</span>
-                                </div>
+                                )}
+                            </div>
 
-                                {/* Title */}
-                                <h3 className="text-lg md:text-xl font-manrope font-medium text-foreground leading-tight mb-3">
-                                    {seminar.title}
-                                </h3>
-
-                                {/* Meta */}
-                                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1.5">
-                                        <Users className="w-3.5 h-3.5" />
-                                        {seminar.speaker_name}
-                                    </span>
-                                    <span className="flex items-center gap-1.5">
-                                        <Building2 className="w-3.5 h-3.5" />
-                                        {seminar.organization_name}
-                                    </span>
-                                    {seminar.location_type === "onsite" && seminar.venue_address && (
-                                        <span className="flex items-center gap-1.5">
-                                            <MapPin className="w-3.5 h-3.5" />
-                                            {seminar.venue_address}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Expandable Description */}
-                                {seminar.description && (
+                            {/* Expandable Description */}
+                            {seminar.description && (
+                                <div className="mt-4 pt-4 border-t border-slate-100">
                                     <DescriptionToggle description={seminar.description} title={seminar.title} seminarType={seminar.seminar_type} />
-                                )}
-                            </div>
+                                </div>
+                            )}
+                        </div>
 
-                            {/* Actions */}
-                            <div className="flex items-center gap-3 shrink-0 lg:pt-1">
-                                {showRegister && (
-                                    <Button
-                                        asChild
-                                        className="h-10 px-6 rounded-full bg-foreground text-background font-medium text-sm hover:scale-[1.02] transition-transform"
-                                    >
-                                        <Link href={`/seminars/${seminar.id}/register`}>
-                                            Register
-                                            <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                                        </Link>
-                                    </Button>
-                                )}
-                                {showCertificate && (
-                                    <Button
-                                        asChild
-                                        variant="ghost"
-                                        className="h-10 px-5 rounded-full border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground font-medium text-sm"
-                                    >
-                                        <Link href={`/seminars/${seminar.id}/certificate`}>
-                                            <Award className="w-3.5 h-3.5 mr-1.5" />
-                                            Certificate
-                                        </Link>
-                                    </Button>
-                                )}
-                                {past && !showCertificate && (
-                                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                                        <CheckCircle2 className="w-3.5 h-3.5" />
-                                        Completed
-                                    </span>
-                                )}
-                            </div>
+                        {/* Actions */}
+                        <div className="flex flex-col sm:flex-row lg:flex-col items-stretch gap-3 shrink-0 lg:pt-1 min-w-[160px]">
+                            {showRegister && (
+                                <Link 
+                                    href={`/seminars/${seminar.id}/register`}
+                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
+                                >
+                                    Register Now
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            )}
+                            {showCertificate && (
+                                <Link 
+                                    href={`/seminars/${seminar.id}/certificate`}
+                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4a6ffa] hover:text-[#4a6ffa] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm"
+                                >
+                                    <Award className="w-4 h-4" />
+                                    Certificate
+                                </Link>
+                            )}
+                            {past && !showCertificate && (
+                                <span className="flex items-center justify-center gap-1.5 text-[13px] text-slate-500 font-inter font-medium py-2 px-4 bg-slate-50 rounded-full border border-slate-100">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    Completed
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }
 
@@ -258,136 +257,164 @@ export default function SeminarsPage() {
     const allSorted = [...upcoming, ...past_];
 
     return (
-        <>
+        <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden">
             {/* ════════════════════════════════════════════════════════ */}
             {/* HERO                                                    */}
             {/* ════════════════════════════════════════════════════════ */}
-            <section className="relative w-full pt-32 pb-16 lg:pt-40 lg:pb-20 bg-background text-foreground overflow-hidden">
-                {/* Background ambience — matching WhyZecurXSection */}
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-[10%] left-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] dark:bg-primary/15" />
-                    <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[100px] dark:bg-blue-900/15" />
+            <section className="relative w-full pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                    <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
                 </div>
 
-                <div className="relative z-10 max-w-7xl mx-auto px-6">
-                    <ScrollAnimation direction="up">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                            {/* Left — Copy */}
-                            <div>
-                                <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-6 block">
-                                    Academy & Workshops
-                                </span>
-                                <h1 className="text-5xl md:text-7xl font-manrope font-light text-foreground leading-[1.05] mb-8">
-                                    Learn{" "}
-                                    <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-foreground to-muted-foreground">
-                                        Cybersecurity
+                <div className="relative z-10 max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+                    <BlurFade delay={0.1}>
+                        <div className="mb-8">
+                            <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a6ffa] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                                <ArrowLeft className="w-3.5 h-3.5" />
+                                <span>Back to Resources</span>
+                            </Link>
+                        </div>
+                    </BlurFade>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        {/* Left — Copy */}
+                        <div>
+                            <BlurFade delay={0.2}>
+                                <div className="flex mb-4">
+                                    <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                                        ACADEMY & WORKSHOPS
                                     </span>
-                                    <br />
+                                </div>
+                            </BlurFade>
+                            
+                            <BlurFade delay={0.3}>
+                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
+                                    Learn <span className="text-[#4a6ffa]">Cybersecurity</span>
+                                    <br className="hidden md:block" />
                                     from Practitioners.
                                 </h1>
-                                <p className="text-xl text-muted-foreground font-manrope font-light leading-relaxed max-w-lg mb-10">
+                            </BlurFade>
+                            
+                            <BlurFade delay={0.4}>
+                                <p className="text-lg text-slate-600 font-inter mb-10 max-w-lg leading-relaxed">
                                     Expert-led workshops on offensive security, cloud defense, and AI threats.
                                     Hands-on labs. Real-world scenarios. Certificates on completion.
                                 </p>
+                            </BlurFade>
+                            
+                            <BlurFade delay={0.5}>
                                 <div className="flex flex-wrap items-center gap-4">
-                                    <Button
-                                        asChild
-                                        className="h-12 px-8 rounded-full bg-foreground text-background font-medium text-sm hover:scale-105 transition-transform"
+                                    <Link 
+                                        href="/book-seminar"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                                     >
-                                        <Link href="/book-seminar">
-                                            Book Seminar
-                                            <ArrowRight className="w-4 h-4 ml-2" />
-                                        </Link>
-                                    </Button>
-                                    <Button
-                                        asChild
-                                        variant="ghost"
-                                        className="h-12 px-6 rounded-full border border-border/50 hover:border-foreground/20 text-muted-foreground hover:text-foreground font-medium"
+                                        Book Seminar
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                    <a 
+                                        href="#schedule"
+                                        className="inline-flex items-center justify-center bg-white border border-slate-200 text-[#0c1a2e] rounded-full px-8 py-4 text-[15px] font-semibold font-inter hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200 shadow-sm"
                                     >
-                                        <a href="#schedule">
-                                            View Schedule
-                                        </a>
-                                    </Button>
+                                        View Schedule
+                                    </a>
                                 </div>
-                            </div>
+                            </BlurFade>
+                        </div>
 
-                            {/* Right — Next Session Card (or stat card) */}
-                            <div>
+                        {/* Right — Next Session Card (or stat card) */}
+                        <BlurFade delay={0.4}>
+                            <div className="relative">
                                 {loading ? (
-                                    <Card className="h-full min-h-[400px] bg-card/50 border border-border/50 rounded-3xl flex items-center justify-center">
-                                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                                    </Card>
+                                    <div className="glass-card h-full min-h-[400px] bg-white/40 border border-slate-200/60 rounded-3xl flex items-center justify-center shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
+                                        <Loader2 className="w-8 h-8 animate-spin text-[#4a6ffa]" />
+                                    </div>
                                 ) : nextSession ? (
-                                    <Card className="bg-card/50 border border-border/50 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300 rounded-3xl overflow-hidden relative">
-                                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+                                    <div className="glass-card bg-white border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.08)] rounded-3xl overflow-hidden relative group">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full pointer-events-none" />
+                                        
+                                        <div className="p-8 md:p-10 relative z-10">
+                                            <div className="inline-flex items-center gap-2 bg-blue-50 text-[#4a6ffa] px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-6">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-[#4a6ffa] animate-pulse" />
+                                                Next Session
+                                            </div>
 
-                                        <CardContent className="p-8 md:p-10 relative z-10">
-                                            <div className="text-xs font-mono text-primary uppercase tracking-widest mb-6">Next Session</div>
-
-                                            <h3 className="text-2xl md:text-3xl font-manrope font-medium text-foreground leading-tight mb-4">
+                                            <h3 className="text-2xl md:text-3xl font-manrope font-bold text-[#0c1a2e] leading-tight mb-6">
                                                 {nextSession.title}
                                             </h3>
 
-                                            <div className="space-y-3 mb-8">
-                                                <div className="flex items-center gap-3 text-muted-foreground">
-                                                    <Calendar className="w-4 h-4 shrink-0" />
-                                                    <span className="font-manrope">{formatDate(nextSession.date).full}</span>
+                                            <div className="space-y-4 mb-8">
+                                                <div className="flex items-center gap-3 text-slate-600 font-inter">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a6ffa]">
+                                                        <Calendar className="w-4 h-4 shrink-0" />
+                                                    </div>
+                                                    <span className="font-medium text-[15px]">{formatDate(nextSession.date).full}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-muted-foreground">
-                                                    <Users className="w-4 h-4 shrink-0" />
-                                                    <span className="font-manrope">{nextSession.speaker_name}</span>
+                                                <div className="flex items-center gap-3 text-slate-600 font-inter">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a6ffa]">
+                                                        <Users className="w-4 h-4 shrink-0" />
+                                                    </div>
+                                                    <span className="text-[15px]">{nextSession.speaker_name}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-muted-foreground">
-                                                    <Building2 className="w-4 h-4 shrink-0" />
-                                                    <span className="font-manrope">{nextSession.organization_name}</span>
+                                                <div className="flex items-center gap-3 text-slate-600 font-inter">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a6ffa]">
+                                                        <Building2 className="w-4 h-4 shrink-0" />
+                                                    </div>
+                                                    <span className="text-[15px]">{nextSession.organization_name}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-muted-foreground">
-                                                    <Clock className="w-4 h-4 shrink-0" />
-                                                    <span className="font-manrope">{nextSession.duration}</span>
+                                                <div className="flex items-center gap-3 text-slate-600 font-inter">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a6ffa]">
+                                                        <Clock className="w-4 h-4 shrink-0" />
+                                                    </div>
+                                                    <span className="text-[15px]">{nextSession.duration}</span>
                                                 </div>
                                             </div>
 
                                             {nextSession.registration_enabled && (
-                                                <Button
-                                                    asChild
-                                                    className="h-12 px-8 rounded-full bg-foreground text-background font-medium text-sm hover:scale-105 transition-transform w-full sm:w-auto"
+                                                <Link 
+                                                    href={`/seminars/${nextSession.id}/register`}
+                                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-xl px-6 py-3.5 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
                                                 >
-                                                    <Link href={`/seminars/${nextSession.id}/register`}>
-                                                        Register Now
-                                                        <ArrowRight className="w-4 h-4 ml-2" />
-                                                    </Link>
-                                                </Button>
+                                                    Register Now
+                                                    <ArrowRight className="w-4 h-4" />
+                                                </Link>
                                             )}
-                                        </CardContent>
-                                    </Card>
+                                        </div>
+                                    </div>
                                 ) : (
                                     /* Stats card when no upcoming session */
-                                    <Card className="bg-muted/50 border-border rounded-3xl overflow-hidden">
-                                        <CardContent className="p-10 md:p-14 space-y-10">
-                                            <div className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Track Record</div>
-                                            {[
-                                                { value: "12+", label: "Institutions Trained" },
-                                                { value: "1,200+", label: "Students Certified" },
-                                                { value: "8+", label: "Seminar Types" },
-                                            ].map((stat, i) => (
-                                                <div key={i}>
-                                                    <div className="text-4xl md:text-5xl font-manrope font-light text-foreground mb-1">{stat.value}</div>
-                                                    <div className="text-sm text-muted-foreground font-manrope">{stat.label}</div>
-                                                </div>
-                                            ))}
-                                        </CardContent>
-                                    </Card>
+                                    <div className="glass-card bg-white/60 border border-slate-200/60 rounded-3xl overflow-hidden shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
+                                        <div className="p-10 md:p-12 space-y-8">
+                                            <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-2">
+                                                Track Record
+                                            </div>
+                                            <div className="grid gap-8">
+                                                {[
+                                                    { value: "12+", label: "Institutions Trained" },
+                                                    { value: "1,200+", label: "Students Certified" },
+                                                    { value: "8+", label: "Seminar Types" },
+                                                ].map((stat, i) => (
+                                                    <div key={i} className="flex items-center gap-6">
+                                                        <div className="text-4xl md:text-5xl font-manrope font-bold text-[#0c1a2e] w-24">{stat.value}</div>
+                                                        <div className="text-[15px] text-slate-500 font-inter font-medium">{stat.label}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-                        </div>
-                    </ScrollAnimation>
+                        </BlurFade>
+                    </div>
                 </div>
             </section>
 
             {/* ════════════════════════════════════════════════════════ */}
             {/* TRUSTED PARTNERS                                        */}
             {/* ════════════════════════════════════════════════════════ */}
-            <TrustedPartners />
+            <div className="bg-white py-12 border-y border-slate-100">
+                <TrustedPartners />
+            </div>
 
             {/* ════════════════════════════════════════════════════════ */}
             {/* TESTIMONIALS                                            */}
@@ -397,63 +424,62 @@ export default function SeminarsPage() {
             {/* ════════════════════════════════════════════════════════ */}
             {/* SESSION SCHEDULE                                        */}
             {/* ════════════════════════════════════════════════════════ */}
-            <section id="schedule" className="relative w-full py-24 bg-background text-foreground overflow-hidden">
-                <div className="max-w-7xl mx-auto px-6">
+            <section id="schedule" className="relative w-full py-24 bg-[#f8fbff] relative z-10">
+                <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Section Header */}
-                    <ScrollAnimation direction="up">
-                        <div className="mb-16">
-                            <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
-                                Schedule
-                            </span>
+                    <BlurFade delay={0.2}>
+                        <div className="mb-12">
+                            <div className="flex mb-4">
+                                <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                                    SCHEDULE
+                                </span>
+                            </div>
                             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                                 <div>
-                                    <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-4">
-                                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-muted-foreground">
-                                            All Sessions
-                                        </span>
+                                    <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-4">
+                                        All <span className="text-[#4a6ffa]">Sessions</span>
                                     </h2>
-                                    <p className="text-muted-foreground max-w-xl text-lg font-manrope font-light">
+                                    <p className="text-slate-600 max-w-xl text-lg font-inter">
                                         Browse upcoming workshops and past sessions. Register or claim your certificate.
                                     </p>
                                 </div>
                                 {!loading && allSorted.length > 0 && (
-                                    <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest shrink-0">
-                                        {allSorted.length} Sessions · {upcoming.length} Upcoming
+                                    <span className="text-[13px] font-inter font-medium text-slate-500 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm shrink-0">
+                                        <strong className="text-[#0c1a2e]">{allSorted.length}</strong> Sessions · <strong className="text-[#4a6ffa]">{upcoming.length}</strong> Upcoming
                                     </span>
                                 )}
                             </div>
                         </div>
-                    </ScrollAnimation>
+                    </BlurFade>
 
                     {/* Session List */}
                     {loading ? (
                         <div className="flex items-center justify-center py-32">
-                            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                            <Loader2 className="w-8 h-8 animate-spin text-[#4a6ffa]" />
                         </div>
                     ) : error ? (
-                        <Card className="border-red-500/20 bg-red-500/5">
-                            <CardContent className="p-8 text-center">
-                                <p className="text-red-400 text-sm font-mono">{error}</p>
-                            </CardContent>
-                        </Card>
+                        <div className="bg-red-50 border border-red-100 rounded-3xl p-8 text-center">
+                            <p className="text-red-500 text-[15px] font-inter">{error}</p>
+                        </div>
                     ) : seminars.length === 0 ? (
-                        <Card className="border-dashed border-border bg-muted/30">
-                            <CardContent className="p-16 text-center">
-                                <Calendar className="w-8 h-8 text-muted-foreground/40 mx-auto mb-4" />
-                                <p className="text-muted-foreground font-manrope">No sessions scheduled yet. Check back soon.</p>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                        <ScrollAnimation direction="up" delay={0.15}>
-                            <div className="space-y-3">
-                                {allSorted.map((seminar) => (
-                                    <SeminarRow key={seminar.id} seminar={seminar} />
-                                ))}
+                        <div className="glass-card bg-white/50 border border-slate-200/60 rounded-3xl p-16 text-center shadow-[0_18px_44px_rgba(30,58,95,0.03)]">
+                            <div className="w-16 h-16 rounded-full bg-[#f8fbff] flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                                <Calendar className="w-6 h-6 text-[#4a6ffa]" />
                             </div>
-                        </ScrollAnimation>
+                            <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-2">No sessions scheduled</h3>
+                            <p className="text-slate-500 font-inter">Check back soon for upcoming workshops and seminars.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {allSorted.map((seminar, i) => (
+                                <BlurFade key={seminar.id} delay={0.2 + (i * 0.1)}>
+                                    <SeminarRow seminar={seminar} />
+                                </BlurFade>
+                            ))}
+                        </div>
                     )}
                 </div>
             </section>
-        </>
+        </div>
     );
 }

@@ -20,7 +20,7 @@ const partners: Partner[] = [
     name: "Mount Carmel",
     logo: `${CDN_BASE}/mount-carmel.png`,
     invertInLight: false,
-    className: "max-h-20",
+    className: "max-h-24 scale-[1.3]",
   },
   { name: "Presidency", logo: `${CDN_BASE}/logo.png`, invertInLight: true },
   {
@@ -33,12 +33,18 @@ const partners: Partner[] = [
     logo: `${CDN_BASE}/brindavan-logo.png`,
     invertInLight: true,
   },
-  { name: "RIBS", logo: `${CDN_BASE}/ribs.png`, invertInLight: false },
+  {
+    name: "RIBS",
+    logo: `${CDN_BASE}/ribs.png`,
+    invertInLight: false,
+    className: "max-h-24 scale-[1.5] -translate-y-3",
+  },
   { name: "KGI", logo: `${CDN_BASE}/kgi-light-logo.png`, invertInLight: true },
   {
     name: "Sapthagiri",
     logo: `${CDN_BASE}/sapthagiri.png`,
     invertInLight: false,
+    className: "max-h-24 scale-[1.3]",
   },
   {
     name: "Yenepoya",
@@ -87,9 +93,9 @@ export default function TrustedPartners() {
                   height={96}
                   quality={75}
                   className={cn(
-                    "max-h-16 w-auto object-contain transition-all duration-500 relative z-10",
-                    "opacity-80 grayscale",
-
+                    "max-h-16 w-auto object-contain transition-all duration-300 relative z-10",
+                    "opacity-50 grayscale",
+                    "group-hover/card:grayscale-0 group-hover/card:opacity-100 group-hover/card:scale-105",
                     partner.invertInLight
                       ? "invert dark:invert-0"
                       : "dark:invert",

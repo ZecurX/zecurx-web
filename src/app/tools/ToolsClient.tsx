@@ -196,10 +196,10 @@ export default function ToolsClient() {
                     </p>
 
                     <div className="w-full h-48 mt-auto rounded-xl overflow-hidden border border-border/50 relative bg-muted/20 flex items-center justify-center group-hover:border-[#4a6ffa]/30 transition-colors group-hover:shadow-[0_0_30px_-10px_rgba(74,111,250,0.2)]">
-                      {/* @ts-expect-error - dynamic key for lottie data */}
+                      
                       {tool.lottie ? (
                         <Lottie 
-                          // @ts-expect-error - dynamic key for lottie data
+                          
                           animationData={tool.lottie} 
                           loop={true} 
                           className="w-full h-full object-contain p-4 transition-all group-hover:scale-105 duration-700 ease-out z-10"

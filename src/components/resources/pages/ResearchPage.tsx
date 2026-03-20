@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { EnrichedStory } from "@/lib/hacker-news";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 interface ResearchPageProps {
     initialStories: EnrichedStory[];
@@ -96,49 +97,56 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
     };
 
     return (
-        <>
-            <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 pt-32 pb-24 border-b border-white/[0.08]">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-                
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className="max-w-4xl mx-auto"
-                    >
-                        <Link href="/resources" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8 text-xs font-mono tracking-widest uppercase bg-white/[0.05] px-3 py-1.5 rounded-full border border-white/[0.05] hover:bg-white/[0.1]">
-                            <ArrowLeft className="w-3 h-3" />
-                            <span>Resources / Intelligence</span>
+        <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden pt-32 pb-24">
+            <div className="absolute inset-0 z-0">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
+            </div>
+
+            <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <BlurFade delay={0.1}>
+                    <div className="flex justify-center mb-6">
+                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a6ffa] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                            <ArrowLeft className="w-3.5 h-3.5" />
+                            <span>Back to Resources</span>
                         </Link>
+                    </div>
+                </BlurFade>
 
-                        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground to-muted-foreground mb-8 leading-[1.1]">
-                            Global Threat <br />
-                            Intelligence.
+                <div className="text-center max-w-4xl mx-auto mb-16">
+                    <BlurFade delay={0.2}>
+                        <div className="flex justify-center mb-4">
+                            <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                                THREAT RESEARCH
+                            </span>
+                        </div>
+                    </BlurFade>
+                    
+                    <BlurFade delay={0.3}>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
+                            Global Threat <span className="text-[#4a6ffa]">Intelligence</span>
                         </h1>
-
-                        <p className="text-lg md:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed">
+                    </BlurFade>
+                    
+                    <BlurFade delay={0.4}>
+                        <p className="text-lg text-slate-600 font-inter leading-relaxed max-w-2xl mx-auto">
                             Real-time cybersecurity news, vulnerability disclosures, and research analysis curated from verified sources.
                         </p>
-                    </motion.div>
+                    </BlurFade>
                 </div>
-            </section>
 
-            <section className="relative w-full py-8 bg-background text-foreground min-h-screen">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                    
-                    <div className="flex flex-col lg:flex-row gap-4 mb-8 items-center justify-between sticky top-24 z-30 bg-background/95 backdrop-blur-xl p-3 md:p-4 rounded-xl border border-white/[0.08] shadow-sm">
-                        
-                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full lg:flex-1 lg:w-auto min-w-0 mask-linear-fade pr-4">
+                <BlurFade delay={0.5}>
+                    <div className="flex flex-col lg:flex-row gap-4 mb-8 items-center justify-between sticky top-24 z-30 bg-white/80 backdrop-blur-xl p-3 md:p-4 rounded-3xl border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full lg:flex-1 lg:w-auto min-w-0 pr-4">
                             {CATEGORIES.map((cat) => (
                                 <button
                                     key={cat.id}
                                     onClick={() => { setActiveCategory(cat.id); setCurrentPage(1); }}
                                     className={`
-                                        flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap border
+                                        flex items-center gap-2 px-4 py-2 rounded-full text-xs font-inter font-medium transition-all whitespace-nowrap border
                                         ${activeCategory === cat.id 
-                                            ? 'bg-white text-black border-white shadow-sm' 
-                                            : 'bg-transparent text-muted-foreground border-transparent hover:bg-white/[0.05] hover:text-foreground'
+                                            ? 'bg-[#4a6ffa] text-white border-transparent shadow-md' 
+                                            : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-[#0c1a2e]'
                                         }
                                     `}
                                 >
@@ -148,206 +156,191 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 pt-3 lg:pt-0 lg:pl-2">
-                            <div className="relative flex-1 lg:w-56">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                        <div className="flex items-center gap-3 w-full lg:w-auto shrink-0 pt-3 lg:pt-0">
+                            <div className="relative flex-1 lg:w-64">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search..." 
+                                    placeholder="Search intelligence..." 
                                     value={searchQuery}
                                     onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                                    className="w-full pl-9 pr-4 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] focus:border-white/[0.2] focus:outline-none focus:ring-0 text-sm transition-all placeholder:text-muted-foreground/50"
+                                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-slate-200 focus:border-[#4a6ffa] focus:outline-none focus:ring-2 focus:ring-[#4a6ffa]/20 text-sm font-inter transition-all placeholder:text-slate-400 text-[#0c1a2e]"
                                 />
                             </div>
-                            <div className="flex items-center gap-1 pl-1">
+                            <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-full border border-slate-200">
                                 <button 
                                     onClick={() => setViewMode('list')}
-                                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white/[0.1] text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                    className={`p-2 rounded-full transition-colors ${viewMode === 'list' ? 'bg-white text-[#4a6ffa] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
                                 >
                                     <List className="w-4 h-4" />
                                 </button>
                                 <button 
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white/[0.1] text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                                    className={`p-2 rounded-full transition-colors ${viewMode === 'grid' ? 'bg-white text-[#4a6ffa] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
                                 >
                                     <LayoutGrid className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
                     </div>
+                </BlurFade>
 
-                    <motion.div 
-                        layout
-                        className={`
-                            grid gap-4
-                            ${viewMode === 'grid' 
-                                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-                                : "grid-cols-1"
-                            }
-                        `}
-                    >
-                        <AnimatePresence mode="popLayout" initial={false}>
-                            {paginatedStories.map((story) => (
-                                <motion.div
-                                    key={story.id}
-                                    layout
-                                    initial={{ opacity: 0, scale: 0.96 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }}
-                                    transition={{ 
-                                        opacity: { duration: 0.2 },
-                                        layout: { duration: 0.3, ease: "easeOut" }
-                                    }}
-                                    className={`
-                                        group relative flex border border-border bg-card hover:bg-muted/50 transition-all duration-200 shadow-sm hover:shadow-md
-                                        ${viewMode === 'grid' 
-                                            ? 'flex-col justify-between p-6 rounded-xl h-full' 
-                                            : 'flex-col md:flex-row md:items-start justify-between p-6 rounded-lg gap-6'
-                                        }
-                                    `}
-                                >
-                                    <motion.div layout className={viewMode === 'list' ? 'flex-1 min-w-0' : 'w-full'}>
-                                        <div className={`flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-3`}>
-                                            <span className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground/80">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-foreground/20"></span>
-                                                {story.domain || 'Direct Source'}
+                <motion.div 
+                    layout
+                    className={`
+                        grid gap-6
+                        ${viewMode === 'grid' 
+                            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+                            : "grid-cols-1 max-w-4xl mx-auto"
+                        }
+                    `}
+                >
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {paginatedStories.map((story) => (
+                            <motion.div
+                                key={story.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.96 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }}
+                                transition={{ 
+                                    opacity: { duration: 0.2 },
+                                    layout: { duration: 0.3, ease: "easeOut" }
+                                }}
+                                className={`
+                                    group glass-card relative flex border border-slate-200/60 bg-white/50 hover:bg-white transition-all duration-300 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 overflow-hidden
+                                    ${viewMode === 'grid' 
+                                        ? 'flex-col justify-between p-8 rounded-3xl h-full' 
+                                        : 'flex-col md:flex-row md:items-start justify-between p-6 md:p-8 rounded-3xl gap-6'
+                                    }
+                                `}
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                
+                                <motion.div layout className={`relative z-10 ${viewMode === 'list' ? 'flex-1 min-w-0' : 'w-full'}`}>
+                                    <div className="flex flex-wrap items-center gap-3 text-xs mb-4">
+                                        <span className="flex items-center gap-1.5 font-space-grotesk font-semibold tracking-wide text-slate-500 uppercase bg-slate-100 px-3 py-1 rounded-full">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#4a6ffa]"></span>
+                                            {story.domain || 'Direct Source'}
+                                        </span>
+                                        <span className="text-slate-400 font-inter">
+                                            {getRelativeTime(story.time)}
+                                        </span>
+                                        {story.score > 50 && (
+                                            <span className="flex items-center gap-1 text-[#f59e0b] font-inter font-medium bg-[#fef3c7] px-2 py-1 rounded-full">
+                                                <TrendingUp className="w-3 h-3" />
+                                                Trending
                                             </span>
-                                            <span className="text-muted-foreground/30">•</span>
-                                            <span className="flex items-center gap-1">
-                                                {getRelativeTime(story.time)}
-                                            </span>
-                                            {story.score > 50 && (
-                                                <>
-                                                    <span className="text-muted-foreground/30">•</span>
-                                                    <span className="flex items-center gap-1 text-foreground font-medium">
-                                                        <TrendingUp className="w-3 h-3" />
-                                                        Trending
-                                                    </span>
-                                                </>
-                                            )}
-                                        </div>
+                                        )}
+                                    </div>
 
-                                        <h3 className={`font-semibold text-foreground group-hover:text-primary/80 transition-colors leading-snug ${viewMode === 'grid' ? 'text-lg mb-4' : 'text-xl mb-3'}`}>
-                                            <a 
-                                                href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="focus:outline-none"
-                                            >
-                                                <span className="absolute inset-0" aria-hidden="true" />
-                                                {story.title}
-                                            </a>
-                                        </h3>
-
-                                        {story.text && (
-                                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4 max-w-3xl leading-relaxed">
-                                                {story.text}
-                                            </p>
-                                        )}
-                                        
-                                        {viewMode === 'grid' && (
-                                            <motion.div layout className="flex flex-wrap gap-2 mt-auto pt-4">
-                                                {story.categories.map(cat => (
-                                                    <span key={cat} className="text-[10px] uppercase tracking-wider font-medium px-2 py-1 rounded bg-muted text-muted-foreground border border-border">
-                                                        {cat}
-                                                    </span>
-                                                ))}
-                                            </motion.div>
-                                        )}
-                                        
-                                        {viewMode === 'list' && (
-                                            <div className="flex flex-wrap gap-2 mt-auto">
-                                                {story.categories.map(cat => (
-                                                    <span key={cat} className="text-[10px] uppercase tracking-wider font-medium px-2.5 py-1 rounded bg-muted text-muted-foreground border border-border">
-                                                        {cat}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </motion.div>
-
-                                    <motion.div layout className={`flex items-center gap-4 ${viewMode === 'list' ? 'shrink-0 self-center' : 'mt-6 border-t border-border/50 pt-4 justify-between w-full'}`}>
-                                        {viewMode === 'list' && (
-                                            <div className="hidden md:block w-0" />
-                                        )}
-                                        
+                                    <h3 className={`font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a6ffa] transition-colors leading-snug ${viewMode === 'grid' ? 'text-xl mb-4' : 'text-2xl mb-3'}`}>
                                         <a 
                                             href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`flex items-center gap-1 text-muted-foreground group-hover:text-foreground transition-colors text-xs font-medium z-10 bg-muted/50 px-4 py-2 rounded-full border border-border hover:bg-muted hover:border-foreground/20 cursor-pointer ${viewMode === 'grid' ? 'w-full justify-center' : ''}`}
+                                            className="focus:outline-none"
                                         >
-                                            <span>Read Article</span>
-                                            <ArrowLeft className="w-3 h-3 rotate-[135deg]" />
+                                            <span className="absolute inset-0 z-0" aria-hidden="true" />
+                                            {story.title}
                                         </a>
-                                    </motion.div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                    </motion.div>
+                                    </h3>
 
-                    {filteredStories.length === 0 && (
-                        <div className="text-center py-24 border border-dashed border-white/[0.1] rounded-xl bg-white/[0.02]">
-                            <div className="w-12 h-12 rounded-full bg-white/[0.05] flex items-center justify-center mx-auto mb-4">
-                                <Search className="w-5 h-5 text-muted-foreground" />
-                            </div>
-                            <h3 className="text-lg font-medium text-foreground mb-1">No intelligence found</h3>
-                            <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6">
-                                We couldn't find any reports matching your current filter criteria.
-                            </p>
-                            <Button 
-                                variant="outline" 
-                                className="h-8 text-xs"
-                                onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
-                            >
-                                Clear Filters
-                            </Button>
-                        </div>
-                    )}
-
-                    {totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-2 mt-12">
-                            <button
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="p-2 rounded-lg hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            
-                            {getPageNumbers().map((page, i) => (
-                                <React.Fragment key={i}>
-                                    {page === '...' ? (
-                                        <span className="text-muted-foreground text-sm px-2">...</span>
-                                    ) : (
-                                        <button
-                                            onClick={() => handlePageChange(page as number)}
-                                            className={`
-                                                w-8 h-8 rounded-lg text-sm font-medium transition-colors flex items-center justify-center
-                                                ${currentPage === page 
-                                                    ? 'bg-white text-black font-bold' 
-                                                    : 'text-muted-foreground hover:bg-white/[0.05] hover:text-foreground'
-                                                }
-                                            `}
-                                        >
-                                            {page}
-                                        </button>
+                                    {story.text && (
+                                        <p className="text-[15px] font-inter text-slate-600 line-clamp-2 mb-6 leading-relaxed">
+                                            {story.text}
+                                        </p>
                                     )}
-                                </React.Fragment>
-                            ))}
+                                    
+                                    <div className={`flex flex-wrap gap-2 ${viewMode === 'grid' ? 'mt-auto pt-4' : 'mt-auto'}`}>
+                                        {story.categories.map(cat => (
+                                            <span key={cat} className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a6ffa] uppercase bg-blue-50 px-3 py-1.5 rounded-full">
+                                                {cat}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </motion.div>
 
-                            <button
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="p-2 rounded-lg hover:bg-white/[0.05] disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground"
-                            >
-                                <ChevronRight className="w-4 h-4" />
-                            </button>
+                                <motion.div layout className={`relative z-10 flex items-center gap-4 ${viewMode === 'list' ? 'shrink-0 self-center' : 'mt-6 border-t border-slate-100 pt-6 justify-between w-full'}`}>
+                                    {viewMode === 'list' && (
+                                        <div className="hidden md:block w-0" />
+                                    )}
+                                    
+                                    <a 
+                                        href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`flex items-center gap-2 text-[#0c1a2e] hover:text-[#4a6ffa] transition-colors text-[13px] font-inter font-semibold z-10 bg-white px-5 py-2.5 rounded-full border border-slate-200 hover:border-[#4a6ffa] hover:bg-[#f8fbff] shadow-sm cursor-pointer ${viewMode === 'grid' ? 'w-full justify-center' : ''}`}
+                                    >
+                                        <span>Read Article</span>
+                                        <ArrowLeft className="w-3.5 h-3.5 rotate-[135deg]" />
+                                    </a>
+                                </motion.div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+
+                {filteredStories.length === 0 && (
+                    <div className="text-center py-20 border border-dashed border-slate-300 rounded-3xl bg-white/50 max-w-4xl mx-auto">
+                        <div className="w-16 h-16 rounded-full bg-[#f8fbff] border border-blue-100 flex items-center justify-center mx-auto mb-6">
+                            <Search className="w-6 h-6 text-[#4a6ffa]" />
                         </div>
-                    )}
+                        <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-2">No intelligence found</h3>
+                        <p className="text-[15px] font-inter text-slate-500 max-w-sm mx-auto mb-8">
+                            We couldn't find any reports matching your current filter criteria.
+                        </p>
+                        <Button 
+                            variant="outline" 
+                            className="rounded-full bg-white border-slate-200 text-[#0c1a2e] hover:bg-slate-50 font-inter px-6"
+                            onClick={() => { setActiveCategory('all'); setSearchQuery(''); }}
+                        >
+                            Clear Filters
+                        </Button>
+                    </div>
+                )}
 
-                </div>
-            </section>
-        </>
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-16">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-[#0c1a2e] hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:shadow-none disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        
+                        {getPageNumbers().map((page, i) => (
+                            <React.Fragment key={i}>
+                                {page === '...' ? (
+                                    <span className="text-slate-400 font-inter px-2">...</span>
+                                ) : (
+                                    <button
+                                        onClick={() => handlePageChange(page as number)}
+                                        className={`
+                                            w-10 h-10 rounded-full text-[15px] font-inter font-medium transition-all flex items-center justify-center
+                                            ${currentPage === page 
+                                                ? 'bg-[#4a6ffa] text-white shadow-md' 
+                                                : 'text-slate-600 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm'
+                                            }
+                                        `}
+                                    >
+                                        {page}
+                                    </button>
+                                )}
+                            </React.Fragment>
+                        ))}
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-[#0c1a2e] hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:border-transparent disabled:hover:shadow-none disabled:cursor-not-allowed transition-all"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const footerLinks = {
   Services: [
@@ -40,8 +41,18 @@ const legalLinks = [
 ] as const;
 
 export default function Footer() {
+  const containerRef = useRef<HTMLElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end end"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["50%", "0%"]);
+
   return (
-    <footer className="relative mt-0 overflow-hidden border-t border-blue-200/70 bg-[linear-gradient(180deg,#dbeafe_0%,#eaf3ff_42%,#f4f8ff_100%)]">
+    <footer ref={containerRef} className="relative mt-0 overflow-hidden border-t border-blue-200/70 bg-[#dbeafe]">
+      <motion.div style={{ y }} className="w-full bg-[linear-gradient(180deg,#dbeafe_0%,#eaf3ff_42%,#f4f8ff_100%)]">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(74,111,250,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(74,111,250,0.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35 [mask-image:radial-gradient(65%_55%_at_50%_30%,black,transparent)]" />
         <div className="relative max-w-[1320px] mx-auto px-6 py-14 md:py-16">
         {/* Top Section */}
@@ -112,6 +123,7 @@ export default function Footer() {
           </div>
         </div>
         </div>
+      </motion.div>
       </footer>
   );
 }

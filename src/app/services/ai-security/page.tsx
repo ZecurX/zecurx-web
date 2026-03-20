@@ -2,6 +2,10 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { ArrowRight, Bot, Shield, Code, Database, Search, Activity, Cpu, LineChart } from "lucide-react";
+import Image from "next/image";
+import ServiceBentoFeatures from "@/components/ui/service-bento-features";
 
 export const metadata: Metadata = {
     title: "AI Security Services | ZecurX",
@@ -20,29 +24,36 @@ export const metadata: Metadata = {
 
 const capabilities = [
     {
-        title: "LLM Application Security Testing",
-        desc: "We test your LLM-powered applications against the OWASP LLM Top 10 (2025), including prompt injection, sensitive information disclosure, and improper output handling. We identify ways attackers can manipulate your AI to bypass controls or leak sensitive data."
+        title: "LLM Application Testing",
+        desc: "We test your LLM-powered apps against the OWASP Top 10, including prompt injection, data disclosure, and output handling. We find ways attackers bypass controls.",
+        icon: "Bot",
+        span: 3,
+        variant: "highlight" as const,
     },
     {
-        title: "Prompt Injection & Jailbreak Testing",
-        desc: "We systematically test for both direct injection (jailbreaking) and indirect injection through RAG pipelines. We find ways to override system prompts, extract hidden instructions, exfiltrate data via poisoned documents, and trigger unauthorized actions."
+        title: "Prompt Injection & Jailbreaks",
+        desc: "Testing for direct injection and indirect injection through RAG pipelines. We find ways to override prompts and extract instructions.",
+        icon: "Code",
+        span: 3,
     },
     {
         title: "AI Threat Modeling",
-        desc: "We analyze your AI system architecture to identify attack surfaces specific to ML systems—from training data poisoning and model extraction to adversarial inputs and supply chain risks in third-party models, datasets, and plugins."
+        desc: "Analyzing your AI system architecture to identify attack surfaces specific to ML systems and supply chain risks.",
+        icon: "Shield",
+        span: 2,
     },
     {
-        title: "RAG & Agentic Workflow Security",
-        desc: "We assess your Retrieval-Augmented Generation systems and AI agents for vector database vulnerabilities, document injection attacks, excessive agency risks, and authorization bypasses in tool/function calling workflows."
+        title: "RAG & Agent Workflow Security",
+        desc: "Assessing Retrieval-Augmented Generation systems and AI agents for vector DB vulnerabilities and excessive agency risks.",
+        icon: "Database",
+        span: 2,
     },
     {
-        title: "System Prompt & Data Leakage Testing",
-        desc: "We probe for system prompt leakage vulnerabilities that reveal hidden instructions. We test for accidental disclosure of PII, training data, and confidential information through crafted queries and edge-case inputs."
+        title: "System Prompt Leakage",
+        desc: "Probing for system prompt leakage vulnerabilities and accidental disclosure of PII or training data through crafted queries.",
+        icon: "Search",
+        span: 2,
     },
-    {
-        title: "Resource & Cost Abuse Analysis",
-        desc: "We identify denial-of-service vectors and unbounded consumption risks—recursive agentic loops, token exhaustion attacks, and resource abuse scenarios that could degrade performance or exhaust API credits."
-    }
 ];
 
 const deliverables = [
@@ -66,124 +77,164 @@ const deliverables = [
 
 export default function AISecurityPage() {
     return (
-        <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+        <main className="bg-[#f8fbff] min-h-screen text-[#0c1a2e] selection:bg-[#4a6ffa]/30 relative overflow-hidden">
             <CreativeNavBar />
 
-            <section className="relative pt-32 pb-20 px-6">
-                <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-foreground/3 blur-[120px] rounded-full pointer-events-none" />
+            {/* ── HERO ────────────────────────────────────────────── */}
+            <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                    <div className="absolute bottom-0 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
+                </div>
 
-                <div className="max-w-7xl mx-auto relative z-10">
-                    <div className="mb-8">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em]">
-                            Emerging Technology Security
-                        </span>
-                    </div>
+                <div className="max-w-[1320px] mx-auto relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        <div>
+                            <BlurFade delay={0.1}>
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#1e3a5f] text-white font-space-grotesk text-xs font-medium tracking-widest uppercase mb-6">
+                                    Emerging Tech Security
+                                </div>
+                            </BlurFade>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-[1.1]">
-                        AI Security
-                    </h1>
+                            <BlurFade delay={0.2}>
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#0c1a2e] mb-6 leading-[1.05] font-manrope">
+                                    AI & LLM <span className="text-[#4a6ffa]">Security</span>
+                                </h1>
+                            </BlurFade>
 
-                    <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mb-12">
-                        Secure your AI/ML systems and LLM applications. We provide threat modeling, prompt injection testing, and abuse scenario analysis for AI-powered products.
-                    </p>
+                            <BlurFade delay={0.3}>
+                                <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-xl mb-10 font-inter">
+                                    Secure your AI systems against prompt injection, training data poisoning, and unauthorized model extraction before deployment.
+                                </p>
+                            </BlurFade>
 
-                    <div className="flex flex-wrap gap-4">
-                        <Link
-                            href="/contact"
-                            className="px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
-                        >
-                            Get an AI Security Review
-                        </Link>
-                        <Link
-                            href="/how-we-work"
-                            className="px-8 py-4 border border-border text-foreground font-medium rounded-full hover:bg-muted/50 transition-colors"
-                        >
-                            How We Work
-                        </Link>
+                            <BlurFade delay={0.4}>
+                                <div className="flex flex-wrap gap-4">
+                                    <Link
+                                        href="/contact"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                                    >
+                                        Get an AI Security Review
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                    <Link
+                                        href="/how-we-work"
+                                        className="inline-flex items-center justify-center bg-white border border-slate-200 text-[#0c1a2e] rounded-full px-8 py-4 text-[15px] font-semibold font-inter hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200 shadow-sm"
+                                    >
+                                        How We Work
+                                    </Link>
+                                </div>
+                            </BlurFade>
+                        </div>
+
+                        <BlurFade delay={0.3}>
+                            <div className="flex justify-center lg:justify-end">
+                                <div className="relative glass-card bg-white/50 border border-slate-200/60 rounded-3xl p-8 shadow-[0_18px_44px_rgba(30,58,95,0.05)] w-full max-w-[480px]">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full pointer-events-none" />
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_CDN_URL || "https://zecurx-web.fsn1.your-objectstorage.com"}/images/services/cloud-security.png`}
+                                        alt="AI Security illustration"
+                                        width={400}
+                                        height={400}
+                                        className="w-full h-auto relative z-10 drop-shadow-sm"
+                                        priority
+                                        unoptimized
+                                    />
+                                </div>
+                            </div>
+                        </BlurFade>
                     </div>
                 </div>
             </section>
 
-            <div className="w-full h-px bg-border/40 max-w-7xl mx-auto px-6" />
+            {/* ── BENTO GRID (CAPABILITIES) ───────────────────────── */}
+            <ServiceBentoFeatures
+                label="Capabilities"
+                title="What We"
+                titleAccent="Test"
+                subtitle="Specialized security testing for the unique attack surface of modern AI and ML systems."
+                items={capabilities as any}
+            />
 
-            <section className="py-24 px-6 border-t border-white/5">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
-                    <div className="lg:col-span-1">
-                        <div className="sticky top-32">
-                            <h2 className="text-3xl font-bold text-foreground mb-6 leading-tight">
-                                What We <br />
-                                <span className="text-muted-foreground">Test</span>
-                            </h2>
-                            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                                Specialized security testing for the unique attack surface of AI systems.
-                            </p>
-                            <div className="hidden lg:block w-12 h-1 bg-primary mb-8" />
+            {/* ── WHAT YOU GET ─────────────────────────────────────── */}
+            <section className="py-20 md:py-32 px-6 bg-white border-y border-slate-100 relative z-10">
+                <div className="max-w-[1320px] mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+                        <div className="lg:col-span-4">
+                            <BlurFade delay={0.1}>
+                                <div className="lg:sticky lg:top-32">
+                                    <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-4">
+                                        Deliverables
+                                    </span>
+                                    <h2 className="text-3xl md:text-4xl font-bold font-manrope text-[#0c1a2e] mb-6 leading-tight">
+                                        What You <span className="text-[#4a6ffa]">Get</span>
+                                    </h2>
+                                    <p className="text-lg text-slate-600 font-inter leading-relaxed mb-8">
+                                        Actionable insights and hardening strategies to secure your AI features against emerging LLM threats.
+                                    </p>
+                                </div>
+                            </BlurFade>
+                        </div>
+
+                        <div className="lg:col-span-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {deliverables.map((item, i) => (
+                                    <BlurFade key={i} delay={0.2 + (i * 0.1)} className="h-full">
+                                        <div className="group glass-card h-full relative overflow-hidden p-8 rounded-3xl border border-slate-200/60 bg-[#f8fbff]/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                            <div className="absolute top-6 right-6 text-6xl font-bold font-manrope text-white shadow-sm select-none pointer-events-none z-0">
+                                                {String(i + 1).padStart(2, "0")}
+                                            </div>
+                                            <div className="relative z-10 h-full flex flex-col pt-8">
+                                                <h3 className="text-xl font-bold font-manrope text-[#0c1a2e] mb-3 group-hover:text-[#4a6ffa] transition-colors">
+                                                    {item.title}
+                                                </h3>
+                                                <p className="text-slate-600 font-inter leading-relaxed text-[15px] flex-grow">
+                                                    {item.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </BlurFade>
+                                ))}
+                            </div>
                         </div>
                     </div>
-
-                    <div className="lg:col-span-2 flex flex-col">
-                        {capabilities.map((item, i) => (
-                            <div key={i} className="group py-8 border-t border-white/10 first:border-0 first:pt-0">
-                                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors flex items-center gap-3">
-                                    <span className="text-xs font-mono text-primary/50 border border-primary/20 px-2 py-1 rounded">0{i + 1}</span>
-                                    {item.title}
-                                </h3>
-                                <p className="text-muted-foreground leading-relaxed text-lg pl-12">
-                                    {item.desc}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
-            <section className="py-24 px-6 bg-muted/5 border-t border-white/5">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
-                    <div className="lg:col-span-1">
-                        <div className="sticky top-32">
-                            <h2 className="text-3xl font-bold text-foreground mb-6 leading-tight">
-                                What You <br />
-                                <span className="text-muted-foreground">Get</span>
-                            </h2>
-                            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                                Actionable insights to secure your AI systems against emerging threats.
-                            </p>
-                            <div className="hidden lg:block w-12 h-1 bg-primary mb-8" />
+            {/* ── BOTTOM CTA ──────────────────────────────────────── */}
+            <section className="py-20 md:py-32 px-6 relative z-10">
+                <div className="max-w-[1000px] mx-auto">
+                    <BlurFade delay={0.2}>
+                        <div className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a6ffa]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center">
+                            <div className="absolute inset-0 z-0">
+                                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a6ffa10_1px,transparent_1px),linear-gradient(to_bottom,#4a6ffa10_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+                            </div>
+                            <div className="relative z-10">
+                                <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
+                                    Building with AI? <span className="text-[#4a6ffa]">Secure it properly.</span>
+                                </h2>
+                                <p className="text-slate-600 font-inter mb-10 max-w-xl mx-auto text-lg leading-relaxed">
+                                    Get ahead of AI-specific threats. We help you ship AI features with confidence.
+                                </p>
+                                <div className="flex flex-wrap gap-4 justify-center">
+                                    <Link
+                                        href="/contact"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                                    >
+                                        Contact Us
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Link>
+                                    <Link
+                                        href="/services"
+                                        className="inline-flex items-center justify-center bg-white border border-slate-200 text-[#0c1a2e] rounded-full px-8 py-4 text-[15px] font-semibold font-inter hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200 shadow-sm"
+                                    >
+                                        All Services
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="lg:col-span-2 grid grid-cols-1 gap-12">
-                        {deliverables.map((item, i) => (
-                            <div key={i} className="group relative pl-8 border-l border-white/10 hover:border-primary/50 transition-colors py-2">
-                                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                                    {item.title}
-                                </h3>
-                                <p className="text-muted-foreground leading-relaxed text-lg">
-                                    {item.desc}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <section className="py-20 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="p-8 md:p-12 rounded-3xl border border-border/40 bg-card/20">
-                        <h2 className="text-2xl md:text-3xl font-semibold text-foreground mb-4">
-                            Building with AI? Secure it properly.
-                        </h2>
-                        <p className="text-muted-foreground mb-8 max-w-xl">
-                            Get ahead of AI-specific threats. We help you ship AI features with confidence.
-                        </p>
-                        <Link
-                            href="/contact"
-                            className="inline-flex px-8 py-4 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity"
-                        >
-                            Contact Us
-                        </Link>
-                    </div>
+                    </BlurFade>
                 </div>
             </section>
 

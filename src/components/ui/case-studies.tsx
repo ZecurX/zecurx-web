@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
+import { BlurFade } from "@/components/ui/blur-fade";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
+
 const CountUp = dynamic(() => import("react-countup"), { ssr: false });
 
 /** Map of string icon names to Lucide components */
@@ -72,9 +75,9 @@ function MetricStat({
     const { prefix, end, suffix, decimals } = parseMetricValue(value);
 
     return (
-        <div className="flex flex-col gap-2 text-left p-6">
+        <div className="flex flex-col gap-1 text-left">
             <p
-                className="text-2xl font-medium text-foreground sm:text-4xl"
+                className="text-3xl md:text-4xl font-manrope font-bold text-[#0c1a2e] mb-2"
                 aria-label={`${label} ${value}`}
             >
                 {prefix}
@@ -97,9 +100,9 @@ function MetricStat({
                 )}
                 {suffix}
             </p>
-            <p className="font-medium text-foreground text-left">{label}</p>
+            <p className="font-semibold font-inter text-slate-700 text-left">{label}</p>
             {sub ? (
-                <p className="text-muted-foreground text-left text-sm">{sub}</p>
+                <p className="text-slate-500 font-inter text-left text-sm mt-1">{sub}</p>
             ) : null}
         </div>
     );
@@ -113,6 +116,7 @@ export interface CaseStudy {
     role: string;
     image: string;
     icon: string;
+    lottie?: string;
     metrics: { value: string; label: string; sub?: string }[];
 }
 
@@ -129,83 +133,102 @@ export default function CaseStudies({
 }: CaseStudiesProps) {
     return (
         <section
-            className="py-20 md:py-32 bg-background"
+            className="py-20 md:py-32 px-6 relative z-10"
             aria-labelledby="case-studies-heading"
         >
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="max-w-[1320px] mx-auto">
                 {/* Header */}
-                <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
-                    <h2
-                        id="case-studies-heading"
-                        className="text-3xl font-bold md:text-5xl text-foreground"
-                    >
-                        {title}
-                    </h2>
-                    <p className="text-muted-foreground text-lg">{subtitle}</p>
-                </div>
+                <BlurFade delay={0.1}>
+                    <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
+                        <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                            SUCCESS STORIES
+                        </span>
+                        <h2
+                            id="case-studies-heading"
+                            className="text-3xl font-bold md:text-5xl font-manrope text-[#0c1a2e]"
+                        >
+                            {title}
+                        </h2>
+                        <p className="text-slate-600 font-inter text-lg">{subtitle}</p>
+                    </div>
+                </BlurFade>
 
                 {/* Cases */}
-                <div className="flex flex-col gap-20">
+                <div className="flex flex-col gap-8 lg:gap-12">
                     {studies.map((study, idx) => {
                         const reversed = idx % 2 === 1;
                         const Icon = iconMap[study.icon] ?? ShieldCheck;
                         return (
-                            <div
-                                key={study.id}
-                                className="grid gap-12 lg:grid-cols-3 xl:gap-24 items-center border-b border-border/40 pb-12"
-                            >
-                                {/* Left: Image + Quote */}
-                                <div
-                                    className={[
-                                        "flex flex-col sm:flex-row gap-10 lg:col-span-2 lg:border-r lg:pr-12 xl:pr-16 text-left",
-                                        reversed
-                                            ? "lg:order-2 lg:border-r-0 lg:border-l border-border/40 lg:pl-12 xl:pl-16 lg:pr-0"
-                                            : "border-border/40",
-                                    ].join(" ")}
-                                >
-                                    <Image
-                                        src={study.image}
-                                        alt={`${study.heading} illustration`}
-                                        width={300}
-                                        height={400}
-                                        className="aspect-[29/35] h-auto w-full max-w-60 rounded-2xl object-cover ring-1 ring-border hover:scale-[1.02] transition-all duration-300"
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
-                                    <figure className="flex flex-col justify-between gap-8 text-left">
-                                        <blockquote className="text-lg sm:text-xl text-foreground leading-relaxed text-left">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="w-10 h-10 rounded-xl bg-muted/50 border border-border/50 flex items-center justify-center">
-                                                    <Icon className="w-5 h-5 text-muted-foreground" />
+                            <BlurFade key={study.id} delay={0.2 + (idx * 0.1)}>
+                                <div className="group glass-card relative bg-white/50 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] transition-all duration-500 rounded-3xl overflow-hidden p-6 md:p-10 lg:p-12">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a6ffa]/5 blur-[60px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                    
+                                        {/* Content Block (Metrics + Quote) */}
+                                        <div className={`grid gap-12 lg:grid-cols-2 xl:gap-20 items-center relative z-10 w-full`}>
+                                            
+                                            {/* Text & Metrics Column */}
+                                            <div className={`flex flex-col gap-10 ${reversed ? 'lg:order-2' : ''}`}>
+                                                {/* Quote Content */}
+                                                <figure className="flex flex-col gap-6 text-left">
+                                                    <div className="w-16 h-16 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center group-hover:scale-110 group-hover:bg-[#4a6ffa]/5 transition-all duration-500 shadow-sm">
+                                                        <Icon className="w-7 h-7 text-[#4a6ffa]" />
+                                                    </div>
+                                                    <blockquote className="text-left">
+                                                        <h3 className="text-3xl lg:text-4xl font-bold font-manrope text-[#0c1a2e] leading-tight mb-6 group-hover:text-[#4a6ffa] transition-colors duration-300">
+                                                            {study.heading}
+                                                        </h3>
+                                                        <p className="text-slate-600 font-inter text-lg sm:text-xl leading-relaxed mb-8 italic">
+                                                            "{study.quote}"
+                                                        </p>
+                                                        <footer className="flex flex-col">
+                                                            <span className="font-semibold font-inter text-[#0c1a2e] text-lg">{study.name}</span>
+                                                            <span className="text-base font-inter text-slate-500 mt-1">{study.role}</span>
+                                                        </footer>
+                                                    </blockquote>
+                                                </figure>
+
+                                                {/* Metrics Grid */}
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8 border-t border-slate-200/60">
+                                                    {study.metrics.map((metric, i) => (
+                                                        <div key={`${study.id}-${i}`} className="bg-white/80 backdrop-blur-sm border border-slate-200/80 rounded-2xl p-6 shadow-[0_8px_30px_rgba(30,58,95,0.04)] hover:shadow-[0_12px_40px_rgba(30,58,95,0.08)] hover:-translate-y-1 transition-all duration-300">
+                                                            <MetricStat
+                                                                value={metric.value}
+                                                                label={metric.label}
+                                                                sub={metric.sub}
+                                                            />
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
-                                            <h3 className="text-lg sm:text-xl lg:text-xl font-semibold text-foreground leading-relaxed text-left">
-                                                {study.heading}
-                                                <span className="block text-muted-foreground text-sm sm:text-base lg:text-lg mt-3 font-normal">
-                                                    {study.quote}
-                                                </span>
-                                            </h3>
-                                        </blockquote>
-                                    </figure>
-                                </div>
 
-                                {/* Right: Metrics */}
-                                <div
-                                    className={[
-                                        "grid grid-cols-1 gap-10 self-center text-left",
-                                        reversed ? "lg:order-1" : "",
-                                    ].join(" ")}
-                                >
-                                    {study.metrics.map((metric, i) => (
-                                        <MetricStat
-                                            key={`${study.id}-${i}`}
-                                            value={metric.value}
-                                            label={metric.label}
-                                            sub={metric.sub}
-                                        />
-                                    ))}
+                                            {/* Illustration / Lottie Column */}
+                                            <div className={`flex items-center justify-center w-full ${reversed ? 'lg:order-1' : ''}`}>
+                                                <div className="relative w-full max-w-[400px] lg:max-w-[500px]">
+                                                    {/* Background blob for extra pop */}
+                                                    <div className="absolute inset-0 bg-[#4a6ffa]/5 blur-[60px] rounded-full pointer-events-none group-hover:bg-[#4a6ffa]/10 transition-colors duration-700" />
+                                                    
+                                                    {study.lottie ? (
+                                                        <div className="relative z-10 flex items-center justify-center w-full aspect-square group-hover:scale-[1.02] group-hover:-translate-y-2 transition-transform duration-700 ease-out">
+                                                            <LottieAnimation src={study.lottie} className="w-full h-full object-contain drop-shadow-xl" />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="relative z-10 flex items-center justify-center w-full aspect-[4/5] p-2 group-hover:scale-[1.02] group-hover:-translate-y-2 transition-transform duration-700 ease-out">
+                                                            <Image
+                                                                src={study.image}
+                                                                alt={`${study.heading} illustration`}
+                                                                width={500}
+                                                                height={600}
+                                                                className="h-auto w-full rounded-[2.5rem] object-cover drop-shadow-xl border border-white/50"
+                                                                loading="lazy"
+                                                                decoding="async"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
                                 </div>
-                            </div>
+                            </BlurFade>
                         );
                     })}
                 </div>

@@ -71,7 +71,7 @@ const DEBRIS_THRESHOLDS = [0.3, 0.5, 0.7, 0.9];
  */
 const useBreakableCard = (onBreak?: () => void) => {
     // --- State ---
-    const [isDragging, setIsDragging] = useState(false);
+    const [isDragging, ] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [crackLevel, setCrackLevel] = useState(0); // Range: 0.0 to 1.0
     const [isBroken, setIsBroken] = useState(false);
@@ -103,7 +103,7 @@ const useBreakableCard = (onBreak?: () => void) => {
         if (isBrokenRef.current) return;
         isBrokenRef.current = true;
         setIsBroken(true);
-        setIsDragging(false);
+        (false);
 
         // Calculate fall physics based on last frame's velocity
         const vx = velocityRef.current.x;
@@ -149,7 +149,7 @@ const useBreakableCard = (onBreak?: () => void) => {
     // --- Interaction Handlers ---
     const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         if (isBrokenRef.current) return;
-        setIsDragging(true);
+        (true);
 
         const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
         const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
@@ -227,7 +227,7 @@ const useBreakableCard = (onBreak?: () => void) => {
 
     const handleDragEnd = useCallback(() => {
         if (!isDragging) return;
-        setIsDragging(false);
+        (false);
 
         // Always snap back on release. 
         // Cards only break now by hitting 100% damage during the shake.
@@ -394,7 +394,7 @@ export const BreakableCard = ({ children, className, onBreak }: SectionCardProps
         handleDragStart,
         respawnProgress,
         isFlashing,
-        setIsDragging
+        
     } = useBreakableCard(onBreak);
 
     // Unique ID for the mask to prevent collisions between multiple cards
