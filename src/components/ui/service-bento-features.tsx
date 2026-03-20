@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
 import {
     Shield, Key, Search, Bug, Code, CheckCircle,
     Cloud, Lock, Container, GitBranch, FileCode, KeyRound,
@@ -32,6 +33,8 @@ export interface BentoItem {
     variant?: "default" | "stat" | "chart" | "highlight";
     /** Stat value for the "stat" variant */
     statValue?: string;
+    /** Lottie animation path */
+    lottie?: string;
 }
 
 interface ServiceBentoFeaturesProps {
@@ -50,24 +53,26 @@ export default function ServiceBentoFeatures({
     items,
 }: ServiceBentoFeaturesProps) {
     return (
-        <section className="py-20 md:py-32 px-6">
+        <section className="py-20 md:py-32 px-6 relative z-10">
             <div className="max-w-5xl mx-auto">
                 {/* Section header */}
-                <div className="max-w-2xl mb-16">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-4 block">
-                        {label}
-                    </span>
-                    <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                        {title}{" "}
-                        <span className="text-muted-foreground">{titleAccent}</span>
-                    </h2>
-                    <p className="text-lg text-muted-foreground leading-relaxed">
-                        {subtitle}
-                    </p>
-                </div>
+                <BlurFade delay={0.1}>
+                    <div className="max-w-2xl mb-16">
+                        <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-4">
+                            {label}
+                        </span>
+                        <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6 leading-tight">
+                            {title}{" "}
+                            <span className="text-[#4a6ffa]">{titleAccent}</span>
+                        </h2>
+                        <p className="text-lg text-slate-600 font-inter leading-relaxed">
+                            {subtitle}
+                        </p>
+                    </div>
+                </BlurFade>
 
                 {/* Bento grid */}
-                <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+                <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
                     {items.map((item, i) => {
                         const Icon = iconMap[item.icon] ?? Shield;
                         const span = item.span ?? (i < 3 ? 2 : 3);
@@ -83,102 +88,116 @@ export default function ServiceBentoFeatures({
 
                         if (variant === "stat") {
                             return (
-                                <Card key={i} className={`relative flex overflow-hidden ${spanClass}`}>
-                                    <CardContent className="relative m-auto size-fit pt-6 pb-8">
-                                        <div className="relative flex h-24 w-full justify-center items-center">
-                                            <span className="mx-auto block w-fit text-6xl md:text-7xl font-semibold tracking-tighter text-foreground">
-                                                {item.statValue ?? "100%"}
-                                            </span>
+                                <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative flex ${spanClass}`}>
+                                    <div className="group glass-card w-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="relative z-10 p-8 flex flex-col items-center justify-center h-full text-center">
+                                            <div className="flex h-24 w-full justify-center items-center mb-2">
+                                                <span className="text-6xl md:text-7xl font-manrope font-bold tracking-tight text-[#0c1a2e]">
+                                                    {item.statValue ?? "100%"}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-xl sm:text-2xl font-manrope font-bold text-[#0c1a2e] mb-2">
+                                                {item.title}
+                                            </h3>
+                                            <p className="text-slate-500 font-inter text-sm max-w-[240px] mx-auto">
+                                                {item.desc}
+                                            </p>
                                         </div>
-                                        <h3 className="mt-6 text-center text-xl sm:text-2xl font-semibold text-foreground whitespace-nowrap">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-muted-foreground text-center text-sm mt-2 max-w-[240px] mx-auto">
-                                            {item.desc}
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                </BlurFade>
                             );
                         }
 
                         if (variant === "chart") {
                             return (
-                                <Card key={i} className={`relative overflow-hidden ${spanClass}`}>
-                                    <CardContent className="pt-6 pb-8">
-                                        <div className="pt-2 lg:px-2 flex justify-center pb-4">
-                                            <div className="relative flex items-center justify-center size-20 rounded-full bg-primary/5 border border-primary/10">
-                                                <Icon className="size-8 text-primary/60" strokeWidth={1.5} />
+                                <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
+                                    <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="relative z-10 p-8 flex flex-col items-center text-center h-full">
+                                            <div className="w-20 h-20 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                                <Icon className="w-8 h-8 text-[#4a6ffa]" />
                                             </div>
-                                        </div>
-                                        <div className="relative z-10 mt-4 space-y-2 text-center">
-                                            <h3 className="text-lg sm:text-xl font-semibold text-foreground transition whitespace-nowrap">
+                                            <h3 className="text-lg sm:text-xl font-manrope font-bold text-[#0c1a2e] mb-3">
                                                 {item.title}
                                             </h3>
-                                            <p className="text-muted-foreground text-sm">
+                                            <p className="text-slate-600 font-inter text-sm">
                                                 {item.desc}
                                             </p>
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                </BlurFade>
                             );
                         }
 
                         if (variant === "highlight") {
                             return (
-                                <Card key={i} className={`relative overflow-hidden ${spanClass}`}>
-                                    <CardContent className="grid pt-6 sm:grid-cols-[1.3fr_1fr] gap-8">
-                                        <div className="relative z-10 flex flex-col justify-between space-y-12 lg:space-y-6">
-                                            <div className="relative flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5">
-                                                <Icon className="m-auto size-5 text-primary" strokeWidth={1.5} />
+                                <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
+                                    <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a6ffa]/5 blur-[60px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="grid pt-6 sm:grid-cols-[1.3fr_1fr] gap-8 h-full relative z-10">
+                                            <div className="flex flex-col justify-between p-8 space-y-8">
+                                                <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                                    <Icon className="w-6 h-6 text-[#4a6ffa]" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-2xl lg:text-[28px] font-manrope font-bold text-[#0c1a2e] mb-4 leading-tight">
+                                                        {item.title}
+                                                    </h3>
+                                                    <p className="text-slate-600 font-inter leading-relaxed">
+                                                        {item.desc}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="space-y-2 pb-6">
-                                                <h3 className="text-xl sm:text-2xl lg:text-[28px] font-semibold text-foreground transition tracking-tight whitespace-nowrap">
-                                                    {item.title}
-                                                </h3>
-                                                <p className="text-muted-foreground text-sm sm:text-base max-w-sm leading-relaxed">
-                                                    {item.desc}
-                                                </p>
+                                            <div className="rounded-tl-3xl relative -mb-6 -mr-6 mt-6 h-fit border-l border-t border-slate-200/60 bg-[#f8fbff]/80 p-6 py-12 sm:ml-6 flex items-center justify-center min-h-[240px]">
+                                                <div className="absolute left-4 top-4 flex gap-1.5">
+                                                    <span className="block w-2.5 h-2.5 rounded-full bg-slate-200" />
+                                                    <span className="block w-2.5 h-2.5 rounded-full bg-slate-200" />
+                                                    <span className="block w-2.5 h-2.5 rounded-full bg-slate-200" />
+                                                </div>
+                                                {item.lottie ? (
+                                                    <div className="relative w-full max-w-[280px] flex items-center justify-center">
+                                                        <LottieAnimation src={item.lottie} className="w-full h-auto" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="relative flex items-center justify-center size-28 sm:size-36 rounded-full bg-white border border-slate-200 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                                                        <Icon className="size-12 sm:size-16 text-[#4a6ffa]/40" />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="rounded-tl-2xl relative -mb-6 -mr-6 mt-6 h-fit border-l border-t bg-muted/20 p-6 py-12 sm:ml-6 flex items-center justify-center min-h-[200px]">
-                                            <div className="absolute left-3 top-2 flex gap-1">
-                                                <span className="block size-2 rounded-full border dark:border-white/10 dark:bg-white/10" />
-                                                <span className="block size-2 rounded-full border dark:border-white/10 dark:bg-white/10" />
-                                                <span className="block size-2 rounded-full border dark:border-white/10 dark:bg-white/10" />
-                                            </div>
-                                            <div className="relative flex items-center justify-center size-28 sm:size-36 rounded-full bg-background border shadow-sm">
-                                                <Icon className="size-12 sm:size-16 text-primary/40" strokeWidth={1} />
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                </BlurFade>
                             );
                         }
 
                         // Default card
                         return (
-                            <Card key={i} className={`relative overflow-hidden ${spanClass}`}>
-                                <CardContent className="pt-6 pb-8">
-                                    <div className="relative mx-auto flex aspect-square size-12 rounded-full border before:absolute before:-inset-2 before:rounded-full before:border dark:border-white/10 dark:before:border-white/5 mb-6">
-                                        <Icon className="m-auto size-5 text-primary" strokeWidth={1.5} />
+                            <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
+                                <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 p-8 flex flex-col">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                    
+                                    <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
+                                        <Icon className="w-6 h-6 text-[#4a6ffa]" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-lg sm:text-xl font-semibold text-foreground whitespace-nowrap">
+                                    
+                                    <div className="relative z-10 flex-1 flex flex-col">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a6ffa] transition-colors">
                                                 {item.title}
                                             </h3>
                                             {item.badge && (
-                                                <span className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider">
+                                                <span className="text-[11px] font-space-grotesk font-semibold uppercase tracking-widest text-[#4a6ffa] bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap ml-2">
                                                     {item.badge}
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-muted-foreground text-sm leading-relaxed">
+                                        <p className="text-slate-600 font-inter text-[15px] leading-relaxed flex-1">
                                             {item.desc}
                                         </p>
                                     </div>
-                                </CardContent>
-                            </Card>
+                                </div>
+                            </BlurFade>
                         );
                     })}
                 </div>

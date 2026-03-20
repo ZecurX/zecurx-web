@@ -36,10 +36,6 @@ export default function CaseStudies() {
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                     <div>
-                        <div className="inline-flex items-center rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1 text-sm font-medium text-blue-300 mb-6 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-                            <span className="flex h-2 w-2 rounded-full bg-blue-500 mr-2 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></span>
-                            Success Stories
-                        </div>
                         <h2 className="text-3xl md:text-5xl font-manrope font-extrabold text-foreground tracking-tight mb-4">
                             Real Results
                         </h2>
@@ -64,23 +60,25 @@ export default function CaseStudies() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1, duration: 0.5 }}
-                            className="p-8 md:p-10 rounded-3xl bg-muted/20 border border-border/50 hover:bg-blue-500/5 hover:border-blue-500/20 transition-all duration-300 group relative overflow-hidden"
+                            className="p-8 md:p-10 rounded-3xl bg-[#f4f8ff] border border-blue-100 hover:border-blue-200 transition-all duration-300 group relative overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-transparent transition-all duration-500" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-blue-50/0 group-hover:from-[#eef4ff] group-hover:to-transparent transition-all duration-500" />
                             
-                            <div className="relative z-10">
-                                <div className="text-xs font-bold tracking-wider text-blue-500 uppercase mb-6 bg-blue-500/10 inline-block px-3 py-1 rounded-full">
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="text-[11px] font-bold tracking-wider text-[#3b82f6] uppercase mb-8 bg-[#dce8ff] self-start px-3 py-1.5 rounded-full">
                                     {study.tag}
                                 </div>
-                                <div className="text-5xl md:text-6xl font-extrabold font-manrope text-foreground mb-6 tracking-tighter group-hover:text-blue-400 transition-colors">
+                                <div className="text-6xl md:text-7xl font-bold font-manrope text-[#0f172a] mb-6 tracking-tight group-hover:text-[#2563eb] transition-colors">
                                     {study.metric}
                                 </div>
-                                <h3 className="text-xl font-bold mb-4 text-foreground">
-                                    {study.label}
-                                </h3>
-                                <p className="text-muted-foreground leading-relaxed text-sm">
-                                    {study.desc}
-                                </p>
+                                <div className="mt-auto">
+                                    <h3 className="text-xl font-bold mb-4 text-[#0f172a]">
+                                        {study.label}
+                                    </h3>
+                                    <p className="text-slate-500 leading-relaxed text-sm font-medium max-w-[90%]">
+                                        {study.desc}
+                                    </p>
+                                </div>
                             </div>
                         </motion.div>
                     ))}

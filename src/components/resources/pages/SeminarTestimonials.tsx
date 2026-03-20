@@ -137,13 +137,13 @@ export default function SeminarTestimonials() {
                             Testimonials
                         </span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-manrope font-medium mb-4 tracking-tight text-foreground">
+                    <h2 className="text-4xl md:text-5xl font-manrope font-bold mb-4 tracking-tight text-[#0c1a2e]">
                         Academic{" "}
-                        <span className="bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-muted-foreground">
+                        <span className="text-[#4a6ffa]">
                             Impact
                         </span>
                     </h2>
-                    <p className="text-muted-foreground max-w-lg mx-auto text-base md:text-lg font-manrope font-light leading-relaxed">
+                    <p className="text-slate-600 max-w-lg mx-auto text-base md:text-lg font-inter font-light leading-relaxed">
                         Trusted by leading institutions to bridge the gap between curriculum and cyber warfare.
                     </p>
                 </div>
@@ -172,25 +172,25 @@ export default function SeminarTestimonials() {
                             className="text-center"
                         >
                             <blockquote className="max-w-4xl mx-auto mb-10">
-                                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-manrope font-light text-foreground/90 leading-[1.35] tracking-[-0.01em]">
+                                <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-manrope font-semibold text-[#0c1a2e] leading-[1.35] tracking-[-0.01em]">
                                     &ldquo;{current.quote}&rdquo;
                                 </p>
                             </blockquote>
 
                             <div className="flex flex-col items-center gap-3">
                                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <span className="text-sm font-manrope font-semibold text-primary">
+                                    <span className="text-sm font-manrope font-bold text-primary">
                                         {initials}
                                     </span>
                                 </div>
                                 <div>
-                                    <div className="font-manrope font-semibold text-foreground text-base">
+                                    <div className="font-manrope font-bold text-[#0c1a2e] text-base">
                                         {current.name}
                                     </div>
-                                    <div className="text-sm text-muted-foreground font-manrope">
+                                    <div className="text-sm text-slate-500 font-inter">
                                         {current.role}, {current.org}
                                     </div>
-                                    <div className="text-xs text-muted-foreground/60 font-manrope mt-0.5">
+                                    <div className="text-xs text-slate-400 font-inter mt-0.5">
                                         {current.location}
                                     </div>
                                 </div>
