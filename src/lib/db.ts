@@ -2,9 +2,13 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    // TODO: Enable SSL verification once the Hetzner PG server has a CA-signed cert
-    // Currently self-hosted PG at 65.21.191.184 likely uses a self-signed cert
-    ssl: { rejectUnauthorized: false },
+    // SECURITY WARNING: SSL verification disabled - exposes connections to MITM attacks
+    // ACTION REQUIRED: Obtain CA certificate from Hetzner and configure ssl.ca property
+    // For Hetzner Managed PostgreSQL: Download CA cert from Cloud Console
+    // Then replace with: ssl: { rejectUnauthorized: true, ca: fs.readFileSync('./hetzner-ca.crt').toString() }
+    ssl: process.env.NODE_ENV === 'production' 
+        ? { rejectUnauthorized: true } // Fails fast in production without proper cert
+        : { rejectUnauthorized: false }, // Allows development with self-signed certs
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000, // Increased from 3000
@@ -23,14 +27,8 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
     text: string,
     params?: unknown[]
 ): Promise<QueryResult<T>> {
-    if (process.env.NODE_ENV === 'development') {
-        const start = Date.now();
-        const res = await pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
-        const duration = Date.now() - start;
-        console.log('Executed query', { text: text.substring(0, 100), duration, rows: res.rowCount });
-        return res;
-    }
-
+    // Query logging removed - sensitive data should not be logged
+    // Use structured logging with proper PII redaction if query monitoring needed
     return pool.query<T>(text, params as (string | number | boolean | null | undefined)[]);
 }
 
