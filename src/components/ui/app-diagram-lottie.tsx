@@ -6,14 +6,13 @@ import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function AppDiagramLottie() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<object | null>(null);
 
   useEffect(() => {
     fetch("/lottie/App Diagram.json")
       .then((res) => res.json())
       .then(setAnimationData)
-      .catch((err) => console.error("Error loading App Diagram Lottie:", err));
+      .catch(() => { /* Lottie fetch error silently handled */ });
   }, []);
 
   if (!animationData) {
