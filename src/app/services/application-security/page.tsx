@@ -8,6 +8,7 @@ import { ArrowRight, ShieldCheck, Award } from "lucide-react";
 import { AppSecHero } from "./app-sec-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { ServiceFeatureGrid } from "@/components/ui/service-feature-grid";
+import { getCdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
   title: "Application Security Services | ZecurX",
@@ -98,7 +99,7 @@ const appSecCaseStudies: CaseStudy[] = [
     role: "CTO, FinTech Startup",
     icon: "ShieldCheck",
     image: "/images/case-studies/idor.webp",
-    lottie: "/lottie/idor_vuln.json",
+    lottie: getCdnUrl("lottie/idor_vuln.json"),
     metrics: [
       { value: "23", label: "Critical Vulns Found", sub: "In first assessment" },
       { value: "100%", label: "Fix Rate", sub: "Within 30 days" },
@@ -112,7 +113,7 @@ const appSecCaseStudies: CaseStudy[] = [
     role: "VP Engineering, SaaS Platform",
     icon: "Award",
     image: "/images/case-studies/soc2.webp",
-    lottie: "/lottie/soc_pentest.json",
+    lottie: getCdnUrl("lottie/soc_pentest.json"),
     metrics: [
       { value: "48h", label: "Report Delivery", sub: "After testing completed" },
       { value: "0", label: "Audit Findings", sub: "Zero non-conformities" },

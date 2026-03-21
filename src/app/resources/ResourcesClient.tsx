@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { HeroWords, heroEnd } from "@/components/ui/hero-words";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 import { BlurFade } from "@/components/ui/blur-fade";
 
 const featuredResources = [
@@ -128,7 +129,7 @@ export default function ResourcesClient() {
             <div className="flex-1 w-full max-w-[500px] relative hidden md:block">
               <BlurFade delay={0.4}>
                 <div className="relative w-full aspect-square opacity-90">
-                  <LottieAnimation src="/lottie/service-main.json" />
+                  <LottieAnimation src={getCdnUrl("lottie/service-main.json")} />
                 </div>
               </BlurFade>
             </div>

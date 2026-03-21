@@ -35,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 setUser(null);
             }
-        } catch (error) {
-            console.error("Failed to fetch session:", error);
+        } catch {
+            // Session fetch failed silently - user will be prompted to login
             setUser(null);
         } finally {
             setIsLoading(false);
@@ -65,8 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 method: "POST",
                 credentials: "include",
             });
-        } catch (error) {
-            console.error("Logout error:", error);
+        } catch {
+            // Logout error silently handled - redirect happens anyway
         } finally {
             setUser(null);
             router.push("/admin/login");

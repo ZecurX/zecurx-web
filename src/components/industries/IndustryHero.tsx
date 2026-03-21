@@ -3,6 +3,7 @@
 import React from "react";
 import { HeroWords, heroEnd } from "@/components/ui/hero-words";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 
 export default function IndustryHero() {
   // badge = 1 word-group, title = 5 words, subtitle ~25 words
@@ -46,7 +47,7 @@ export default function IndustryHero() {
         <div className="relative hidden lg:block w-full h-[450px]">
            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-transparent rounded-full blur-3xl" />
            <LottieAnimation
-              src="/lottie/saas.json"
+              src={getCdnUrl("lottie/saas.json")}
               className="w-full h-full relative z-10 drop-shadow-2xl"
               speed={0.8}
             />

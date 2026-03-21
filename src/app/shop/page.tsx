@@ -53,8 +53,8 @@ async function getProducts() {
             ORDER BY created_at DESC
         `);
     return result.rows;
-  } catch (error) {
-    console.error("Error fetching products:", error);
+  } catch {
+    // Products fetch error - return empty array to show empty shop
     return [] as ShopProduct[];
   }
 }

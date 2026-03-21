@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 import { WordRotate } from "@/components/ui/word-rotate";
 
 export function ComplianceHero() {
@@ -90,7 +91,7 @@ export function ComplianceHero() {
             <div className="relative glass-card bg-white/50 border border-slate-200/60 rounded-3xl p-8 shadow-[0_18px_44px_rgba(30,58,95,0.05)] w-full max-w-[480px]">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full pointer-events-none" />
               <LottieAnimation
-                src="/lottie/compilance.json"
+                src={getCdnUrl("lottie/compilance.json")}
                 className="w-full h-auto relative z-10"
               />
             </div>
