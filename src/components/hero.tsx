@@ -12,8 +12,7 @@ import { getCdnUrl } from "@/lib/cdn";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function Hero() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<object | null>(null);
 
   useEffect(() => {
     fetch(getCdnUrl("hero-lottie.json"))

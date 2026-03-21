@@ -17,7 +17,7 @@ export function LottieAnimation({ src, className, speed = 1 }: LottieAnimationPr
     fetch(src)
       .then((res) => res.json())
       .then(setAnimationData)
-      .catch(console.error);
+      .catch(() => { /* Lottie fetch error silently handled */ });
   }, [src]);
 
   useEffect(() => {
