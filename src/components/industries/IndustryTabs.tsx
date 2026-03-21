@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 
 const industries = [
     {
@@ -15,7 +16,7 @@ const industries = [
         name: "SaaS & Startups",
         subtitle: "Seed to Series B",
         icon: Rocket,
-        lottie: "/lottie/saas.json",
+        lottie: getCdnUrl("lottie/saas.json"),
         description: "Security that enables speed, not slows you down. Get audit-ready without dedicated security hires.",
         challenges: [
             "Need SOC 2 / ISO 27001 for enterprise deals",
@@ -37,7 +38,7 @@ const industries = [
         name: "AI Companies",
         subtitle: "LLM & ML Products",
         icon: Brain,
-        lottie: "/lottie/aiml.json",
+        lottie: getCdnUrl("lottie/aiml.json"),
         description: "Specialized security for AI-powered applications. Protect your models, data pipelines, and user trust.",
         challenges: [
             "Prompt injection and jailbreak vulnerabilities",
@@ -59,7 +60,7 @@ const industries = [
         name: "SMEs",
         subtitle: "Growing Businesses",
         icon: Building2,
-        lottie: "/lottie/tools-pack.json",
+        lottie: getCdnUrl("lottie/tools-pack.json"),
         description: "Enterprise-grade security without enterprise complexity. Practical protection for established businesses.",
         challenges: [
             "Growing attack surface with business expansion",
@@ -81,7 +82,7 @@ const industries = [
         name: "EdTech & Colleges",
         subtitle: "Education Sector",
         icon: GraduationCap,
-        lottie: "/lottie/health.json",
+        lottie: getCdnUrl("lottie/health.json"),
         description: "Protect student data, research IP, and institutional reputation. Security for open academic environments.",
         challenges: [
             "Student PII and FERPA compliance",

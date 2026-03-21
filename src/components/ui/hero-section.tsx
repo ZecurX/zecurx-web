@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
+import { getCdnUrl } from "@/lib/cdn";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -24,7 +25,7 @@ export function ServicesHeroSection() {
   }, []);
 
   useEffect(() => {
-    fetch("/lottie/service-main.json")
+    fetch(getCdnUrl("lottie/service-main.json"))
       .then((res) => res.json())
       .then(setAnimationData)
       .catch(() => { /* Lottie fetch error silently handled */ });

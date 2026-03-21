@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { getCdnUrl } from "@/lib/cdn";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -9,7 +10,7 @@ export function CallingLottie() {
   const [animationData, setAnimationData] = useState<object | null>(null);
 
   useEffect(() => {
-    fetch("/lottie/calling.json")
+    fetch(getCdnUrl("lottie/calling.json"))
       .then((res) => res.json())
       .then(setAnimationData)
       .catch(() => { /* Lottie fetch error silently handled */ });

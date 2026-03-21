@@ -100,9 +100,9 @@ export default function CaseStudiesPage() {
             if (!selectedCategory && data.categories) {
                 setCategories(data.categories);
             }
-        } catch (err) {
+        } catch {
+            // Case studies fetch error shown to user via state
             setError('Failed to load case studies. Please try again later.');
-            console.error('Error fetching case studies:', err);
         } finally {
             setLoading(false);
         }

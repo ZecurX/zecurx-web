@@ -16,6 +16,7 @@ import dynamic from "next/dynamic";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import CourseCard from "@/components/academy/CourseCard";
+import { getCdnUrl } from "@/lib/cdn";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import { CourseData } from "@/lib/courses";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
@@ -38,10 +39,10 @@ export default function AcademyClient({
   const [animationData, setAnimationData] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/lottie/cert.json")
+    fetch(getCdnUrl("lottie/cert.json"))
       .then((res) => res.json())
       .then(setAnimationData)
-      .catch((err) => console.error("Error loading Lottie logic:", err));
+      .catch(() => { /* Lottie fetch error silently handled */ });
 
     // Animate words
     const words = document.querySelectorAll<HTMLElement>(".hero-word");

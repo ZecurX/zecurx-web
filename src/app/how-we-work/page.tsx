@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
   title: "How We Work - Security Approach & Model",
@@ -123,7 +124,7 @@ export default function HowWeWorkPage() {
           >
             <div className="h-[320px] md:h-[380px]">
               <LottieAnimation
-                src="/lottie/work_hero.json"
+                src={getCdnUrl("lottie/work_hero.json")}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -194,7 +195,7 @@ export default function HowWeWorkPage() {
           >
             <div className="h-[280px] md:h-[340px]">
               <LottieAnimation
-                src="/lottie/deliver.json"
+                src={getCdnUrl("lottie/deliver.json")}
                 className="w-full h-full object-contain"
               />
             </div>

@@ -49,8 +49,8 @@ export default function LabelSelector({
         const data = await response.json();
         setLabels(data);
       }
-    } catch (error) {
-      console.error('Failed to fetch labels:', error);
+    } catch {
+      // Label fetch error silently handled - empty list shown
     } finally {
       setLoading(false);
     }
@@ -80,8 +80,8 @@ export default function LabelSelector({
       setNewLabelName('');
       setNewLabelColor('#3B82F6');
       setShowCreateForm(false);
-    } catch (error) {
-      console.error('Failed to create label:', error);
+    } catch {
+      // Label create error shown via alert
       alert('Failed to create label. Please try again.');
     } finally {
       setCreating(false);

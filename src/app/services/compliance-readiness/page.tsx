@@ -8,6 +8,7 @@ import { ArrowRight, ShieldCheck, Award } from "lucide-react";
 import { ComplianceHero } from "./compliance-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { ServiceFeatureGrid } from "@/components/ui/service-feature-grid";
+import { getCdnUrl } from "@/lib/cdn";
 
 export const metadata: Metadata = {
   title: "Compliance Readiness | ZecurX",
@@ -87,7 +88,7 @@ const complianceCaseStudies: CaseStudy[] = [
       "ZecurX took us from zero to ISO 27001 certified in just 10 weeks. They wrote our ISMS policies, configured our tools, and prepped us for the stage 2 audit. We passed with zero non-conformities.",
     name: "Deepak Kumar",
     role: "CEO, B2B SaaS Platform",
-    lottie: "/lottie/iso.json",
+    lottie: getCdnUrl("lottie/iso.json"),
     image:
       "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=600&h=800&fit=crop",
     icon: "Award",

@@ -96,9 +96,9 @@ export default function WhitepapersPage() {
             if (!selectedCategory && data.categories) {
                 setCategories(data.categories);
             }
-        } catch (err) {
+        } catch {
+            // Whitepaper fetch error shown to user via state
             setError('Failed to load whitepapers. Please try again later.');
-            console.error('Error fetching whitepapers:', err);
         } finally {
             setLoading(false);
         }
