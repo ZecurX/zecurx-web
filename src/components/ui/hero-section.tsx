@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -8,40 +8,66 @@ import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function ServicesHeroSection() {
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [animationData, setAnimationData] = useState<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
+
+  // Memoized hover handlers to ensure stable references for cleanup
+  const handleMouseEnter = useCallback((e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    target.style.textShadow = "0 0 20px oklch(0.6 0.1 260 / 0.5)";
+  }, []);
+
+  const handleMouseLeave = useCallback((e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    target.style.textShadow = "none";
+  }, []);
 
   useEffect(() => {
     fetch("/lottie/service-main.json")
       .then((res) => res.json())
       .then(setAnimationData)
-      .catch((err) => console.error("Error loading Lottie logic:", err));
-
-    // Animate words
-    const words = document.querySelectorAll<HTMLElement>(".hero-word");
-    words.forEach((word) => {
-      const delay = parseInt(word.getAttribute("data-delay") || "0", 10);
-      setTimeout(() => {
-        word.style.animation = "word-appear 0.5s ease-out forwards";
-      }, delay);
-    });
-
-    // Word hover effects
-    words.forEach((word) => {
-      word.addEventListener("mouseenter", () => {
-        word.style.textShadow = "0 0 20px oklch(0.6 0.1 260 / 0.5)";
-      });
-      word.addEventListener("mouseleave", () => {
-        word.style.textShadow = "none";
-      });
-    });
-
-
+      .catch(() => { /* Lottie fetch error silently handled */ });
   }, []);
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Get words within our container ref (not global document query)
+    const words = containerRef.current.querySelectorAll<HTMLElement>(".hero-word");
+    
+    // Animate words with staggered delays
+    words.forEach((word) => {
+      const delay = parseInt(word.getAttribute("data-delay") || "0", 10);
+      const timeoutId = setTimeout(() => {
+        word.style.animation = "word-appear 0.5s ease-out forwards";
+      }, delay);
+      timeoutsRef.current.push(timeoutId);
+    });
+
+    // Add hover effects
+    words.forEach((word) => {
+      word.addEventListener("mouseenter", handleMouseEnter);
+      word.addEventListener("mouseleave", handleMouseLeave);
+    });
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Clear all pending timeouts
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+      
+      // Remove event listeners
+      words.forEach((word) => {
+        word.removeEventListener("mouseenter", handleMouseEnter);
+        word.removeEventListener("mouseleave", handleMouseLeave);
+      });
+    };
+  }, [handleMouseEnter, handleMouseLeave]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-foreground font-manrope overflow-hidden relative w-full">
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-foreground font-manrope overflow-hidden relative w-full">
 
 
       <div className="relative z-10 min-h-screen flex flex-col justify-between items-center px-8 py-12 md:px-16 md:py-20">
