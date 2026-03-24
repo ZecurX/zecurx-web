@@ -69,19 +69,19 @@ const deliverables = [
 
 export default function SecureCodeReviewPage() {
     return (
-        <main className="min-h-screen bg-[#f8fbff] relative selection:bg-[#4a6ffa]/30">
+        <main className="min-h-screen bg-[#f8fbff] relative selection:bg-[#4a69e6]/30">
             <CreativeNavBar />
 
             <div className="relative z-10 bg-[#f8fbff] mb-[700px] md:mb-[420px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] pb-20">
                 {/* ── HERO ────────────────────────────────────────────── */}
                 <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-6 overflow-hidden">
                     <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:56px_56px] pointer-events-none" />
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#4a6ffa]/5 blur-[100px] rounded-full pointer-events-none" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#4a69e6]/5 blur-[100px] rounded-full pointer-events-none" />
 
                     <div className="max-w-4xl mx-auto relative z-10 text-center">
                         <BlurFade delay={0}>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200/60 bg-white/50 mb-8 backdrop-blur-sm shadow-sm">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#4a6ffa]" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#4a69e6]" />
                                 <span className="text-xs font-semibold text-[#0c1a2e] uppercase tracking-[0.15em] font-['Space_Grotesk']">
                                     <HeroWords>Source Code Security</HeroWords>
                                 </span>
@@ -110,7 +110,7 @@ export default function SecureCodeReviewPage() {
                         >
                             <Link
                                 href="/contact"
-                                className="group px-7 py-3.5 bg-[#4a6ffa] text-white font-semibold rounded-full hover:bg-[#3a5cea] hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 shadow-[0_8px_20px_rgba(74,111,250,0.25)] hover:shadow-[0_12px_25px_rgba(74,111,250,0.35)]"
+                                className="group px-7 py-3.5 bg-[#4a69e6] text-white font-semibold rounded-full hover:bg-[#3a5cea] hover:-translate-y-0.5 transition-all inline-flex items-center gap-2 shadow-[0_8px_20px_rgba(74,111,250,0.25)] hover:shadow-[0_12px_25px_rgba(74,111,250,0.35)]"
                             >
                                 Request a Code Review
                                 <svg
@@ -152,7 +152,7 @@ export default function SecureCodeReviewPage() {
                                     <p className="text-slate-600 text-lg leading-relaxed mb-8 font-['Inter']">
                                         Deep analysis of your source code to find security issues before attackers do.
                                     </p>
-                                    <div className="hidden lg:block w-12 h-1 bg-[#4a6ffa] mb-8" />
+                                    <div className="hidden lg:block w-12 h-1 bg-[#4a69e6] mb-8" />
                                 </div>
                             </BlurFade>
                         </div>
@@ -161,8 +161,8 @@ export default function SecureCodeReviewPage() {
                             {capabilities.map((item, i) => (
                                 <BlurFade key={i} delay={0.2 + i * 0.1} inView>
                                     <div className="group py-8 border-t border-slate-200/60 first:border-0 first:pt-0">
-                                        <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4a6ffa] transition-colors flex items-center gap-3 font-['Manrope']">
-                                            <span className="text-xs font-mono text-[#4a6ffa]/70 border border-[#4a6ffa]/30 px-2 py-1 rounded bg-[#4a6ffa]/5">0{i + 1}</span>
+                                        <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4a69e6] transition-colors flex items-center gap-3 font-['Manrope']">
+                                            <span className="text-xs font-mono text-[#4a69e6]/70 border border-[#4a69e6]/30 px-2 py-1 rounded bg-[#4a69e6]/5">0{i + 1}</span>
                                             {item.title}
                                         </h3>
                                         <p className="text-slate-600 leading-relaxed text-lg pl-12 font-['Inter']">
@@ -188,7 +188,7 @@ export default function SecureCodeReviewPage() {
                                     <p className="text-slate-600 text-lg leading-relaxed mb-8 font-['Inter']">
                                         Developer-friendly reports with actionable fixes, not just a list of problems.
                                     </p>
-                                    <div className="hidden lg:block w-12 h-1 bg-[#4a6ffa] mb-8" />
+                                    <div className="hidden lg:block w-12 h-1 bg-[#4a69e6] mb-8" />
                                 </div>
                             </BlurFade>
                         </div>
@@ -197,7 +197,7 @@ export default function SecureCodeReviewPage() {
                             {deliverables.map((item, i) => (
                                 <BlurFade key={i} delay={0.2 + i * 0.1} inView>
                                     <div className="group relative p-6 md:p-8 rounded-2xl border border-slate-200/60 bg-white/60 backdrop-blur-md shadow-[0_8px_30px_rgba(30,58,95,0.04)] hover:shadow-[0_12px_40px_rgba(30,58,95,0.08)] hover:-translate-y-1 transition-all duration-300 h-full">
-                                        <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4a6ffa] transition-colors font-['Manrope']">
+                                        <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4a69e6] transition-colors font-['Manrope']">
                                             {item.title}
                                         </h3>
                                         <p className="text-slate-600 leading-relaxed text-[15px] font-['Inter']">
@@ -226,7 +226,7 @@ export default function SecureCodeReviewPage() {
                                     <div className="flex flex-wrap gap-4 justify-center">
                                         <Link
                                             href="/contact"
-                                            className="group inline-flex items-center gap-2 px-8 py-4 bg-[#4a6ffa] text-white font-semibold rounded-full hover:bg-[#3a5cea] hover:-translate-y-0.5 transition-all shadow-[0_8px_20px_rgba(74,111,250,0.25)] hover:shadow-[0_12px_25px_rgba(74,111,250,0.35)]"
+                                            className="group inline-flex items-center gap-2 px-8 py-4 bg-[#4a69e6] text-white font-semibold rounded-full hover:bg-[#3a5cea] hover:-translate-y-0.5 transition-all shadow-[0_8px_20px_rgba(74,111,250,0.25)] hover:shadow-[0_12px_25px_rgba(74,111,250,0.35)]"
                                         >
                                             Contact Us
                                             <svg

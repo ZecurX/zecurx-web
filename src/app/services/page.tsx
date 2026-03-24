@@ -56,7 +56,7 @@ export default function ServicesPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                 Efficient security recovery
               </h2>
-              <p className="text-[#496ae8] mt-4 text-lg">
+              <p className="text-[#4a69e6] mt-4 text-lg">
                 Measurable impact across our entire portfolio.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function ServicesPage() {
                 <p className="text-xl font-medium text-foreground mb-2">
                   Faster Compliance
                 </p>
-                <p className="text-[#496ae8]">
+                <p className="text-[#4a69e6]">
                   Reduction in time-to-certification.
                 </p>
               </motion.div>
@@ -92,7 +92,7 @@ export default function ServicesPage() {
                 <p className="text-xl font-medium text-foreground mb-2">
                   Continuous Protection
                 </p>
-                <p className="text-[#496ae8]">
+                <p className="text-[#4a69e6]">
                   Always-on DevSecOps integration.
                 </p>
               </motion.div>
@@ -110,7 +110,7 @@ export default function ServicesPage() {
                 <p className="text-xl font-medium text-foreground mb-2">
                   Critical Leaks
                 </p>
-                <p className="text-[#496ae8]">
+                <p className="text-[#4a69e6]">
                   Zero high-severity breaches reported for managed clients.
                 </p>
               </motion.div>
@@ -131,7 +131,7 @@ export default function ServicesPage() {
                 Hands-on guidance with 24/7/365 support from the team that never
                 sleeps.
               </h2>
-              <p className="text-base md:text-xl text-[#496ae8] leading-relaxed">
+              <p className="text-base md:text-xl text-[#4a69e6] leading-relaxed">
                 Always-on support prepares, matures, and fortifies all facets of
                 your security program. We don't just hand you a PDF report; we
                 work alongside your engineers to fix flaws and ship secure code.
@@ -174,7 +174,7 @@ export default function ServicesPage() {
                 <p className="text-base md:text-xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                   We believe in giving back to the community. The{" "}
                   <span
-                    className="font-bold text-[#496ae8]"
+                    className="font-bold text-[#4a69e6]"
                     style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2rem" }}
                   >
                     VulnHunter Suite
@@ -191,9 +191,9 @@ export default function ServicesPage() {
                   ].map((feature, idx) => (
                     <li
                       key={idx}
-                      className="flex items-center text-base md:text-lg text-[#496ae8]"
+                      className="flex items-center text-base md:text-lg text-[#4a69e6]"
                     >
-                      <CheckCircle2 className="w-6 h-6 text-[#496ae8] mr-4 shrink-0" />
+                      <CheckCircle2 className="w-6 h-6 text-[#4a69e6] mr-4 shrink-0" />
                       {feature}
                     </li>
                   ))}
@@ -224,7 +224,7 @@ export default function ServicesPage() {
 
         {/* --- FINAL CTA --- */}
         <section className="py-10 md:py-16 px-4 md:px-6 bg-background">
-          <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border border-[#496ae8]/30 overflow-hidden shadow-lg shadow-[#496ae8]/5">
+          <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border border-[#4a69e6]/30 overflow-hidden shadow-lg shadow-[#4a69e6]/5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
               <div className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start">
                 <div className="flex items-center space-x-2 text-sm font-medium text-muted-foreground">

@@ -73,7 +73,7 @@ export default function AcademyClient({
         <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden min-h-[85vh] flex items-center">
           {/* Background elements */}
           <div className="absolute inset-0 z-0">
-              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
               <div className="absolute bottom-0 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
           </div>
 
@@ -89,7 +89,7 @@ export default function AcademyClient({
 
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#0c1a2e] mb-6 leading-[1.05] font-manrope">
                   <span className="hero-word" data-delay="300">ZecurX</span><br />
-                  <span className="hero-word text-[#4a6ffa]" data-delay="400">Professional</span><br />
+                  <span className="hero-word text-[#4a69e6]" data-delay="400">Professional</span><br />
                   <span className="hero-word" data-delay="500">Certificates</span>
                 </h1>
 
@@ -106,7 +106,7 @@ export default function AcademyClient({
                 >
                   <a
                     href="#courses"
-                    className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                    className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                   >
                     Explore Curriculum
                     <ArrowRight className="w-4 h-4" />
@@ -146,7 +146,7 @@ export default function AcademyClient({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200/60">
               {stats.map((stat, idx) => (
                 <div key={idx} className="flex flex-col items-center justify-center py-4 md:py-8 group">
-                  <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0c1a2e] mb-2 font-manrope transition-colors duration-300 group-hover:text-[#496ae8]">
+                  <span className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0c1a2e] mb-2 font-manrope transition-colors duration-300 group-hover:text-[#4a69e6]">
                     {stat.value}
                   </span>
                   <span className="text-slate-500 font-medium text-xs md:text-sm tracking-wide font-inter text-center">
@@ -213,7 +213,7 @@ export default function AcademyClient({
                   Curriculum
                 </span>
                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-4">
-                  Professional <span className="text-[#4a6ffa]">Programs</span>
+                  Professional <span className="text-[#4a69e6]">Programs</span>
                 </h2>
                 <p className="text-slate-600 max-w-xl text-lg font-inter">
                   From foundational security to advanced red teaming.
@@ -229,7 +229,7 @@ export default function AcademyClient({
                 </Link>
                 <Link
                   href="/cart"
-                  className="flex items-center gap-2 px-6 py-3 text-sm font-medium bg-[#4a6ffa] text-white rounded-full hover:bg-[#385be6] transition-colors shadow-sm"
+                  className="flex items-center gap-2 px-6 py-3 text-sm font-medium bg-[#4a69e6] text-white rounded-full hover:bg-[#385be6] transition-colors shadow-sm"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   Cart
@@ -252,17 +252,17 @@ export default function AcademyClient({
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a6ffa]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center"
+              className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a69e6]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center"
             >
               <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a6ffa10_1px,transparent_1px),linear-gradient(to_bottom,#4a6ffa10_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a69e610_1px,transparent_1px),linear-gradient(to_bottom,#4a69e610_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
               </div>
               <div className="relative z-10">
                 <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-6 mx-auto">
                   For Teams
                 </span>
                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
-                  <span className="text-[#4a6ffa]">Enterprise</span> Training
+                  <span className="text-[#4a69e6]">Enterprise</span> Training
                 </h2>
                 <p className="text-slate-600 font-inter mb-10 max-w-xl mx-auto text-lg leading-relaxed">
                   Customized security capability building for engineering and operations teams. Upskill your entire department.
@@ -270,7 +270,7 @@ export default function AcademyClient({
                 <div className="flex flex-wrap gap-4 justify-center">
                   <a
                     href="/contact"
-                    className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                    className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                   >
                     Contact Sales
                     <ArrowRight className="w-4 h-4" />

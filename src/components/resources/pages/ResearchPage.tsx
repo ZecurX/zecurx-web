@@ -99,14 +99,14 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
     return (
         <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden pt-32 pb-24">
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
                 <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
             </div>
 
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <BlurFade delay={0.1}>
                     <div className="flex justify-center mb-6">
-                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a6ffa] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a69e6] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
                             <ArrowLeft className="w-3.5 h-3.5" />
                             <span>Back to Resources</span>
                         </Link>
@@ -124,7 +124,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                     
                     <BlurFade delay={0.3}>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
-                            Global Threat <span className="text-[#4a6ffa]">Intelligence</span>
+                            Global Threat <span className="text-[#4a69e6]">Intelligence</span>
                         </h1>
                     </BlurFade>
                     
@@ -145,7 +145,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                     className={`
                                         flex items-center gap-2 px-4 py-2 rounded-full text-xs font-inter font-medium transition-all whitespace-nowrap border
                                         ${activeCategory === cat.id 
-                                            ? 'bg-[#4a6ffa] text-white border-transparent shadow-md' 
+                                            ? 'bg-[#4a69e6] text-white border-transparent shadow-md' 
                                             : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-[#0c1a2e]'
                                         }
                                     `}
@@ -164,19 +164,19 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                     placeholder="Search intelligence..." 
                                     value={searchQuery}
                                     onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-slate-200 focus:border-[#4a6ffa] focus:outline-none focus:ring-2 focus:ring-[#4a6ffa]/20 text-sm font-inter transition-all placeholder:text-slate-400 text-[#0c1a2e]"
+                                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-white border border-slate-200 focus:border-[#4a69e6] focus:outline-none focus:ring-2 focus:ring-[#4a69e6]/20 text-sm font-inter transition-all placeholder:text-slate-400 text-[#0c1a2e]"
                                 />
                             </div>
                             <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-full border border-slate-200">
                                 <button 
                                     onClick={() => setViewMode('list')}
-                                    className={`p-2 rounded-full transition-colors ${viewMode === 'list' ? 'bg-white text-[#4a6ffa] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
+                                    className={`p-2 rounded-full transition-colors ${viewMode === 'list' ? 'bg-white text-[#4a69e6] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
                                 >
                                     <List className="w-4 h-4" />
                                 </button>
                                 <button 
                                     onClick={() => setViewMode('grid')}
-                                    className={`p-2 rounded-full transition-colors ${viewMode === 'grid' ? 'bg-white text-[#4a6ffa] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
+                                    className={`p-2 rounded-full transition-colors ${viewMode === 'grid' ? 'bg-white text-[#4a69e6] shadow-sm' : 'text-slate-400 hover:text-[#0c1a2e]'}`}
                                 >
                                     <LayoutGrid className="w-4 h-4" />
                                 </button>
@@ -215,12 +215,12 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                     }
                                 `}
                             >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                 
                                 <motion.div layout className={`relative z-10 ${viewMode === 'list' ? 'flex-1 min-w-0' : 'w-full'}`}>
                                     <div className="flex flex-wrap items-center gap-3 text-xs mb-4">
                                         <span className="flex items-center gap-1.5 font-space-grotesk font-semibold tracking-wide text-slate-500 uppercase bg-slate-100 px-3 py-1 rounded-full">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-[#4a6ffa]"></span>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-[#4a69e6]"></span>
                                             {story.domain || 'Direct Source'}
                                         </span>
                                         <span className="text-slate-400 font-inter">
@@ -234,7 +234,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                         )}
                                     </div>
 
-                                    <h3 className={`font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a6ffa] transition-colors leading-snug ${viewMode === 'grid' ? 'text-xl mb-4' : 'text-2xl mb-3'}`}>
+                                    <h3 className={`font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a69e6] transition-colors leading-snug ${viewMode === 'grid' ? 'text-xl mb-4' : 'text-2xl mb-3'}`}>
                                         <a 
                                             href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
                                             target="_blank"
@@ -254,7 +254,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                     
                                     <div className={`flex flex-wrap gap-2 ${viewMode === 'grid' ? 'mt-auto pt-4' : 'mt-auto'}`}>
                                         {story.categories.map(cat => (
-                                            <span key={cat} className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a6ffa] uppercase bg-blue-50 px-3 py-1.5 rounded-full">
+                                            <span key={cat} className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 px-3 py-1.5 rounded-full">
                                                 {cat}
                                             </span>
                                         ))}
@@ -270,7 +270,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                         href={story.url || `https://news.ycombinator.com/item?id=${story.id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className={`flex items-center gap-2 text-[#0c1a2e] hover:text-[#4a6ffa] transition-colors text-[13px] font-inter font-semibold z-10 bg-white px-5 py-2.5 rounded-full border border-slate-200 hover:border-[#4a6ffa] hover:bg-[#f8fbff] shadow-sm cursor-pointer ${viewMode === 'grid' ? 'w-full justify-center' : ''}`}
+                                        className={`flex items-center gap-2 text-[#0c1a2e] hover:text-[#4a69e6] transition-colors text-[13px] font-inter font-semibold z-10 bg-white px-5 py-2.5 rounded-full border border-slate-200 hover:border-[#4a69e6] hover:bg-[#f8fbff] shadow-sm cursor-pointer ${viewMode === 'grid' ? 'w-full justify-center' : ''}`}
                                     >
                                         <span>Read Article</span>
                                         <ArrowLeft className="w-3.5 h-3.5 rotate-[135deg]" />
@@ -284,7 +284,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                 {filteredStories.length === 0 && (
                     <div className="text-center py-20 border border-dashed border-slate-300 rounded-3xl bg-white/50 max-w-4xl mx-auto">
                         <div className="w-16 h-16 rounded-full bg-[#f8fbff] border border-blue-100 flex items-center justify-center mx-auto mb-6">
-                            <Search className="w-6 h-6 text-[#4a6ffa]" />
+                            <Search className="w-6 h-6 text-[#4a69e6]" />
                         </div>
                         <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-2">No intelligence found</h3>
                         <p className="text-[15px] font-inter text-slate-500 max-w-sm mx-auto mb-8">
@@ -320,7 +320,7 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                         className={`
                                             w-10 h-10 rounded-full text-[15px] font-inter font-medium transition-all flex items-center justify-center
                                             ${currentPage === page 
-                                                ? 'bg-[#4a6ffa] text-white shadow-md' 
+                                                ? 'bg-[#4a69e6] text-white shadow-md' 
                                                 : 'text-slate-600 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-sm'
                                             }
                                         `}

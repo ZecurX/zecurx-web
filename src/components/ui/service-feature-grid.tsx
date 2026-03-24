@@ -47,17 +47,17 @@ export function ServiceFeatureGrid({ items }: ServiceFeatureGridProps) {
         return (
           <div
             key={idx}
-            className="group relative bg-white border border-slate-200/80 rounded-3xl p-8 hover:border-[#4a6ffa]/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 overflow-hidden flex flex-col h-full"
+            className="group relative bg-white border border-slate-200/80 rounded-3xl p-8 hover:border-[#4a69e6]/30 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all duration-300 overflow-hidden flex flex-col h-full"
           >
             {/* Background Glow */}
-            <div className="absolute -right-20 -top-20 w-40 h-40 bg-[#4a6ffa]/5 rounded-full blur-3xl group-hover:bg-[#4a6ffa]/10 transition-colors duration-500" />
+            <div className="absolute -right-20 -top-20 w-40 h-40 bg-[#4a69e6]/5 rounded-full blur-3xl group-hover:bg-[#4a69e6]/10 transition-colors duration-500" />
             
             {/* Icon Wrapper */}
             <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-50 group-hover:border-blue-100 transition-all duration-300 z-10">
-              <Icon className="w-6 h-6 text-slate-600 group-hover:text-[#4a6ffa] transition-colors duration-300" strokeWidth={1.5} />
+              <Icon className="w-6 h-6 text-slate-600 group-hover:text-[#4a69e6] transition-colors duration-300" strokeWidth={1.5} />
             </div>
 
-            <h3 className="text-xl font-bold font-manrope text-[#0c1a2e] mb-3 z-10 group-hover:text-[#4a6ffa] transition-colors duration-300">
+            <h3 className="text-xl font-bold font-manrope text-[#0c1a2e] mb-3 z-10 group-hover:text-[#4a69e6] transition-colors duration-300">
               {item.title}
             </h3>
             
@@ -66,7 +66,7 @@ export function ServiceFeatureGrid({ items }: ServiceFeatureGridProps) {
             </p>
             
             {/* Subtle bottom accent line on hover */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4a6ffa] to-[#92c4fd] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4a69e6] to-[#92c4fd] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
         );
       })}

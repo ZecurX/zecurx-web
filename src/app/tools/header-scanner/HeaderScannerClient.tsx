@@ -81,12 +81,12 @@ export default function HeaderScannerPage() {
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder="https://example.com"
-                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4a6ffa]/50 focus:border-[#4a6ffa] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
+                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4a69e6]/50 focus:border-[#4a69e6] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !url.trim()}
-                            className="px-8 py-3 rounded-xl bg-[#4a6ffa] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                            className="px-8 py-3 rounded-xl bg-[#4a69e6] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>

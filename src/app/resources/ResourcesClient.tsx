@@ -100,7 +100,7 @@ export default function ResourcesClient() {
         {/* Hero Section */}
         <section className="relative w-full pt-32 pb-20 md:pt-40 md:pb-32 px-4 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
             <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
           </div>
 
@@ -116,7 +116,7 @@ export default function ResourcesClient() {
               
               <BlurFade delay={0.2}>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
-                  Expert <span className="text-[#4a6ffa]">Knowledge</span> & Insights
+                  Expert <span className="text-[#4a69e6]">Knowledge</span> & Insights
                 </h1>
               </BlurFade>
               
@@ -145,7 +145,7 @@ export default function ResourcesClient() {
               </span>
             </div>
             <h2 className="text-center text-4xl md:text-5xl lg:text-6xl font-manrope font-medium text-[#0f172a] mb-16 tracking-tight">
-              Featured <span className="text-[#4a6ffa]">Resources</span>
+              Featured <span className="text-[#4a69e6]">Resources</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -153,19 +153,19 @@ export default function ResourcesClient() {
                 <BlurFade key={index} delay={index * 0.1}>
                   <Link href={item.href} className="group block h-full">
                     <div className="glass-card rounded-3xl p-8 h-full flex flex-col border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out bg-white/50 relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors" />
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors" />
                       
                       <div className="relative z-10 flex flex-col h-full">
                         <div className="mb-6 flex justify-between items-start">
-                          <div className="w-12 h-12 rounded-2xl bg-[#f8fbff] flex items-center justify-center border border-blue-100 text-[#4a6ffa] group-hover:scale-110 transition-transform duration-300">
+                          <div className="w-12 h-12 rounded-2xl bg-[#f8fbff] flex items-center justify-center border border-blue-100 text-[#4a69e6] group-hover:scale-110 transition-transform duration-300">
                             <item.icon className="w-6 h-6" />
                           </div>
-                          <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a6ffa] uppercase bg-blue-50 px-3 py-1 rounded-full">
+                          <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 px-3 py-1 rounded-full">
                             {item.type}
                           </span>
                         </div>
                         
-                        <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4a6ffa] transition-colors">
+                        <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4a69e6] transition-colors">
                           {item.title}
                         </h3>
                         
@@ -174,10 +174,10 @@ export default function ResourcesClient() {
                         </p>
                         
                         <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
-                          <span className="text-[13px] font-inter font-semibold text-[#1e3a5f] group-hover:text-[#4a6ffa] transition-colors">
+                          <span className="text-[13px] font-inter font-semibold text-[#1e3a5f] group-hover:text-[#4a69e6] transition-colors">
                             Explore
                           </span>
-                          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#4a6ffa] group-hover:text-white transition-all duration-300">
+                          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#4a69e6] group-hover:text-white transition-all duration-300">
                             <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]" />
                           </div>
                         </div>
@@ -199,15 +199,15 @@ export default function ResourcesClient() {
               </span>
             </div>
             <h2 className="text-center text-3xl md:text-5xl lg:text-6xl font-manrope font-medium text-[#0f172a] mb-12 tracking-tight">
-              Explore by <span className="text-[#4a6ffa]">Topic</span>
+              Explore by <span className="text-[#4a69e6]">Topic</span>
             </h2>
 
             <div className="flex flex-wrap justify-center gap-4">
               {blogTopics.map((topic, i) => (
                 <BlurFade key={i} delay={0.2 + i * 0.05}>
                   <Link href={`/resources/blog?topic=${encodeURIComponent(topic.label)}`}>
-                    <div className="group flex items-center gap-3 px-6 py-4 bg-white rounded-full border border-slate-200/80 shadow-sm hover:shadow-md hover:border-[#4a6ffa]/30 transition-all duration-300">
-                      <div className="text-slate-400 group-hover:text-[#4a6ffa] transition-colors">
+                    <div className="group flex items-center gap-3 px-6 py-4 bg-white rounded-full border border-slate-200/80 shadow-sm hover:shadow-md hover:border-[#4a69e6]/30 transition-all duration-300">
+                      <div className="text-slate-400 group-hover:text-[#4a69e6] transition-colors">
                         <topic.icon className="w-5 h-5" />
                       </div>
                       <span className="font-inter font-medium text-[#0c1a2e] text-[15px]">
@@ -229,13 +229,13 @@ export default function ResourcesClient() {
               
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
-                  Ready to secure your <span className="text-[#4a6ffa] font-caveat">future?</span>
+                  Ready to secure your <span className="text-[#4a69e6] font-caveat">future?</span>
                 </h2>
                 <p className="text-lg text-slate-600 font-inter mb-10 max-w-2xl mx-auto">
                   Get full access to our premium whitepapers, research, and security guides by subscribing to our updates.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link href="/contact" className="w-full sm:w-auto relative inline-flex justify-center items-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200">
+                  <Link href="/contact" className="w-full sm:w-auto relative inline-flex justify-center items-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200">
                     Subscribe Now
                     <ArrowRight className="w-4 h-4" />
                   </Link>

@@ -63,14 +63,14 @@ export function ServiceAccordion({ items, defaultOpen = 0 }: ServiceAccordionPro
             className={cn(
               "group relative overflow-hidden rounded-2xl border transition-all duration-300 ease-out",
               isOpen 
-                ? "bg-white border-[#4a6ffa]/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)]" 
+                ? "bg-white border-[#4a69e6]/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)]" 
                 : "bg-white/60 border-slate-200/60 hover:bg-white hover:border-slate-300/80 hover:shadow-sm"
             )}
           >
             {/* Active Left Indicator */}
             <div 
               className={cn(
-                "absolute left-0 top-0 bottom-0 w-1 bg-[#4a6ffa] transition-transform duration-300 ease-out origin-top",
+                "absolute left-0 top-0 bottom-0 w-1 bg-[#4a69e6] transition-transform duration-300 ease-out origin-top",
                 isOpen ? "scale-y-100" : "scale-y-0"
               )}
             />
@@ -85,7 +85,7 @@ export function ServiceAccordion({ items, defaultOpen = 0 }: ServiceAccordionPro
                 className={cn(
                   "flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
                   isOpen
-                    ? "bg-[#4a6ffa]/10 text-[#4a6ffa]"
+                    ? "bg-[#4a69e6]/10 text-[#4a69e6]"
                     : "bg-slate-100/80 text-slate-500 group-hover:text-slate-700 group-hover:bg-slate-100"
                 )}
               >
@@ -105,12 +105,12 @@ export function ServiceAccordion({ items, defaultOpen = 0 }: ServiceAccordionPro
               {/* Chevron Wrapper */}
               <div className={cn(
                 "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300",
-                isOpen ? "bg-[#4a6ffa]/5" : "bg-transparent group-hover:bg-slate-50"
+                isOpen ? "bg-[#4a69e6]/5" : "bg-transparent group-hover:bg-slate-50"
               )}>
                 <ChevronDown
                   className={cn(
                     "w-5 h-5 transition-transform duration-300 ease-out",
-                    isOpen ? "rotate-180 text-[#4a6ffa]" : "text-slate-400 group-hover:text-slate-600"
+                    isOpen ? "rotate-180 text-[#4a69e6]" : "text-slate-400 group-hover:text-slate-600"
                   )}
                 />
               </div>
