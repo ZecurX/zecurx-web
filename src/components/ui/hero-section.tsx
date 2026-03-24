@@ -36,7 +36,7 @@ export function ServicesHeroSection() {
 
     // Get words within our container ref (not global document query)
     const words = containerRef.current.querySelectorAll<HTMLElement>(".hero-word");
-    
+
     // Animate words with staggered delays
     words.forEach((word) => {
       const delay = parseInt(word.getAttribute("data-delay") || "0", 10);
@@ -57,7 +57,7 @@ export function ServicesHeroSection() {
       // Clear all pending timeouts
       timeoutsRef.current.forEach(clearTimeout);
       timeoutsRef.current = [];
-      
+
       // Remove event listeners
       words.forEach((word) => {
         word.removeEventListener("mouseenter", handleMouseEnter);
@@ -68,7 +68,6 @@ export function ServicesHeroSection() {
 
   return (
     <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-foreground font-manrope overflow-hidden relative w-full">
-
 
       <div className="relative z-10 min-h-screen flex flex-col justify-between items-center px-8 py-12 md:px-16 md:py-20">
         {/* Top tagline */}
@@ -104,7 +103,7 @@ export function ServicesHeroSection() {
 
         {/* Main area - Two columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto w-full mt-8 md:mt-12 mb-16 px-4 md:px-0">
-          
+
           {/* Left: Text Content */}
           <div className="text-center lg:text-left flex flex-col items-center lg:items-start text-left">
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-manrope font-bold text-foreground leading-[1.05]" style={{ letterSpacing: "-0.02em" }}>
@@ -154,7 +153,7 @@ export function ServicesHeroSection() {
           </div>
 
           {/* Right: Lottie Animation */}
-          <div 
+          <div
             className="flex justify-center lg:justify-end opacity-0"
             style={{
               animation: "word-appear 0.5s ease-out forwards",
