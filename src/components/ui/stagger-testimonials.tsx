@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from "react";
 import { Star } from "lucide-react";
@@ -58,11 +58,10 @@ function StarRating({ count }: { count: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`w-4 h-4 ${
-            i < count
-              ? "fill-amber-400 text-amber-400"
-              : "fill-slate-200 text-slate-200"
-          }`}
+          className={`w-4 h-4 ${i < count
+            ? "fill-amber-400 text-amber-400"
+            : "fill-slate-200 text-slate-200"
+            }`}
         />
       ))}
     </div>

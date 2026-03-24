@@ -32,7 +32,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `src/app/layout.tsx`: Root layout with font configurations.
 - `src/app/globals.css`: Global styles and Tailwind configuration.
 
-
 ## Developers Guide (For Antigravity Agents)
 
 This project has been set up with a **strict global theming system** to support both Light and Dark modes seamlessly. All future development MUST adhere to these guidelines to ensure consistency.
@@ -42,64 +41,95 @@ This project has been set up with a **strict global theming system** to support 
 **DO NOT** use hardcoded colors like `bg-black`, `bg-white`, `text-white`, or `text-black`.
 Instead, use the semantic variables defined in `src/app/globals.css`.
 
--   **Backgrounds**:
-    -   Use `bg-background` for the main page background.
-    -   Use `bg-muted` for secondary backgrounds (cards, sections).
-    -   Use `bg-foreground` for primary buttons (text will be `text-background`).
--   **Text**:
-    -   Use `text-foreground` for primary headings and body text.
-    -   Use `text-muted-foreground` for subtitles and secondary text.
--   **Borders**:
-    -   Use `border-border` for all borders.
+- **Backgrounds**:
+  - Use `bg-background` for the main page background.
+  - Use `bg-muted` for secondary backgrounds (cards, sections).
+  - Use `bg-foreground` for primary buttons (text will be `text-background`).
+- **Text**:
+  - Use `text-foreground` for primary headings and body text.
+  - Use `text-muted-foreground` for subtitles and secondary text.
+- **Borders**:
+  - Use `border-border` for all borders.
 
 **Why?**
 These variables automatically switch values based on the active theme (`light` or `dark`). Using them guarantees your new pages (Services, Resources, etc.) will look perfect in both modes immediately.
 
-### 2. Assets & Images
+# ZecurX Web
 
--   **Theme-Aware Images**:
-    -   If a section requires a specific background image (like the Hero "glow"), use the pattern in `HeroSection.tsx`.
-    -   Check `theme === "light"` to conditional render `/assets/light-bg.png` vs `/assets/dark-bg.png`.
--   **Logos**:
-    -   Do **NOT** use `invert` filters on logos unless absolutely necessary.
-    -   The current logo setup is optimized to look good on both light (white) and dark (black) backgrounds without modification.
+A Next.js website implementing the ZecurX design system and landing experience.
 
-### 3. Reusable Components (STRICT REUSE POLICY)
+## Quick Start
 
-**Do NOT create new UI components if an equivalent already exists.**
-We want to maintain a unified codebase. Reusing components ensures that design updates (like the recent Light Mode overhaul) propagate everywhere instantly.
+Prerequisites: Node 18+, npm/yarn/pnpm
 
--   **`ThemeToggle`**: Use `<ThemeToggle />` for any color mode switching.
--   **`CreativeNavBar`**: The single source of truth for navigation.
--   **`Footer`**: Use the shared footer component.
--   **UI Primitives**: Always import from `@/components/ui/` (Buttons, Cards, etc.).
+Install dependencies:
 
-### 4. Content Source (IMPORTANT)
+```bash
+npm install
+# or
+pnpm install
+```
 
-All text, copy, and structural outlines for new pages are stored in the **`doc/` folder**.
+Run development server:
 
-**Where to get Content & Structure Inspiration?**
-When generating content for standard pages (Services, Why ZecurX, Resources, etc.), refer to these industry leaders. **Refactor and adapt** their professional tone and structure to fit ZecurX:
+```bash
+npm run dev
+```
 
-1.  **[Palo Alto Networks](https://www.paloaltonetworks.com/)**
-2.  **[CrowdStrike](https://www.crowdstrike.com/en-us/)**
-3.  **[Fortinet](https://www.fortinet.com/)**
-4.  **[Accenture Security](https://www.accenture.com/in-en/services/cybersecurity)**
-5.  **[EPAM](https://www.epam.com/)**
+Build and run production preview:
 
-**Instructions for Content Generation:**
--   **Analyze**: Look at how these sites structure their "Services" or "About" pages.
--   **Synthesize**: Use their high-level structure (e.g., "Problem -> Solution -> Benefit" flow) as a template.
--   **Adapt**: Rewrite the content to match ZecurX's "Cyber-Physical Obsidian" branding—more futuristic, concise, and premium.
--   **Verify**: Ensure the final copy aligns with the outlines in `doc/`.
+```bash
+npm run build
+npm run start
+```
 
-### 5. Upcoming Pages Roadmap
+Open http://localhost:3000 to view the site.
 
-You are assigned to develop the following pages. Create new routes in `src/app/` for each (e.g., `src/app/services/page.tsx`).
+## Useful Scripts
 
--   **Services Page** (`/services`): Detailed breakdown of cybersecurity offerings.
--   **Why ZecurX** (`/why-zecurx`): Company values, mission, and differentiators.
--   **Resources** (`/resources`): Blog, whitepapers, and guides.
--   **Academy** (`/academy`): Educational platform landing.
+- `dev` — Runs Next.js in development mode.
+- `build` — Builds the production app.
+- `start` — Runs the production server.
+- `lint` — Runs ESLint.
+- `format` — Runs code formatter (if configured).
 
-**Objective**: Extend the "Cyber-Physical Obsidian" aesthetic (and its Light Mode equivalent) to these new pages. Maintain the high standard of animation and polish seen on the Landing Page.
+Check `package.json` for exact script names.
+
+## Project Highlights
+
+- Next.js with App Router (`src/app`).
+- Tailwind CSS for utility-based styling.
+- Theme-aware design system to support Light/Dark modes.
+
+## Project Layout (high level)
+
+- `src/app` — Next.js app routes and layouts.
+- `src/components` — Reusable UI components.
+- `scripts` — Helper and migration scripts used by the team.
+- `docs` — Design & security docs (whitepapers, RBAC guides).
+
+## Theming & Development Notes
+
+- Use semantic CSS variables in `src/app/globals.css` for colors (avoid hardcoded `bg-black`/`text-white`).
+- Prefer existing UI primitives in `src/components/ui/` when possible.
+- Follow the project's responsive and accessibility conventions when adding components.
+
+## Documentation
+
+See the `docs/` directory for security reports, RBAC guides, and media role documentation.
+
+## Contributing
+
+1. Fork and branch from `main`.
+2. Run `npm install` and `npm run dev`.
+3. Open a PR with a clear description and screenshots for visual changes.
+
+## License
+
+This repository contains company-owned code — check internal policies for contribution and licensing.
+
+---
+
+Maintainers: point to the team or internal contacts as needed.
+
+For further edits, tell me what you'd like added or adjusted.
