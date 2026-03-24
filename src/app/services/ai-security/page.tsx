@@ -77,13 +77,13 @@ const deliverables = [
 
 export default function AISecurityPage() {
     return (
-        <main className="bg-[#f8fbff] min-h-screen text-[#0c1a2e] selection:bg-[#4a6ffa]/30 relative overflow-hidden">
+        <main className="bg-[#f8fbff] min-h-screen text-[#0c1a2e] selection:bg-[#4a69e6]/30 relative overflow-hidden">
             <CreativeNavBar />
 
             {/* ── HERO ────────────────────────────────────────────── */}
             <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a6ffa]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
                     <div className="absolute bottom-0 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
                 </div>
 
@@ -98,7 +98,7 @@ export default function AISecurityPage() {
 
                             <BlurFade delay={0.2}>
                                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-[#0c1a2e] mb-6 leading-[1.05] font-manrope">
-                                    AI & LLM <span className="text-[#4a6ffa]">Security</span>
+                                    AI & LLM <span className="text-[#4a69e6]">Security</span>
                                 </h1>
                             </BlurFade>
 
@@ -112,7 +112,7 @@ export default function AISecurityPage() {
                                 <div className="flex flex-wrap gap-4">
                                     <Link
                                         href="/contact"
-                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                                     >
                                         Get an AI Security Review
                                         <ArrowRight className="w-4 h-4" />
@@ -130,7 +130,7 @@ export default function AISecurityPage() {
                         <BlurFade delay={0.3}>
                             <div className="flex justify-center lg:justify-end">
                                 <div className="relative glass-card bg-white/50 border border-slate-200/60 rounded-3xl p-8 shadow-[0_18px_44px_rgba(30,58,95,0.05)] w-full max-w-[480px]">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full pointer-events-none" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full pointer-events-none" />
                                     <Image
                                         src={`${process.env.NEXT_PUBLIC_CDN_URL || "https://zecurx-web.fsn1.your-objectstorage.com"}/images/services/cloud-security.png`}
                                         alt="AI Security illustration"
@@ -167,7 +167,7 @@ export default function AISecurityPage() {
                                         Deliverables
                                     </span>
                                     <h2 className="text-3xl md:text-4xl font-bold font-manrope text-[#0c1a2e] mb-6 leading-tight">
-                                        What You <span className="text-[#4a6ffa]">Get</span>
+                                        What You <span className="text-[#4a69e6]">Get</span>
                                     </h2>
                                     <p className="text-lg text-slate-600 font-inter leading-relaxed mb-8">
                                         Actionable insights and hardening strategies to secure your AI features against emerging LLM threats.
@@ -181,12 +181,12 @@ export default function AISecurityPage() {
                                 {deliverables.map((item, i) => (
                                     <BlurFade key={i} delay={0.2 + (i * 0.1)} className="h-full">
                                         <div className="group glass-card h-full relative overflow-hidden p-8 rounded-3xl border border-slate-200/60 bg-[#f8fbff]/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                             <div className="absolute top-6 right-6 text-6xl font-bold font-manrope text-white shadow-sm select-none pointer-events-none z-0">
                                                 {String(i + 1).padStart(2, "0")}
                                             </div>
                                             <div className="relative z-10 h-full flex flex-col pt-8">
-                                                <h3 className="text-xl font-bold font-manrope text-[#0c1a2e] mb-3 group-hover:text-[#4a6ffa] transition-colors">
+                                                <h3 className="text-xl font-bold font-manrope text-[#0c1a2e] mb-3 group-hover:text-[#4a69e6] transition-colors">
                                                     {item.title}
                                                 </h3>
                                                 <p className="text-slate-600 font-inter leading-relaxed text-[15px] flex-grow">
@@ -206,13 +206,13 @@ export default function AISecurityPage() {
             <section className="py-20 md:py-32 px-6 relative z-10">
                 <div className="max-w-[1000px] mx-auto">
                     <BlurFade delay={0.2}>
-                        <div className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a6ffa]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center">
+                        <div className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a69e6]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center">
                             <div className="absolute inset-0 z-0">
-                                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a6ffa10_1px,transparent_1px),linear-gradient(to_bottom,#4a6ffa10_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+                                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a69e610_1px,transparent_1px),linear-gradient(to_bottom,#4a69e610_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
                             </div>
                             <div className="relative z-10">
                                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
-                                    Building with AI? <span className="text-[#4a6ffa]">Secure it properly.</span>
+                                    Building with AI? <span className="text-[#4a69e6]">Secure it properly.</span>
                                 </h2>
                                 <p className="text-slate-600 font-inter mb-10 max-w-xl mx-auto text-lg leading-relaxed">
                                     Get ahead of AI-specific threats. We help you ship AI features with confidence.
@@ -220,7 +220,7 @@ export default function AISecurityPage() {
                                 <div className="flex flex-wrap gap-4 justify-center">
                                     <Link
                                         href="/contact"
-                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                                     >
                                         Contact Us
                                         <ArrowRight className="w-4 h-4" />

@@ -28,7 +28,7 @@ export default function IndustryHero() {
             <br />
             <HeroWords delay={heroEnd(3, heroEnd(1) + 100)}>
               <span
-                className="text-[#4a6ffa]"
+                className="text-[#4a69e6]"
                 style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}
               >
                 For Your Industry.

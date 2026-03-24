@@ -139,7 +139,7 @@ export default function SeminarTestimonials() {
                     </div>
                     <h2 className="text-4xl md:text-5xl font-manrope font-bold mb-4 tracking-tight text-[#0c1a2e]">
                         Academic{" "}
-                        <span className="text-[#4a6ffa]">
+                        <span className="text-[#4a69e6]">
                             Impact
                         </span>
                     </h2>

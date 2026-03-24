@@ -101,7 +101,7 @@ export default async function ShopPage() {
                   Quality Guaranteed
                 </span>
                 <h2 className="text-3xl md:text-5xl font-bold font-manrope text-[#0c1a2e]">
-                  Why Choose <span className="text-[#4a6ffa]">ZecurX?</span>
+                  Why Choose <span className="text-[#4a69e6]">ZecurX?</span>
                 </h2>
                 <p className="text-slate-600 max-w-2xl mx-auto text-lg font-inter">
                   Verified hardware for serious security professionals.
@@ -109,8 +109,8 @@ export default async function ShopPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a6ffa]/30 transition-all group">
-                  <div className="w-14 h-14 rounded-2xl bg-[#4a6ffa]/10 flex items-center justify-center mb-6 text-[#4a6ffa] group-hover:scale-110 transition-transform">
+                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a69e6]/30 transition-all group">
+                  <div className="w-14 h-14 rounded-2xl bg-[#4a69e6]/10 flex items-center justify-center mb-6 text-[#4a69e6] group-hover:scale-110 transition-transform">
                     <Shield className="w-7 h-7" />
                   </div>
                   <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 font-manrope">
@@ -122,11 +122,11 @@ export default async function ShopPage() {
                   </p>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 md:col-span-2 relative overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a6ffa]/30 transition-all group">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a6ffa]/5 blur-[80px] rounded-full pointer-events-none" />
+                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 md:col-span-2 relative overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a69e6]/30 transition-all group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a69e6]/5 blur-[80px] rounded-full pointer-events-none" />
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8 h-full">
                     <div className="flex-1">
-                      <div className="w-14 h-14 rounded-2xl bg-[#4a6ffa]/10 flex items-center justify-center mb-6 text-[#4a6ffa] group-hover:scale-110 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-[#4a69e6]/10 flex items-center justify-center mb-6 text-[#4a69e6] group-hover:scale-110 transition-transform">
                         <Zap className="w-7 h-7" />
                       </div>
                       <h3 className="text-xl font-bold text-[#0c1a2e] mb-3 font-manrope">
@@ -139,7 +139,7 @@ export default async function ShopPage() {
                       </p>
                       <a
                         href="/academy"
-                        className="inline-flex items-center text-sm font-bold text-[#4a6ffa] group-hover:translate-x-1 transition-transform"
+                        className="inline-flex items-center text-sm font-bold text-[#4a69e6] group-hover:translate-x-1 transition-transform"
                       >
                         View Academy Preview{" "}
                         <ArrowRight className="w-4 h-4 ml-2" />
@@ -148,7 +148,7 @@ export default async function ShopPage() {
                   </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a6ffa]/30 transition-all group">
+                <div className="p-8 rounded-3xl bg-white border border-slate-200/60 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_40px_-10px_rgba(74,111,250,0.1)] hover:border-[#4a69e6]/30 transition-all group">
                   <div className="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 text-green-600 group-hover:scale-110 transition-transform">
                     <Package className="w-7 h-7" />
                   </div>
@@ -161,9 +161,9 @@ export default async function ShopPage() {
                   </p>
                 </div>
 
-                <div className="md:col-span-2 relative p-10 md:p-12 rounded-3xl border border-[#4a6ffa]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 group">
+                <div className="md:col-span-2 relative p-10 md:p-12 rounded-3xl border border-[#4a69e6]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 group">
                   <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a6ffa10_1px,transparent_1px),linear-gradient(to_bottom,#4a6ffa10_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+                    <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a69e610_1px,transparent_1px),linear-gradient(to_bottom,#4a69e610_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
                   </div>
                   <div className="relative z-10 flex-1">
                     <h3 className="text-2xl font-bold text-[#0c1a2e] mb-2 font-manrope">
@@ -176,7 +176,7 @@ export default async function ShopPage() {
                   <div className="relative z-10">
                     <a
                       href="/contact"
-                      className="relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-3px] hover:shadow-[0px_5px_0px_0px_#92c4fd] transition-all duration-200 whitespace-nowrap"
+                      className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-3px] hover:shadow-[0px_5px_0px_0px_#92c4fd] transition-all duration-200 whitespace-nowrap"
                     >
                       Contact Sales
                     </a>

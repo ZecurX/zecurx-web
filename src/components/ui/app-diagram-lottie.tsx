@@ -25,7 +25,7 @@ export function AppDiagramLottie() {
   }
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="w-full flex justify-center items-center" style={{ filter: "hue-rotate(-42deg) saturate(86%) brightness(92%)" }}>
       <Lottie
         animationData={animationData}
         loop={true}

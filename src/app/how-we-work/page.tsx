@@ -86,12 +86,12 @@ export default function HowWeWorkPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <p className="text-[#4a6ffa] font-medium mb-4">Our Execution Model</p>
+            <p className="text-[#4a69e6] font-medium mb-4">Our Execution Model</p>
             <h1
               className="text-4xl sm:text-5xl md:text-6xl font-manrope font-bold text-foreground leading-[1.05] mb-6"
               style={{ letterSpacing: "-0.02em" }}
             >
-              Security that <span className="text-[#4a6ffa]" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}>works</span>
+              Security that <span className="text-[#4a69e6]" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}>works</span>
               <br />
               with how your team ships.
             </h1>
@@ -152,7 +152,7 @@ export default function HowWeWorkPage() {
                 transition={{ delay: idx * 0.08 }}
                 className="rounded-2xl border border-border bg-background p-6 md:p-8"
               >
-                <div className="text-[#496ae8] text-sm font-semibold tracking-wider mb-3">STEP {item.step}</div>
+                <div className="text-[#4a69e6] text-sm font-semibold tracking-wider mb-3">STEP {item.step}</div>
                 <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{item.description}</p>
               </motion.div>
@@ -177,7 +177,7 @@ export default function HowWeWorkPage() {
             <ul className="space-y-4">
               {deliveryModes.map((mode) => (
                 <li key={mode.title} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#496ae8] mt-1 shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-[#4a69e6] mt-1 shrink-0" />
                   <div>
                     <p className="font-semibold text-foreground">{mode.title}</p>
                     <p className="text-muted-foreground">{mode.text}</p>
@@ -228,7 +228,7 @@ export default function HowWeWorkPage() {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/contact" className="group w-full sm:w-auto">
-                  <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
+                  <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
                     Get Enterprise Access
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </button>

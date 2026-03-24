@@ -113,7 +113,7 @@ export function ServicesHeroSection() {
                 <span className="hero-word" data-delay="860">and</span>{" "}
                 <span className="hero-word" data-delay="940">scale</span>{" "}
                 <span className="hero-word" data-delay="1020">with</span>{" "}
-                <span className="hero-word text-[#496ae8]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }} data-delay="1100">confidence.</span>
+                <span className="hero-word text-[#4a69e6]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }} data-delay="1100">confidence.</span>
               </div>
               <div className="text-lg md:text-xl font-inter leading-relaxed text-muted-foreground mt-5 md:mt-7 max-w-lg mx-auto lg:mx-0">
                 <span className="hero-word" data-delay="1250">Practical,</span>{" "}
@@ -138,7 +138,7 @@ export function ServicesHeroSection() {
             >
               <Link
                 href="/contact"
-                className="group inline-flex items-center justify-center px-8 py-4 bg-[#496ae8] text-white font-inter font-semibold rounded-full hover:opacity-90 transition-all text-base md:text-lg"
+                className="group inline-flex items-center justify-center px-8 py-4 bg-[#4a69e6] text-white font-inter font-semibold rounded-full hover:opacity-90 transition-all text-base md:text-lg"
               >
                 Get Started
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -176,7 +176,7 @@ export function ServicesHeroSection() {
         {/* Bottom tagline */}
         <div className="text-center">
           <div className="mb-4 w-16 h-px opacity-30 mx-auto bg-gradient-to-r from-transparent via-muted-foreground to-transparent" />
-          <h2 className="text-xs md:text-sm font-inter font-medium uppercase tracking-[0.2em] text-[#496ae8]">
+          <h2 className="text-xs md:text-sm font-inter font-medium uppercase tracking-[0.2em] text-[#4a69e6]">
             <span className="hero-word" data-delay="2200">
               Application Security
             </span>{" "}

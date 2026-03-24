@@ -90,13 +90,13 @@ export default function ToolPageLayout({
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                             className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8 mb-12 md:mb-16"
                         >
-                            <div className="p-4 md:p-5 bg-muted/50 rounded-2xl border border-border/40 text-[#4a6ffa] w-max shadow-sm backdrop-blur-sm">
+                            <div className="p-4 md:p-5 bg-muted/50 rounded-2xl border border-border/40 text-[#4a69e6] w-max shadow-sm backdrop-blur-sm">
                                 <Icon className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
                             </div>
                             <div className="flex-1">
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-foreground tracking-tight mb-4" style={{ letterSpacing: "-0.02em" }}>
                                     {title.split(' ').slice(0, -1).join(' ')}{' '}
-                                    <span className="text-[#4a6ffa]" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}>
+                                    <span className="text-[#4a69e6]" style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}>
                                         {title.split(' ').slice(-1)[0]}
                                     </span>
                                 </h1>
@@ -147,7 +147,7 @@ export default function ToolPageLayout({
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                     <Link href="/contact" className="group w-full sm:w-auto">
-                                        <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
+                                        <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
                                             Contact Sales
                                         </button>
                                     </Link>

@@ -137,7 +137,7 @@ export default function ToolsClient() {
                   <br />
                   <HeroWords delay={heroEnd(1)}>
                     <span
-                      className="text-[#4a6ffa]"
+                      className="text-[#4a69e6]"
                       style={{ fontFamily: "var(--font-caveat)", fontSize: "1.2em" }}
                     >
                       Suite
@@ -180,10 +180,10 @@ export default function ToolsClient() {
                     gradientColor="rgba(74, 111, 250, 0.08)"
                   >
                     <div className="flex justify-between items-start mb-6">
-                      <div className="p-3 rounded-xl bg-muted/50 text-foreground/80 group-hover:text-[#4a6ffa] group-hover:bg-[#4a6ffa]/10 transition-colors">
+                      <div className="p-3 rounded-xl bg-muted/50 text-foreground/80 group-hover:text-[#4a69e6] group-hover:bg-[#4a69e6]/10 transition-colors">
                         <tool.icon className="w-6 h-6" strokeWidth={1.5} />
                       </div>
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-muted/50 group-hover:bg-[#4a6ffa] group-hover:text-white transition-all duration-300">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-muted/50 group-hover:bg-[#4a69e6] group-hover:text-white transition-all duration-300">
                         <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                       </div>
                     </div>
@@ -195,7 +195,7 @@ export default function ToolsClient() {
                       {tool.description}
                     </p>
 
-                    <div className="w-full h-48 mt-auto rounded-xl overflow-hidden border border-border/50 relative bg-muted/20 flex items-center justify-center group-hover:border-[#4a6ffa]/30 transition-colors group-hover:shadow-[0_0_30px_-10px_rgba(74,111,250,0.2)]">
+                    <div className="w-full h-48 mt-auto rounded-xl overflow-hidden border border-border/50 relative bg-muted/20 flex items-center justify-center group-hover:border-[#4a69e6]/30 transition-colors group-hover:shadow-[0_0_30px_-10px_rgba(74,111,250,0.2)]">
                       
                       {tool.lottie ? (
                         <Lottie 
@@ -261,7 +261,7 @@ export default function ToolsClient() {
               <BlurFade delay={0.4} inView={true} direction="up">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                   <Link href="/contact" className="group w-full sm:w-auto">
-                    <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a6ffa] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
+                    <button className="w-full sm:w-auto relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-base font-semibold font-inter cursor-pointer transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5">
                       Get Enterprise Access
                       <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </button>

@@ -63,7 +63,7 @@ export default function ServiceBentoFeatures({
                         </span>
                         <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6 leading-tight">
                             {title}{" "}
-                            <span className="text-[#4a6ffa]">{titleAccent}</span>
+                            <span className="text-[#4a69e6]">{titleAccent}</span>
                         </h2>
                         <p className="text-lg text-slate-600 font-inter leading-relaxed">
                             {subtitle}
@@ -90,7 +90,7 @@ export default function ServiceBentoFeatures({
                             return (
                                 <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative flex ${spanClass}`}>
                                     <div className="group glass-card w-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                         <div className="relative z-10 p-8 flex flex-col items-center justify-center h-full text-center">
                                             <div className="flex h-24 w-full justify-center items-center mb-2">
                                                 <span className="text-6xl md:text-7xl font-manrope font-bold tracking-tight text-[#0c1a2e]">
@@ -113,10 +113,10 @@ export default function ServiceBentoFeatures({
                             return (
                                 <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
                                     <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                         <div className="relative z-10 p-8 flex flex-col items-center text-center h-full">
                                             <div className="w-20 h-20 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                                <Icon className="w-8 h-8 text-[#4a6ffa]" />
+                                                <Icon className="w-8 h-8 text-[#4a69e6]" />
                                             </div>
                                             <h3 className="text-lg sm:text-xl font-manrope font-bold text-[#0c1a2e] mb-3">
                                                 {item.title}
@@ -134,11 +134,11 @@ export default function ServiceBentoFeatures({
                             return (
                                 <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
                                     <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300">
-                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a6ffa]/5 blur-[60px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#4a69e6]/5 blur-[60px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                         <div className="grid pt-6 sm:grid-cols-[1.3fr_1fr] gap-8 h-full relative z-10">
                                             <div className="flex flex-col justify-between p-8 space-y-8">
                                                 <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                                    <Icon className="w-6 h-6 text-[#4a6ffa]" />
+                                                    <Icon className="w-6 h-6 text-[#4a69e6]" />
                                                 </div>
                                                 <div>
                                                     <h3 className="text-2xl lg:text-[28px] font-manrope font-bold text-[#0c1a2e] mb-4 leading-tight">
@@ -161,7 +161,7 @@ export default function ServiceBentoFeatures({
                                                     </div>
                                                 ) : (
                                                     <div className="relative flex items-center justify-center size-28 sm:size-36 rounded-full bg-white border border-slate-200 shadow-sm group-hover:scale-105 transition-transform duration-500">
-                                                        <Icon className="size-12 sm:size-16 text-[#4a6ffa]/40" />
+                                                        <Icon className="size-12 sm:size-16 text-[#4a69e6]/40" />
                                                     </div>
                                                 )}
                                             </div>
@@ -175,19 +175,19 @@ export default function ServiceBentoFeatures({
                         return (
                             <BlurFade key={i} delay={0.2 + (i * 0.1)} className={`relative ${spanClass}`}>
                                 <div className="group glass-card w-full h-full relative overflow-hidden rounded-3xl border border-slate-200/60 bg-white/50 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 p-8 flex flex-col">
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a6ffa]/5 blur-[40px] rounded-full group-hover:bg-[#4a6ffa]/10 transition-colors pointer-events-none" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
                                     
                                     <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative z-10">
-                                        <Icon className="w-6 h-6 text-[#4a6ffa]" />
+                                        <Icon className="w-6 h-6 text-[#4a69e6]" />
                                     </div>
                                     
                                     <div className="relative z-10 flex-1 flex flex-col">
                                         <div className="flex items-start justify-between mb-3">
-                                            <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a6ffa] transition-colors">
+                                            <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] group-hover:text-[#4a69e6] transition-colors">
                                                 {item.title}
                                             </h3>
                                             {item.badge && (
-                                                <span className="text-[11px] font-space-grotesk font-semibold uppercase tracking-widest text-[#4a6ffa] bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap ml-2">
+                                                <span className="text-[11px] font-space-grotesk font-semibold uppercase tracking-widest text-[#4a69e6] bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap ml-2">
                                                     {item.badge}
                                                 </span>
                                             )}
