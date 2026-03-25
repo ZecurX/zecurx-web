@@ -13,12 +13,9 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
     return compare(password, hash);
 }
 
-// Hidden superadmin email (obfuscated)
-const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
-    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
-
+// Super admin emails - all use OTP-based authentication
 const SUPER_USERS = [
-    HIDDEN_SUPERADMIN,
+    'zecurxintern@gmail.com',
     'mohitsen.official16@gmail.com',
     'hrshpriyam@gmail.com',
     'alkakumari1976@gmail.com'
