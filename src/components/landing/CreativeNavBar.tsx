@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ThemeToggle } from '../ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import CartIcon from '@/components/shop/CartIcon';
 import { CDN_ASSETS } from "@/lib/cdn";
@@ -200,8 +199,8 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     asChild
                                     className={cn(
                                         "relative px-6 py-2.5 h-auto rounded-full",
-                                        "border border-transparent bg-[#4a69e6] text-white",
-                                        "hover:bg-[#4a69e6]",
+                                        "border border-transparent bg-[#4b69e5] text-white",
+                                        "hover:bg-[#4b69e5]",
                                         "shadow-[0px_0px_0px_0px_#92c4fd]",
                                         "hover:translate-y-[-3px] hover:shadow-[0px_3px_0px_0px_#92c4fd]",
                                         "active:translate-y-[-2px] active:shadow-[0px_2px_0px_0px_#92c4fd]",
@@ -217,7 +216,6 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
 
                         {/* Mobile Toggle */}
                         <div className="lg:hidden flex items-center gap-3">
-                            <ThemeToggle />
                             {showCart && <CartIcon />}
                             <button
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -445,6 +443,14 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     </Link>
 
                                     <Link
+                                        href="/tools"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
+                                    >
+                                        Security Toolkit
+                                    </Link>
+
+                                    <Link
                                         href="/how-we-work"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
@@ -457,7 +463,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             <div className="p-6 border-t border-border/50 bg-muted/30 shrink-0">
                                 <Button
                                     asChild
-                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4"
+                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4 bg-[#4b69e5] text-white hover:bg-[#4b69e5] hover:opacity-90"
                                 >
                                     <Link
                                         href="/contact"
