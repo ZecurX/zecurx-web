@@ -2,7 +2,9 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }, // Development: accept self-signed certs
+    ssl: process.env.NODE_ENV === 'production'
+        ? true  // Production: use SSL with proper verification
+        : { rejectUnauthorized: false }, // Development: accept self-signed certs
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
