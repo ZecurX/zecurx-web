@@ -199,8 +199,8 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     asChild
                                     className={cn(
                                         "relative px-6 py-2.5 h-auto rounded-full",
-                                        "border border-transparent bg-[#4b69e5] text-white",
-                                        "hover:bg-[#4b69e5]",
+                                        "border border-transparent bg-[#4c69e4] text-white",
+                                        "hover:bg-[#4c69e4]",
                                         "shadow-[0px_0px_0px_0px_#92c4fd]",
                                         "hover:translate-y-[-3px] hover:shadow-[0px_3px_0px_0px_#92c4fd]",
                                         "active:translate-y-[-2px] active:shadow-[0px_2px_0px_0px_#92c4fd]",
@@ -293,7 +293,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             </div>
                                             <span className={cn(
                                                 "mt-4 inline-flex items-center gap-1.5 text-sm font-medium",
-                                                forceDark ? "text-white/85" : "text-[#4a69e6]"
+                                                forceDark ? "text-white/85" : "text-[#4c69e4]"
                                             )}>
                                                 View all {navData[activeDropdown as keyof typeof navData].label}
                                                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -463,7 +463,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             <div className="p-6 border-t border-border/50 bg-muted/30 shrink-0">
                                 <Button
                                     asChild
-                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4 bg-[#4b69e5] text-white hover:bg-[#4b69e5] hover:opacity-90"
+                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4 bg-[#4c69e4] text-white hover:bg-[#4c69e4] hover:opacity-90"
                                 >
                                     <Link
                                         href="/contact"

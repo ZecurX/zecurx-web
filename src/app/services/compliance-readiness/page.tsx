@@ -147,7 +147,7 @@ export default function ComplianceReadinessPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200/60">
               {stats.map((stat, idx) => (
                 <div key={idx} className="flex flex-col items-center justify-center py-4 md:py-8 group">
-                  <span className="text-4xl md:text-5xl font-bold text-[#0c1a2e] mb-2 font-manrope transition-colors duration-300 group-hover:text-[#4a69e6]">
+                  <span className="text-4xl md:text-5xl font-bold text-[#0c1a2e] mb-2 font-manrope transition-colors duration-300 group-hover:text-[#4c69e4]">
                     {stat.value}
                   </span>
                   <span className="text-slate-500 font-medium text-sm tracking-wide font-inter">
@@ -168,7 +168,7 @@ export default function ComplianceReadinessPage() {
                 Frameworks
               </span>
               <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c1a2e]">
-                What We <span className="text-[#4a69e6]">Support</span>
+                What We <span className="text-[#4c69e4]">Support</span>
               </h2>
               <p className="text-slate-600 font-inter text-lg">
                 We help you navigate complex regulatory landscapes without slowing down your team.
@@ -191,7 +191,7 @@ export default function ComplianceReadinessPage() {
                 Scope
               </span>
               <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c1a2e]">
-                How We <span className="text-[#4a69e6]">Work</span>
+                How We <span className="text-[#4c69e4]">Work</span>
               </h2>
               <p className="text-slate-600 font-inter text-lg">
                 Our proven methodology takes you from gap assessment to audit success.
@@ -218,13 +218,13 @@ export default function ComplianceReadinessPage() {
       <section className="py-20 md:py-32 px-6 relative z-10">
         <div className="max-w-[1000px] mx-auto">
           <BlurFade delay={0.2}>
-            <div className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4a69e6]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center">
+            <div className="relative p-10 md:p-16 rounded-[2.5rem] border border-[#4c69e4]/20 bg-gradient-to-br from-[#f8fbff] to-blue-50/50 shadow-[0_20px_60px_rgba(74,111,250,0.08)] overflow-hidden text-center">
               <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4a69e610_1px,transparent_1px),linear-gradient(to_bottom,#4a69e610_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
+                <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(to_right,#4c69e410_1px,transparent_1px),linear-gradient(to_bottom,#4c69e410_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
               </div>
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
-                  Ready to start your <span className="text-[#4a69e6]">compliance</span> journey?
+                  Ready to start your <span className="text-[#4c69e4]">compliance</span> journey?
                 </h2>
                 <p className="text-slate-600 font-inter mb-10 max-w-xl mx-auto text-lg leading-relaxed">
                   Get expert guidance tailored to your startup's needs. Fast
@@ -233,7 +233,7 @@ export default function ComplianceReadinessPage() {
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Link
                     href="/contact"
-                    className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                    className="relative inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                   >
                     Contact Us
                     <ArrowRight className="w-4 h-4" />
