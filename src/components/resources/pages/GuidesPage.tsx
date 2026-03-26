@@ -67,14 +67,14 @@ export default function GuidesPage() {
     return (
         <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden pt-32 pb-24">
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4c69e4]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
                 <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
             </div>
 
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <BlurFade delay={0.1}>
                     <div className="flex justify-center mb-6">
-                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a69e6] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4c69e4] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
                             <ArrowLeft className="w-3.5 h-3.5" />
                             <span>Back to Resources</span>
                         </Link>
@@ -92,7 +92,7 @@ export default function GuidesPage() {
                     
                     <BlurFade delay={0.3}>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
-                            Security <span className="text-[#4a69e6]">Guides</span>
+                            Security <span className="text-[#4c69e4]">Guides</span>
                         </h1>
                     </BlurFade>
                     
@@ -108,12 +108,12 @@ export default function GuidesPage() {
                     {guideCategories.map((cat, i) => (
                         <BlurFade key={i} delay={0.3 + (i * 0.1)}>
                             <div className="group bg-white rounded-3xl p-6 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-[#4a69e6]/5 blur-[30px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors" />
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-[#4c69e4]/5 blur-[30px] rounded-full group-hover:bg-[#4c69e4]/10 transition-colors" />
                                 <div className="relative z-10 flex flex-col items-center text-center">
-                                    <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-[#4a69e6]">
+                                    <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 text-[#4c69e4]">
                                         <cat.icon className="w-6 h-6" />
                                     </div>
-                                    <h4 className="font-semibold font-manrope text-[#0c1a2e] text-lg mb-1 group-hover:text-[#4a69e6] transition-colors">{cat.label}</h4>
+                                    <h4 className="font-semibold font-manrope text-[#0c1a2e] text-lg mb-1 group-hover:text-[#4c69e4] transition-colors">{cat.label}</h4>
                                     <p className="text-sm text-slate-500 font-inter">{cat.count} guides</p>
                                 </div>
                             </div>
@@ -126,11 +126,11 @@ export default function GuidesPage() {
                     {guides.map((guide, i) => (
                         <BlurFade key={i} delay={0.5 + (i * 0.1)}>
                             <div className="group glass-card rounded-3xl p-8 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] bg-white/50 hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
-                                <div className="absolute left-0 top-0 w-1 h-full bg-[#4a69e6]/20 group-hover:bg-[#4a69e6] transition-colors" />
+                                <div className="absolute left-0 top-0 w-1 h-full bg-[#4c69e4]/20 group-hover:bg-[#4c69e4] transition-colors" />
                                 <div className="flex flex-col lg:flex-row lg:items-center gap-6">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <span className="px-3 py-1 text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 rounded-full">
+                                            <span className="px-3 py-1 text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4c69e4] uppercase bg-blue-50 rounded-full">
                                                 {guide.category}
                                             </span>
                                             <span className="px-3 py-1 text-[11px] font-space-grotesk font-semibold tracking-widest text-slate-600 uppercase bg-slate-100 rounded-full">
@@ -138,7 +138,7 @@ export default function GuidesPage() {
                                             </span>
                                         </div>
 
-                                        <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4a69e6] transition-colors">
+                                        <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-3 group-hover:text-[#4c69e4] transition-colors">
                                             {guide.title}
                                         </h3>
 
@@ -149,7 +149,7 @@ export default function GuidesPage() {
                                         <div className="flex flex-wrap gap-2">
                                             {guide.topics.map((topic, j) => (
                                                 <span key={j} className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-inter text-slate-500 bg-white border border-slate-200 rounded-full shadow-sm">
-                                                    <CheckCircle className="w-3.5 h-3.5 text-[#4a69e6]" />
+                                                    <CheckCircle className="w-3.5 h-3.5 text-[#4c69e4]" />
                                                     {topic}
                                                 </span>
                                             ))}
@@ -157,7 +157,7 @@ export default function GuidesPage() {
                                     </div>
 
                                     <div className="flex-shrink-0 mt-4 lg:mt-0">
-                                        <button className="relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4a69e6] hover:text-[#4a69e6] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm">
+                                        <button className="relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4c69e4] hover:text-[#4c69e4] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm">
                                             <BookOpen className="w-4 h-4" />
                                             Read Guide
                                         </button>

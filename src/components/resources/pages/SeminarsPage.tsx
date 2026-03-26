@@ -138,11 +138,11 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
 
     return (
         <div className={`group glass-card relative rounded-3xl p-1.5 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] bg-white/50 hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 overflow-hidden ${past && !showCertificate ? "opacity-60" : ""}`}>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#4c69e4]/5 blur-[40px] rounded-full group-hover:bg-[#4c69e4]/10 transition-colors pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row">
                 {/* Date Block */}
                 <div className="flex md:flex-col items-center justify-center gap-2 md:gap-1 px-6 py-6 md:w-32 shrink-0 md:border-r border-b md:border-b-0 border-slate-100 bg-[#f8fbff]/50 rounded-2xl md:rounded-r-none m-1.5">
-                    <span className="text-[11px] font-space-grotesk text-[#4a69e6] uppercase tracking-widest font-semibold">{dateInfo.weekday}</span>
+                    <span className="text-[11px] font-space-grotesk text-[#4c69e4] uppercase tracking-widest font-semibold">{dateInfo.weekday}</span>
                     <span className="text-3xl font-manrope font-bold text-[#0c1a2e] leading-none">{dateInfo.day}</span>
                     <span className="text-[11px] font-space-grotesk text-slate-500 uppercase tracking-widest font-medium">{dateInfo.month}</span>
                 </div>
@@ -154,7 +154,7 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
                         <div className="flex-1 min-w-0">
                             {/* Type + Duration */}
                             <div className="flex items-center gap-3 mb-3">
-                                <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 px-3 py-1 rounded-full">
+                                <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4c69e4] uppercase bg-blue-50 px-3 py-1 rounded-full">
                                     {seminar.seminar_type || "Workshop"}
                                 </span>
                                 <span className="text-slate-300">·</span>
@@ -162,23 +162,23 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
                             </div>
 
                             {/* Title */}
-                            <h3 className="text-xl md:text-2xl font-manrope font-bold text-[#0c1a2e] leading-tight mb-4 group-hover:text-[#4a69e6] transition-colors">
+                            <h3 className="text-xl md:text-2xl font-manrope font-bold text-[#0c1a2e] leading-tight mb-4 group-hover:text-[#4c69e4] transition-colors">
                                 {seminar.title}
                             </h3>
 
                             {/* Meta */}
                             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] text-slate-600 font-inter">
                                 <span className="flex items-center gap-2">
-                                    <Users className="w-4 h-4 text-[#4a69e6]" />
+                                    <Users className="w-4 h-4 text-[#4c69e4]" />
                                     {seminar.speaker_name}
                                 </span>
                                 <span className="flex items-center gap-2">
-                                    <Building2 className="w-4 h-4 text-[#4a69e6]" />
+                                    <Building2 className="w-4 h-4 text-[#4c69e4]" />
                                     {seminar.organization_name}
                                 </span>
                                 {seminar.location_type === "onsite" && seminar.venue_address && (
                                     <span className="flex items-center gap-2">
-                                        <MapPin className="w-4 h-4 text-[#4a69e6]" />
+                                        <MapPin className="w-4 h-4 text-[#4c69e4]" />
                                         {seminar.venue_address}
                                     </span>
                                 )}
@@ -197,7 +197,7 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
                             {showRegister && (
                                 <Link 
                                     href={`/seminars/${seminar.id}/register`}
-                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
+                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
                                 >
                                     Register Now
                                     <ArrowRight className="w-4 h-4" />
@@ -206,7 +206,7 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
                             {showCertificate && (
                                 <Link 
                                     href={`/seminars/${seminar.id}/certificate`}
-                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4a69e6] hover:text-[#4a69e6] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm"
+                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4c69e4] hover:text-[#4c69e4] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm"
                                 >
                                     <Award className="w-4 h-4" />
                                     Certificate
@@ -263,14 +263,14 @@ export default function SeminarsPage() {
             {/* ════════════════════════════════════════════════════════ */}
             <section className="relative w-full pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4c69e4]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
                     <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
                 </div>
 
                 <div className="relative z-10 max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
                     <BlurFade delay={0.1}>
                         <div className="mb-8">
-                            <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a69e6] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                            <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4c69e4] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
                                 <ArrowLeft className="w-3.5 h-3.5" />
                                 <span>Back to Resources</span>
                             </Link>
@@ -290,7 +290,7 @@ export default function SeminarsPage() {
                             
                             <BlurFade delay={0.3}>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
-                                    Learn <span className="text-[#4a69e6]">Cybersecurity</span>
+                                    Learn <span className="text-[#4c69e4]">Cybersecurity</span>
                                     <br className="hidden md:block" />
                                     from Practitioners.
                                 </h1>
@@ -307,7 +307,7 @@ export default function SeminarsPage() {
                                 <div className="flex flex-wrap items-center gap-4">
                                     <Link 
                                         href="/book-seminar"
-                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
+                                        className="relative inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200"
                                     >
                                         Book Seminar
                                         <ArrowRight className="w-4 h-4" />
@@ -327,15 +327,15 @@ export default function SeminarsPage() {
                             <div className="relative">
                                 {loading ? (
                                     <div className="glass-card h-full min-h-[400px] bg-white/40 border border-slate-200/60 rounded-3xl flex items-center justify-center shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
-                                        <Loader2 className="w-8 h-8 animate-spin text-[#4a69e6]" />
+                                        <Loader2 className="w-8 h-8 animate-spin text-[#4c69e4]" />
                                     </div>
                                 ) : nextSession ? (
                                     <div className="glass-card bg-white border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.08)] rounded-3xl overflow-hidden relative group">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full pointer-events-none" />
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#4c69e4]/5 blur-[40px] rounded-full pointer-events-none" />
                                         
                                         <div className="p-8 md:p-10 relative z-10">
-                                            <div className="inline-flex items-center gap-2 bg-blue-50 text-[#4a69e6] px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-6">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-[#4a69e6] animate-pulse" />
+                                            <div className="inline-flex items-center gap-2 bg-blue-50 text-[#4c69e4] px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-6">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-[#4c69e4] animate-pulse" />
                                                 Next Session
                                             </div>
 
@@ -345,25 +345,25 @@ export default function SeminarsPage() {
 
                                             <div className="space-y-4 mb-8">
                                                 <div className="flex items-center gap-3 text-slate-600 font-inter">
-                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a69e6]">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4c69e4]">
                                                         <Calendar className="w-4 h-4 shrink-0" />
                                                     </div>
                                                     <span className="font-medium text-[15px]">{formatDate(nextSession.date).full}</span>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-slate-600 font-inter">
-                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a69e6]">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4c69e4]">
                                                         <Users className="w-4 h-4 shrink-0" />
                                                     </div>
                                                     <span className="text-[15px]">{nextSession.speaker_name}</span>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-slate-600 font-inter">
-                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a69e6]">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4c69e4]">
                                                         <Building2 className="w-4 h-4 shrink-0" />
                                                     </div>
                                                     <span className="text-[15px]">{nextSession.organization_name}</span>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-slate-600 font-inter">
-                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4a69e6]">
+                                                    <div className="w-8 h-8 rounded-full bg-[#f8fbff] flex items-center justify-center text-[#4c69e4]">
                                                         <Clock className="w-4 h-4 shrink-0" />
                                                     </div>
                                                     <span className="text-[15px]">{nextSession.duration}</span>
@@ -373,7 +373,7 @@ export default function SeminarsPage() {
                                             {nextSession.registration_enabled && (
                                                 <Link 
                                                     href={`/seminars/${nextSession.id}/register`}
-                                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4a69e6] text-white rounded-xl px-6 py-3.5 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
+                                                    className="w-full relative inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-xl px-6 py-3.5 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-2px] hover:shadow-[0px_4px_0px_0px_#92c4fd] active:translate-y-[0px] active:shadow-none transition-all duration-200"
                                                 >
                                                     Register Now
                                                     <ArrowRight className="w-4 h-4" />
@@ -437,7 +437,7 @@ export default function SeminarsPage() {
                             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                                 <div>
                                     <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-4">
-                                        All <span className="text-[#4a69e6]">Sessions</span>
+                                        All <span className="text-[#4c69e4]">Sessions</span>
                                     </h2>
                                     <p className="text-slate-600 max-w-xl text-lg font-inter">
                                         Browse upcoming workshops and past sessions. Register or claim your certificate.
@@ -445,7 +445,7 @@ export default function SeminarsPage() {
                                 </div>
                                 {!loading && allSorted.length > 0 && (
                                     <span className="text-[13px] font-inter font-medium text-slate-500 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm shrink-0">
-                                        <strong className="text-[#0c1a2e]">{allSorted.length}</strong> Sessions · <strong className="text-[#4a69e6]">{upcoming.length}</strong> Upcoming
+                                        <strong className="text-[#0c1a2e]">{allSorted.length}</strong> Sessions · <strong className="text-[#4c69e4]">{upcoming.length}</strong> Upcoming
                                     </span>
                                 )}
                             </div>
@@ -455,7 +455,7 @@ export default function SeminarsPage() {
                     {/* Session List */}
                     {loading ? (
                         <div className="flex items-center justify-center py-32">
-                            <Loader2 className="w-8 h-8 animate-spin text-[#4a69e6]" />
+                            <Loader2 className="w-8 h-8 animate-spin text-[#4c69e4]" />
                         </div>
                     ) : error ? (
                         <div className="bg-red-50 border border-red-100 rounded-3xl p-8 text-center">
@@ -464,7 +464,7 @@ export default function SeminarsPage() {
                     ) : seminars.length === 0 ? (
                         <div className="glass-card bg-white/50 border border-slate-200/60 rounded-3xl p-16 text-center shadow-[0_18px_44px_rgba(30,58,95,0.03)]">
                             <div className="w-16 h-16 rounded-full bg-[#f8fbff] flex items-center justify-center mx-auto mb-4 border border-blue-100">
-                                <Calendar className="w-6 h-6 text-[#4a69e6]" />
+                                <Calendar className="w-6 h-6 text-[#4c69e4]" />
                             </div>
                             <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-2">No sessions scheduled</h3>
                             <p className="text-slate-500 font-inter">Check back soon for upcoming workshops and seminars.</p>
