@@ -74,7 +74,7 @@ export function Hero() {
                 style={{ letterSpacing: "-0.02em" }}
               >
                 Security that{" "}
-                <span className="text-[#4a69e6]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }}>moves</span>
+                <span className="text-[#4c69e4]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }}>moves</span>
                 <br />
                 as fast as you do.
               </h1>
@@ -98,7 +98,7 @@ export function Hero() {
               <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
                 <Link href="/contact" className="group/cta pb-[5px] inline-block">
                   <button
-                    className="relative inline-flex items-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-3.5 text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
+                    className="relative inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-3.5 text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
                     style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
                   >
                     Book a Security Consultation
