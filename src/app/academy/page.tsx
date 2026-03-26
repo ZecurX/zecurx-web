@@ -1,5 +1,5 @@
 import { query } from '@/lib/db';
-import { CourseData, courses as staticCourses } from '@/lib/courses';
+import { CourseData } from '@/lib/courses';
 import { getCdnUrl } from '@/lib/cdn';
 import AcademyClient from './AcademyClient';
 
@@ -23,10 +23,7 @@ interface DBPlan {
 }
 
 export default async function AcademyPage() {
-    let courses = staticCourses;
-
-    try {
-        const result = await query<DBPlan>(
+    const result = await query<DBPlan>(
         `SELECT id, name, price, description, duration, level, features,
                 logo, original_price, popular, students_count, brochure_link,
                 COALESCE(in_stock, true) as in_stock,
@@ -43,40 +40,35 @@ export default async function AcademyPage() {
            name`
     );
 
-        if (result.rows.length > 0) {
-            courses = result.rows.map(row => {
-                const pricingType = row.pricing_type as CourseData['pricingType'];
-                const price = parseFloat(row.price);
-                const originalPrice = row.original_price ? parseFloat(row.original_price) : undefined;
+    const courses = result.rows.map(row => {
+        const pricingType = row.pricing_type as CourseData['pricingType'];
+        const price = parseFloat(row.price);
+        const originalPrice = row.original_price ? parseFloat(row.original_price) : undefined;
 
-                let displayPrice: number | string = 'Contact for Pricing';
-                if (pricingType === 'institutional') {
-                    displayPrice = 'Institution Only';
-                } else if (pricingType !== 'contact' && !isNaN(price) && price > 0) {
-                    displayPrice = price;
-                }
-
-                return {
-                    id: row.id,
-                    title: row.name,
-                    description: row.description || '',
-                    price: displayPrice,
-                    originalPrice: originalPrice && !isNaN(originalPrice) ? originalPrice : undefined,
-                    duration: row.duration || 'Custom',
-                    level: (row.level as CourseData['level']) || 'Beginner',
-                    features: row.features || [],
-                    popular: row.popular ?? false,
-                    logo: row.logo || undefined,
-                    students: row.students_count || undefined,
-                    brochureLink: row.brochure_link ? getCdnUrl(row.brochure_link) : undefined,
-                    inStock: row.in_stock ?? true,
-                    pricingType,
-                };
-            });
+        let displayPrice: number | string = 'Contact for Pricing';
+        if (pricingType === 'institutional') {
+            displayPrice = 'Institution Only';
+        } else if (pricingType !== 'contact' && !isNaN(price) && price > 0) {
+            displayPrice = price;
         }
-    } catch {
-        // Fallback to static courses if DB fails
-    }
+
+        return {
+            id: row.id,
+            title: row.name,
+            description: row.description || '',
+            price: displayPrice,
+            originalPrice: originalPrice && !isNaN(originalPrice) ? originalPrice : undefined,
+            duration: row.duration || 'Custom',
+            level: (row.level as CourseData['level']) || 'Beginner',
+            features: row.features || [],
+            popular: row.popular ?? false,
+            logo: row.logo || undefined,
+            students: row.students_count || undefined,
+            brochureLink: row.brochure_link ? getCdnUrl(row.brochure_link) : undefined,
+            inStock: row.in_stock ?? true,
+            pricingType,
+        };
+    });
 
     return <AcademyClient courses={courses} />;
 }
