@@ -1,136 +1,78 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import dynamic from "next/dynamic";
+import { getCdnUrl } from "@/lib/cdn";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function ServicesHeroSection() {
-  const gradientRef = useRef<HTMLDivElement>(null);
+  const [animationData, setAnimationData] = useState<object | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
-  useEffect(() => {
-    // Animate words
-    const words = document.querySelectorAll<HTMLElement>(".hero-word");
-    words.forEach((word) => {
-      const delay = parseInt(word.getAttribute("data-delay") || "0", 10);
-      setTimeout(() => {
-        word.style.animation = "word-appear 0.5s ease-out forwards";
-      }, delay);
-    });
-
-    // Mouse gradient
-    const gradient = gradientRef.current;
-    function onMouseMove(e: MouseEvent) {
-      if (gradient) {
-        gradient.style.left = e.clientX - 192 + "px";
-        gradient.style.top = e.clientY - 192 + "px";
-        gradient.style.opacity = "1";
-      }
-    }
-    function onMouseLeave() {
-      if (gradient) gradient.style.opacity = "0";
-    }
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseleave", onMouseLeave);
-
-    // Word hover effects
-    words.forEach((word) => {
-      word.addEventListener("mouseenter", () => {
-        word.style.textShadow = "0 0 20px oklch(0.6 0.1 260 / 0.5)";
-      });
-      word.addEventListener("mouseleave", () => {
-        word.style.textShadow = "none";
-      });
-    });
-
-
-
-
-    return () => {
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseleave", onMouseLeave);
-    };
+  // Memoized hover handlers to ensure stable references for cleanup
+  const handleMouseEnter = useCallback((e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    target.style.textShadow = "0 0 20px oklch(0.6 0.1 260 / 0.5)";
   }, []);
 
+  const handleMouseLeave = useCallback((e: Event) => {
+    const target = e.currentTarget as HTMLElement;
+    target.style.textShadow = "none";
+  }, []);
+
+  useEffect(() => {
+    fetch(getCdnUrl("lottie/service-main.json"))
+      .then((res) => res.json())
+      .then(setAnimationData)
+      .catch(() => { /* Lottie fetch error silently handled */ });
+  }, []);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Get words within our container ref (not global document query)
+    const words = containerRef.current.querySelectorAll<HTMLElement>(".hero-word");
+
+    // Animate words with staggered delays
+    words.forEach((word) => {
+      const delay = parseInt(word.getAttribute("data-delay") || "0", 10);
+      const timeoutId = setTimeout(() => {
+        word.style.animation = "word-appear 0.5s ease-out forwards";
+      }, delay);
+      timeoutsRef.current.push(timeoutId);
+    });
+
+    // Add hover effects
+    words.forEach((word) => {
+      word.addEventListener("mouseenter", handleMouseEnter);
+      word.addEventListener("mouseleave", handleMouseLeave);
+    });
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Clear all pending timeouts
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+
+      // Remove event listeners
+      words.forEach((word) => {
+        word.removeEventListener("mouseenter", handleMouseEnter);
+        word.removeEventListener("mouseleave", handleMouseLeave);
+      });
+    };
+  }, [handleMouseEnter, handleMouseLeave]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-foreground font-manrope overflow-hidden relative w-full">
-      {/* SVG Grid Background */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="services-grid"
-            width="60"
-            height="60"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 60 0 L 0 0 0 60"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="0.5"
-              className="text-foreground/[0.06]"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#services-grid)" />
-        <line
-          x1="0"
-          y1="20%"
-          x2="100%"
-          y2="20%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "0.5s" }}
-        />
-        <line
-          x1="0"
-          y1="80%"
-          x2="100%"
-          y2="80%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "1s" }}
-        />
-        <line
-          x1="20%"
-          y1="0"
-          x2="20%"
-          y2="100%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "1.5s" }}
-        />
-        <line
-          x1="80%"
-          y1="0"
-          x2="80%"
-          y2="100%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "2s" }}
-        />
-        <line
-          x1="50%"
-          y1="0"
-          x2="50%"
-          y2="100%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "2.5s", opacity: 0.05 }}
-        />
-        <line
-          x1="0"
-          y1="50%"
-          x2="100%"
-          y2="50%"
-          className="grid-line text-foreground"
-          style={{ animationDelay: "3s", opacity: 0.05 }}
-        />
-      </svg>
-
-
+    <div ref={containerRef} className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 text-foreground font-manrope overflow-hidden relative w-full">
 
       <div className="relative z-10 min-h-screen flex flex-col justify-between items-center px-8 py-12 md:px-16 md:py-20">
         {/* Top tagline */}
         <div className="text-center pt-16">
-          <h2 className="text-xs md:text-sm font-manrope font-semibold uppercase tracking-[0.2em] text-primary">
+          <h2 className="text-xs md:text-sm font-inter font-semibold uppercase tracking-[0.2em] text-black">
             <span className="hero-word" data-delay="0">
               Welcome
             </span>{" "}
@@ -159,120 +101,82 @@ export function ServicesHeroSection() {
           <div className="mt-4 w-16 h-px opacity-30 mx-auto bg-gradient-to-r from-transparent via-primary to-transparent" />
         </div>
 
-        {/* Main headline */}
-        <div className="text-center max-w-5xl mx-auto">
-          <h1 className="text-3xl md:text-5xl lg:text-7xl font-newsreader font-medium leading-tight tracking-tight text-foreground">
-            <div className="mb-4 md:mb-6">
-              <span className="hero-word" data-delay="700">
-                Build,
-              </span>{" "}
-              <span className="hero-word" data-delay="780">
-                secure,
-              </span>{" "}
-              <span className="hero-word" data-delay="860">
-                and
-              </span>{" "}
-              <span className="hero-word" data-delay="940">
-                scale
-              </span>{" "}
-              <span className="hero-word" data-delay="1020">
-                with
-              </span>{" "}
-              <span
-                className="hero-word italic text-muted-foreground"
-                data-delay="1100"
-              >
-                confidence.
-              </span>
-            </div>
-            <div className="text-xl md:text-2xl lg:text-3xl font-manrope font-light leading-relaxed text-muted-foreground">
-              <span className="hero-word" data-delay="1250">
-                Practical,
-              </span>{" "}
-              <span className="hero-word" data-delay="1330">
-                real-world
-              </span>{" "}
-              <span className="hero-word" data-delay="1410">
-                security
-              </span>{" "}
-              <span className="hero-word" data-delay="1490">
-                for
-              </span>{" "}
-              <span className="hero-word" data-delay="1570">
-                startups,
-              </span>{" "}
-              <span className="hero-word" data-delay="1650">
-                SMEs,
-              </span>{" "}
-              <span className="hero-word" data-delay="1730">
-                and
-              </span>{" "}
-              <span className="hero-word" data-delay="1810">
-                AI
-              </span>{" "}
-              <span className="hero-word" data-delay="1890">
-                teams.
-              </span>
-            </div>
-            <div className="text-xl md:text-2xl lg:text-3xl font-manrope font-light leading-relaxed text-muted-foreground">
-              <span className="hero-word" data-delay="2600">
-                Practical,
-              </span>{" "}
-              <span className="hero-word" data-delay="2750">
-                real-world
-              </span>{" "}
-              <span className="hero-word" data-delay="2900">
-                security
-              </span>{" "}
-              <span className="hero-word" data-delay="3050">
-                for
-              </span>{" "}
-              <span className="hero-word" data-delay="3200">
-                startups,
-              </span>{" "}
-              <span className="hero-word" data-delay="3350">
-                SMEs,
-              </span>{" "}
-              <span className="hero-word" data-delay="3500">
-                and
-              </span>{" "}
-              <span className="hero-word" data-delay="3650">
-                AI
-              </span>{" "}
-              <span className="hero-word" data-delay="3800">
-                teams.
-              </span>
-            </div>
-          </h1>
+        {/* Main area - Two columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto w-full mt-8 md:mt-12 mb-16 px-4 md:px-0">
 
-          {/* CTA Buttons */}
+          {/* Left: Text Content */}
+          <div className="text-center lg:text-left flex flex-col items-center lg:items-start text-left">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-manrope font-bold text-foreground leading-[1.05]" style={{ letterSpacing: "-0.02em" }}>
+              <div className="mb-4 md:mb-6">
+                <span className="hero-word" data-delay="700">Build,</span>{" "}
+                <span className="hero-word" data-delay="780">secure,</span>{" "}
+                <span className="hero-word" data-delay="860">and</span>{" "}
+                <span className="hero-word" data-delay="940">scale</span>{" "}
+                <span className="hero-word" data-delay="1020">with</span>{" "}
+                <span className="hero-word text-[#4a69e6]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }} data-delay="1100">confidence.</span>
+              </div>
+              <div className="text-lg md:text-xl font-inter leading-relaxed text-muted-foreground mt-5 md:mt-7 max-w-lg mx-auto lg:mx-0">
+                <span className="hero-word" data-delay="1250">Practical,</span>{" "}
+                <span className="hero-word" data-delay="1330">real-world</span>{" "}
+                <span className="hero-word" data-delay="1410">security</span>{" "}
+                <span className="hero-word" data-delay="1490">for</span>{" "}
+                <span className="hero-word text-foreground font-medium" data-delay="1570">startups,</span>{" "}
+                <span className="hero-word text-foreground font-medium" data-delay="1650">SMEs,</span>{" "}
+                <span className="hero-word text-foreground font-medium" data-delay="1730">and</span>{" "}
+                <span className="hero-word text-foreground font-medium" data-delay="1810">AI</span>{" "}
+                <span className="hero-word text-foreground font-medium" data-delay="1890">teams.</span>
+              </div>
+            </h1>
+
+            {/* CTA Buttons */}
+            <div
+              className="mt-10 md:mt-14 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 opacity-0"
+              style={{
+                animation: "word-appear 0.5s ease-out forwards",
+                animationDelay: "2s",
+              }}
+            >
+              <Link
+                href="/contact"
+                className="group inline-flex items-center justify-center px-8 py-4 bg-[#4a69e6] text-white font-inter font-semibold rounded-full hover:opacity-90 transition-all text-base md:text-lg"
+              >
+                Get Started
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="#capabilities"
+                className="inline-flex items-center justify-center px-8 py-4 bg-transparent border border-slate-200 text-foreground font-inter font-medium rounded-full hover:bg-muted/50 transition-all hover:border-slate-300 text-base md:text-lg"
+              >
+                Explore capabilities
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Lottie Animation */}
           <div
-            className="mt-10 md:mt-14 flex flex-col sm:flex-row justify-center items-center gap-4 opacity-0"
+            className="flex justify-center lg:justify-end opacity-0"
             style={{
               animation: "word-appear 0.5s ease-out forwards",
-              animationDelay: "2s",
+              animationDelay: "2.2s",
             }}
           >
-            <Link
-              href="/contact"
-              className="group inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-manrope font-semibold rounded-full hover:opacity-90 transition-all text-base md:text-lg"
-            >
-              Get Started
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="#capabilities"
-              className="inline-flex items-center justify-center px-8 py-4 bg-transparent border border-border text-foreground font-manrope font-semibold rounded-full hover:bg-muted/50 transition-all text-base md:text-lg"
-            >
-              Explore capabilities
-            </Link>
+            <div className="w-full max-w-[500px] aspect-square">
+              {animationData && (
+                <Lottie
+                  animationData={animationData}
+                  loop
+                  autoplay
+                  style={{ width: "100%", height: "100%" }}
+                />
+              )}
+            </div>
           </div>
         </div>
 
         {/* Bottom tagline */}
         <div className="text-center">
           <div className="mb-4 w-16 h-px opacity-30 mx-auto bg-gradient-to-r from-transparent via-muted-foreground to-transparent" />
-          <h2 className="text-xs md:text-sm font-manrope font-light uppercase tracking-[0.2em] text-muted-foreground">
+          <h2 className="text-xs md:text-sm font-inter font-medium uppercase tracking-[0.2em] text-[#4a69e6]">
             <span className="hero-word" data-delay="2200">
               Application Security
             </span>{" "}
@@ -309,15 +213,7 @@ export function ServicesHeroSection() {
         </div>
       </div>
 
-      {/* Mouse-following gradient */}
-      <div
-        ref={gradientRef}
-        className="fixed pointer-events-none w-96 h-96 rounded-full blur-3xl transition-all duration-500 ease-out opacity-0 z-0"
-        style={{
-          background:
-            "radial-gradient(circle, oklch(0.25 0.1 260 / 0.08) 0%, transparent 100%)",
-        }}
-      />
+
     </div>
   );
 }

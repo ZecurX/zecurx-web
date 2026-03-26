@@ -59,33 +59,33 @@ export default async function BlogPage({
   const params: unknown[] = [];
   let paramIndex = 1;
 
-  if (search) {
-    const searchCondition = ` AND (bp.title ILIKE $${paramIndex} OR bp.content ILIKE $${paramIndex})`;
-    postsQuery += searchCondition;
-    countQuery += ` AND (title ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`;
-    params.push(`%${search}%`);
-    paramIndex++;
-  }
-
-  if (labelSlug) {
-    const labelResult = await query('SELECT id FROM blog_labels WHERE slug = $1 LIMIT 1', [labelSlug]);
-    if (labelResult.rows.length > 0) {
-      const labelId = labelResult.rows[0].id;
-      const labelCondition = ` AND bp.id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
-      postsQuery += labelCondition;
-      countQuery += ` AND id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
-      params.push(labelId);
-      paramIndex++;
-    } else {
-      return <BlogPageClient error="label_not_found" />;
-    }
-  }
-
-  postsQuery += ` ORDER BY bp.published_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
-  const countParams = params.slice();
-  params.push(limit, offset);
-
   try {
+    if (search) {
+      const searchCondition = ` AND (bp.title ILIKE $${paramIndex} OR bp.content ILIKE $${paramIndex})`;
+      postsQuery += searchCondition;
+      countQuery += ` AND (title ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`;
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
+
+    if (labelSlug) {
+      const labelResult = await query('SELECT id FROM blog_labels WHERE slug = $1 LIMIT 1', [labelSlug]);
+      if (labelResult.rows.length > 0) {
+        const labelId = labelResult.rows[0].id;
+        const labelCondition = ` AND bp.id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
+        postsQuery += labelCondition;
+        countQuery += ` AND id IN (SELECT blog_post_id FROM blog_post_labels WHERE label_id = $${paramIndex})`;
+        params.push(labelId);
+        paramIndex++;
+      } else {
+        return <BlogPageClient error="label_not_found" />;
+      }
+    }
+
+    postsQuery += ` ORDER BY bp.published_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    const countParams = params.slice();
+    params.push(limit, offset);
+
     const [countResult, postsResult, labelsResult] = await Promise.all([
       query<{ total: string }>(countQuery, countParams),
       query(postsQuery, params),

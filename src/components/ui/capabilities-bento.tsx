@@ -78,7 +78,8 @@ const CapabilityCard: React.FC<{
     description: string
     icon: React.ElementType
     href: string
-}> = ({ className = "", title, description, icon: Icon, href }) => {
+    visual?: React.ReactNode
+}> = ({ className = "", title, description, icon: _Icon, href, visual }) => {
     return (
         <div
             className={cn(
@@ -92,7 +93,12 @@ const CapabilityCard: React.FC<{
 
             {/* Content */}
             <div className="relative z-10 space-y-3">
-                <h3 className="text-lg md:text-xl font-manrope font-bold text-foreground group-hover:text-primary transition-colors">
+                {visual && (
+                    <div className="w-full mb-2">
+                        {visual}
+                    </div>
+                )}
+                <h3 className="text-lg md:text-xl font-manrope font-bold text-[#4a69e6] transition-colors">
                     {title}
                 </h3>
                 <p className="text-muted-foreground font-manrope font-light leading-relaxed text-sm md:text-base">
@@ -132,7 +138,7 @@ export default function CapabilitiesBento() {
                 {/* Section Footer */}
                 <div className="max-w-2xl ml-auto text-right px-4 mt-8 lg:-mt-16">
                     <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
-                        Built for <span className="font-newsreader italic text-muted-foreground">performance.</span>
+                        Built for <span className="font-newsreader italic text-[#4a69e6]">performance.</span>
                     </h2>
                     <p className="text-muted-foreground font-manrope font-light text-base md:text-lg leading-relaxed">
                         End-to-end security solutions for modern engineering teams. We don&apos;t just hand you a PDF report — we work alongside your engineers to fix flaws and ship secure code.

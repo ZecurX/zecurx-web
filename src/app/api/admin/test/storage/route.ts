@@ -57,7 +57,7 @@ export async function POST() {
                 sampleFiles: response.Contents?.slice(0, 5).map((obj) => obj.Key) || [],
             },
         });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json(
             {
                 success: false,

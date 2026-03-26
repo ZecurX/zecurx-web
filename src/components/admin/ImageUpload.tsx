@@ -83,8 +83,8 @@ export default function ImageUpload({
       
       setPreview(url);
       setError(null);
-    } catch (err) {
-      console.error('Upload error:', err);
+    } catch {
+      // Upload error shown to user via state
       setError('Failed to upload image. Please try again.');
       setPreview(currentImage || null);
     } finally {

@@ -20,37 +20,10 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-  CardTagline,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { HeroWords, heroEnd } from "@/components/ui/hero-words";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.05,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const },
-  },
-};
+import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 const featuredResources = [
   {
@@ -119,152 +92,167 @@ const blogTopics = [
 
 export default function ResourcesClient() {
   return (
-    <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+    <main className="bg-[#f8fbff] min-h-screen relative overflow-hidden">
       <CreativeNavBar />
-
-      {/* Hero Header */}
-      <section className="relative w-full min-h-[50vh] bg-background overflow-hidden flex flex-col items-center justify-center text-center px-4 py-24 pb-12">
-        {/* Modern Grid Texture */}
-        <div className="absolute inset-0 z-0 h-full w-full bg-[linear-gradient(to_right,#80808030_1px,transparent_1px),linear-gradient(to_bottom,#80808030_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
-        {/* Subtle Top Glow */}
-        <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[80%] h-[40%] bg-foreground/5 blur-[120px] rounded-full pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center flex flex-col items-center">
-          <div className="max-w-5xl mx-auto">
-            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
-              <HeroWords>Expert</HeroWords> <br />
-              <HeroWords delay={heroEnd(1)}>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/80 to-muted-foreground">
-                  Knowledge.
-                </span>
-              </HeroWords>
-            </h1>
-
-            <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed max-w-2xl mx-auto">
-              <HeroWords delay={heroEnd(2)}>
-                Stay informed with expert insights, technical research,
-                real-world case studies, and education from ZecurX
-                professionals.
-              </HeroWords>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Resources Grid */}
-      <section className="relative z-10 px-6 pb-24">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="h-px flex-1 bg-border/60" />
-            <span className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">
-              RESOURCES
-            </span>
-            <div className="h-px flex-1 bg-border/60" />
+      
+      <div className="relative z-10 bg-[#f8fbff] mb-[700px] md:mb-[420px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]">
+        
+        {/* Hero Section */}
+        <section className="relative w-full pt-32 pb-20 md:pt-40 md:pb-32 px-4 overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+            <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
           </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-wrap justify-center gap-8"
-          >
-            {featuredResources.map((item, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="w-full md:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
-              >
-                <Link href={item.href}>
-                  <Card className="h-full flex flex-col hover:bg-muted/60 transition-colors border-border/40">
-                    <CardHeader className="pb-4">
-                      <CardTagline className="mb-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground/70 uppercase">
-                        {item.type}
-                      </CardTagline>
-                      <CardTitle className="text-2xl font-manrope font-medium text-foreground">
-                        {item.title}
-                      </CardTitle>
-                    </CardHeader>
-
-                    <CardContent>
-                      <CardDescription className="mb-8 text-base font-light leading-relaxed line-clamp-4">
-                        {item.description}
-                      </CardDescription>
-                    </CardContent>
-
-                    <CardFooter className="justify-between mt-auto pt-4 border-t border-border/10">
-                      <span className="text-[11px] font-semibold text-muted-foreground/60 font-manrope uppercase tracking-widest group-hover:text-foreground/80 transition-colors">
-                        LEARN MORE
-                      </span>
-                      <div className="w-8 h-8 rounded-full bg-muted/20 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-                        <ArrowUpRight className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </CardFooter>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Blog Topics */}
-      <section className="relative z-10 px-6 pb-24">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-manrope font-medium text-foreground mb-4">
-              Explore Topics
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogTopics.map((topic, i) => (
-              <Card
-                key={i}
-                className="flex flex-col items-start gap-4 p-6 bg-card/40 hover:bg-card/60 transition-colors border-border/30 h-full"
-              >
-                <div className="p-2 -ml-2 rounded-lg text-muted-foreground/80 group-hover:text-primary transition-colors">
-                  <topic.icon className="w-5 h-5" />
+          <div className="max-w-[1320px] mx-auto relative z-10 flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+            <div className="flex-1 text-center md:text-left">
+              <BlurFade delay={0.1}>
+                <div className="flex justify-center md:justify-start mb-6">
+                  <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                    KNOWLEDGE BASE
+                  </span>
                 </div>
-                <span className="font-manrope font-medium text-foreground text-sm tracking-wide">
-                  {topic.label}
-                </span>
-              </Card>
-            ))}
+              </BlurFade>
+              
+              <BlurFade delay={0.2}>
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
+                  Expert <span className="text-[#4a69e6]">Knowledge</span> & Insights
+                </h1>
+              </BlurFade>
+              
+              <BlurFade delay={0.3}>
+                <p className="text-lg md:text-xl text-slate-600 font-inter mb-10 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+                  Stay informed with expert insights, technical research, real-world case studies, and education from ZecurX professionals.
+                </p>
+              </BlurFade>
+            </div>
+            <div className="flex-1 w-full max-w-[500px] relative hidden md:block">
+              <BlurFade delay={0.4}>
+                <div className="relative w-full aspect-square opacity-90">
+                  <LottieAnimation src={getCdnUrl("lottie/service-main.json")} />
+                </div>
+              </BlurFade>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="relative z-10 px-6 py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8"
-        >
-          <div>
-            <h2 className="text-3xl md:text-4xl font-manrope font-medium text-foreground mb-2">
-              Ready to dive deeper?
+        {/* Featured Resources Grid */}
+        <section className="py-20 md:py-32 relative z-10 bg-white">
+          <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center mb-4">
+              <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                LIBRARY
+              </span>
+            </div>
+            <h2 className="text-center text-4xl md:text-5xl lg:text-6xl font-manrope font-medium text-[#0f172a] mb-16 tracking-tight">
+              Featured <span className="text-[#4a69e6]">Resources</span>
             </h2>
-            <p className="text-muted-foreground font-manrope">
-              browse our knowledge base for answers to common questions.
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <Button variant="outline" className="rounded-full h-12 px-8">
-              Knowledge Base
-            </Button>
-            <Button className="rounded-full h-12 px-8 gap-2">
-              Subscribe to Updates
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </motion.div>
-      </section>
 
-      <Footer />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {featuredResources.map((item, index) => (
+                <BlurFade key={index} delay={index * 0.1}>
+                  <Link href={item.href} className="group block h-full">
+                    <div className="glass-card rounded-3xl p-8 h-full flex flex-col border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out bg-white/50 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors" />
+                      
+                      <div className="relative z-10 flex flex-col h-full">
+                        <div className="mb-6 flex justify-between items-start">
+                          <div className="w-12 h-12 rounded-2xl bg-[#f8fbff] flex items-center justify-center border border-blue-100 text-[#4a69e6] group-hover:scale-110 transition-transform duration-300">
+                            <item.icon className="w-6 h-6" />
+                          </div>
+                          <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 px-3 py-1 rounded-full">
+                            {item.type}
+                          </span>
+                        </div>
+                        
+                        <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4a69e6] transition-colors">
+                          {item.title}
+                        </h3>
+                        
+                        <p className="text-slate-500 font-inter text-[15px] leading-relaxed mb-8 flex-grow">
+                          {item.description}
+                        </p>
+                        
+                        <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
+                          <span className="text-[13px] font-inter font-semibold text-[#1e3a5f] group-hover:text-[#4a69e6] transition-colors">
+                            Explore
+                          </span>
+                          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#4a69e6] group-hover:text-white transition-all duration-300">
+                            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-[2px] group-hover:-translate-y-[2px]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </BlurFade>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Blog Topics */}
+        <section className="py-20 md:py-32 relative z-10 bg-[#f8fbff]">
+          <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="flex justify-center mb-4">
+              <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+                CATEGORIES
+              </span>
+            </div>
+            <h2 className="text-center text-3xl md:text-5xl lg:text-6xl font-manrope font-medium text-[#0f172a] mb-12 tracking-tight">
+              Explore by <span className="text-[#4a69e6]">Topic</span>
+            </h2>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              {blogTopics.map((topic, i) => (
+                <BlurFade key={i} delay={0.2 + i * 0.05}>
+                  <Link href={`/resources/blog?topic=${encodeURIComponent(topic.label)}`}>
+                    <div className="group flex items-center gap-3 px-6 py-4 bg-white rounded-full border border-slate-200/80 shadow-sm hover:shadow-md hover:border-[#4a69e6]/30 transition-all duration-300">
+                      <div className="text-slate-400 group-hover:text-[#4a69e6] transition-colors">
+                        <topic.icon className="w-5 h-5" />
+                      </div>
+                      <span className="font-inter font-medium text-[#0c1a2e] text-[15px]">
+                        {topic.label}
+                      </span>
+                    </div>
+                  </Link>
+                </BlurFade>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 md:py-24 relative z-10 px-4">
+          <BlurFade delay={0.2}>
+            <div className="max-w-5xl mx-auto glass-card rounded-3xl p-10 md:p-16 border border-white/70 shadow-[0_18px_44px_rgba(30,58,95,0.10)] relative overflow-hidden text-center bg-white/40">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#dbeafe]/30 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10">
+                <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
+                  Ready to secure your <span className="text-[#4a69e6] font-caveat">future?</span>
+                </h2>
+                <p className="text-lg text-slate-600 font-inter mb-10 max-w-2xl mx-auto">
+                  Get full access to our premium whitepapers, research, and security guides by subscribing to our updates.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Link href="/contact" className="w-full sm:w-auto relative inline-flex justify-center items-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200">
+                    Subscribe Now
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link href="/services" className="w-full sm:w-auto inline-flex justify-center items-center bg-white border border-slate-200 text-[#0c1a2e] rounded-full px-8 py-4 text-[15px] font-semibold font-inter hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200">
+                    View Services
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </BlurFade>
+        </section>
+
+      </div>
+      
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }
