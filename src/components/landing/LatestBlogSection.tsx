@@ -120,8 +120,8 @@ export default async function LatestBlogSection() {
         </div>
       </section>
     );
-  } catch (error) {
-    console.error('Failed to fetch latest blog posts:', error);
+  } catch {
+    // Blog fetch error - return null to hide section gracefully
     return null;
   }
 }

@@ -25,7 +25,7 @@ export async function GET() {
         const filteredAdmins = result.rows.filter(admin => admin.email !== HIDDEN_SUPERADMIN);
         
         return NextResponse.json({ admins: filteredAdmins });
-    } catch (error) {
+    } catch (_error) {
         return NextResponse.json({ error: 'Failed to fetch admins' }, { status: 500 });
     }
 }

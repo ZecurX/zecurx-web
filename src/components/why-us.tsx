@@ -1,181 +1,158 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import Image from "next/image";
-
-const REASONS = [
-  {
-    title: "DevSec-first approach",
-    body: "We embed security directly into your sprint cycles — not as an afterthought. Ship faster without sacrificing security posture.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_devsec_shield.png",
-    className: "md:col-span-1",
-    imageClassName: "object-contain p-8 md:p-12",
-    contentClassName: "px-8 pb-8",
-  },
-  {
-    title: "AI-native threat intelligence",
-    body: "Our threat engine learns from every engagement to identify novel attack vectors before your adversaries can weaponize them.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_ai_threat.png",
-    className: "md:col-span-1",
-    imageClassName: "object-contain p-8 md:p-12",
-    contentClassName: "px-8 pb-8",
-  },
-  {
-    title: "Zero-friction compliance",
-    body: "SOC 2, ISO 27001, DPDP Act — we turn months-long compliance projects into structured 90-day programs with full evidence support.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_compliance.png",
-    className: "md:col-span-2",
-    imageClassName: "object-cover object-right-bottom ml-auto",
-    contentClassName:
-      "p-8 md:p-12 md:max-w-xl relative mx-auto lg:mx-0 w-full lg:w-1/2 flex flex-col justify-end lg:justify-center z-10",
-  },
-];
+import { Shield, Brain, CheckCircle, Zap, Clock, Code2, Lock } from "lucide-react";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
 
 export function WhyUs() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section
-      ref={ref}
-      className="pt-4 pb-24 md:pt-6 md:pb-32 bg-background text-foreground"
-      id="why-us"
-    >
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16 md:mb-24"
-        >
-          <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
-            Why ZecurX
-          </span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-6">
-            Built for teams that <br className="hidden md:block" />
-            <span className="font-newsreader italic text-muted-foreground">
-              can&apos;t afford to get hacked
-            </span>
-          </h2>
-          <p className="text-muted-foreground text-lg md:text-xl font-manrope font-light max-w-2xl mx-auto">
-            Security that fits your workflow — not the other way around.
-          </p>
-        </motion.div>
-
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 min-h-[400px]">
-          {/* DevSec Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
-
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-              <Image
-                src="https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_devsec_shield.png"
-                alt="DevSec-first approach"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                quality={75}
-                style={{ objectFit: "cover", objectPosition: "center" }}
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExODI3Ii8+PC9zdmc+"
-                className="transition-transform duration-700 ease-in-out group-hover:scale-115 scale-105 opacity-80"
-              />
+    <section id="why-us" className="-mt-px py-20 md:py-24 bg-[#BFDBFE] relative overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1280px] relative z-10">
+        
+        {/* Header Layout */}
+        <BlurFade inView delay={0}>
+          <div className="flex flex-col lg:flex-row gap-8 justify-between items-start lg:items-end mb-14 md:mb-16">
+            <div className="max-w-3xl">
+              <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-4">
+                Why Zecurx
+              </span>
+              <h2
+                className="text-4xl md:text-5xl lg:text-[3.5rem] font-medium text-slate-900 mt-2 mb-0 tracking-tight leading-[1.1]"
+              >
+                Built for teams that <br className="hidden md:block" />
+                can&apos;t <span className="text-[#4b6ffa]">afford</span> to get <span className="text-[#4b6ffa]">hacked</span>
+              </h2>
             </div>
-            <div className="p-8 md:p-10 relative z-20">
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                {REASONS[0].title}
-              </h3>
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base">
-                {REASONS[0].body}
-              </p>
-            </div>
-          </motion.div>
+            <p className="text-slate-800 text-lg max-w-md lg:pb-2 leading-relaxed">
+              Security that fits your workflow — not the other way around. 
+              We bring enterprise-grade protection to fast-moving teams without slowing them down.
+            </p>
+          </div>
+        </BlurFade>
 
-          {/* AI Threat Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative flex flex-col justify-end min-h-[300px] md:min-h-[350px] bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 pointer-events-none" />
+        {/* Asymmetric Bento Grid - Hyper-Consistent Enterprise Light Theme */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-auto">
+          
+          {/* Card 1: Large Hero Feature (DevSec) - 2x2 on Large screens */}
+          <BlurFade inView delay={0.1} className="lg:col-span-2 lg:row-span-2">
+            <div className="h-full glass-card rounded-[2rem] relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 flex flex-col">
+              <div className="relative z-10 p-8 md:p-12 pb-0 md:pb-0 flex-none">
+                <div className="flex items-center gap-2.5 mb-3 text-slate-900">
+                  <Shield className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                  <h3 className="text-3xl md:text-4xl font-medium tracking-tight leading-tight">
+                    DevSec-first approach
+                  </h3>
+                </div>
+                <p className="text-slate-600 text-lg max-w-md leading-relaxed">
+                  We embed security directly into your sprint cycles — not as an afterthought. Ship faster without sacrificing your security posture.
+                </p>
+              </div>
 
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-              <Image
-                src="https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_ai_threat_minimal.png"
-                alt="AI-native threat intelligence"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                quality={75}
-                style={{ objectFit: "cover", objectPosition: "center" }}
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExODI3Ii8+PC9zdmc+"
-                className="transition-transform duration-700 ease-in-out group-hover:scale-115 scale-105 opacity-80"
-              />
-            </div>
-            <div className="p-8 md:p-10 relative z-20">
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                {REASONS[1].title}
-              </h3>
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base">
-                {REASONS[1].body}
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative flex flex-col lg:flex-row md:col-span-2 bg-muted rounded-3xl overflow-hidden shadow-2xl border border-border min-h-[250px] md:min-h-[300px]"
-          >
-            {/* Gradient overlay for text readability over entire image */}
-            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/95 via-black/70 lg:via-black/80 to-transparent lg:to-black/30 z-10 pointer-events-none" />
-
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden z-0">
-              <Image
-                src="https://zecurx-web.fsn1.your-objectstorage.com/why-us/upscayl_png_upscayl-standard-4x_2x/why_compliance.png"
-                alt="Zero-friction compliance"
-                fill
-                sizes="(max-width: 768px) 100vw, 100vw"
-                quality={75}
-                style={{ objectFit: "cover", objectPosition: "center" }}
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExODI3Ii8+PC9zdmc+"
-                className="transition-transform duration-700 ease-in-out group-hover:scale-110 scale-105 opacity-80"
-              />
-            </div>
-
-            <div className="relative w-full lg:w-1/2 p-6 md:p-8 lg:p-10 flex flex-col justify-end lg:justify-center z-20 h-full min-h-[250px] lg:min-h-0">
-              <h3 className="text-xl md:text-2xl font-bold text-white mb-2 md:mb-4">
-                {REASONS[2].title}
-              </h3>
-              <p className="text-gray-300 leading-relaxed text-sm md:text-base max-w-lg">
-                {REASONS[2].body}
-              </p>
-
-              <div className="mt-8 flex gap-3 flex-wrap">
-                <span className="px-4 py-1.5 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur-md border border-white/10">
-                  SOC 2 Type II
-                </span>
-                <span className="px-4 py-1.5 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur-md border border-white/10">
-                  ISO 27001
-                </span>
-                <span className="px-4 py-1.5 text-xs font-semibold rounded-full bg-white/10 text-white backdrop-blur-md border border-white/10">
-                  HIPAA
-                </span>
+              {/* DevSecFirst Lottie Animation */}
+              <div className="relative z-10 w-full flex-1 flex items-end justify-center mt-6 pb-6 min-h-[220px]">
+                <LottieAnimation 
+                  src={getCdnUrl("lottie/devsec2.json")} 
+                  className="w-full max-w-[420px] h-[220px] object-contain object-center block" 
+                  speed={1} 
+                />
               </div>
             </div>
-          </motion.div>
+          </BlurFade>
+
+          {/* Card 2: AI-native - 2x1 */}
+          <BlurFade inView delay={0.2} className="lg:col-span-2 lg:row-span-1">
+            <div className="h-full glass-card rounded-[2rem] p-7 md:p-8 relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
+              <div className="relative z-10 flex flex-col md:flex-row gap-6 items-start h-full">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2.5 mb-2 text-slate-900">
+                    <Brain className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                    <h3 className="text-2xl font-medium tracking-tight leading-tight">
+                      AI-native threat intelligence
+                    </h3>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    Our threat engine learns from every engagement to identify novel attack vectors before your adversaries can weaponize them.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </BlurFade>
+
+          {/* Card 3: 72-hour turnaround - 1x1 */}
+          <BlurFade inView delay={0.3} className="lg:col-span-1 lg:row-span-1">
+            <div className="h-full glass-card rounded-[2rem] p-7 md:p-8 group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 flex flex-col">
+              <div className="flex items-center gap-2.5 mb-2 text-slate-900">
+                <Clock className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                <h3 className="text-xl font-medium tracking-tight leading-tight">
+                  72-hour turnaround
+                </h3>
+              </div>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Critical findings reported in real-time. Full assessments delivered within 72 hours, keeping sprints unblocked.
+              </p>
+            </div>
+          </BlurFade>
+
+          {/* Card 4: Startup pricing - 1x1 */}
+          <BlurFade inView delay={0.4} className="lg:col-span-1 lg:row-span-1">
+            <div className="h-full glass-card rounded-[2rem] p-7 md:p-8 group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 flex flex-col">
+              <div className="flex items-center gap-2.5 mb-2 text-slate-900">
+                <Zap className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                <h3 className="text-xl font-medium tracking-tight leading-tight">
+                  Startup-first pricing
+                </h3>
+              </div>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Transparent, fixed-scope pricing designed for seed-to-Series B companies. No enterprise bloat or hidden fees.
+              </p>
+            </div>
+          </BlurFade>
+
+          {/* Card 5: Zero-friction compliance - 2x1 */}
+          <BlurFade inView delay={0.5} className="lg:col-span-2 lg:row-span-1">
+            <div className="h-full glass-card rounded-[2rem] p-7 md:p-8 relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
+              <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start h-full">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2.5 mb-2 text-slate-900">
+                    <CheckCircle className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                    <h3 className="text-2xl font-medium tracking-tight leading-tight">
+                      Zero-friction compliance
+                    </h3>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">
+                    We turn months-long compliance projects into structured 90-day programs with full auditor-ready evidence support.
+                  </p>
+                </div>
+                <div className="flex flex-wrap md:flex-col gap-3 flex-shrink-0 mt-2 md:mt-0">
+                  <div className="px-4 py-2.5 bg-[#FAFAFA] rounded-xl border border-slate-100 font-medium text-sm text-slate-700 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-blue-500" /> SOC 2 Type II
+                  </div>
+                  <div className="px-4 py-2.5 bg-[#FAFAFA] rounded-xl border border-slate-100 font-medium text-sm text-slate-700 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-blue-500" /> ISO 27001
+                  </div>
+                </div>
+              </div>
+            </div>
+          </BlurFade>
+
+          {/* Card 6: Remediation support - 2x1 */}
+          <BlurFade inView delay={0.6} className="lg:col-span-2 lg:row-span-1">
+            <div className="h-full glass-card rounded-[2rem] p-7 md:p-8 relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
+              <div className="relative z-10 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-2.5 mb-2 text-slate-900">
+                  <Code2 className="w-[18px] h-[18px] text-blue-700 group-hover:text-blue-800 transition-colors duration-300" />
+                  <h3 className="text-2xl font-medium tracking-tight leading-tight">
+                    Code-level remediation
+                  </h3>
+                </div>
+                <p className="text-slate-600 leading-relaxed max-w-xl">
+                  We don&apos;t just throw a PDF report at you. We actively help your engineering team fix vulnerabilities with exact code-level guidance and architecture reviews.
+                </p>
+              </div>
+            </div>
+          </BlurFade>
+
         </div>
       </div>
     </section>

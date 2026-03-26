@@ -13,24 +13,28 @@ export default function SmoothScrollProvider({
     useEffect(() => {
         // Initialize Lenis smooth scroll
         lenisRef.current = new Lenis({
-            duration: 1.2,
+            duration: 1.4,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo easing
             orientation: 'vertical',
             gestureOrientation: 'vertical',
             smoothWheel: true,
-            touchMultiplier: 2,
+            touchMultiplier: 1.5,
+            wheelMultiplier: 1,
+            autoResize: true,
         });
 
         // Animation frame loop
+        let frameId: number;
         function raf(time: number) {
             lenisRef.current?.raf(time);
-            requestAnimationFrame(raf);
+            frameId = requestAnimationFrame(raf);
         }
 
-        requestAnimationFrame(raf);
+        frameId = requestAnimationFrame(raf);
 
         // Cleanup
         return () => {
+            cancelAnimationFrame(frameId);
             lenisRef.current?.destroy();
         };
     }, []);

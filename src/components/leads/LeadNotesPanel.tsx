@@ -41,8 +41,8 @@ export function LeadNotesPanel({ notes, leadId, leadType, onNoteAdded }: LeadNot
             const { data } = await response.json();
             setNewNote('');
             onNoteAdded?.(data);
-        } catch (error) {
-            console.error('Error adding note:', error);
+        } catch {
+            // Note add error shown to user via alert
             alert('Failed to add note. Please try again.');
         } finally {
             setIsSubmitting(false);

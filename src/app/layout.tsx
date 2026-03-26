@@ -4,7 +4,7 @@ import {
   Inter,
   Space_Grotesk,
   Newsreader,
-  Caveat,
+  Kalam,
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -39,9 +39,10 @@ const newsreader = Newsreader({
   style: ["italic", "normal"],
 });
 
-const caveat = Caveat({
+const kalam = Kalam({
   subsets: ["latin"],
   variable: "--font-caveat",
+  weight: ["700"],
 });
 
 export const metadata: Metadata = {
@@ -142,7 +143,7 @@ export default function RootLayout({
         <StructuredData data={getWebSiteSchema()} />
       </head>
       <body
-        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} ${caveat.variable} antialiased`}
+        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} ${kalam.variable} antialiased`}
       >
         <NextTopLoader
           color="var(--primary)"
@@ -157,8 +158,9 @@ export default function RootLayout({
         />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          forcedTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <CartProvider>
