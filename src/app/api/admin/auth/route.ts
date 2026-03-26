@@ -128,15 +128,23 @@ export async function POST(req: NextRequest) {
         });
     } catch (error: unknown) {
         console.error("Auth Error:", error);
-        const errorMessage = error instanceof Error ? error.message : '';
-        const isConnectionError = errorMessage.includes('timeout') || errorMessage.includes('ETIMEDOUT') || errorMessage.includes('Connection terminated');
-        if (isConnectionError) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+
+        // Check for database connection errors
+        const isDBError = errorMessage.includes('timeout') ||
+                         errorMessage.includes('ETIMEDOUT') ||
+                         errorMessage.includes('Connection terminated') ||
+                         errorMessage.includes('connection') ||
+                         errorMessage.includes('database');
+
+        if (isDBError) {
             return NextResponse.json({
-                error: "Service temporarily unavailable. Database connection failed — please try again later."
+                error: "Service temporarily unavailable. Please try again later."
             }, { status: 503 });
         }
+
         return NextResponse.json({
-            error: "Internal Error"
+            error: "Internal server error. Please try again."
         }, { status: 500 });
     }
 }
