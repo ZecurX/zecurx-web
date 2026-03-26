@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Search, Loader2, Globe, ExternalLink } from 'lucide-react';
 import ToolPageLayout from '@/components/tools/ToolPageLayout';
-import { Button } from '@/components/ui/button';
 
 interface SubdomainResult {
     subdomain: string;
@@ -73,12 +72,12 @@ export default function SubdomainFinderPage() {
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text relative z-50"
+                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4a69e6]/50 focus:border-[#4a69e6] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
                         />
-                        <Button
+                        <button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 rounded-lg"
+                            className="px-8 py-3 rounded-xl bg-[#4a69e6] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -88,7 +87,7 @@ export default function SubdomainFinderPage() {
                             ) : (
                                 'Scan'
                             )}
-                        </Button>
+                        </button>
                     </div>
                     <p className="mt-2 text-sm text-muted-foreground">
                         Enter a root domain without protocol (e.g., example.com)

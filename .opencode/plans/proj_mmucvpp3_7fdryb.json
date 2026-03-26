@@ -1,0 +1,139 @@
+{
+  "id": "proj_mmucvpp3_7fdryb",
+  "spec": {
+    "goal": "Create a separate landing page v2 route by cloning the current redesign landing page, moving all static assets it depends on to CDN/object storage, and verifying it builds and renders without changing the existing home page or redesign preview.",
+    "requirements": [
+      "Preserve the current landing page implementations at `src/app/page.tsx` and `src/app/redesign/*` exactly as they are; do not repoint or replace them.",
+      "Create a dedicated v2 route and component namespace based on the current redesign page in `src/app/redesign/page.tsx`, `src/app/redesign/RedesignLandingClient.tsx`, and `src/components/landing-v2/*`.",
+      "Transfer every static asset used by the new v2 page to object storage/CDN and update the new v2 references consistently to CDN-backed URLs/helpers.",
+      "Use existing project conventions for Next.js app routes, server `page.tsx` plus client wrapper structure, and existing CDN/S3 utilities or scripts already present in `src/lib/cdn.ts`, `src/lib/s3.ts`, and `scripts/*upload*`/`scripts/*sync*`.",
+      "Fetch required environment credentials with the Vercel CLI for the `zecurx-web` project instead of hardcoding secrets anywhere in code or scripts.",
+      "Verify the new page builds and renders successfully, then restart the dev server when finished.",
+      "Return a precise implementation report listing created files, modified files, uploaded asset keys/URLs, and any follow-up needed if Vercel or object-storage access is unavailable."
+    ],
+    "constraints": [
+      "Do not alter the behavior or route of the current home page at `src/app/page.tsx`.",
+      "Do not overwrite or rename the existing redesign preview files under `src/app/redesign/*` or the current `src/components/landing-v2/*` source set; create an isolated v2 copy.",
+      "Do not hardcode `HETZNER_S3_*`, `NEXT_PUBLIC_CDN_URL`, or any other secrets in source files or scripts.",
+      "Prefer existing helpers such as `getCdnUrl()`/`CDN_ASSETS` and existing upload utilities before introducing a new one-off uploader.",
+      "If the pulled CDN hostname differs from the current allowlist in `next.config.ts`, update Next image `remotePatterns` so the new route renders in production builds.",
+      "Treat dynamic blog `featured_image_url` values as content data, not as static repo assets to upload."
+    ],
+    "outOfScope": [
+      "Redesigning page copy, layout, animations, or content beyond what is needed to clone the current redesign into a new namespace/route.",
+      "Replacing the existing `/` route with the new v2 page.",
+      "Changing unrelated pages, services, or admin features.",
+      "Migrating the entire `public/` directory if only a small subset of assets is actually used by the cloned v2 page."
+    ],
+    "doneWhen": "A new route such as `src/app/v2/page.tsx` renders the cloned redesign page through its own component namespace, all static assets referenced by that v2 implementation resolve from CDN/object storage, `npm run build` succeeds, the dev server is restarted and serves the new route successfully, and the final report enumerates every created/changed file, every uploaded asset, and any missing external access or credentials."
+  },
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Clone redesign route",
+      "description": "Read the current redesign implementation in `src/app/redesign/page.tsx`, `src/app/redesign/RedesignLandingClient.tsx`, and every file in `src/components/landing-v2/*`. Create an isolated v2 namespace without modifying those originals: add a new app route (recommended: `src/app/v2/page.tsx` and `src/app/v2/V2LandingClient.tsx`) and duplicate the redesign components into a new folder (recommended: `src/components/landing-page-v2/*`). Preserve the existing server/client split and data flow: the new `page.tsx` should keep using `getLatestBlogPosts(3)` and pass posts into the client wrapper, and the client wrapper should keep the same section order and dynamic import behavior as `RedesignLandingClient`. Update imports so the new route only depends on the new v2 component folder, leaving `/redesign` and the current component set untouched.",
+      "dependsOn": [],
+      "files": [
+        "src/app/redesign/page.tsx",
+        "src/app/redesign/RedesignLandingClient.tsx",
+        "src/components/landing-v2/BackgroundNarrative.tsx",
+        "src/components/landing-v2/BlogSection.tsx",
+        "src/components/landing-v2/ConnectedMetaphorLayer.tsx",
+        "src/components/landing-v2/FinalCTASection.tsx",
+        "src/components/landing-v2/FooterV2.tsx",
+        "src/components/landing-v2/HeroSection.tsx",
+        "src/components/landing-v2/IndustriesSection.tsx",
+        "src/components/landing-v2/MetaphorLayer.tsx",
+        "src/components/landing-v2/NarrativeSection.tsx",
+        "src/components/landing-v2/NavBarV2.tsx",
+        "src/components/landing-v2/ServicesSection.tsx",
+        "src/components/landing-v2/TrustProofSection.tsx",
+        "src/components/landing-v2/WhyZecurXSection.tsx",
+        "src/app/v2/page.tsx",
+        "src/app/v2/V2LandingClient.tsx",
+        "src/components/landing-page-v2/BackgroundNarrative.tsx",
+        "src/components/landing-page-v2/BlogSection.tsx",
+        "src/components/landing-page-v2/ConnectedMetaphorLayer.tsx",
+        "src/components/landing-page-v2/FinalCTASection.tsx",
+        "src/components/landing-page-v2/FooterV2.tsx",
+        "src/components/landing-page-v2/HeroSection.tsx",
+        "src/components/landing-page-v2/IndustriesSection.tsx",
+        "src/components/landing-page-v2/MetaphorLayer.tsx",
+        "src/components/landing-page-v2/NarrativeSection.tsx",
+        "src/components/landing-page-v2/NavBarV2.tsx",
+        "src/components/landing-page-v2/ServicesSection.tsx",
+        "src/components/landing-page-v2/TrustProofSection.tsx",
+        "src/components/landing-page-v2/WhyZecurXSection.tsx"
+      ],
+      "verify": "Open the new route source and confirm it imports only the new v2 component namespace; grep for `@/components/landing-v2/` inside `src/app/v2` and ensure there are no remaining imports to the original folder. Confirm `src/app/page.tsx` and `src/app/redesign/*` are unchanged.",
+      "status": "pending",
+      "wave": 0
+    },
+    {
+      "id": "task-2",
+      "title": "Bootstrap Vercel env",
+      "description": "Set up environment access for the repo using the Vercel CLI instead of hardcoded values. In the repo root, ensure the project is linked to the `zecurx-web` Vercel project (creating `.vercel/project.json` if it does not exist), then pull the needed environment values into local env files with `vercel env pull` or the equivalent project-linked flow. Confirm the pulled env contains at minimum `NEXT_PUBLIC_CDN_URL`, `HETZNER_S3_ENDPOINT`, `HETZNER_S3_ACCESS_KEY`, `HETZNER_S3_SECRET_KEY`, and `HETZNER_S3_BUCKET`, because the existing CDN helpers in `src/lib/cdn.ts` and `src/lib/s3.ts` depend on them. If the repo cannot be linked or the operator lacks Vercel access, stop and capture that as an explicit blocker for the final report.",
+      "dependsOn": [],
+      "files": [
+        ".vercel/project.json",
+        ".env.local",
+        ".env.development.local",
+        "src/lib/cdn.ts",
+        "src/lib/s3.ts"
+      ],
+      "verify": "Run the Vercel CLI pull/link flow successfully and confirm the required keys are present locally without adding any secrets to tracked source files. If linking or env pull fails, record the exact missing access in the task result.",
+      "status": "pending",
+      "wave": 0
+    },
+    {
+      "id": "task-3",
+      "title": "Migrate v2 assets",
+      "description": "Audit the new v2 component set for every static asset reference and move those assets to CDN/object storage using existing project utilities. Based on the current redesign code, expected static assets include the logo already consumed through `CDN_ASSETS.brand.logo` in `NavBarV2`/`FooterV2` and the local texture reference `/noise.png` in `BackgroundNarrative`; blog `featured_image_url` values are dynamic content and should not be uploaded as repo assets. Upload any missing static files via the existing S3/CDN path using `src/lib/s3.ts` or an existing uploader such as `scripts/upload-images.mjs`/`scripts/upload-public.js`, extending with a focused script only if the existing scripts cannot handle the needed file types or keys. Then update only the new v2 components to reference CDN-backed assets consistently through `getCdnUrl()` or `CDN_ASSETS`. If the actual CDN hostname from env is not already covered by `next.config.ts`, update `images.remotePatterns` so `next/image` works for CDN-hosted assets in the build.",
+      "dependsOn": [
+        "task-1",
+        "task-2"
+      ],
+      "files": [
+        "src/components/landing-page-v2/BackgroundNarrative.tsx",
+        "src/components/landing-page-v2/FooterV2.tsx",
+        "src/components/landing-page-v2/NavBarV2.tsx",
+        "src/components/landing-page-v2/BlogSection.tsx",
+        "src/lib/cdn.ts",
+        "src/lib/s3.ts",
+        "next.config.ts",
+        "public/noise.png",
+        "scripts/upload-images.mjs",
+        "scripts/upload-public.js",
+        "scripts/sync-assets.js"
+      ],
+      "verify": "Grep the new v2 component folder and confirm every static asset reference is either CDN-backed or intentionally data-driven. Specifically, there should be no remaining local `/noise.png` reference in the new v2 components unless the asset was intentionally kept local. Verify uploads by checking object keys/URLs reported by the uploader or by listing/head-checking the target objects in storage.",
+      "status": "pending",
+      "wave": 1
+    },
+    {
+      "id": "task-4",
+      "title": "Build and verify",
+      "description": "Run the full validation pass after the v2 route and assets are in place. Execute the production build with `npm run build`, start or restart the dev server with `npm run dev` in a properly detached way, and verify the new route renders successfully over HTTP while the existing `/` and `/redesign` routes still load. Check the v2 page for expected sections from the cloned implementation (navbar, hero, narrative, services, why, trust, industries, blog, CTA, footer) and confirm CDN-backed images load without Next image host errors. Then prepare the delivery report for the user containing: all created files, all modified files, all uploaded asset keys/URLs, and explicit follow-up if Vercel linking, env pull, or object-storage permissions were unavailable.",
+      "dependsOn": [
+        "task-3"
+      ],
+      "files": [
+        "package.json",
+        "src/app/v2/page.tsx",
+        "src/app/v2/V2LandingClient.tsx",
+        "next.config.ts",
+        "src/lib/cdn.ts"
+      ],
+      "verify": "`npm run build` exits successfully, the restarted dev server returns HTTP 200 for the new v2 route, manual inspection shows the cloned page renders end-to-end, and the final implementation summary includes created/changed files, uploaded assets, and any missing external access.",
+      "status": "pending",
+      "wave": 2
+    }
+  ],
+  "currentWave": 0,
+  "totalWaves": 3,
+  "status": "planning",
+  "createdAt": 1773736441829,
+  "updatedAt": 1773736441829,
+  "sessionID": "ses_30ec3e6c5ffeFjA1i3qgZ2IYBp",
+  "baseCommit": "739c9ec0be36812babf238318c991ba87d8eeecf"
+}

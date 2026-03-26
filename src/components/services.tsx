@@ -1,169 +1,151 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
+import { getCdnUrl } from "@/lib/cdn";
+import {
+  HighlightText,
+  type DescriptionPart,
+} from "@/components/ui/highlight-text";
 
-// Exact services from the navbar
-const SERVICES = [
+const SERVICES: {
+  id: string;
+  title: string;
+  description: DescriptionPart[];
+  href: string;
+  lottie: string;
+}[] = [
   {
+    id: "application-security",
     title: "Application Security",
-    description:
-      "Web, API & source code security testing. We uncover logic flaws and deep vulnerabilities that automated scanners miss, securing your apps before they ship.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/services/upscayl_png_upscayl-standard-4x_2x/service_appsec_ui.png",
+    description: [
+      "Your app ships fast. Attackers move faster. Scanners catch the obvious — ",
+      { text: "business logic flaws", highlight: true },
+      " don't show up in automated reports. The bugs that matter are the ones ",
+      { text: "no tool was built to find", highlight: true },
+      ".",
+    ],
+    href: "/services/application-security",
+    lottie: getCdnUrl("lottie/appsec.json"),
   },
   {
+    id: "cloud-devsecops",
     title: "Cloud & DevSecOps",
-    description:
-      "Cloud misconfig & CI/CD security audits. We secure your AWS, Azure, and GCP environments while embedding shift-left security directly into your pipelines.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/services/upscayl_png_upscayl-standard-4x_2x/service_cloud_ui.png",
+    description: [
+      "One misconfigured IAM role. One open S3 bucket. One CI pipeline ",
+      { text: "without a gate", highlight: true },
+      ". That's all it takes. Your infrastructure changes daily — your security posture ",
+      { text: "shouldn't lag behind", highlight: true },
+      ".",
+    ],
+    href: "/services/cloud-devsecops",
+    lottie: getCdnUrl("lottie/cloudsec.json"),
   },
   {
+    id: "secure-ai-development",
     title: "Secure AI Development",
-    description:
-      "LLM security & AI abuse testing. Protect your models and AI agents from prompt injection, data poisoning, and unauthorized model access.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/services/upscayl_png_upscayl-standard-4x_2x/service_ai_ui.png",
+    description: [
+      "Your LLM takes instructions from users. That's the feature — and ",
+      { text: "the vulnerability", highlight: true },
+      ". Prompt injection, data exfiltration, model abuse. Traditional security tools ",
+      { text: "weren't built for this", highlight: true },
+      ".",
+    ],
+    href: "/services/secure-ai-development",
+    lottie: getCdnUrl("lottie/aisec.json"),
   },
   {
+    id: "compliance-readiness",
     title: "Compliance Readiness",
-    description:
-      "ISO 27001, SOC 2 & DPDP preparation. We fast-track your compliance goals with gap assessments, penetration testing, and evidence collection workflows.",
-    image:
-      "https://zecurx-web.fsn1.your-objectstorage.com/services/upscayl_png_upscayl-standard-4x_2x/service_compliance_ui.png",
+    description: [
+      "The audit is in six weeks. Evidence is scattered across Notion, Slack, and someone's laptop. SOC 2 doesn't have to mean ",
+      { text: "months of paperwork", highlight: true },
+      ". Get audit-ready without ",
+      { text: "losing your mind", highlight: true },
+      ".",
+    ],
+    href: "/services/compliance-readiness",
+    lottie: getCdnUrl("lottie/compla.json"),
   },
 ];
 
 export function Services() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [expandedIndex, setExpandedIndex] = useState<number>(0);
-
   return (
     <section
-      ref={ref}
-      className="py-24 md:py-32 bg-background text-foreground"
       id="services"
+      className="py-20 md:py-24 bg-background text-foreground"
     >
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mb-16 md:mb-24"
-        >
-          <span className="text-primary font-manrope font-semibold tracking-widest text-sm uppercase mb-4 block">
-            What We Do
-          </span>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
-            Security across{" "}
-            <span className="font-newsreader italic text-muted-foreground">
-              every attack surface
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1320px]">
+        {/* Header */}
+        <BlurFade inView={true} delay={0} className="mb-14 md:mb-16">
+          <div className="flex justify-center mb-4">
+            <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
+              SERVICES
             </span>
+          </div>
+          <h2
+            className="text-center text-4xl md:text-5xl lg:text-6xl font-manrope font-medium"
+            style={{ letterSpacing: "-0.015em" }}
+          >
+            Security across every <span className="text-blue-600">attack</span>{" "}
+            <span className="text-blue-600">surface</span>
           </h2>
-        </motion.div>
+        </BlurFade>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center">
-          {/* Left Side: The "Perfect Image" container */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square max-w-xl mx-auto lg:mx-0 rounded-3xl overflow-hidden group shadow-2xl hover:shadow-[0_0_80px_rgba(59,130,246,0.15)] transition-shadow duration-500 bg-[#0a0a0a]"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={expandedIndex}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full"
-              >
-                <Image
-                  src={SERVICES[expandedIndex].image}
-                  alt={SERVICES[expandedIndex].title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                  style={{ objectFit: "cover", objectPosition: "center" }}
-                  quality={75}
-                  priority={expandedIndex === 0}
-                  placeholder="blur"
-                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMGEwYTBhIi8+PC9zdmc+"
-                  className="transition-transform duration-700 ease-in-out group-hover:scale-[1.02]"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
+        {/* Service blocks */}
+        <div className="space-y-8 md:space-y-0 md:divide-y md:divide-slate-200/60">
+          {SERVICES.map((service, index) => {
+            const isEven = index % 2 === 1;
 
-          {/* Right Side: Services Accordion */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col gap-2"
-          >
-            {SERVICES.map((svc, i) => {
-              const isExpanded = expandedIndex === i;
-
-              return (
-                <div
-                  key={svc.title}
-                  className="border-b border-border last:border-0"
-                >
-                  <button
-                    onClick={() => setExpandedIndex(i)}
-                    className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
+            return (
+              <div key={service.id} className="py-6 md:py-7">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-12 items-center">
+                  {/* Text column */}
+                  <BlurFade
+                    inView={true}
+                    delay={0.1}
+                    className={isEven ? "md:order-2" : ""}
                   >
-                    <h3
-                      className={`text-xl md:text-2xl font-semibold transition-colors duration-300 ${
-                        isExpanded
-                          ? "text-foreground"
-                          : "text-muted-foreground group-hover:text-foreground/80"
-                      }`}
-                    >
-                      {svc.title}
-                    </h3>
-                    <motion.div
-                      animate={{ rotate: isExpanded ? 180 : 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full ${
-                        isExpanded ? "bg-muted" : "bg-transparent"
-                      }`}
-                    >
-                      <ChevronDown
-                        className={`w-5 h-5 transition-colors duration-300 ${
-                          isExpanded
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      />
-                    </motion.div>
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {isExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    <div>
+                      <h3
+                        className="text-2xl md:text-3xl lg:text-4xl font-manrope font-bold text-blue-600 leading-tight"
+                        style={{ letterSpacing: "-0.02em" }}
                       >
-                        <div className="pb-8 pr-4 md:pr-12">
-                          <p className="text-lg leading-relaxed text-muted-foreground">
-                            {svc.description}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        {service.title}
+                      </h3>
+                      <HighlightText
+                        parts={service.description}
+                        className="text-base md:text-lg text-slate-600 leading-relaxed mt-3 max-w-lg"
+                      />
+
+                      {/* Link */}
+                      <Link
+                        href={service.href}
+                        className="inline-flex items-center gap-1 mt-4 text-blue-600 font-semibold text-base hover:underline"
+                      >
+                        Learn more &rarr;
+                      </Link>
+                    </div>
+                  </BlurFade>
+
+                  {/* Illustration column */}
+                  <BlurFade
+                    inView={true}
+                    delay={0.2}
+                    className={isEven ? "md:order-1" : ""}
+                  >
+                    <div className="w-full flex items-center justify-center">
+                      <LottieAnimation
+                        src={service.lottie}
+                        className="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56"
+                      />
+                    </div>
+                  </BlurFade>
                 </div>
-              );
-            })}
-          </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

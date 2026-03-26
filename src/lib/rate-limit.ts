@@ -1,5 +1,6 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
+import { logger } from './logger';
 
 type RateLimitResult = {
     success: boolean;
@@ -76,7 +77,17 @@ if (isUpstashConfigured) {
         prefix: 'ratelimit:orders',
     });
 } else {
-    console.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled');
+    logger.warn('UPSTASH_REDIS_REST_URL or UPSTASH_REDIS_REST_TOKEN not configured - rate limiting disabled (development only)');
+}
+
+// Runtime check for production - called by health check or middleware
+export function validateProductionConfig(): void {
+    if (process.env.NODE_ENV === 'production' && !isUpstashConfigured) {
+        throw new Error(
+            'CRITICAL: Rate limiting is disabled in production. ' +
+            'Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN environment variables.'
+        );
+    }
 }
 
 export async function checkPaymentRateLimit(ip: string): Promise<RateLimitResult> {

@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Lock, Loader2, CheckCircle2, XCircle, Shield } from 'lucide-react';
 import ToolPageLayout from '@/components/tools/ToolPageLayout';
-import { Button } from '@/components/ui/button';
 
 interface TLSResult {
     certificate: {
@@ -90,12 +89,12 @@ export default function SSLAnalyzerPage() {
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-4 py-3 bg-background/50 backdrop-blur-sm border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/50 transition-all !cursor-text"
+                            className="flex-1 px-5 py-4 bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4a69e6]/50 focus:border-[#4a69e6] transition-all !cursor-text shadow-sm font-mono text-sm relative z-50"
                         />
-                        <Button
+                        <button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 rounded-lg"
+                            className="px-8 py-3 rounded-xl bg-[#4a69e6] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#3b5bdb] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -105,7 +104,7 @@ export default function SSLAnalyzerPage() {
                             ) : (
                                 'Analyze'
                             )}
-                        </Button>
+                        </button>
                     </div>
                 </div>
 

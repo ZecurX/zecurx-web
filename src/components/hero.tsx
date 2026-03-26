@@ -1,136 +1,138 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useRef } from "react";
-import { HeroWords, heroEnd } from "@/components/ui/hero-words";
+import { ArrowRight } from "lucide-react";
+import dynamic from "next/dynamic";
+import { DotPattern } from "@/components/ui/dot-pattern";
+import { BlurFade } from "@/components/ui/blur-fade";
+import { WordRotate } from "@/components/ui/word-rotate";
+import { getCdnUrl } from "@/lib/cdn";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const [animationData, setAnimationData] = useState<object | null>(null);
 
-  // "Security that lets you ship fearlessly." = 6 words
-  const headlineEnd = heroEnd(6);
-  // subtitle ~18 words
-  const subtitleEnd = heroEnd(18, headlineEnd + 100);
+  useEffect(() => {
+    fetch(getCdnUrl("hero-lottie.json"))
+      .then((res) => res.json())
+      .then(setAnimationData);
+  }, []);
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-screen flex items-center overflow-hidden bg-background text-foreground"
-    >
-      {/* Subtle grid background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <section className="relative flex items-center overflow-hidden bg-background contain-paint">
+      {/* Organic blue-white blobs — optimized to 3 layers */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ willChange: 'auto', contain: 'strict' }}>
+        {/* Top-left blue blob */}
         <div
-          className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-20 dark:opacity-10"
+          className="absolute -top-20 -left-20 w-[600px] h-[600px] rounded-full"
           style={{
-            background:
-              "radial-gradient(ellipse at center, #3b82f6 0%, transparent 70%)",
-            filter: "blur(80px)",
+            background: "radial-gradient(circle at center, rgba(74, 111, 250, 0.15) 0%, transparent 70%)",
+            filter: "blur(60px)",
+            willChange: 'transform',
+          }}
+        />
+        {/* Center-right blue blob */}
+        <div
+          className="absolute top-1/3 right-[5%] w-[700px] h-[500px] rounded-full"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(59, 130, 246, 0.14) 0%, transparent 65%)",
+            filter: "blur(70px)",
+            willChange: 'transform',
+          }}
+        />
+        {/* Center white patch */}
+        <div
+          className="absolute top-[8%] left-[35%] w-[500px] h-[400px] rounded-full"
+          style={{
+            background: "radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, transparent 60%)",
+            filter: "blur(40px)",
+            willChange: 'transform',
           }}
         />
       </div>
 
-      <motion.div
-        style={{ y, opacity }}
-        className="container mx-auto px-6 lg:px-8 relative z-10 max-w-7xl pt-28 pb-20"
-      >
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          {/* Left */}
-          <div className="flex-1 text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-            {/* Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-newsreader font-medium tracking-tight mb-6 leading-[1.05] text-foreground">
-              <HeroWords>
-                Security that lets you{" "}
-                <span className="italic text-muted-foreground">
-                  ship fearlessly.
-                </span>
-              </HeroWords>
-            </h1>
+      {/* Dot matrix pattern */}
+      <DotPattern
+        width={18}
+        height={18}
+        cr={1.1}
+        randomOpacity
+        className="text-slate-400"
+      />
 
-            <p className="text-lg md:text-xl text-muted-foreground font-manrope font-light mb-10 max-w-xl leading-relaxed">
-              <HeroWords delay={headlineEnd + 100}>
-                ZecurX delivers enterprise-grade application security, cloud
-                protection, and compliance — purpose-built for startups and
-                modern engineering teams.
-              </HeroWords>
-            </p>
+      {/* Content — two columns */}
+      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 lg:px-8 pt-40 md:pt-48 pb-20 md:pb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left — text content */}
+          <div>
+            {/* Headline */}
+            <BlurFade delay={0.1} inView={true} direction="up">
+              <h1
+                className="text-4xl sm:text-5xl md:text-6xl font-manrope font-bold text-foreground leading-[1.05]"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                Security that{" "}
+                <span className="text-[#4a69e6]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }}>moves</span>
+                <br />
+                as fast as you do.
+              </h1>
+            </BlurFade>
+
+            {/* Subtitle */}
+            <BlurFade delay={0.25} inView={true} direction="up">
+              <p className="mt-7 text-lg md:text-xl text-muted-foreground font-inter leading-relaxed max-w-lg">
+                Pentesting, security training, cloud audits, and compliance
+                readiness — built for{" "}
+                <WordRotate
+                  words={["startups", "AI teams", "enterprises", "fintechs"]}
+                  className="inline-block text-lg md:text-xl text-foreground font-inter font-medium"
+                />
+                .
+              </p>
+            </BlurFade>
 
             {/* CTAs */}
-            <div
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 opacity-0"
-              style={{
-                animation: "word-appear 0.5s ease-out forwards",
-                animationDelay: `${subtitleEnd + 100}ms`,
-              }}
-            >
-              <Link href="/contact">
-                <motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="group px-7 py-3.5 rounded-full text-sm font-manrope font-semibold text-primary-foreground bg-primary hover:opacity-90 transition-opacity duration-200"
-                >
-                  Start Protecting Now
-                  <span className="ml-2 inline-block transition-transform group-hover:translate-x-0.5">
-                    →
-                  </span>
-                </motion.button>
-              </Link>
-              <Link href="/book-demo">
-                <motion.button
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="px-7 py-3.5 rounded-full text-sm font-manrope font-medium border border-border text-foreground hover:bg-muted transition-colors duration-200"
-                >
-                  Talk to Experts
-                </motion.button>
-              </Link>
-            </div>
-
-            <p
-              className="mt-8 text-sm text-muted-foreground font-manrope opacity-0"
-              style={{
-                animation: "word-appear 0.5s ease-out forwards",
-                animationDelay: `${subtitleEnd + 300}ms`,
-              }}
-            >
-              Trusted by security teams at fast-growing Indian startups
-            </p>
+            <BlurFade delay={0.4} inView={true} direction="up">
+              <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
+                <Link href="/contact" className="group/cta pb-[5px] inline-block">
+                  <button
+                    className="relative inline-flex items-center gap-2 bg-[#4a69e6] text-white rounded-full px-8 py-3.5 text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
+                    style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
+                  >
+                    Book a Security Consultation
+                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/cta:translate-x-1" />
+                  </button>
+                </Link>
+                <Link href="/how-we-work">
+                  <button
+                    className="border border-slate-200 bg-white text-foreground rounded-full px-8 py-3.5 text-sm font-inter font-medium cursor-pointer transition-colors duration-200 hover:border-slate-300 hover:bg-white"
+                  >
+                    See How We Work
+                  </button>
+                </Link>
+              </div>
+            </BlurFade>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex-1 w-full relative flex justify-center items-center lg:-mr-16"
-          >
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="relative w-[115%] sm:w-[125%] lg:w-[140%] aspect-square md:aspect-[4/3]"
-              style={{ isolation: "isolate" }}
-            >
-              <Image
-                src="https://zecurx-web.fsn1.your-objectstorage.com/hero-graphic.png"
-                alt="ZecurX Unified Security Platform"
-                fill
-                sizes="(max-width: 768px) 115vw, (max-width: 1024px) 125vw, 70vw"
-                quality={75}
-                className="object-contain mix-blend-multiply dark:mix-blend-screen dark:invert dark:hue-rotate-180 will-change-transform"
-                priority
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTJlIi8+PC9zdmc+"
-              />
-            </motion.div>
-          </motion.div>
+          {/* Right — Lottie animation */}
+          <BlurFade delay={0.3} inView={true} direction="up">
+            <div className="flex items-center justify-center lg:justify-end">
+              <div className="w-full max-w-[500px] aspect-square">
+                {animationData && (
+                  <Lottie
+                    animationData={animationData}
+                    loop
+                    autoplay
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                )}
+              </div>
+            </div>
+          </BlurFade>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

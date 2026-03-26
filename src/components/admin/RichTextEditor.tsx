@@ -108,7 +108,7 @@ export default function RichTextEditor({
         }
         editor.chain().focus().setImage({ src: url }).run();
       } catch (error: unknown) {
-        console.error('Failed to upload image:', error);
+        // Image upload error shown via alert
         alert(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
     };

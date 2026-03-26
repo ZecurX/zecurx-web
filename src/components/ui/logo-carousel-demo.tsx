@@ -1,49 +1,38 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { LogoCloud } from '@/components/ui/logo-cloud-4';
-
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
+import Image from "next/image";
+import { getCdnUrl } from "@/lib/cdn";
 
 const logos = [
-  { src: `${CDN_URL}/logos/GURUDEV.webp`, alt: 'Gurudev' },
-  { src: `${CDN_URL}/logos/HONEY-HERBAL.webp?v=4`, alt: 'Honey Herbal' },
-  { src: `${CDN_URL}/logos/IBM.webp`, alt: 'IBM' },
-  {
-    src: `${CDN_URL}/logos/MATEX.webp`,
-    darkSrc: `${CDN_URL}/logos/MATEX-dark.webp`,
-    alt: 'Matex',
-  },
-  { src: `${CDN_URL}/logos/my-garden-v3.webp`, alt: 'My Garden' },
-  {
-    src: `${CDN_URL}/logos/st-claret-college.webp`,
-    darkSrc: `${CDN_URL}/logos/st-claret-college-dark.webp`,
-    alt: 'St. Claret College',
-  },
+  { src: getCdnUrl("logos/GURUDEV.webp"), alt: "Gurudev", size: "" },
+  { src: `${getCdnUrl("logos/HONEY-HERBAL.webp")}?v=4`, alt: "Honey Herbal", size: "large" },
+  { src: getCdnUrl("logos/IBM.webp"), alt: "IBM", size: "large" },
+  { src: getCdnUrl("logos/KANTI.webp"), alt: "Kanti", size: "" },
+  { src: getCdnUrl("logos/MATEX.webp"), alt: "Matex", size: "large" },
+  { src: getCdnUrl("logos/my-garden-v3.webp"), alt: "My Garden", size: "" },
+  { src: getCdnUrl("logos/st-claret-college.webp"), alt: "St. Claret College", size: "" },
 ];
 
 export function LogoCarouselBasic() {
   return (
-    <section className="relative py-4 md:py-6 px-4 sm:px-12 bg-transparent w-full">
-      <div
-        aria-hidden="true"
-        className={cn(
-          '-top-1/2 -translate-x-1/2 pointer-events-none absolute left-1/2 h-[120vmin] w-[120vmin] rounded-b-full',
-          'bg-[radial-gradient(ellipse_at_center,--theme(--color-foreground/.1),transparent_50%)]',
-          'blur-[30px]',
-        )}
-      />
-      <div className="max-w-7xl mx-auto">
-        <h2 className="mb-5 text-center">
-          <span className="block font-medium text-2xl text-muted-foreground">
-            Already used by
-          </span>
-          <span className="font-black text-2xl text-primary tracking-tight md:text-3xl">
-            Best in the Game
-          </span>
-        </h2>
-
-        <LogoCloud logos={logos} />
+    <section className="relative z-10 w-full py-6 md:py-10 px-4 sm:px-12">
+      <div className="max-w-[90rem] mx-auto">
+        <p className="text-center text-muted-foreground text-sm font-medium mb-8">
+          Trusted by
+        </p>
+        <div className="flex items-center justify-center gap-10 md:gap-14 lg:gap-16 flex-nowrap overflow-x-auto scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+          {logos.map((logo) => (
+            <div key={logo.alt} className="flex items-center justify-center group shrink-0">
+              <Image
+                src={logo.src!}
+                alt={logo.alt}
+                width={200}
+                height={72}
+                className={`${logo.size === "large" ? "h-20 md:h-24" : "h-14 md:h-16"} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300`}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
