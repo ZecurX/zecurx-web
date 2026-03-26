@@ -31,19 +31,13 @@ type Plan = {
 };
 
 export default async function InternshipsPage() {
-    let plans: Plan[] = [];
+    const result = await query(`
+        SELECT * FROM plans
+        WHERE type = 'internship' AND active = true
+        ORDER BY created_at ASC
+    `);
 
-    try {
-        const result = await query(`
-            SELECT * FROM plans
-            WHERE type = 'internship' AND active = true
-            ORDER BY created_at ASC
-        `);
-
-        plans = (result.rows as Plan[]) || [];
-    } catch {
-        // Fallback to empty array if DB fails
-    }
+    const plans = (result.rows as Plan[]) || [];
 
     return <InternshipsClient plans={plans} />;
 }
