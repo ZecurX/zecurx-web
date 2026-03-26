@@ -125,7 +125,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                     className="flex items-center gap-2.5 group"
                     aria-label="Go to admin dashboard"
                 >
-                    <div className="relative w-8 h-8 transition-transform group-hover:scale-105 duration-300">
+                    <div className="relative w-12 h-12 transition-transform group-hover:scale-105 duration-300">
                         <Image
                             src={CDN_ASSETS.brand.logo}
                             alt=""
@@ -323,7 +323,7 @@ export function AdminSidebar({ navItems, user }: AdminSidebarProps) {
                     className="flex items-center gap-2"
                     aria-label="Go to admin dashboard"
                 >
-                    <div className="relative w-8 h-8">
+                    <div className="relative w-12 h-12">
                         <Image
                             src={CDN_ASSETS.brand.logo}
                             alt=""

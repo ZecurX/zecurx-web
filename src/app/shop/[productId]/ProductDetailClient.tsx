@@ -44,8 +44,8 @@ export default function ProductDetailClient({ productId }: Props) {
                 const data = await response.json();
                 setProduct(data.product);
                 setRelatedProducts(data.related || []);
-            } catch (error) {
-                console.error('Failed to fetch product:', error);
+            } catch {
+                // Product fetch error - loading state will show product not found
             } finally {
                 setLoading(false);
             }

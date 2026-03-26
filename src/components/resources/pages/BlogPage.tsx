@@ -79,8 +79,8 @@ export default function BlogPage() {
                 setPosts(data.posts);
                 setPagination(data.pagination);
             }
-        } catch (error) {
-            console.error('Failed to fetch posts:', error);
+        } catch {
+            // Blog fetch error silently handled
         } finally {
             setLoading(false);
         }
@@ -93,8 +93,8 @@ export default function BlogPage() {
                 const data = await res.json();
                 setLabels(data);
             }
-        } catch (error) {
-            console.error('Failed to fetch labels:', error);
+        } catch {
+            // Labels fetch error silently handled
         }
     };
 

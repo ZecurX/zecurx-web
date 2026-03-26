@@ -109,7 +109,8 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="bg-background min-h-screen text-foreground selection:bg-primary/30">
+    <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
       <CreativeNavBar />
 
       <section className="w-full pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
@@ -397,7 +398,11 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <Footer />
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 import { AnimatedFeatureSpotlight } from "@/components/ui/feature-spotlight";
 
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://zecurx-web.fsn1.your-objectstorage.com";
 
 export default function ReadyToSecureSection() {
     return (

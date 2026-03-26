@@ -77,7 +77,7 @@ export default function RazorpayCheckout({
             script.async = true;
             script.onload = () => setScriptLoaded(true);
             script.onerror = () => {
-                console.error('Failed to load Razorpay script');
+                // Razorpay script load failure handled via callback
                 onFailure?.('Failed to load payment gateway');
             };
             document.body.appendChild(script);
@@ -190,7 +190,7 @@ export default function RazorpayCheckout({
             const razorpay = new window.Razorpay(options);
             razorpay.open();
         } catch (error) {
-            console.error('Payment error:', error);
+            // Payment error handled via callback
             onFailure?.(error instanceof Error ? error.message : 'Payment failed');
         } finally {
             setIsLoading(false);

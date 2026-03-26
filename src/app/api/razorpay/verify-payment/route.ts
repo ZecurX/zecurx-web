@@ -81,14 +81,20 @@ export async function POST(request: NextRequest) {
                 const isShopOrder = notes.type === 'shop_order';
 
                 if (isShopOrder && notes.items) {
+                    // Use PostgreSQL transaction to ensure atomicity of order creation + stock deduction
+                    const { getClient } = await import('@/lib/db');
+                    const client = await getClient();
+                    
                     try {
+                        await client.query('BEGIN');
+
                         const items = typeof notes.items === 'string' ? JSON.parse(notes.items) : notes.items;
 
                         const address = validator.escape(String(notes.address || '').trim()).substring(0, 500);
                         const city = validator.escape(String(notes.city || '').trim()).substring(0, 100);
                         const pincode = String(notes.pincode || '').replace(/[^0-9]/g, '').substring(0, 10);
 
-                        const orderResult = await query(`
+                        const orderResult = await client.query(`
                             INSERT INTO shop_orders (
                                 order_id, payment_id, customer_email, customer_name, customer_phone,
                                 shipping_address, shipping_city, shipping_pincode,
@@ -132,7 +138,7 @@ export async function POST(request: NextRequest) {
                                 paramIndex += 6;
                             }
 
-                            await query(`
+                            await client.query(`
                                 INSERT INTO shop_order_items (
                                     order_id, product_id, product_name, product_price, quantity, subtotal
                                 ) VALUES ${itemPlaceholders.join(', ')}
@@ -144,7 +150,7 @@ export async function POST(request: NextRequest) {
                             }));
 
                             for (const update of stockUpdates) {
-                                const stockResult = await query(`
+                                const stockResult = await client.query(`
                                     UPDATE products 
                                     SET stock = stock - $1 
                                     WHERE id::text = $2 AND stock >= $1
@@ -152,14 +158,32 @@ export async function POST(request: NextRequest) {
                                 `, [update.qty, update.id]);
 
                                 if (stockResult.rowCount === 0) {
-                                    console.error(`CRITICAL: Stock deduction failed for product ${update.id} - insufficient stock or product not found`);
+                                    // CRITICAL: Stock deduction failed - rollback entire transaction
+                                    await client.query('ROLLBACK');
+                                    client.release();
+                                    
+                                    return NextResponse.json(
+                                        { 
+                                            success: false, 
+                                            error: 'Order failed: insufficient stock for requested items. Payment will be refunded.' 
+                                        },
+                                        { status: 500 }
+                                    );
                                 }
                             }
                         }
+
+                        // All operations successful - commit transaction
+                        await client.query('COMMIT');
+                        client.release();
                     } catch (shopError) {
-                        console.error('Shop Order DB Error:', shopError);
+                        // Rollback on any error
+                        await client.query('ROLLBACK');
+                        client.release();
+                        
+                        console.error('Shop Order Transaction Failed:', shopError);
                         return NextResponse.json(
-                            { success: false, error: 'Failed to save order details' },
+                            { success: false, error: 'Failed to process order. Please contact support.' },
                             { status: 500 }
                         );
                     }
@@ -325,6 +349,15 @@ export async function POST(request: NextRequest) {
                 notesType: notes?.type,
                 errorMessage: dbError instanceof Error ? dbError.message : String(dbError)
             });
+            
+            // CRITICAL: Return error instead of success when DB sync fails
+            return NextResponse.json(
+                { 
+                    success: false, 
+                    error: 'Failed to save payment data. Payment was captured but records not saved. Contact support with your payment ID.' 
+                },
+                { status: 500 }
+            );
         }
 
         return NextResponse.json({

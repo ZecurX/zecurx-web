@@ -74,8 +74,8 @@ export default async function AcademyPage() {
                 pricingType,
             };
         });
-    } catch (error) {
-        console.error('Failed to fetch courses from DB:', error);
+    } catch {
+        // DB fetch error - fallback to static courses from courses.ts
     }
 
     return <AcademyClient courses={courses} />;
