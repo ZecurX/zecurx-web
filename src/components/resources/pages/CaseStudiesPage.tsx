@@ -169,14 +169,14 @@ export default function CaseStudiesPage() {
     return (
         <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden pt-32 pb-24">
             <div className="absolute inset-0 z-0">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4a69e6]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4c69e4]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
                 <div className="absolute top-1/4 left-[-10%] w-[500px] h-[500px] bg-blue-300/10 blur-[100px] rounded-full mix-blend-multiply opacity-60 pointer-events-none" />
             </div>
 
             <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <BlurFade delay={0.1}>
                     <div className="flex justify-center mb-6">
-                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4a69e6] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
+                        <Link href="/resources" className="inline-flex items-center gap-2 text-slate-500 hover:text-[#4c69e4] transition-colors bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm text-xs font-inter font-medium tracking-wide">
                             <ArrowLeft className="w-3.5 h-3.5" />
                             <span>Back to Resources</span>
                         </Link>
@@ -194,7 +194,7 @@ export default function CaseStudiesPage() {
                     
                     <BlurFade delay={0.3}>
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
-                            Customer <span className="text-[#4a69e6]">Case Studies</span>
+                            Customer <span className="text-[#4c69e4]">Case Studies</span>
                         </h1>
                     </BlurFade>
                     
@@ -217,7 +217,7 @@ export default function CaseStudiesPage() {
                                         onClick={() => handleCategoryClick(null)}
                                         className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all text-left ${
                                             selectedCategory === null 
-                                                ? 'bg-[#4a69e6]/10 text-[#4a69e6] font-medium' 
+                                                ? 'bg-[#4c69e4]/10 text-[#4c69e4] font-medium' 
                                                 : 'text-slate-600 hover:bg-slate-50 hover:text-[#0c1a2e]'
                                         }`}
                                     >
@@ -225,7 +225,7 @@ export default function CaseStudiesPage() {
                                             <FileText className="w-4 h-4" />
                                             All Industries
                                         </span>
-                                        <span className={`text-xs ${selectedCategory === null ? 'text-[#4a69e6]' : 'text-slate-400'}`}>
+                                        <span className={`text-xs ${selectedCategory === null ? 'text-[#4c69e4]' : 'text-slate-400'}`}>
                                             {pagination.total}
                                         </span>
                                     </button>
@@ -237,7 +237,7 @@ export default function CaseStudiesPage() {
                                                 onClick={() => handleCategoryClick(cat.label)}
                                                 className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all text-left ${
                                                     selectedCategory === cat.label 
-                                                        ? 'bg-[#4a69e6]/10 text-[#4a69e6] font-medium' 
+                                                        ? 'bg-[#4c69e4]/10 text-[#4c69e4] font-medium' 
                                                         : 'text-slate-600 hover:bg-slate-50 hover:text-[#0c1a2e]'
                                                 }`}
                                             >
@@ -245,7 +245,7 @@ export default function CaseStudiesPage() {
                                                     <CatIcon className="w-4 h-4" />
                                                     {cat.label}
                                                 </span>
-                                                <span className={`text-xs ${selectedCategory === cat.label ? 'text-[#4a69e6]' : 'text-slate-400'}`}>
+                                                <span className={`text-xs ${selectedCategory === cat.label ? 'text-[#4c69e4]' : 'text-slate-400'}`}>
                                                     {cat.count}
                                                 </span>
                                             </button>
@@ -259,7 +259,7 @@ export default function CaseStudiesPage() {
                     <div className="lg:col-span-3">
                         {loading ? (
                             <div className="flex items-center justify-center h-64">
-                                <Loader2 className="w-8 h-8 animate-spin text-[#4a69e6]" />
+                                <Loader2 className="w-8 h-8 animate-spin text-[#4c69e4]" />
                             </div>
                         ) : error ? (
                             <div className="flex flex-col items-center justify-center h-64 text-center bg-white rounded-3xl border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
@@ -284,7 +284,7 @@ export default function CaseStudiesPage() {
                                         return (
                                             <BlurFade key={study.id} delay={0.2 + (i * 0.1)}>
                                                 <div className="glass-card h-full flex flex-col rounded-3xl p-8 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] bg-white/50 hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
-                                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4a69e6]/5 blur-[40px] rounded-full group-hover:bg-[#4a69e6]/10 transition-colors" />
+                                                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#4c69e4]/5 blur-[40px] rounded-full group-hover:bg-[#4c69e4]/10 transition-colors" />
                                                     
                                                     <div className="relative z-10 flex flex-col h-full">
                                                         <div className="flex items-start justify-between mb-6">
@@ -299,12 +299,12 @@ export default function CaseStudiesPage() {
                                                                     />
                                                                 </div>
                                                             ) : (
-                                                                <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center text-[#4a69e6] group-hover:scale-110 transition-transform duration-300">
+                                                                <div className="w-14 h-14 rounded-2xl bg-[#f8fbff] border border-blue-100 flex items-center justify-center text-[#4c69e4] group-hover:scale-110 transition-transform duration-300">
                                                                     <IconComponent className="w-6 h-6" />
                                                                 </div>
                                                             )}
                                                             {study.pages > 0 && (
-                                                                <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4a69e6] uppercase bg-blue-50 px-3 py-1 rounded-full">
+                                                                <span className="text-[11px] font-space-grotesk font-semibold tracking-widest text-[#4c69e4] uppercase bg-blue-50 px-3 py-1 rounded-full">
                                                                     {study.pages} pages
                                                                 </span>
                                                             )}
@@ -312,7 +312,7 @@ export default function CaseStudiesPage() {
 
                                                         <span className="text-xs font-inter font-medium text-slate-500 mb-3 block">{study.category}</span>
 
-                                                        <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4a69e6] transition-colors leading-tight">
+                                                        <h3 className="text-xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4c69e4] transition-colors leading-tight">
                                                             {study.title}
                                                         </h3>
 
@@ -322,7 +322,7 @@ export default function CaseStudiesPage() {
 
                                                         <button 
                                                             onClick={() => handleDownload(study)}
-                                                            className="w-full relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4a69e6] hover:text-[#4a69e6] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm mt-auto"
+                                                            className="w-full relative inline-flex items-center justify-center gap-2 bg-white text-[#0c1a2e] rounded-full px-6 py-3 text-sm font-semibold font-inter cursor-pointer border border-slate-200 hover:border-[#4c69e4] hover:text-[#4c69e4] hover:bg-[#f8fbff] transition-all duration-200 shadow-sm mt-auto"
                                                         >
                                                             <Download className="w-4 h-4" />
                                                             Download Study

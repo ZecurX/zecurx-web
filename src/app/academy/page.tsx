@@ -23,60 +23,52 @@ interface DBPlan {
 }
 
 export default async function AcademyPage() {
-    let courses: CourseData[] = [];
+    const result = await query<DBPlan>(
+        `SELECT id, name, price, description, duration, level, features,
+                logo, original_price, popular, students_count, brochure_link,
+                COALESCE(in_stock, true) as in_stock,
+                COALESCE(pricing_type, 'fixed') as pricing_type
+         FROM plans
+         WHERE active = true AND type = 'academy'
+         ORDER BY
+           CASE COALESCE(pricing_type, 'fixed')
+             WHEN 'fixed' THEN 1
+             WHEN 'contact' THEN 2
+             WHEN 'institutional' THEN 3
+             ELSE 4
+           END,
+           name`
+    );
 
-    try {
-        const result = await query<DBPlan>(
-            `SELECT id, name, price, description, duration, level, features,
-                    logo, original_price, popular, students_count, brochure_link,
-                    COALESCE(in_stock, true) as in_stock,
-                    COALESCE(pricing_type, 'fixed') as pricing_type
-             FROM plans
-             WHERE active = true AND type = 'academy'
-             ORDER BY
-               CASE COALESCE(pricing_type, 'fixed')
-                 WHEN 'fixed' THEN 1
-                 WHEN 'contact' THEN 2
-                 WHEN 'institutional' THEN 3
-                 ELSE 4
-               END,
-               name`
-        );
+    const courses = result.rows.map(row => {
+        const pricingType = row.pricing_type as CourseData['pricingType'];
+        const price = parseFloat(row.price);
+        const originalPrice = row.original_price ? parseFloat(row.original_price) : undefined;
 
-        courses = result.rows.map(row => {
-            const pricingType = row.pricing_type as CourseData['pricingType'];
-            const price = parseFloat(row.price);
-            const originalPrice = row.original_price ? parseFloat(row.original_price) : undefined;
+        let displayPrice: number | string = 'Contact for Pricing';
+        if (pricingType === 'institutional') {
+            displayPrice = 'Institution Only';
+        } else if (pricingType !== 'contact' && !isNaN(price) && price > 0) {
+            displayPrice = price;
+        }
 
-            let displayPrice: number | string;
-            if (pricingType === 'institutional') {
-                displayPrice = 'Institution Only';
-            } else if (pricingType === 'contact') {
-                displayPrice = 'Contact for Pricing';
-            } else {
-                displayPrice = !isNaN(price) && price > 0 ? price : 'Contact for Pricing';
-            }
-
-            return {
-                id: row.id,
-                title: row.name,
-                description: row.description || '',
-                price: displayPrice,
-                originalPrice: originalPrice && !isNaN(originalPrice) ? originalPrice : undefined,
-                duration: row.duration || 'Custom',
-                level: (row.level as CourseData['level']) || 'Beginner',
-                features: row.features || [],
-                popular: row.popular ?? false,
-                logo: row.logo || undefined,
-                students: row.students_count || undefined,
-                brochureLink: row.brochure_link ? getCdnUrl(row.brochure_link) : undefined,
-                inStock: row.in_stock ?? true,
-                pricingType,
-            };
-        });
-    } catch {
-        // DB fetch error - fallback to static courses from courses.ts
-    }
+        return {
+            id: row.id,
+            title: row.name,
+            description: row.description || '',
+            price: displayPrice,
+            originalPrice: originalPrice && !isNaN(originalPrice) ? originalPrice : undefined,
+            duration: row.duration || 'Custom',
+            level: (row.level as CourseData['level']) || 'Beginner',
+            features: row.features || [],
+            popular: row.popular ?? false,
+            logo: row.logo || undefined,
+            students: row.students_count || undefined,
+            brochureLink: row.brochure_link ? getCdnUrl(row.brochure_link) : undefined,
+            inStock: row.in_stock ?? true,
+            pricingType,
+        };
+    });
 
     return <AcademyClient courses={courses} />;
 }

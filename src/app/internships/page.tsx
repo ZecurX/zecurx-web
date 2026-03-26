@@ -32,10 +32,12 @@ type Plan = {
 
 export default async function InternshipsPage() {
     const result = await query(`
-        SELECT * FROM plans 
-        WHERE type = 'internship' AND active = true 
+        SELECT * FROM plans
+        WHERE type = 'internship' AND active = true
         ORDER BY created_at ASC
     `);
 
-    return <InternshipsClient plans={(result.rows as Plan[]) || []} />;
+    const plans = (result.rows as Plan[]) || [];
+
+    return <InternshipsClient plans={plans} />;
 }
