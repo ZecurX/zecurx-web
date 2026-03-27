@@ -1,32 +1,44 @@
 "use client";
 
-import Lottie, { type LottieRefCurrentProps } from "lottie-react";
-import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
+import type { LottieRefCurrentProps } from "lottie-react";
+import { useLottieData } from "@/hooks/use-lottie-data";
+
+// Dynamic import with SSR disabled - fixes "document is not defined" error
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface LottieAnimationProps {
   src: string;
   className?: string;
   speed?: number;
+  fallback?: React.ReactNode;
 }
 
-export function LottieAnimation({ src, className, speed = 1 }: LottieAnimationProps) {
-  const [animationData, setAnimationData] = useState<object | null>(null);
+export function LottieAnimation({ 
+  src, 
+  className, 
+  speed = 1,
+  fallback = null 
+}: LottieAnimationProps) {
+  const { animationData, error, loading } = useLottieData(src);
   const lottieRef = useRef<LottieRefCurrentProps>(null);
-
-  useEffect(() => {
-    fetch(src)
-      .then((res) => res.json())
-      .then(setAnimationData)
-      .catch(() => { /* Lottie fetch error silently handled */ });
-  }, [src]);
 
   useEffect(() => {
     if (lottieRef.current) {
       lottieRef.current.setSpeed(speed);
     }
-  }, [speed]);
+  }, [speed, animationData]);
 
-  if (!animationData) return null;
+  // Show fallback on error
+  if (error) {
+    return <>{fallback}</>;
+  }
+
+  // Show placeholder while loading
+  if (loading || !animationData) {
+    return <div className={className} />;
+  }
 
   return (
     <Lottie
