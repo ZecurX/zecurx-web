@@ -33,7 +33,7 @@ export default function Home() {
         <Hero />
         <LogoCarouselBasic />
 
-        <div className="relative z-[1] -mt-[220px] w-full overflow-hidden md:-mt-[283px]">
+        <div className="relative z-[1] -mt-[120px] sm:-mt-[180px] md:-mt-[283px] w-full overflow-hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 1440 344"

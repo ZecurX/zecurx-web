@@ -1,25 +1,27 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import { getCdnUrl } from "@/lib/cdn";
+import { useLottieData } from "@/hooks/use-lottie-data";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function AppDiagramLottie() {
-  const [animationData, setAnimationData] = useState<object | null>(null);
+  const { animationData, loading, error } = useLottieData(getCdnUrl("lottie/App Diagram.json"));
 
-  useEffect(() => {
-    fetch(getCdnUrl("lottie/App Diagram.json"))
-      .then((res) => res.json())
-      .then(setAnimationData)
-      .catch(() => { /* Lottie fetch error silently handled */ });
-  }, []);
-
-  if (!animationData) {
+  if (loading) {
     return (
       <div className="w-full min-h-[50vh] flex items-center justify-center text-muted-foreground font-inter">
         Loading Diagram...
+      </div>
+    );
+  }
+
+  if (error || !animationData) {
+    return (
+      <div className="w-full min-h-[50vh] flex items-center justify-center text-muted-foreground font-inter">
+        Failed to load diagram
       </div>
     );
   }
