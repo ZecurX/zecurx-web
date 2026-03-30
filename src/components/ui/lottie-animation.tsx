@@ -1,12 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LottieRefCurrentProps } from "lottie-react";
-import { useLottieData } from "@/hooks/use-lottie-data";
-
-// Dynamic import with SSR disabled - fixes "document is not defined" error
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface LottieAnimationProps {
   src: string;
@@ -15,30 +10,39 @@ interface LottieAnimationProps {
   fallback?: React.ReactNode;
 }
 
-export function LottieAnimation({ 
-  src, 
-  className, 
-  speed = 1,
-  fallback = null 
-}: LottieAnimationProps) {
-  const { animationData, error, loading } = useLottieData(src);
+type LottieComponent = React.ComponentType<{
+  lottieRef?: React.RefObject<LottieRefCurrentProps>;
+  animationData: object;
+  loop?: boolean;
+  autoplay?: boolean;
+  className?: string;
+}>;
+
+export function LottieAnimation({ src, className, speed = 1, fallback = null }: LottieAnimationProps) {
+  const [Lottie, setLottie] = useState<LottieComponent | null>(null);
+  const [animationData, setAnimationData] = useState<object | null>(null);
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
   useEffect(() => {
-    if (lottieRef.current) {
+    // Load lottie-react and animation data in parallel on client only
+    Promise.all([
+      import("lottie-react").then((m) => m.default),
+      fetch(src).then((r) => r.json()),
+    ])
+      .then(([LottieLib, data]) => {
+        setLottie(() => LottieLib as LottieComponent);
+        setAnimationData(data);
+      })
+      .catch(() => {});
+  }, [src]);
+
+  useEffect(() => {
+    if (lottieRef.current && animationData) {
       lottieRef.current.setSpeed(speed);
     }
   }, [speed, animationData]);
 
-  // Show fallback on error
-  if (error) {
-    return <>{fallback}</>;
-  }
-
-  // Show placeholder while loading
-  if (loading || !animationData) {
-    return <div className={className} />;
-  }
+  if (!Lottie || !animationData) return <>{fallback}</>;
 
   return (
     <Lottie
