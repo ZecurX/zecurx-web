@@ -63,63 +63,64 @@ export function Hero() {
       />
 
       {/* Content — two columns */}
-      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 lg:px-8 pt-40 md:pt-48 pb-20 md:pb-28">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className="relative z-10 w-full max-w-[1320px] mx-auto px-6 sm:px-8 lg:px-8 pt-28 sm:pt-32 md:pt-44 pb-12 sm:pb-16 md:pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left — text content */}
           <div>
-            {/* Headline */}
+            {/* Headline - Mobile: 32px, scales up smoothly */}
             <BlurFade delay={0.1} inView={true} direction="up">
               <h1
-                className="text-4xl sm:text-5xl md:text-6xl font-manrope font-bold text-foreground leading-[1.05]"
+                className="text-[2rem] sm:text-[2.5rem] md:text-5xl lg:text-6xl font-manrope font-bold text-foreground leading-[1.15] sm:leading-[1.1]"
                 style={{ letterSpacing: "-0.02em" }}
               >
                 Security that{" "}
-                <span className="text-[#4c69e4]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.2em' }}>moves</span>
+                <span className="text-[#4c69e4]" style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.15em' }}>moves</span>
                 <br />
                 as fast as you do.
               </h1>
             </BlurFade>
 
-            {/* Subtitle */}
+            {/* Subtitle - Clear supporting copy */}
             <BlurFade delay={0.25} inView={true} direction="up">
-              <p className="mt-7 text-lg md:text-xl text-muted-foreground font-inter leading-relaxed max-w-lg">
+              <p className="mt-5 sm:mt-6 md:mt-7 text-base sm:text-lg md:text-xl text-muted-foreground font-inter leading-relaxed max-w-lg">
                 Pentesting, security training, cloud audits, and compliance
                 readiness — built for{" "}
                 <WordRotate
                   words={["startups", "AI teams", "enterprises", "fintechs"]}
-                  className="inline-block text-lg md:text-xl text-foreground font-inter font-medium"
+                  className="inline-block text-base sm:text-lg md:text-xl text-foreground font-inter font-medium"
                 />
                 .
               </p>
             </BlurFade>
 
-            {/* CTAs */}
+            {/* CTAs - Large touch targets (min 44px), proper spacing */}
             <BlurFade delay={0.4} inView={true} direction="up">
-              <div className="mt-10 flex flex-col sm:flex-row items-start gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
                 <Link href="/contact" className="group/cta pb-[5px] inline-block">
                   <button
-                    className="relative inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-3.5 text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
+                    className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-7 sm:px-8 py-4 sm:py-3.5 text-base sm:text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
                     style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
                   >
                     Book a Security Consultation
                     <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/cta:translate-x-1" />
                   </button>
                 </Link>
-                <Link href="/how-we-work">
+                <Link href="/how-we-work" className="w-full sm:w-auto">
                   <button
-                    className="border border-slate-200 bg-white text-foreground rounded-full px-8 py-3.5 text-sm font-inter font-medium cursor-pointer transition-colors duration-200 hover:border-slate-300 hover:bg-white"
+                    className="w-full sm:w-auto border border-slate-200 bg-white text-foreground rounded-full px-7 sm:px-8 py-4 sm:py-3.5 text-base sm:text-sm font-inter font-medium cursor-pointer transition-colors duration-200 hover:border-slate-300 hover:bg-white"
                   >
                     See How We Work
                   </button>
                 </Link>
               </div>
             </BlurFade>
+
           </div>
 
-          {/* Right — Lottie animation */}
+          {/* Right — Lottie animation - Smaller on mobile, not dominating */}
           <BlurFade delay={0.3} inView={true} direction="up">
-            <div className="flex items-center justify-center lg:justify-end">
-              <div className="w-full max-w-[500px] aspect-square">
+            <div className="flex items-center justify-center lg:justify-end mt-4 sm:mt-0">
+              <div className="w-full max-w-[280px] sm:max-w-[360px] md:max-w-[440px] lg:max-w-[500px] aspect-square">
                 {animationData && (
                   <Lottie
                     animationData={animationData}
