@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { getCdnUrl } from '@/lib/cdn';
+import { InfiniteSlider } from './infinite-slider';
 
 const logos = [
   { src: getCdnUrl('logos/GURUDEV.webp'), alt: 'Gurudev', size: '' },
@@ -22,15 +23,12 @@ const logos = [
 
 export function LogoCarouselBasic() {
   return (
-    <section className="relative z-10 w-full py-6 md:py-10 px-4 sm:px-12">
+    <section className="relative z-10 w-full pt-8 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-12">
       <div className="max-w-[90rem] mx-auto">
         <p className="text-center text-muted-foreground text-sm font-medium mb-8">
           Trusted by
         </p>
-        <div
-          className="flex items-center justify-center gap-10 md:gap-14 lg:gap-16 flex-nowrap overflow-x-auto scrollbar-hide"
-          style={{ scrollbarWidth: 'none' }}
-        >
+        <InfiniteSlider gap={48} duration={30} durationOnHover={60}>
           {logos.map((logo) => (
             <div
               key={logo.alt}
@@ -41,11 +39,11 @@ export function LogoCarouselBasic() {
                 alt={logo.alt}
                 width={200}
                 height={72}
-                className={`${logo.size === 'large' ? 'h-20 md:h-24' : 'h-14 md:h-16'} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300`}
+                className={`${logo.size === 'large' ? 'h-16 md:h-20' : 'h-12 md:h-14'} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
               />
             </div>
           ))}
-        </div>
+        </InfiniteSlider>
       </div>
     </section>
   );
