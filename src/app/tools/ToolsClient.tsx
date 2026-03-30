@@ -3,22 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, FileSearch, Search, Lock, Code2, FolderSearch, Radar } from "lucide-react";
-import dynamic from 'next/dynamic';
-import securityVulnData from "../../../public/lottie/securityvuln.json";
-import subdomainData from "../../../public/lottie/subdomain.json";
-import dirfinderData from "../../../public/lottie/dirfinder.json";
-import radarData from "../../../public/lottie/radar.json";
-import sslData from "../../../public/lottie/ssl.json";
-import paramData from "../../../public/lottie/param.json";
-import headerData from "../../../public/lottie/header.json";
+import { getCdnUrl } from "@/lib/cdn";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { HeroWords, heroEnd } from "@/components/ui/hero-words";
 import { MagicCard } from "@/components/ui/magic-card";
-
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const tools = [
   {
@@ -28,7 +20,7 @@ const tools = [
     icon: Search,
     href: "/tools/subdomain-finder",
     image: "/assets/tool-subdomain.webp",
-    lottie: subdomainData,
+    lottie: getCdnUrl("lottie/subdomain.json"),
   },
   {
     title: "Directory Scanner",
@@ -37,7 +29,7 @@ const tools = [
     icon: FolderSearch,
     href: "/tools/directory-scanner",
     image: "/assets/tool-directory.webp",
-    lottie: dirfinderData,
+    lottie: getCdnUrl("lottie/dirfinder.json"),
   },
   {
     title: "Port Radar",
@@ -46,7 +38,7 @@ const tools = [
     icon: Radar,
     href: "/tools/port-radar",
     image: "/assets/tool-port.webp",
-    lottie: radarData,
+    lottie: getCdnUrl("lottie/radar.json"),
   },
   {
     title: "TLS/SSL Analyzer",
@@ -55,7 +47,7 @@ const tools = [
     icon: Lock,
     href: "/tools/ssl-analyzer",
     image: "/assets/tool-ssl.webp",
-    lottie: sslData,
+    lottie: getCdnUrl("lottie/ssl.json"),
   },
   {
     title: "Param Finder",
@@ -64,7 +56,7 @@ const tools = [
     icon: Code2,
     href: "/tools/param-finder",
     image: "/assets/tool-param.webp",
-    lottie: paramData,
+    lottie: getCdnUrl("lottie/param.json"),
   },
   {
     title: "Header Scanner",
@@ -73,7 +65,7 @@ const tools = [
     icon: FileSearch,
     href: "/tools/header-scanner",
     image: "/assets/tool-header.webp",
-    lottie: headerData,
+    lottie: getCdnUrl("lottie/header.json"),
   },
 ];
 
@@ -156,10 +148,10 @@ export default function ToolsClient() {
 
             <div className="relative flex justify-center items-center h-[300px] md:h-[450px]">
               <BlurFade delay={0.4} inView={true} direction="up" className="w-full h-full max-w-[500px]">
-                <Lottie 
-                  animationData={securityVulnData} 
-                  loop={true} 
+                <LottieAnimation
+                  src={getCdnUrl("lottie/securityvuln.json")}
                   className="w-full h-full object-contain drop-shadow-2xl"
+                  speed={1}
                 />
               </BlurFade>
             </div>
@@ -198,11 +190,10 @@ export default function ToolsClient() {
                     <div className="w-full h-48 mt-auto rounded-xl overflow-hidden border border-border/50 relative bg-muted/20 flex items-center justify-center group-hover:border-[#4c69e4]/30 transition-colors group-hover:shadow-[0_0_30px_-10px_rgba(74,111,250,0.2)]">
                       
                       {tool.lottie ? (
-                        <Lottie 
-                          
-                          animationData={tool.lottie} 
-                          loop={true} 
+                        <LottieAnimation
+                          src={tool.lottie}
                           className="w-full h-full object-contain p-4 transition-all group-hover:scale-105 duration-700 ease-out z-10"
+                          speed={1}
                         />
                       ) : (
                         <>
