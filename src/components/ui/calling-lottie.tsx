@@ -1,22 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import { getCdnUrl } from "@/lib/cdn";
+import { useLottieData } from "@/hooks/use-lottie-data";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export function CallingLottie() {
-  const [animationData, setAnimationData] = useState<object | null>(null);
+  const { animationData, loading } = useLottieData(getCdnUrl("lottie/calling.json"));
 
-  useEffect(() => {
-    fetch(getCdnUrl("lottie/calling.json"))
-      .then((res) => res.json())
-      .then(setAnimationData)
-      .catch(() => { /* Lottie fetch error silently handled */ });
-  }, []);
-
-  if (!animationData) return null;
+  if (loading || !animationData) {
+    return <div className="w-full max-w-[500px] aspect-square" />;
+  }
 
   return (
     <div className="w-full flex justify-center items-center pointer-events-none">

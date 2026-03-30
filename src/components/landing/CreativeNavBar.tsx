@@ -91,12 +91,12 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                     style={!forceDark ? { backgroundColor: 'rgba(237, 244, 255, 0.85)', backdropFilter: 'blur(12px)' } : undefined}
                     onMouseLeave={handleMouseLeave}
                 >
-                    <div className="flex items-center justify-between h-16 px-6">
+                    <div className="flex items-center justify-between h-14 sm:h-16 px-5 sm:px-6">
 
                         {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+                        <Link href="/" className="flex items-center gap-2 shrink-0 group">
                             <motion.div
-                                className="relative w-12 h-12"
+                                className="relative w-8 h-8 sm:w-10 sm:h-10"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
@@ -108,7 +108,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     priority
                                 />
                             </motion.div>
-                            <span className={cn("font-manrope font-semibold text-[1.5rem] leading-none tracking-tight", forceDark ? "text-white" : "text-foreground")}>
+                            <span className={cn("font-manrope font-semibold text-lg sm:text-xl leading-none tracking-tight", forceDark ? "text-white" : "text-foreground")}>
                                 ZecurX
                             </span>
                         </Link>
@@ -370,9 +370,9 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             transition={{ type: "spring", damping: 30, stiffness: 300 }}
                             className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background lg:hidden border-l border-border/50 shadow-2xl flex flex-col h-full"
                         >
-                            <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">
-                                <Link href="/" className="flex items-center gap-2.5" onClick={() => setMobileMenuOpen(false)}>
-                                    <div className="relative w-12 h-12">
+                            <div className="flex items-center justify-between p-5 border-b border-border/50 shrink-0">
+                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                                    <div className="relative w-8 h-8">
                                         <Image
                                             src={CDN_ASSETS.brand.logo}
                                             alt="ZecurX"
@@ -380,7 +380,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             className="object-contain"
                                         />
                                     </div>
-                                    <span className="font-manrope font-semibold text-[1.5rem] leading-none tracking-tight">ZecurX</span>
+                                    <span className="font-manrope font-semibold text-lg leading-none tracking-tight">ZecurX</span>
                                 </Link>
                                 <button
                                     onClick={() => setMobileMenuOpen(false)}
