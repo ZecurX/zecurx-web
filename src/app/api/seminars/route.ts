@@ -20,8 +20,9 @@ export async function GET(request: NextRequest) {
             WHERE s.status = 'approved'
         `;
 
+        // FIX 1: Use CURRENT_DATE instead of NOW()
         if (!includeAll) {
-            sql += ` AND s.date > NOW()`;
+            sql += ` AND s.date >= CURRENT_DATE`;
         }
 
         sql += `
@@ -32,12 +33,20 @@ export async function GET(request: NextRequest) {
         const result = await query<PublicSeminar & { registration_count: string }>(sql);
 
         const now = new Date();
-        const seminars = result.rows.map(row => ({
-            ...row,
-            registration_count: parseInt(row.registration_count) || 0,
-            // Auto-close registration for past seminars
-            registration_enabled: new Date(row.date) < now ? false : row.registration_enabled,
-        }));
+
+        const seminars = result.rows.map(row => {
+            // FIX 2: Force local time interpretation to avoid timezone shift
+            const seminarDate = new Date(row.date + 'T00:00:00');
+
+            return {
+                ...row,
+                registration_count: parseInt(row.registration_count) || 0,
+
+                // FIX 3: Correct comparison
+                registration_enabled:
+                    seminarDate < now ? false : row.registration_enabled,
+            };
+        });
 
         return NextResponse.json({
             success: true,
