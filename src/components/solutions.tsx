@@ -25,7 +25,7 @@ const SOLUTIONS: {
       { text: "continuously", highlight: true },
       ".",
     ],
-    href: "/solutions/vulnerability-management",
+    href: "/",
     lottie: getCdnUrl("lottie/vulnman.json"),
   },
   {
@@ -36,7 +36,7 @@ const SOLUTIONS: {
       { text: "vulnerabilities live", highlight: true },
       ". Build the gates into the pipeline — not around it.",
     ],
-    href: "/solutions/secure-sdlc",
+    href: "/",
     lottie: getCdnUrl("lottie/sdlc.json"),
   },
   {
@@ -47,7 +47,7 @@ const SOLUTIONS: {
       { text: "potential entry point", highlight: true },
       ". Trust nothing. Verify everything.",
     ],
-    href: "/solutions/zero-trust-architecture",
+    href: "/",
     lottie: getCdnUrl("lottie/zerotrust.json"),
   },
   {
@@ -58,7 +58,7 @@ const SOLUTIONS: {
       { text: "noise nobody reads", highlight: true },
       ". See what matters, when it matters.",
     ],
-    href: "/solutions/security-observability",
+    href: "/",
     lottie: getCdnUrl("lottie/obsv.json"),
   },
 ];
