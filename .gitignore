@@ -82,3 +82,10 @@ landing-redesign/
 # PDF files (certificates generated at runtime, templates on CDN)
 *.pdf
 public/certificates/
+
+
+#navbar improvements
+.planning/navbar-improvements/
+
+#seminar-page-fixes
+.planning/seminar-page-fixes/
