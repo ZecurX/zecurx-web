@@ -4,7 +4,7 @@ import Footer from "@/components/landing/Footer";
 import Link from "next/link";
 import CaseStudies, { CaseStudy } from "@/components/ui/case-studies";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { ArrowRight, ShieldCheck, Award } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { SecureAiHero } from "./secure-ai-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { ServiceFeatureGrid } from "@/components/ui/service-feature-grid";
@@ -135,21 +135,6 @@ const aiCaseStudies: CaseStudy[] = [
   },
 ];
 
-const stats = [
-  {
-    value: "10k+",
-    label: "Prompts Tested",
-  },
-  {
-    value: "0",
-    label: "Data Leaks",
-  },
-  {
-    value: "24/7",
-    label: "Agent Monitoring",
-  },
-];
-
 export default function SecureAIDevelopmentPage() {
   return (
     <div className="min-h-screen bg-[#f8fbff] flex flex-col font-sans">
@@ -158,26 +143,9 @@ export default function SecureAIDevelopmentPage() {
       <main className="flex-1 pt-24 pb-12">
         <SecureAiHero />
 
-        {/* ── STATS SECTION ───────────────────────── */}
-        <section className="py-12 border-y border-slate-200/60 bg-white/50 relative z-10">
-          <div className="max-w-[1320px] mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-slate-200/60">
-              {stats.map((stat, idx) => (
-                <div key={idx} className="flex flex-col items-center justify-center py-4 md:py-8 group">
-                  <span className="text-4xl md:text-5xl font-bold text-[#0c1a2e] mb-2 font-manrope transition-colors duration-300 group-hover:text-[#4c69e4]">
-                    {stat.value}
-                  </span>
-                  <span className="text-slate-500 font-medium text-sm tracking-wide font-inter">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
       {/* ── WHAT WE TEST ───────────────────────── */}
-      <section className="py-20 md:py-32 px-6 relative z-10">
+      <section className="pt-8 pb-20 md:pt-12 md:pb-32 px-6 relative z-10">
         <div className="max-w-[1320px] mx-auto">
           <BlurFade delay={0.1}>
             <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
