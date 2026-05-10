@@ -30,7 +30,7 @@ export function AppSecHero() {
   }, []);
 
   return (
-    <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative pt-32 md:pt-40 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#4c69e4]/10 blur-[120px] rounded-full mix-blend-multiply opacity-70 pointer-events-none" />
