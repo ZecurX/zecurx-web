@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Clock,
@@ -127,6 +127,48 @@ function DescriptionToggle({ description, title, seminarType }: { description: s
             </AnimatePresence>
         </div>
     );
+}
+
+// CountUp component: animates numeric value on first viewport entry
+function CountUp({ value, suffix = "+", duration = 900 }: { value: string; suffix?: string; duration?: number }) {
+    const ref = useRef<HTMLSpanElement | null>(null);
+    const [display, setDisplay] = useState(value);
+    const played = useRef(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting && !played.current) {
+                    played.current = true;
+                    // parse number from value (strip non-digits)
+                    const numeric = parseInt(value.replace(/[^0-9]/g, "")) || 0;
+                    const start = 0;
+                    const startTime = performance.now();
+
+                    function tick(now: number) {
+                        const t = Math.min(1, (now - startTime) / duration);
+                        const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+                        const current = Math.round(start + (numeric - start) * eased);
+                        const formatted = current.toLocaleString();
+                        // preserve non-numeric suffixes like +
+                        setDisplay(formatted + (value.trim().endsWith(suffix) ? suffix : ""));
+                        if (t < 1) requestAnimationFrame(tick);
+                    }
+
+                    requestAnimationFrame(tick);
+                    observer.disconnect();
+                }
+            });
+        }, { threshold: 0.2 });
+
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [value, duration, suffix]);
+
+    return <span ref={ref}>{display}</span>;
 }
 
 // ─── Seminar Row ───────────────────────────────────────────
@@ -383,25 +425,55 @@ export default function SeminarsPage() {
                                     </div>
                                 ) : (
                                     /* Stats card when no upcoming session */
-                                    <div className="glass-card bg-white/60 border border-slate-200/60 rounded-3xl overflow-hidden shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
-                                        <div className="p-10 md:p-12 space-y-8">
-                                            <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-2">
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.5, ease: "easeOut" }}
+                                        className="glass-card bg-white/70 backdrop-blur-sm border border-slate-200/60 rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(12,26,46,0.08)]"
+                                    >
+                                        <div className="p-8 md:p-10 space-y-6">
+                                            <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-1">
                                                 Track Record
                                             </div>
-                                            <div className="grid gap-8">
+
+                                            <motion.div
+                                                initial="hidden"
+                                                whileInView="visible"
+                                                viewport={{ once: true, amount: 0.2 }}
+                                                variants={{
+                                                    hidden: {},
+                                                    visible: { transition: { staggerChildren: 0.08 } },
+                                                }}
+                                                className="grid grid-cols-2 gap-y-6 gap-x-6 items-center"
+                                            >
                                                 {[
-                                                    { value: "12+", label: "Institutions Trained" },
                                                     { value: "1,200+", label: "Students Certified" },
+                                                    { value: "12+", label: "Institutions Trained" },
                                                     { value: "8+", label: "Seminar Types" },
                                                 ].map((stat, i) => (
-                                                    <div key={i} className="flex items-center gap-6">
-                                                        <div className="text-4xl md:text-5xl font-manrope font-bold text-[#0c1a2e] w-24">{stat.value}</div>
-                                                        <div className="text-[15px] text-slate-500 font-inter font-medium">{stat.label}</div>
-                                                    </div>
+                                                    <motion.div
+                                                        key={i}
+                                                        className="col-span-2"
+                                                        variants={{
+                                                            hidden: { opacity: 0, y: 6 },
+                                                            visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+                                                        }}
+                                                        whileHover={{ y: -4 }}
+                                                        transition={{ type: "spring", stiffness: 280, damping: 26 }}
+                                                    >
+                                                        <div className="flex items-center gap-6 p-2 rounded-md hover:bg-white/40 transition-colors duration-200">
+                                                            <div className="text-4xl md:text-5xl font-manrope font-bold text-[#0c1a2e] w-[140px] md:w-[160px] shrink-0 text-right tabular-nums leading-tight">
+                                                                <CountUp value={stat.value} />
+                                                            </div>
+                                                            <div className="text-[15px] text-slate-500 font-inter font-medium min-w-0">
+                                                                {stat.label}
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
                                                 ))}
-                                            </div>
+                                            </motion.div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 )}
                             </div>
                         </BlurFade>
