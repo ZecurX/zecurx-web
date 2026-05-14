@@ -46,16 +46,26 @@ const Connector = ({
         />
         {/* Subtle Signal Flow Pulse */}
         <g className={cn("transition-opacity duration-700 ease-out", isActive ? "opacity-100" : "opacity-40")}>
-          <motion.path 
-            d={pathD} 
-            stroke="#4c69e4" 
-            strokeWidth="1.5" 
-            fill="none" 
-            vectorEffect="non-scaling-stroke"
-            style={{ pathLength: 0.3 }}
-            animate={{ pathOffset: [0, 1], opacity: [0, 1, 1, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          />
+          {isActive ? (
+            <motion.path 
+              d={pathD} 
+              stroke="#4c69e4" 
+              strokeWidth="1.5" 
+              fill="none" 
+              vectorEffect="non-scaling-stroke"
+              style={{ pathLength: 0.3 }}
+              animate={{ pathOffset: [0, 1], opacity: [0, 1, 1, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            />
+          ) : (
+            <path
+              d={pathD}
+              stroke="#4c69e4"
+              strokeWidth="1.5"
+              fill="none"
+              vectorEffect="non-scaling-stroke"
+            />
+          )}
         </g>
       </svg>
     </div>
