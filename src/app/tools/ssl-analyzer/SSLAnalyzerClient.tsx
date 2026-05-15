@@ -82,19 +82,19 @@ export default function SSLAnalyzerPage() {
                     <label htmlFor="domain" className="block text-sm font-medium text-foreground mb-3">
                         Target Domain
                     </label>
-                    <div className="flex gap-4 relative z-50 isolate">
+                    <div className="relative z-50 isolate flex flex-col gap-3 sm:flex-row sm:gap-4">
                         <input
                             type="text"
                             id="domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-5 py-4 bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text shadow-sm font-mono text-sm relative z-50"
+                            className="relative z-50 min-w-0 w-full sm:flex-1 px-5 py-4 bg-background/50 backdrop-blur-sm border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text shadow-sm font-mono text-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                            className="w-full sm:w-auto px-8 py-4 sm:py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center sm:min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -117,8 +117,8 @@ export default function SSLAnalyzerPage() {
                 {results && (
                     <div className="border-t border-border pt-8 space-y-8">
                         {/* Grade & Score */}
-                        <div className="flex items-center gap-6">
-                            <div className={`w-24 h-24 rounded-xl border flex items-center justify-center ${getGradeColor(results.grade)}`}>
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+                            <div className={`w-24 h-24 shrink-0 rounded-xl border flex items-center justify-center ${getGradeColor(results.grade)}`}>
                                 <span className="text-5xl font-bold">{results.grade}</span>
                             </div>
                             <div>
@@ -138,15 +138,15 @@ export default function SSLAnalyzerPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div className="p-4 bg-background rounded-lg border border-border">
                                     <p className="text-xs text-muted-foreground mb-1">Subject</p>
-                                    <p className="text-sm font-medium text-foreground truncate">{results.certificate.subject}</p>
+                                    <p className="text-sm font-medium text-foreground break-words">{results.certificate.subject}</p>
                                 </div>
                                 <div className="p-4 bg-background rounded-lg border border-border">
                                     <p className="text-xs text-muted-foreground mb-1">Issuer</p>
-                                    <p className="text-sm font-medium text-foreground">{results.certificate.issuer}</p>
+                                    <p className="text-sm font-medium text-foreground break-words">{results.certificate.issuer}</p>
                                 </div>
                                 <div className="p-4 bg-background rounded-lg border border-border">
                                     <p className="text-xs text-muted-foreground mb-1">Algorithm</p>
-                                    <p className="text-sm font-medium text-foreground">{results.certificate.signatureAlgorithm}</p>
+                                    <p className="text-sm font-medium text-foreground break-words">{results.certificate.signatureAlgorithm}</p>
                                 </div>
                                 <div className="p-4 bg-background rounded-lg border border-border">
                                     <p className="text-xs text-muted-foreground mb-1">Valid From</p>
@@ -158,7 +158,7 @@ export default function SSLAnalyzerPage() {
                                 </div>
                                 <div className="p-4 bg-background rounded-lg border border-border">
                                     <p className="text-xs text-muted-foreground mb-1">Serial Number</p>
-                                    <p className="text-sm font-mono text-foreground truncate">{results.certificate.serialNumber}</p>
+                                    <p className="text-sm font-mono text-foreground break-all">{results.certificate.serialNumber}</p>
                                 </div>
                             </div>
                         </div>
@@ -192,11 +192,11 @@ export default function SSLAnalyzerPage() {
                         <div>
                             <h4 className="text-sm font-medium text-foreground mb-3">Active Cipher Suite</h4>
                             <div className="p-4 bg-background rounded-lg border border-border">
-                                <div className="flex items-center gap-3 mb-2">
+                                <div className="flex items-start gap-3 mb-2">
                                     <Shield className="w-5 h-5 text-foreground" />
-                                    <span className="font-mono text-sm text-foreground">{results.ciphers.name}</span>
+                                    <span className="font-mono text-sm text-foreground break-all">{results.ciphers.name}</span>
                                 </div>
-                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                                     <span>Version: {results.ciphers.version}</span>
                                     <span>Strength: {results.ciphers.strength}</span>
                                 </div>

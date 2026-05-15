@@ -177,13 +177,9 @@ export default function CaseStudies({
                                                         <h3 className="text-3xl lg:text-4xl font-bold font-manrope text-[#0c1a2e] leading-tight mb-6 group-hover:text-[#4c69e4] transition-colors duration-300">
                                                             {study.heading}
                                                         </h3>
-                                                        <p className="text-slate-600 font-inter text-lg sm:text-xl leading-relaxed mb-8 italic">
+                                                        <p className="text-slate-600 font-inter text-lg sm:text-xl leading-relaxed mb-0 italic">
                                                             "{study.quote}"
                                                         </p>
-                                                        <footer className="flex flex-col">
-                                                            <span className="font-semibold font-inter text-[#0c1a2e] text-lg">{study.name}</span>
-                                                            <span className="text-base font-inter text-slate-500 mt-1">{study.role}</span>
-                                                        </footer>
                                                     </blockquote>
                                                 </figure>
 

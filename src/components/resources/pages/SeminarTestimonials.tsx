@@ -114,14 +114,6 @@ export default function SeminarTestimonials() {
     }, [isPaused, currentIndex, nextTestimonial]);
 
     const current = testimonials[currentIndex];
-    const initials = current.name
-        .split(" ")
-        .map((w) => w[0])
-        .filter(Boolean)
-        .slice(0, 2)
-        .join("")
-        .toUpperCase();
-
     return (
         <section className="relative py-20 md:py-32 bg-background overflow-hidden">
             <div className="absolute inset-0 pointer-events-none">
@@ -177,12 +169,7 @@ export default function SeminarTestimonials() {
                                 </p>
                             </blockquote>
 
-                            <div className="flex flex-col items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <span className="text-sm font-manrope font-bold text-primary">
-                                        {initials}
-                                    </span>
-                                </div>
+                            <div className="flex flex-col items-center gap-1.5 pt-2">
                                 <div>
                                     <div className="font-manrope font-bold text-[#0c1a2e] text-base">
                                         {current.name}
