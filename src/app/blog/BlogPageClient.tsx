@@ -58,6 +58,32 @@ export function BlogPageClient({
   labelSlug = "",
   error,
 }: BlogPageClientProps) {
+  const demoPost: BlogPost = {
+    id: "demo-post",
+    title: "Zero Trust in Practice: What Security Teams Miss",
+    slug: "zero-trust-in-practice",
+    excerpt:
+      "A practical look at zero trust rollouts, the overlooked control gaps, and how to prioritize fixes without slowing engineering.",
+    content:
+      "Zero trust is more than identity checks. It demands continuous validation, clear segmentation, and measurable control effectiveness across every workflow.",
+    featured_image_url: "",
+    published_at: new Date().toISOString(),
+    labels: [
+      {
+        blog_labels: {
+          id: "demo-label",
+          name: "Threat Intel",
+          slug: "threat-intel",
+          color: "#4c69e4",
+        },
+      },
+    ],
+    author: {
+      name: "ZecurX Labs",
+      email: "labs@zecurx.com",
+    },
+  };
+  const displayedPosts = posts && posts.length > 0 ? posts : [demoPost];
   if (error === "label_not_found" || error === "fetch_failed") {
     return (
       <div className="bg-[#f8fbff] min-h-screen relative overflow-hidden pt-32 pb-24 flex items-center justify-center">
@@ -130,36 +156,33 @@ export function BlogPageClient({
 
         <BlurFade delay={0.5}>
           <div className="mb-12 lg:mb-16">
-            <div className="flex flex-col lg:flex-row gap-6 items-center justify-between p-4 lg:p-6 bg-white/80 border border-slate-200/60 rounded-3xl backdrop-blur-xl shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
-              {/* Mobile: Horizontal Scroll, Desktop: Wrap */}
-              <div className="w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 -mx-4 px-4 lg:mx-0 lg:px-0 no-scrollbar">
-                <div className="flex lg:flex-wrap gap-2 lg:gap-3 min-w-max lg:min-w-0">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between p-4 lg:p-6 bg-white/80 border border-slate-200/60 rounded-3xl backdrop-blur-xl shadow-[0_18px_44px_rgba(30,58,95,0.05)]">
+              <div className="flex flex-wrap gap-2 lg:gap-3">
+                <Link
+                  href="/blog"
+                  className={cn(
+                    "px-5 py-2.5 rounded-full text-sm font-inter font-medium transition-all duration-300",
+                    !labelSlug
+                      ? "bg-[#4c69e4] text-white shadow-md border border-transparent"
+                      : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-[#0c1a2e] border border-slate-200",
+                  )}
+                >
+                  All Posts
+                </Link>
+                {allLabels?.map((label) => (
                   <Link
-                    href="/blog"
+                    key={label.id}
+                    href={`/blog?label=${label.slug}${search ? `&search=${search}` : ""}`}
                     className={cn(
-                      "px-5 py-2.5 rounded-full text-sm font-inter font-medium transition-all duration-300 whitespace-nowrap",
-                      !labelSlug
+                      "px-5 py-2.5 rounded-full text-sm font-inter font-medium transition-all duration-300",
+                      labelSlug === label.slug
                         ? "bg-[#4c69e4] text-white shadow-md border border-transparent"
                         : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-[#0c1a2e] border border-slate-200",
                     )}
                   >
-                    All Posts
+                    {label.name}
                   </Link>
-                  {allLabels?.map((label) => (
-                    <Link
-                      key={label.id}
-                      href={`/blog?label=${label.slug}${search ? `&search=${search}` : ""}`}
-                      className={cn(
-                        "px-5 py-2.5 rounded-full text-sm font-inter font-medium transition-all duration-300 whitespace-nowrap",
-                        labelSlug === label.slug
-                          ? "bg-[#4c69e4] text-white shadow-md border border-transparent"
-                          : "bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-[#0c1a2e] border border-slate-200",
-                      )}
-                    >
-                      {label.name}
-                    </Link>
-                  ))}
-                </div>
+                ))}
               </div>
 
               <form className="relative w-full lg:w-80 shrink-0">
@@ -178,82 +201,84 @@ export function BlogPageClient({
           </div>
         </BlurFade>
 
-        {posts && posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {posts.map((post, index) => (
+        {displayedPosts.length > 0 ? (
+          <div className="space-y-5 lg:space-y-6">
+            {displayedPosts.map((post, index) => (
               <BlurFade key={post.id} delay={0.2 + (0.1 * index)}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group h-full flex flex-col glass-card bg-white/50 border border-slate-200/60 rounded-3xl overflow-hidden hover:-translate-y-1 transition-all duration-300 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] relative"
+                  className="group glass-card bg-white/50 border border-slate-200/60 rounded-3xl overflow-hidden hover:-translate-y-1 transition-all duration-300 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] relative"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[#4c69e4]/5 blur-[40px] rounded-full group-hover:bg-[#4c69e4]/10 transition-colors pointer-events-none z-0" />
-                  
-                  <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden z-10 m-2 rounded-2xl">
-                    {post.featured_image_url ? (
-                      <Image
-                        src={post.featured_image_url}
-                        alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-[#f8fbff] flex items-center justify-center border border-blue-50">
-                        <TrendingUp className="w-12 h-12 text-[#4c69e4]/30" />
-                      </div>
-                    )}
 
-                    {post.labels.length > 0 && (
-                      <div className="absolute top-4 left-4 flex flex-wrap gap-2 z-20">
-                        {post.labels.slice(0, 2).map((l) => (
-                          <span
-                            key={l.blog_labels.id}
-                            className="px-3 py-1 text-[11px] font-space-grotesk font-semibold uppercase tracking-widest text-white rounded-full shadow-sm"
-                            style={{ backgroundColor: l.blog_labels.color || '#4c69e4' }}
-                          >
-                            {l.blog_labels.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-1 p-6 space-y-4 flex flex-col relative z-10">
-                    <div className="flex items-center gap-3 text-xs font-inter text-slate-500">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-[#4c69e4]" />
-                        <span>
-                          {post.published_at
-                            ? formatBlogDate(post.published_at)
-                            : ""}
-                        </span>
-                      </div>
-                      <span className="text-slate-300">•</span>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#4c69e4]" />
-                        <span>{calculateReadingTime(post.content)} min</span>
-                      </div>
-                    </div>
-
-                    <h3 className="text-xl font-bold font-manrope group-hover:text-[#4c69e4] transition-colors line-clamp-2 text-[#0c1a2e] leading-snug">
-                      {post.title}
-                    </h3>
-
-                    <p className="text-slate-600 text-[14px] font-inter leading-relaxed line-clamp-3 flex-grow">
-                      {post.excerpt ||
-                        post.content.replace(/<[^>]*>?/gm, "").substring(0, 150) +
-                          "..."}
-                    </p>
-
-                    <div className="pt-4 mt-auto border-t border-slate-100 flex items-center justify-between">
-                      {post.author && (
-                        <div className="text-xs font-inter font-medium text-slate-600">
-                          By <span className="text-[#0c1a2e]">{post.author.name}</span>
+                  <div className="relative z-10 flex flex-col md:flex-row gap-5 p-4 md:p-5">
+                    <div className="relative w-full md:w-56 lg:w-64 aspect-[16/10] bg-slate-100 overflow-hidden rounded-2xl shrink-0">
+                      {post.featured_image_url ? (
+                        <Image
+                          src={post.featured_image_url}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#f8fbff] flex items-center justify-center border border-blue-50">
+                          <TrendingUp className="w-12 h-12 text-[#4c69e4]/30" />
                         </div>
                       )}
-                      <div className="flex items-center gap-1 text-[#4c69e4] font-inter font-semibold text-[13px] group-hover:gap-2 transition-all duration-300">
-                        <span>Read</span>
-                        <ArrowRight className="w-4 h-4" />
+
+                      {post.labels.length > 0 && (
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-2 z-20">
+                          {post.labels.slice(0, 2).map((l) => (
+                            <span
+                              key={l.blog_labels.id}
+                              className="px-3 py-1 text-[11px] font-space-grotesk font-semibold uppercase tracking-widest text-white rounded-full shadow-sm"
+                              style={{ backgroundColor: l.blog_labels.color || "#4c69e4" }}
+                            >
+                              {l.blog_labels.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 space-y-3 md:space-y-4">
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-inter text-slate-500">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-[#4c69e4]" />
+                          <span>
+                            {post.published_at
+                              ? formatBlogDate(post.published_at)
+                              : ""}
+                          </span>
+                        </div>
+                        <span className="text-slate-300">•</span>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-[#4c69e4]" />
+                          <span>{calculateReadingTime(post.content)} min</span>
+                        </div>
+                      </div>
+
+                      <h3 className="text-2xl md:text-[26px] font-bold font-manrope group-hover:text-[#4c69e4] transition-colors line-clamp-2 text-[#0c1a2e] leading-snug">
+                        {post.title}
+                      </h3>
+
+                      <p className="text-slate-600 text-[15px] font-inter leading-relaxed line-clamp-3">
+                        {post.excerpt ||
+                          post.content.replace(/<[^>]*>?/gm, "").substring(0, 180) +
+                            "..."}
+                      </p>
+
+                      <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
+                        {post.author && (
+                          <div className="text-xs font-inter font-medium text-slate-600">
+                            By <span className="text-[#0c1a2e]">{post.author.name}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1 text-[#4c69e4] font-inter font-semibold text-[13px] group-hover:gap-2 transition-all duration-300">
+                          <span>Read</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
                       </div>
                     </div>
                   </div>

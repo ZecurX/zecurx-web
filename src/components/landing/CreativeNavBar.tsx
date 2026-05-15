@@ -395,21 +395,34 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <div className="p-6 space-y-2">
                                     {Object.entries(navData).map(([key, data]) => (
                                         <div key={key} className="border-b border-border/40 last:border-0">
-                                            <button
-                                                onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
-                                                className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground group"
-                                            >
-                                                {data.label}
-                                                <ChevronDown
-                                                    className={cn(
-                                                        "w-5 h-5 text-muted-foreground transition-transform duration-200",
-                                                        mobileExpanded === key ? "rotate-180" : "group-hover:text-foreground"
-                                                    )}
-                                                />
-                                            </button>
+                                            <div className="flex items-center justify-between gap-2 py-2">
+                                                <Link
+                                                    href={data.href}
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    className="flex-1 py-2 text-base font-medium text-foreground rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                                                >
+                                                    {data.label}
+                                                </Link>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
+                                                    className="inline-flex items-center justify-center w-11 h-11 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                                                    aria-label={`${mobileExpanded === key ? "Collapse" : "Expand"} ${data.label} menu`}
+                                                    aria-expanded={mobileExpanded === key}
+                                                    aria-controls={`mobile-submenu-${key}`}
+                                                >
+                                                    <ChevronDown
+                                                        className={cn(
+                                                            "w-5 h-5 transition-transform duration-200",
+                                                            mobileExpanded === key && "rotate-180"
+                                                        )}
+                                                    />
+                                                </button>
+                                            </div>
                                             <AnimatePresence>
                                                 {mobileExpanded === key && (
                                                     <motion.div
+                                                        id={`mobile-submenu-${key}`}
                                                         initial={{ height: 0, opacity: 0 }}
                                                         animate={{ height: "auto", opacity: 1 }}
                                                         exit={{ height: 0, opacity: 0 }}
