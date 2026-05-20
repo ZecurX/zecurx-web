@@ -12,7 +12,7 @@ import { DotPattern } from "@/components/ui/dot-pattern";
 interface ToolPageLayoutProps {
     title: string;
     description: string;
-    icon: LucideIcon;
+    icon?: LucideIcon;
     children: React.ReactNode;
     features?: string[];
 }
@@ -90,9 +90,11 @@ export default function ToolPageLayout({
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                             className="flex flex-col md:flex-row md:items-start gap-6 md:gap-8 mb-12 md:mb-16"
                         >
-                            <div className="p-4 md:p-5 bg-muted/50 rounded-2xl border border-border/40 text-[#4c69e4] w-max shadow-sm backdrop-blur-sm">
-                                <Icon className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
-                            </div>
+                            {Icon && (
+                                <div className="p-4 md:p-5 bg-muted/50 rounded-2xl border border-border/40 text-[#4c69e4] w-max shadow-sm backdrop-blur-sm">
+                                    <Icon className="w-8 h-8 md:w-10 md:h-10" strokeWidth={1.5} />
+                                </div>
+                            )}
                             <div className="flex-1">
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-manrope text-foreground tracking-tight mb-4" style={{ letterSpacing: "-0.02em" }}>
                                     {title.split(' ').slice(0, -1).join(' ')}{' '}

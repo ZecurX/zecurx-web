@@ -67,7 +67,7 @@ export default function HeaderScannerPage() {
         <ToolPageLayout
             title="Header Scanner"
             description="Analyze HTTP security headers to verify proper implementation of HSTS, CSP, X-Frame-Options, and more."
-            icon={FileSearch}
+            // icon={FileSearch}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
