@@ -66,7 +66,7 @@ export default function PortRadarPage() {
         <ToolPageLayout
             title="Port Radar"
             description="Identify open network service ports and running services to map potential attack vectors and vulnerabilities."
-            icon={Radar}
+            // icon={Radar}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
