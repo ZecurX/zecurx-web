@@ -75,7 +75,7 @@ export default function SSLAnalyzerPage() {
         <ToolPageLayout
             title="TLS/SSL Analyzer"
             description="Analyze SSL/TLS certificate configuration, verify encryption standards, and identify security weaknesses."
-            icon={Lock}
+            // icon={Lock}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
