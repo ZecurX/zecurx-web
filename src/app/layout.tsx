@@ -5,6 +5,7 @@ import {
   Space_Grotesk,
   Newsreader,
   Kalam,
+  Poppins,
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -15,6 +16,12 @@ import { CartProvider } from "@/context/CartContext";
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-poppins",
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -129,7 +136,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable}`}>
       <head>
         <link
           rel="preconnect"

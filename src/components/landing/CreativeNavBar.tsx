@@ -108,7 +108,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     priority
                                 />
                             </motion.div>
-                            <span className={cn("font-manrope font-semibold text-lg sm:text-xl leading-none tracking-tight", forceDark ? "text-white" : "text-foreground")}>
+                            <span className={cn("font-poppins font-semibold text-lg sm:text-xl leading-none tracking-normal", forceDark ? "text-white" : "text-foreground")}>
                                 ZecurX
                             </span>
                         </Link>
@@ -380,7 +380,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             className="object-contain"
                                         />
                                     </div>
-                                    <span className="font-manrope font-semibold text-lg leading-none tracking-tight">ZecurX</span>
+                                    <span className="font-poppins font-semibold text-lg leading-none tracking-normal">ZecurX</span>
                                 </Link>
                                 <button
                                     onClick={() => setMobileMenuOpen(false)}
