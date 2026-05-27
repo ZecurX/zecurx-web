@@ -9,7 +9,9 @@ const config: Config = {
     extend: {
       fontFamily: {
         exo2: ['var(--font-exo2)', 'sans-serif'],
-        poppins: ['var(--font-poppins)', 'sans-serif'],
+        // In the current Tailwind v4 CSS-first setup, additional font utilities
+        // must be declared in the CSS entrypoint `@theme` block (or that CSS
+        // must explicitly reference this config with `@config`).
       },
     },
   },
