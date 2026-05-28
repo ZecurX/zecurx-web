@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 
 export default function SmoothScrollProvider({
@@ -9,12 +10,12 @@ export default function SmoothScrollProvider({
     children: React.ReactNode;
 }) {
     const lenisRef = useRef<Lenis | null>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
-        // Initialize Lenis smooth scroll
         lenisRef.current = new Lenis({
             duration: 1.4,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Expo easing
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             orientation: 'vertical',
             gestureOrientation: 'vertical',
             smoothWheel: true,
@@ -23,7 +24,6 @@ export default function SmoothScrollProvider({
             autoResize: true,
         });
 
-        // Animation frame loop
         let frameId: number;
         function raf(time: number) {
             lenisRef.current?.raf(time);
@@ -32,12 +32,17 @@ export default function SmoothScrollProvider({
 
         frameId = requestAnimationFrame(raf);
 
-        // Cleanup
         return () => {
             cancelAnimationFrame(frameId);
             lenisRef.current?.destroy();
         };
     }, []);
+
+    useEffect(() => {
+        if (lenisRef.current) {
+            lenisRef.current.scrollTo(0, { immediate: true });
+        }
+    }, [pathname]);
 
     return <>{children}</>;
 }
