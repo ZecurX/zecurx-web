@@ -14,11 +14,6 @@ const logos = [
   { src: getCdnUrl('logos/IBM.webp'), alt: 'IBM', size: 'large' },
   { src: getCdnUrl('logos/MATEX.webp'), alt: 'Matex', size: 'large' },
   { src: getCdnUrl('logos/my-garden-v3.webp'), alt: 'My Garden', size: '' },
-  {
-    src: getCdnUrl('logos/st-claret-college.webp'),
-    alt: 'St. Claret College',
-    size: '',
-  },
 ];
 
 export function LogoCarouselBasic() {
