@@ -11,7 +11,7 @@ interface LottieAnimationProps {
 }
 
 type LottieComponent = React.ComponentType<{
-  lottieRef?: React.RefObject<LottieRefCurrentProps>;
+  lottieRef?: React.RefObject<LottieRefCurrentProps | null>;
   animationData: object;
   loop?: boolean;
   autoplay?: boolean;
