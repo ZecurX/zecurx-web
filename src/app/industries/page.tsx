@@ -23,7 +23,6 @@ import ReadyToSecureSection from "@/components/landing/ReadyToSecureSection";
 import IndustryHero from "@/components/industries/IndustryHero";
 import IndustryTabs from "@/components/industries/IndustryTabs";
 import CaseStudies from "@/components/industries/CaseStudies";
-import { CtaSection } from "@/components/cta-section";
 
 export default function IndustriesPage() {
   return (
