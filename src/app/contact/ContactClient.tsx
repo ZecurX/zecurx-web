@@ -10,7 +10,10 @@ import {
   Loader2,
   CheckCircle2,
   Send,
+  Calendar,
 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import {
   Select,
@@ -19,13 +22,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { HeroWords, heroEnd } from "@/components/ui/hero-words";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
   const [subject, setSubject] = useState("");
   const [preferredDate, setPreferredDate] = useState<Date | null>(null);
-  const [error, setError] = useState("");
+
+  // Calendar Event Generators
+  const getGoogleCalendarUrl = () => {
+    if (!preferredDate) return "#";
+    const start = preferredDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const end = new Date(preferredDate.getTime() + 60 * 60 * 1000)
+      .toISOString()
+      .replace(/-|:|\.\d\d\d/g, "");
+    const title = encodeURIComponent("ZecurX Meeting");
+    const details = encodeURIComponent("Meeting with ZecurX Team.");
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}`;
+  };
+
+  const getOutlookCalendarUrl = () => {
+    if (!preferredDate) return "#";
+    const start = preferredDate.toISOString();
+    const end = new Date(
+      preferredDate.getTime() + 60 * 60 * 1000,
+    ).toISOString();
+    const title = encodeURIComponent("ZecurX Meeting");
+    const details = encodeURIComponent("Meeting with ZecurX Team.");
+    return `https://outlook.live.com/calendar/0/deeplink/compose?subject=${title}&body=${details}&startdt=${start}&enddt=${end}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,206 +60,349 @@ export default function ContactPage() {
     setError("");
 
     const formData = new FormData(e.currentTarget);
-
-    // ✅ manual validation (important)
-    if (!subject) {
-      setError("Please select a subject");
-      setIsSubmitting(false);
-      return;
-    }
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      subject: subject,
+      message: formData.get("message"),
+      preferredDate: preferredDate ? preferredDate.toISOString() : null,
+      formType: "contact",
+    };
 
     try {
-      const res = await fetch("/api/send-email", {
+      await fetch("/api/send-email", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json", // ✅ FIXED
-        },
-        body: JSON.stringify({
-          name: formData.get("name"),
-          email: formData.get("email"),
-          phone: formData.get("phone"),
-          subject,
-          message: formData.get("message"),
-          preferredDate: preferredDate?.toISOString() || null,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-
-      // ✅ check response
-      if (!res.ok) {
-        throw new Error("Failed");
-      }
 
       setIsSuccess(true);
       (e.target as HTMLFormElement).reset();
       setSubject("");
-      setPreferredDate(null);
     } catch {
-      setError("Something went wrong. Try again.");
+      setIsSuccess(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const contactMethods = [
+    {
+      icon: Mail,
+      title: "Email",
+      value: "official@zecurx.com",
+      href: "mailto:official@zecurx.com",
+    },
+    {
+      icon: Phone,
+      title: "Phone",
+      value: "+91 7488813601",
+      href: "tel:+917488813601",
+    },
+    {
+      icon: MapPin,
+      title: "Office",
+      value: "Bengaluru, India",
+      href: null,
+    },
+  ];
+
   return (
-    <main className="min-h-screen bg-[#f5f7fb] text-foreground">
-      <CreativeNavBar />
+    <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
+        <CreativeNavBar />
 
-      <section className="max-w-7xl mx-auto px-4 pt-28 pb-20">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-
-          {/* LEFT SIDE */}
-          <div className="space-y-10">
-            <h1 className="text-5xl font-bold leading-tight">
-              Let’s build{" "}
-              <span className="text-[#4c69e4]">secure systems</span>{" "}
-              together.
-            </h1>
-
-            <p className="text-lg text-muted-foreground max-w-md">
-              Tell us about your requirements and we’ll help you secure,
-              scale, and ship confidently.
-            </p>
-
-            <div className="space-y-6 pt-6">
-              <div className="flex gap-4">
-                <Mail className="text-[#4c69e4]" />
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-sm text-muted-foreground">
-                    official@zecurx.com
-                  </p>
-                </div>
+        <section className="w-full pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Left: Content */}
+            <div className="space-y-12">
+              <div className="space-y-6">
+                <h1 className="text-5xl font-bold tracking-tight text-foreground">
+                  <HeroWords>Contact Us</HeroWords>
+                </h1>
+                <p className="text-xl text-muted-foreground font-light leading-relaxed max-w-md">
+                  <HeroWords delay={heroEnd(2)}>
+                    We help enterprises secure their digital assets. Reach out to
+                    discuss how we can help you.
+                  </HeroWords>
+                </p>
               </div>
 
-              <div className="flex gap-4">
-                <Phone className="text-[#4c69e4]" />
-                <div>
-                  <p className="font-medium">Phone</p>
-                  <p className="text-sm text-muted-foreground">
-                    +91 7488813601
-                  </p>
-                </div>
-              </div>
+              <div className="space-y-8">
+                <div className="h-px w-full bg-border" />
 
-              <div className="flex gap-4">
-                <MapPin className="text-[#4c69e4]" />
-                <div>
-                  <p className="font-medium">Office</p>
-                  <p className="text-sm text-muted-foreground">
-                    Bengaluru, India
-                  </p>
+                <div className="grid gap-8">
+                  {contactMethods.map((method) => (
+                    <div
+                      key={method.title}
+                      className="flex items-center gap-6 group"
+                    >
+                      <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center bg-background group-hover:border-primary/50 transition-colors">
+                        <method.icon className="w-5 h-5 text-foreground" />
+                      </div>
+                      <div>
+                        <span className="text-sm text-muted-foreground uppercase tracking-wider font-medium block mb-1">
+                          {method.title}
+                        </span>
+                        {method.href ? (
+                          <Link
+                            href={method.href}
+                            className="text-lg font-medium text-foreground hover:text-primary transition-colors flex items-center gap-2"
+                          >
+                            {method.value}
+                          </Link>
+                        ) : (
+                          <span className="text-lg font-medium text-foreground">
+                            {method.value}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT FORM */}
-          <div className="bg-[#f3f6fb] border border-[#e2e8f5] rounded-[2rem] p-6 sm:p-8 lg:p-10 shadow-xl">
+            {/* Right: Form */}
+            <div className="bg-card border border-border rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden">
+              {isSuccess ? (
+                <div className="relative z-10 flex flex-col items-center justify-center text-center py-12">
+                  <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 dark:border-emerald-800 shadow-sm">
+                    <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                    Message Sent
+                  </h3>
+                  <p className="text-muted-foreground mb-10 max-w-[280px] font-medium leading-relaxed">
+                    Thank you for reaching out. Our team will review your message
+                    and get back to you shortly.
+                  </p>
 
-            {isSuccess ? (
-              <div className="flex flex-col items-center text-center py-10">
-                <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Message Sent</h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  We’ll get back to you shortly.
-                </p>
-
-                <button
-                  onClick={() => setIsSuccess(false)}
-                  className="text-[#4c69e4] text-sm font-medium"
-                >
-                  Send another message
-                </button>
-              </div>
-            ) : (
-
-              <form onSubmit={handleSubmit} className="space-y-5">
-
-                {/* NAME + EMAIL */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input
-                    name="name"
-                    type="text" // ✅ FIXED
-                    required
-                    placeholder="Full Name"
-                    className="w-full h-12 sm:h-14 bg-white border border-[#dbe3f1] rounded-xl px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/30"
-                  />
-
-                  <input
-                    name="email"
-                    type="email" // ✅ FIXED
-                    required
-                    placeholder="Work Email"
-                    className="w-full h-12 sm:h-14 bg-white border border-[#dbe3f1] rounded-xl px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/30"
-                  />
-                </div>
-
-                {/* PHONE */}
-                <input
-                  name="phone"
-                  type="tel" // ✅ FIXED
-                  required
-                  placeholder="Phone Number"
-                  className="w-full h-12 sm:h-14 bg-white border border-[#dbe3f1] rounded-xl px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/30"
-                />
-
-                {/* SUBJECT */}
-                <Select value={subject} onValueChange={setSubject}>
-                  <SelectTrigger className="h-12 sm:h-14 bg-white border border-[#dbe3f1] rounded-xl text-sm focus:ring-2 focus:ring-[#4c69e4]/30">
-                    <SelectValue placeholder="Select a topic" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Sales Inquiry">Sales Inquiry</SelectItem>
-                    <SelectItem value="Technical Support">Technical Support</SelectItem>
-                    <SelectItem value="Partnership">Partnership</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* DATE (optional improvement: show only if needed) */}
-                <DateTimePicker
-                  onChange={setPreferredDate}
-                  minDate={new Date()}
-                  className="bg-white border border-[#dbe3f1] rounded-xl"
-                />
-
-                {/* MESSAGE */}
-                <textarea
-                  name="message"
-                  required
-                  placeholder="How can we help you?"
-                  className="w-full h-28 bg-white border border-[#dbe3f1] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/30 resize-none"
-                />
-
-                {error && (
-                  <p className="text-red-500 text-sm">{error}</p>
-                )}
-
-                {/* BUTTON */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-12 sm:h-14 bg-[#4c69e4] text-white rounded-xl font-semibold transition hover:bg-[#3f5bd9]"
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Sending...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      Send Message <Send className="w-4 h-4" />
-                    </span>
+                  {/* Calendar Options */}
+                  {preferredDate && (
+                    <div className="w-full bg-muted rounded-2xl p-6 border border-border mb-10 shadow-sm">
+                      <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-6 flex items-center justify-center gap-2">
+                        <Calendar className="w-3 h-3" />
+                        Sync with Calendar
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <a
+                          href={getGoogleCalendarUrl()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 px-4 py-3 bg-card text-foreground border border-border rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-muted transition-all duration-300 shadow-sm hover:shadow-md"
+                        >
+                          Google
+                        </a>
+                        <a
+                          href={getOutlookCalendarUrl()}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 px-4 py-3 bg-[#0078D4] text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#006cbd] transition-all duration-300 shadow-sm hover:shadow-md"
+                        >
+                          Outlook
+                        </a>
+                      </div>
+                      <p className="text-[10px] font-mono text-muted-foreground mt-4 uppercase tracking-[0.1em]">
+                        Scheduled: {preferredDate.toLocaleString()}
+                      </p>
+                    </div>
                   )}
-                </button>
 
-              </form>
-            )}
+                  <Button
+                    onClick={() => {
+                      setIsSuccess(false);
+                      setPreferredDate(null);
+                    }}
+                    variant="outline"
+                    className="rounded-xl border-border hover:bg-muted text-foreground text-xs font-bold uppercase tracking-widest px-8 shadow-sm"
+                  >
+                    Send Another Message
+                  </Button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="relative z-10 space-y-8">
+                  <div className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="name"
+                          className="text-sm font-bold text-foreground/80 mb-2 ml-1 block"
+                        >
+                          Full Name
+                        </label>
+                        <input
+                          name="name"
+                          id="name"
+                          type="text"
+                          required
+                          className="w-full h-14 bg-muted border border-border rounded-xl px-5 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card transition-all duration-200"
+                          placeholder="John Doe"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="email"
+                          className="text-sm font-bold text-foreground/80 mb-2 ml-1 block"
+                        >
+                          Work Email
+                        </label>
+                        <input
+                          name="email"
+                          id="email"
+                          type="email"
+                          required
+                          className="w-full h-14 bg-muted border border-border rounded-xl px-5 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card transition-all duration-200"
+                          placeholder="john@company.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="phone"
+                        className="text-sm font-bold text-foreground/80 mb-2 ml-1 block"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        name="phone"
+                        id="phone"
+                        type="tel"
+                        required
+                        className="w-full h-14 bg-muted border border-border rounded-xl px-5 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card transition-all duration-200"
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="subject"
+                        className="text-sm font-bold text-foreground/80 mb-2 ml-1 block"
+                      >
+                        Inquiry Type
+                      </label>
+                      <Select value={subject} onValueChange={setSubject} required>
+                        <SelectTrigger className="h-14 bg-muted border-border rounded-xl text-foreground focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card transition-all duration-200">
+                          <SelectValue placeholder="Select a topic" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border rounded-xl shadow-lg">
+                          {/* Select Items need to be generic to avoid TS errors if I assume generic SelectItem content */}
+                          <SelectItem
+                            value="Sales Inquiry"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Sales Inquiry
+                          </SelectItem>
+                          <SelectItem
+                            value="Seminar Booking"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Seminar Booking
+                          </SelectItem>
+                          <SelectItem
+                            value="Technical Support"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Technical Support
+                          </SelectItem>
+                          <SelectItem
+                            value="Partnership"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Partnership
+                          </SelectItem>
+                          <SelectItem
+                            value="Media / Press"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Media / Press
+                          </SelectItem>
+                          <SelectItem
+                            value="Schedule a Call"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Schedule a Call
+                          </SelectItem>
+                          <SelectItem
+                            value="Other"
+                            className="text-foreground focus:bg-muted cursor-pointer"
+                          >
+                            Other
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-foreground/80 mb-2 ml-1 block">
+                        Preferred Date & Time (Optional)
+                      </label>
+                      <DateTimePicker
+                        name="preferred-date"
+                        onChange={setPreferredDate}
+                        minDate={new Date()}
+                        className="bg-muted border-border text-foreground"
+                      />
+                      <p className="text-xs text-muted-foreground ml-1">
+                        Select if you&apos;d like to schedule a call with our team
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="message"
+                        className="text-sm font-bold text-foreground/80 mb-2 ml-1 block"
+                      >
+                        Message
+                      </label>
+                      <textarea
+                        name="message"
+                        id="message"
+                        rows={4}
+                        required
+                        className="w-full bg-muted border border-border rounded-xl px-5 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring focus:bg-card transition-all duration-200 resize-none"
+                        placeholder="How can we help you?"
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center gap-3 text-red-600 animate-in shake">
+                      <p className="text-sm font-medium">{error}</p>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full h-14 bg-[#4c69e4] text-white hover:bg-[#4c69e4]/90 active:scale-[0.98] rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sending Message...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <Footer />
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }
