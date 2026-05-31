@@ -99,18 +99,18 @@ function BookDemoContent() {
   };
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col lg:flex-row pt-24 lg:pt-0">
-      {/* Left Side: Content */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10">
-        <div className="max-w-xl space-y-8">
+    <section className="w-full pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        {/* Left Side: Content */}
+        <div className="space-y-12">
           <div>
-            <span className="inline-block px-4 py-1.5 rounded-full border border-border bg-foreground/5 text-sm font-medium text-muted-foreground mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full border border-[#4c69e4]/20 bg-[#4c69e4]/10 text-sm font-medium text-[#4c69e4] mb-6">
               Schedule a Demo
             </span>
             <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-foreground mb-6 relative z-20">
               <HeroWords>See ZecurX in</HeroWords>{" "}
               <HeroWords delay={heroEnd(3)}>
-                <span className="text-muted-foreground">Action.</span>
+                <span className="text-[#4c69e4]">Action.</span>
               </HeroWords>
             </h1>
             <p className="text-xl text-muted-foreground font-manrope font-normal leading-relaxed">
@@ -129,7 +129,7 @@ function BookDemoContent() {
               "Q&A with our security team",
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-foreground mt-1 shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-[#4c69e4] mt-1 shrink-0" />
                 <span className="text-lg text-foreground/80 font-light">
                   {item}
                 </span>
@@ -137,11 +137,9 @@ function BookDemoContent() {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Right Side: Form */}
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-24 relative z-10 lg:border-l lg:border-border bg-muted/50">
-        <div className="w-full max-w-lg bg-card border border-border rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative overflow-hidden">
+        {/* Right Side: Form */}
+        <div className="bg-card border border-border rounded-[2.5rem] p-8 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative">
           {isSuccess ? (
             <div className="relative z-10 flex flex-col items-center justify-center text-center py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/50 rounded-full flex items-center justify-center mb-6 border border-emerald-100 dark:border-emerald-800 shadow-sm">
@@ -190,7 +188,7 @@ function BookDemoContent() {
 
               <button
                 onClick={() => setIsSuccess(false)}
-                className="mt-10 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+                className="mt-8 px-8 py-3.5 rounded-xl border border-border hover:bg-muted text-foreground text-xs font-bold uppercase tracking-widest shadow-sm transition-all duration-300"
               >
                 New Request
               </button>
@@ -389,7 +387,7 @@ function BookDemoContent() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-16 bg-foreground text-background hover:bg-foreground/90 rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 bg-[#4c69e4] text-white hover:bg-[#4c69e4]/90 active:scale-[0.98] rounded-xl font-bold text-sm transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     <>
@@ -399,7 +397,7 @@ function BookDemoContent() {
                   ) : (
                     <>
                       Book Demo
-                      <MoveRight className="w-5 h-5" />
+                      <MoveRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -431,11 +429,15 @@ function BookDemoFallback() {
 export default function BookDemoClient() {
   return (
     <main className="bg-background min-h-screen text-foreground selection:bg-primary/30 relative overflow-hidden">
-      <CreativeNavBar />
-      <Suspense fallback={<BookDemoFallback />}>
-        <BookDemoContent />
-      </Suspense>
-      <Footer />
+      <div className="relative z-10 bg-background mb-[700px] md:mb-[420px]">
+        <CreativeNavBar />
+        <Suspense fallback={<BookDemoFallback />}>
+          <BookDemoContent />
+        </Suspense>
+      </div>
+      <div className="fixed inset-x-0 bottom-0 z-0">
+        <Footer />
+      </div>
     </main>
   );
 }
