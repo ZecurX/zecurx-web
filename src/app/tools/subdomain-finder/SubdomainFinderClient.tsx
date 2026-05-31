@@ -58,7 +58,7 @@ export default function SubdomainFinderPage() {
         <ToolPageLayout
             title="Subdomain Finder"
             description="Discover hidden subdomains and map the complete attack surface of any target domain using advanced enumeration techniques."
-            icon={Search}
+            // icon={Search}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>

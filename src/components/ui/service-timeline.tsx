@@ -76,11 +76,8 @@ export function ServiceTimeline({ items }: ServiceTimelineProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
-    <div className="w-full max-w-5xl mx-auto relative pt-4 md:pt-12 md:pb-12">
-      {/* Left Line for Mobile (< md) */}
-      <div className="absolute left-[31px] top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-slate-200 to-transparent md:hidden z-0" />
-
-      <div className="space-y-12 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16 md:gap-y-16 relative z-10">
+    <div className="w-full max-w-5xl mx-auto relative pt-6 md:pt-12 md:pb-12 px-4 md:px-6">
+      <div className="flex flex-col gap-8 md:grid md:grid-cols-2 md:gap-x-16 md:gap-y-16 relative z-10">
         {items.map((item, idx) => {
           // U-shape workflow order for md+ (1 -> 2 -> 3 -> 4)
           const orderClass = 
@@ -100,26 +97,22 @@ export function ServiceTimeline({ items }: ServiceTimelineProps) {
               key={idx}
               className={cn(
                 "relative flex items-center md:items-stretch group",
-                "flex-row md:flex-col",
+                "flex-col",
                 orderClass
               )}
             >
-              {/* Intelligent Workflow Connectors */}
+              {/* Intelligent Workflow Connectors (Desktop) */}
               {idx === 0 && <Connector direction="right" isActive={hoveredIdx === 0 || hoveredIdx === 1} />}
               {idx === 1 && <Connector direction="down" isActive={hoveredIdx === 1 || hoveredIdx === 2} />}
               {idx === 2 && <Connector direction="left" isActive={hoveredIdx === 2 || hoveredIdx === 3} />}
 
-              {/* Mobile Node (< md) */}
-              <div 
-                className={cn(
-                  "absolute left-[31px] top-12 -translate-x-1/2 flex-shrink-0 z-10 md:hidden",
-                  "w-2 h-2 rounded-full bg-[#cbd5e1]",
-                  "transition-all duration-300 group-hover:bg-[#4c69e4] group-hover:shadow-[0_0_8px_rgba(76,105,228,0.5)]"
-                )}
-              />
+              {/* Mobile Vertical Connector */}
+              {idx < items.length - 1 && (
+                <div className="md:hidden absolute -bottom-8 left-1/2 -translate-x-1/2 w-px h-8 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-200 z-0" />
+              )}
 
               {/* Content Card Container */}
-              <div className={cn("w-full flex h-full", "pl-16 md:pl-0")}>
+              <div className="w-full flex h-full">
                 <div className="relative w-full h-full group/card transition-transform duration-700 ease-out hover:-translate-y-[2px]">
                   
                   {/* Default Border & Shadow */}
