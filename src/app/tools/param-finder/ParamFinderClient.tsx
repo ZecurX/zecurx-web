@@ -50,7 +50,7 @@ export default function ParamFinderPage() {
         <ToolPageLayout
             title="Param Finder"
             description="Detect hidden URL parameters that may be vulnerable to injection attacks like XSS, SQLi, and SSRF."
-            icon={Code2}
+            // icon={Code2}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>

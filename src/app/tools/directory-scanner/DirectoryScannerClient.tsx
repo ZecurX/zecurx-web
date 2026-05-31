@@ -68,7 +68,7 @@ export default function DirectoryScannerPage() {
         <ToolPageLayout
             title="Directory Scanner"
             description="Discover hidden directories, backup files, and sensitive paths on web servers using intelligent wordlists."
-            icon={FolderSearch}
+            // icon={FolderSearch}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>

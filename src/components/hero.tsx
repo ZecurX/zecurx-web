@@ -96,7 +96,7 @@ export function Hero() {
             {/* CTAs - Large touch targets (min 44px), proper spacing */}
             <BlurFade delay={0.4} inView={true} direction="up">
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
-                <Link href="/contact" className="group/cta pb-[5px] inline-block">
+                <Link href="/book-demo" className="group/cta pb-[5px] inline-block">
                   <button
                     className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-7 sm:px-8 py-4 sm:py-3.5 text-base sm:text-sm font-semibold font-inter cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
                     style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
