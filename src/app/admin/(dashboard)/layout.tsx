@@ -126,6 +126,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             visible: hasPermission(userInfo.role, RESOURCES.SEMINARS, ACTIONS.READ)
         },
         {
+            href: "/admin/bulk-email",
+            label: "Bulk Email Campaigns",
+            icon: "Mail",
+            visible: hasPermission(userInfo.role, RESOURCES.BULK_EMAIL, ACTIONS.READ)
+        },
+        {
             href: "/admin/audit",
             label: "Audit Logs",
             icon: "ScrollText",
