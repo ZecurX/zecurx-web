@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     stars: 5,
   },
   {
-    text: "Working with ZecurX on our security assessment was seamless. They identified critical gaps in our infrastructure and provided clear, actionable remediation steps.",
+    text: "Our collaboration with ZecurX for cybersecurity training delivered excellent results. The structured curriculum, engaging sessions, and practical exercises provided learners with valuable industry-relevant knowledge and skills.",
     image: `${CDN_URL}/logos/IBM.webp`,
     name: "IBM",
     role: "Technology Partner",
