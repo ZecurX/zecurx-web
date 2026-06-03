@@ -30,7 +30,7 @@ export function useLottieData(src: string, options: UseLottieDataOptions = {}) {
       const data = await response.json();
       setAnimationData(data);
       setLoading(false);
-    } catch (err) {
+    } catch (_err) {
       console.warn(`Lottie fetch failed (attempt ${retryCount + 1}/${maxRetries}):`, src);
       
       if (retryCount < maxRetries - 1) {
