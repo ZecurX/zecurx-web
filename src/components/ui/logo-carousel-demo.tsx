@@ -39,10 +39,10 @@ export function LogoCarouselBasic() {
                 className={`
                   ${logo.size === 'large' ? 'h-24 md:h-32' : 'h-20 md:h-24'}
                   w-auto object-contain
-                  opacity-100 grayscale-0
+                  grayscale-0 opacity-100
                   lg:grayscale lg:opacity-50
-                  lg:group-hover:grayscale-0
-                  lg:group-hover:opacity-100
+                  lg:hover:grayscale-0
+                  lg:hover:opacity-100
                   transition-all duration-300
                 `}
               />
