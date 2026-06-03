@@ -33,7 +33,7 @@ const featuredResources = [
     shortDesc: "Latest insights",
     description:
       "Stay ahead of the curve with expert analysis on the dynamic cybersecurity landscape. Our engineers break down the latest threat vectors.",
-    href: "/resources/blog",
+    href: "/blog",
   },
   {
     type: "Whitepapers",
@@ -94,9 +94,9 @@ export default function ResourcesClient() {
   return (
     <main className="bg-[#f8fbff] min-h-screen relative overflow-hidden">
       <CreativeNavBar />
-      
+
       <div className="relative z-10 bg-[#f8fbff] mb-[700px] md:mb-[420px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)]">
-        
+
         {/* Hero Section */}
         <section className="relative w-full pt-32 pb-20 md:pt-40 md:pb-32 px-4 overflow-hidden">
           <div className="absolute inset-0 z-0">
@@ -113,13 +113,13 @@ export default function ResourcesClient() {
                   </span>
                 </div>
               </BlurFade>
-              
+
               <BlurFade delay={0.2}>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-manrope text-[#0c1a2e] mb-6 tracking-tight leading-[1.1]">
                   Expert <span className="text-[#4c69e4]">Knowledge</span> & Insights
                 </h1>
               </BlurFade>
-              
+
               <BlurFade delay={0.3}>
                 <p className="text-lg md:text-xl text-slate-600 font-inter mb-10 max-w-2xl mx-auto md:mx-0 leading-relaxed">
                   Stay informed with expert insights, technical research, real-world case studies, and education from ZecurX professionals.
@@ -154,7 +154,7 @@ export default function ResourcesClient() {
                   <Link href={item.href} className="group block h-full">
                     <div className="glass-card rounded-3xl p-8 h-full flex flex-col border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 ease-out bg-white/50 relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-[#4c69e4]/5 blur-[40px] rounded-full group-hover:bg-[#4c69e4]/10 transition-colors" />
-                      
+
                       <div className="relative z-10 flex flex-col h-full">
                         <div className="mb-6 flex justify-between items-start">
                           <div className="w-12 h-12 rounded-2xl bg-[#f8fbff] flex items-center justify-center border border-blue-100 text-[#4c69e4] group-hover:scale-110 transition-transform duration-300">
@@ -164,15 +164,15 @@ export default function ResourcesClient() {
                             {item.type}
                           </span>
                         </div>
-                        
+
                         <h3 className="text-2xl font-manrope font-bold text-[#0c1a2e] mb-4 group-hover:text-[#4c69e4] transition-colors">
                           {item.title}
                         </h3>
-                        
+
                         <p className="text-slate-500 font-inter text-[15px] leading-relaxed mb-8 flex-grow">
                           {item.description}
                         </p>
-                        
+
                         <div className="pt-6 border-t border-slate-100 flex items-center justify-between mt-auto">
                           <span className="text-[13px] font-inter font-semibold text-[#1e3a5f] group-hover:text-[#4c69e4] transition-colors">
                             Explore
@@ -226,7 +226,7 @@ export default function ResourcesClient() {
           <BlurFade delay={0.2}>
             <div className="max-w-5xl mx-auto glass-card rounded-3xl p-10 md:p-16 border border-white/70 shadow-[0_18px_44px_rgba(30,58,95,0.10)] relative overflow-hidden text-center bg-white/40">
               <div className="absolute inset-0 bg-gradient-to-b from-[#dbeafe]/30 to-transparent pointer-events-none" />
-              
+
               <div className="relative z-10">
                 <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
                   Ready to secure your <span className="text-[#4c69e4] font-caveat">future?</span>
@@ -249,7 +249,7 @@ export default function ResourcesClient() {
         </section>
 
       </div>
-      
+
       <div className="fixed inset-x-0 bottom-0 z-0">
         <Footer />
       </div>

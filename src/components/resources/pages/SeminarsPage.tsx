@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { MagicCard } from "@/components/ui/magic-card";
 import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import Link from "next/link";
 import TrustedPartners from "@/components/landing/TrustedPartners";
@@ -429,50 +430,63 @@ export default function SeminarsPage() {
                                         initial={{ opacity: 0, y: 8 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.5, ease: "easeOut" }}
-                                        className="glass-card bg-white/70 backdrop-blur-sm border border-slate-200/60 rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(12,26,46,0.08)]"
+                                        className="rounded-3xl"
                                     >
-                                        <div className="p-8 md:p-10 space-y-6">
-                                            <div className="inline-flex items-center gap-2 bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-1">
-                                                Track Record
-                                            </div>
+                                        <MagicCard
+                                            mode="orb"
+                                            glowFrom="#4c69e4"
+                                            glowTo="#92c4fd"
+                                            glowSize={520}
+                                            glowBlur={72}
+                                            glowOpacity={0.78}
+                                            gradientFrom="#4c69e4"
+                                            gradientTo="#92c4fd"
+                                            className="glass-card bg-transparent backdrop-blur-sm rounded-3xl overflow-hidden shadow-[0_22px_70px_rgba(76,105,228,0.16)]"
+                                        >
+                                            <div className="relative p-8 md:p-10 space-y-6">
+                                                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(76,105,228,0.34),transparent_42%),radial-gradient(circle_at_100%_100%,rgba(146,196,253,0.34),transparent_46%),linear-gradient(135deg,rgba(238,244,255,0.86),rgba(255,255,255,0.58)_48%,rgba(219,234,254,0.82))]" />
+                                                <div className="relative inline-flex items-center gap-2 bg-white/70 text-slate-600 px-3 py-1.5 rounded-full text-[11px] font-space-grotesk font-semibold uppercase tracking-widest mb-4 shadow-sm ring-1 ring-white/80">
+                                                    Track Record
+                                                </div>
 
-                                            <motion.div
-                                                initial="hidden"
-                                                whileInView="visible"
-                                                viewport={{ once: true, amount: 0.2 }}
-                                                variants={{
-                                                    hidden: {},
-                                                    visible: { transition: { staggerChildren: 0.08 } },
-                                                }}
-                                                className="grid grid-cols-2 gap-y-6 gap-x-6 items-center"
-                                            >
-                                                {[
-                                                    { value: "1,200+", label: "Students Certified" },
-                                                    { value: "12+", label: "Institutions Trained" },
-                                                    { value: "8+", label: "Seminar Types" },
-                                                ].map((stat, i) => (
-                                                    <motion.div
-                                                        key={i}
-                                                        className="col-span-2"
-                                                        variants={{
-                                                            hidden: { opacity: 0, y: 6 },
-                                                            visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-                                                        }}
-                                                        whileHover={{ y: -4 }}
-                                                        transition={{ type: "spring", stiffness: 280, damping: 26 }}
-                                                    >
-                                                        <div className="flex items-center gap-6 p-2 rounded-md hover:bg-white/40 transition-colors duration-200">
-                                                            <div className="text-4xl md:text-5xl font-manrope font-bold text-[#0c1a2e] w-[140px] md:w-[160px] shrink-0 text-right tabular-nums leading-tight">
-                                                                <CountUp value={stat.value} />
+                                                <motion.div
+                                                    initial="hidden"
+                                                    whileInView="visible"
+                                                    viewport={{ once: true, amount: 0.2 }}
+                                                    variants={{
+                                                        hidden: {},
+                                                        visible: { transition: { staggerChildren: 0.08 } },
+                                                    }}
+                                                    className="relative grid grid-cols-2 gap-y-4 gap-x-6 items-center"
+                                                >
+                                                    {[
+                                                        { value: "1,200+", label: "Students Certified" },
+                                                        { value: "12+", label: "Institutions Trained" },
+                                                        { value: "8+", label: "Seminar Types" },
+                                                    ].map((stat, i) => (
+                                                        <motion.div
+                                                            key={i}
+                                                            className="col-span-2"
+                                                            variants={{
+                                                                hidden: { opacity: 0, y: 6 },
+                                                                visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+                                                            }}
+                                                            whileHover={{ y: -4 }}
+                                                            transition={{ type: "spring", stiffness: 280, damping: 26 }}
+                                                        >
+                                                            <div className="flex items-center gap-6 rounded-2xl border border-white/60 bg-white/28 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition-all duration-200 hover:border-white/90 hover:bg-white/60 hover:shadow-[0_14px_34px_rgba(76,105,228,0.12)]">
+                                                                <div className="text-4xl md:text-5xl font-manrope font-bold text-[#0c1a2e] w-[130px] md:w-[150px] shrink-0 text-right tabular-nums leading-tight">
+                                                                    <CountUp value={stat.value} />
+                                                                </div>
+                                                                <div className="text-[15px] text-slate-600 font-inter font-semibold min-w-0">
+                                                                    {stat.label}
+                                                                </div>
                                                             </div>
-                                                            <div className="text-[15px] text-slate-500 font-inter font-medium min-w-0">
-                                                                {stat.label}
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                ))}
-                                            </motion.div>
-                                        </div>
+                                                        </motion.div>
+                                                    ))}
+                                                </motion.div>
+                                            </div>
+                                        </MagicCard>
                                     </motion.div>
                                 )}
                             </div>
