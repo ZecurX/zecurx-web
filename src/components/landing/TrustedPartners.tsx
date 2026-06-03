@@ -97,7 +97,7 @@ export default function TrustedPartners() {
   return (
     <section className="pt-10 md:pt-14 pb-14 md:pb-20 bg-background border-t border-border/40 overflow-hidden select-none">
       <div className="max-w-7xl mx-auto px-4 md:px-6 text-center">
-        <p className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground/70 mb-4 md:mb-6">
+        <p className="inline-flex items-center rounded-md bg-[#1e3a5f] px-3 py-1 text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] text-white mb-3 md:mb-6">
           Empowering Security Across Institutions
         </p>
         <h2 className="text-3xl md:text-5xl font-bold mb-10 md:mb-14 text-foreground tracking-tight">
@@ -108,7 +108,7 @@ export default function TrustedPartners() {
 
       {/* Full-width marquee — edge fades only at the very edges */}
       <div 
-        className="w-full overflow-hidden py-4 select-none relative"
+        className="w-full overflow-hidden pt-0 pb-4 md:py-4 select-none relative"
         style={{
           WebkitMaskImage: "linear-gradient(to right, transparent, white 3%, white 97%, transparent)",
           maskImage: "linear-gradient(to right, transparent, white 3%, white 97%, transparent)",
