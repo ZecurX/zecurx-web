@@ -137,7 +137,7 @@ export function ServicesHeroSection() {
               }}
             >
               <Link
-                href="/contact"
+                href="/book-demo"
                 className="group inline-flex items-center justify-center px-8 py-4 bg-[#4c69e4] text-white font-inter font-semibold rounded-full hover:opacity-90 transition-all text-base md:text-lg"
               >
                 Get Started

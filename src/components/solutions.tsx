@@ -1,20 +1,29 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import type { LottieRefCurrentProps } from "lottie-react";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { LottieAnimation } from "@/components/ui/lottie-animation";
-import { getCdnUrl } from "@/lib/cdn";
 import {
   HighlightText,
   type DescriptionPart,
 } from "@/components/ui/highlight-text";
+import vulnManagementData from "../../public/lottie/vulnman.json";
+import secureSdlcData from "../../public/lottie/sdlc.json";
+import zeroTrustData from "../../public/lottie/zerotrust.json";
+import observabilityData from "../../public/lottie/obsv.json";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+
+type LottieData = Record<string, unknown>;
 
 const SOLUTIONS: {
   id: string;
   title: string;
   description: DescriptionPart[];
   href: string;
-  lottie: string;
+  lottie: LottieData;
 }[] = [
   {
     id: "vulnerability-management",
@@ -27,7 +36,7 @@ const SOLUTIONS: {
       ".",
     ],
     href: "/",
-    lottie: getCdnUrl("lottie/vulnman.json"),
+    lottie: vulnManagementData,
   },
   {
     id: "secure-sdlc",
@@ -38,7 +47,7 @@ const SOLUTIONS: {
       ". Build the gates into the pipeline — not around it.",
     ],
     href: "/",
-    lottie: getCdnUrl("lottie/sdlc.json"),
+    lottie: secureSdlcData,
   },
   {
     id: "zero-trust-architecture",
@@ -49,7 +58,7 @@ const SOLUTIONS: {
       ". Trust nothing. Verify everything.",
     ],
     href: "/",
-    lottie: getCdnUrl("lottie/zerotrust.json"),
+    lottie: zeroTrustData,
   },
   {
     id: "security-observability",
@@ -60,9 +69,35 @@ const SOLUTIONS: {
       ". See what matters, when it matters.",
     ],
     href: "/",
-    lottie: getCdnUrl("lottie/obsv.json"),
+    lottie: observabilityData,
   },
 ];
+
+function SolutionLottie({
+  animationData,
+  className,
+  speed = 1,
+}: {
+  animationData: LottieData;
+  className?: string;
+  speed?: number;
+}) {
+  const lottieRef = useRef<LottieRefCurrentProps>(null);
+
+  useEffect(() => {
+    lottieRef.current?.setSpeed(speed);
+  }, [speed, animationData]);
+
+  return (
+    <Lottie
+      lottieRef={lottieRef}
+      animationData={animationData}
+      loop
+      autoplay
+      className={className}
+    />
+  );
+}
 
 export function Solutions() {
   return (
@@ -121,8 +156,8 @@ export function Solutions() {
                     }`}
                   >
                     <div className="flex h-14 w-14 shrink-0 items-center justify-center md:h-auto md:w-full md:aspect-square">
-                      <LottieAnimation
-                        src={solution.lottie}
+                      <SolutionLottie
+                        animationData={solution.lottie}
                         className="h-full w-full"
                         speed={0.5}
                       />

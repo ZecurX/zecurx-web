@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
 import { motion, useScroll, useTransform } from "framer-motion";
+import logoText from "../../../design/images/raw/logo-text.png";
 
 const footerLinks = {
   Services: [
@@ -61,7 +62,7 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 md:gap-3"
+              className="inline-flex items-center gap-1 md:gap-2"
               aria-label="ZecurX Home"
             >
               <div className="relative w-10 md:w-14 h-10 md:h-14">
@@ -72,9 +73,13 @@ export default function Footer() {
                   className="object-contain"
                 />
               </div>
-              <span className="font-manrope text-lg md:text-2xl font-semibold text-slate-900">
-                ZecurX
-              </span>
+              <Image
+                src={logoText}
+                alt="ZecurX"
+                width={256}
+                height={74}
+                className="h-5 w-auto md:h-6 lg:h-7 object-contain"
+              />
             </Link>
             <p className="mt-2 md:mt-4 max-w-xs text-xs md:text-sm leading-relaxed text-slate-600">
               Security &amp; Technology That Grows With You.
