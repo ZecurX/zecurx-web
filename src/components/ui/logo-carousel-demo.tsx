@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { getCdnUrl } from '@/lib/cdn';
 import { InfiniteSlider } from './infinite-slider';
 
-const logos = [
+const baseLogos = [
   { src: getCdnUrl('logos/GURUDEV.webp'), alt: 'Gurudev', size: '' },
   {
     src: `${getCdnUrl('logos/HONEY-HERBAL.webp')}?v=4`,
@@ -16,6 +16,8 @@ const logos = [
   { src: getCdnUrl('logos/my-garden-v3.webp'), alt: 'My Garden', size: '' },
 ];
 
+const logos = Array.from({ length: 4 }, () => baseLogos).flat();
+
 export function LogoCarouselBasic() {
   return (
     <section className="relative z-10 w-full pt-8 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-12">
@@ -23,10 +25,10 @@ export function LogoCarouselBasic() {
         <p className="text-center text-muted-foreground text-sm font-medium mb-8">
           Trusted by
         </p>
-        <InfiniteSlider gap={48} duration={30} durationOnHover={60}>
-          {logos.map((logo) => (
+        <InfiniteSlider gap={18} duration={30} durationOnHover={60}>
+          {logos.map((logo, index) => (
             <div
-              key={logo.alt}
+              key={`${logo.alt}-${index}`}
               className="flex items-center justify-center group shrink-0"
             >
               <Image
@@ -34,7 +36,7 @@ export function LogoCarouselBasic() {
                 alt={logo.alt}
                 width={200}
                 height={72}
-                className={`${logo.size === 'large' ? 'h-16 md:h-20' : 'h-12 md:h-14'} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
+                className={`${logo.size === 'large' ? 'h-24 md:h-32' : 'h-20 md:h-24'} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
               />
             </div>
           ))}
