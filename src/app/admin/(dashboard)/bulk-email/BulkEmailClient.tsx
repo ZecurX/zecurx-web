@@ -363,7 +363,7 @@ function RecipientListModal({ audienceTypes, customRecipients, onApply, onClose 
     const toggleOne = (email: string) =>
         setSelectedEmails(prev => {
             const next = new Set(prev);
-            next.has(email) ? next.delete(email) : next.add(email);
+            if (next.has(email)) next.delete(email); else next.add(email);
             return next;
         });
 
@@ -598,7 +598,7 @@ function ConfirmSendModal({
     const toggleOne = (email: string) =>
         setSelectedEmails(prev => {
             const next = new Set(prev);
-            next.has(email) ? next.delete(email) : next.add(email);
+            if (next.has(email)) next.delete(email); else next.add(email);
             return next;
         });
 
