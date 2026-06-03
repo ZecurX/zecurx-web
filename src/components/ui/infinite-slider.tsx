@@ -44,10 +44,13 @@ export function InfiniteSlider({
 
     useEffect(() => {
         let controls;
-        const size = direction === 'horizontal' ? width : height;
-        const contentSize = size + gap;
-        const from = reverse ? -contentSize / 2 : 0;
-        const to = reverse ? 0 : -contentSize / 2;
+        const contentSize = direction === 'horizontal' ? width : height;
+        const from = reverse ? -contentSize : 0;
+        const to = reverse ? 0 : -contentSize;
+
+        if (!contentSize) {
+            return;
+        }
 
         if (isTransitioning) {
             controls = animate(translation, [translation.get(), to], {
@@ -66,9 +69,6 @@ export function InfiniteSlider({
                 repeat: Infinity,
                 repeatType: 'loop',
                 repeatDelay: 0,
-                onRepeat: () => {
-                    translation.set(from);
-                },
             });
         }
 
@@ -106,14 +106,30 @@ export function InfiniteSlider({
                     ...(direction === 'horizontal'
                         ? { x: translation }
                         : { y: translation }),
-                    gap: `${gap}px`,
                     flexDirection: direction === 'horizontal' ? 'row' : 'column',
                 }}
-                ref={ref}
                 {...hoverProps}
             >
-                {children}
-                {children}
+                <div
+                    ref={ref}
+                    className={cn(
+                        'flex shrink-0 items-center',
+                        direction === 'horizontal' ? 'flex-row' : 'flex-col'
+                    )}
+                    style={{ gap: `${gap}px` }}
+                >
+                    {children}
+                </div>
+                <div
+                    aria-hidden="true"
+                    className={cn(
+                        'flex shrink-0 items-center',
+                        direction === 'horizontal' ? 'flex-row' : 'flex-col'
+                    )}
+                    style={{ gap: `${gap}px` }}
+                >
+                    {children}
+                </div>
             </motion.div>
         </div>
     );
