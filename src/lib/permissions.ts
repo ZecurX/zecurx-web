@@ -47,6 +47,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'system_test:*',
     'users:*',
     'settings:*',
+    'bulk_email:*',
   ],
 
   [ROLES.SALES]: [
