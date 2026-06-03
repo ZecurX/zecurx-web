@@ -55,14 +55,14 @@ const partners: Partner[] = [
     name: "RIBS",
     logo: `${CDN_BASE}/ribs.png`,
     invertInLight: false,
-    scale: 1.55,
+    scale: 1.35,
     translateY: -3
   },
   { 
     name: "KGI", 
     logo: `${CDN_BASE}/kgi-light-logo.png`, 
     invertInLight: true,
-    scale: 1.3
+    scale: 1.2
   },
   {
     name: "Sapthagiri",
@@ -90,7 +90,6 @@ const partners: Partner[] = [
   },
 ];
 
-// 6x repetition — guarantees the track is always packed solid with logos
 const marqueePartners = Array(6).fill(partners).flat();
 
 export default function TrustedPartners() {
@@ -106,8 +105,7 @@ export default function TrustedPartners() {
         </h2>
       </div>
 
-      {/* Full-width marquee — edge fades only at the very edges */}
-      <div 
+      <div
         className="w-full overflow-hidden py-4 select-none relative"
         style={{
           WebkitMaskImage: "linear-gradient(to right, transparent, white 3%, white 97%, transparent)",
@@ -116,10 +114,10 @@ export default function TrustedPartners() {
       >
         <motion.div
           aria-label="Trusted by partner logos marquee"
-          className="flex w-max items-center will-change-transform transform-gpu"
-          initial={false}
-          animate={{ x: ["-16.66%", "-33.33%"] }}
-          transition={{ duration: 18, ease: "linear", repeat: Infinity }}
+          className="flex w-max items-center will-change-transform"
+          initial={{ x: 0 }}
+          animate={{ x: "-50%" }}
+          transition={{ duration: 60, ease: "linear", repeat: Infinity }}
         >
           {marqueePartners.map((partner, i) => {
             const isDuplicate = i >= partners.length;
@@ -127,34 +125,30 @@ export default function TrustedPartners() {
             const ty = partner.translateY ?? 0;
 
             return (
-              <div 
-                key={`${partner.name}-${i}`} 
-                className="flex items-center shrink-0"
+              <div
+                key={`${partner.name}-${i}`}
+                className="flex items-center shrink-0 px-6 md:px-8"
               >
-                <div
-                  className="group relative flex shrink-0 items-center justify-center cursor-pointer"
-                  aria-hidden={isDuplicate}
-                >
+                <div className="group relative flex shrink-0 items-center justify-center w-[140px] h-[70px] cursor-pointer">
                   <Image
                     src={partner.logo}
                     alt={isDuplicate ? "" : partner.name}
-                    width={240}
-                    height={120}
-                    quality={95}
+                    width={120}
+                    height={60}
+                    quality={75}
                     className={cn(
-                      "h-14 sm:h-[88px] md:h-[120px] w-auto object-contain transition-all duration-500 ease-out origin-center transform-gpu",
+                      "h-12 sm:h-14 md:h-16 w-auto object-contain transition-all duration-500 ease-out origin-center transform-gpu",
                       "opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110",
                       partner.invertInLight ? "invert dark:invert-0" : "dark:invert"
                     )}
                     style={{
-                      transform: `scale(${baseScale}) translateY(${ty}px) translateZ(0)`,
+                      transform: `scale(${baseScale}) translateY(${ty}px)`,
                     }}
                   />
                 </div>
 
-                {/* Tight dot separator */}
-                <span 
-                  className="text-muted-foreground/20 mx-1.5 sm:mx-2 md:mx-3 select-none text-xs sm:text-sm md:text-base shrink-0" 
+                <span
+                  className="text-muted-foreground/30 mx-4 md:mx-6 select-none text-sm shrink-0"
                   aria-hidden="true"
                 >
                   •
@@ -167,4 +161,3 @@ export default function TrustedPartners() {
     </section>
   );
 }
-
