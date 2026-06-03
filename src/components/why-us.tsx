@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { Shield, Brain, CheckCircle, Zap, Clock, Code2, Lock } from "lucide-react";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
+import logoText from "../../design/images/raw/logo-text.png";
 
 export function WhyUs() {
   return (
@@ -14,9 +16,19 @@ export function WhyUs() {
         <BlurFade inView delay={0}>
           <div className="flex flex-col lg:flex-row gap-8 justify-between items-start lg:items-end mb-14 md:mb-16">
             <div className="max-w-3xl">
-              <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-4">
-                Why Zecurx
-              </span>
+              <div className="mb-5 flex items-center gap-3">
+                <span className="font-poppins text-[22px] sm:text-[21px] font-extrabold text-slate-900 leading-none">
+                  Why
+                </span>
+                <Image
+                  src={logoText}
+                  alt="ZecurX"
+                  width={208}
+                  height={118}
+                  className="h-[19px] sm:h-[19px] w-auto object-contain"
+                  priority
+                />
+              </div>
               <h2
                 className="text-4xl md:text-5xl lg:text-[3.5rem] font-medium text-slate-900 mt-2 mb-0 tracking-tight leading-[1.1]"
               >
