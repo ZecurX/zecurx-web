@@ -9,8 +9,14 @@ export function getCdnUrl(path: string): string {
   if (!path) return '';
   if (path.startsWith('http')) return path;
 
-  // Ensure we don't have double slashes
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+
+  // Lottie files live in public/ and are served same-origin to avoid CORS issues
+  // with the external CDN (which has no Access-Control-Allow-Origin header).
+  if (cleanPath.startsWith('lottie/') || cleanPath.endsWith('.json')) {
+    return `/${cleanPath}`;
+  }
+
   return `${CDN_URL}/${cleanPath}`;
 }
 

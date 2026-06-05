@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
     stars: 5,
   },
   {
-    text: "Working with ZecurX on our security assessment was seamless. They identified critical gaps in our infrastructure and provided clear, actionable remediation steps.",
+    text: "Our collaboration with ZecurX for cybersecurity training delivered excellent results. The structured curriculum, engaging sessions, and practical exercises provided learners with valuable industry-relevant knowledge and skills.",
     image: `${CDN_URL}/logos/IBM.webp`,
     name: "IBM",
     role: "Technology Partner",
@@ -103,18 +103,18 @@ export function StaggerTestimonials() {
       className="py-20 md:py-24 bg-[#BFDBFE] relative overflow-hidden contain-paint"
     >
       {/* Header */}
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 mb-12 md:mb-14">
+      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 mb-12 md:mb-14 text-center">
         <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase">
           Testimonials
         </span>
         <h2
           id="testimonials-heading"
-          className="text-3xl md:text-4xl font-manrope font-medium tracking-tight text-foreground mt-5"
+          className="text-4xl md:text-5xl font-manrope font-medium tracking-tight text-foreground mt-5"
           style={{ letterSpacing: "-0.015em" }}
         >
-          What our clients say
+          What our <span className="text-[#4b6ffa]">clients</span> say
         </h2>
-        <p className="mt-3 text-slate-700 text-base leading-relaxed max-w-lg">
+        <p className="mt-3 text-slate-700 text-base leading-relaxed max-w-lg mx-auto">
           Trusted by startups, enterprises, and engineering teams to secure what
           matters most.
         </p>
