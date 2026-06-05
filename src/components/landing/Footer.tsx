@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
 import { motion, useScroll, useTransform } from "framer-motion";
+import logoText from "../../../design/images/raw/logo-text.png";
 
 const footerLinks = {
   Services: [
@@ -12,6 +13,8 @@ const footerLinks = {
     { label: "Cloud & DevSecOps", href: "/services/cloud-devsecops" },
     { label: "AI & LLM Security", href: "/services/secure-ai-llm" },
     { label: "AppSec Development", href: "/services/secure-app-dev" },
+  ],
+  "Services2": [
     { label: "SOC & Response", href: "/services/soc-detection" },
     { label: "Compliance", href: "/services/compliance-governance" },
     { label: "Web3 Security", href: "/services/web3-blockchain-nft" },
@@ -42,153 +45,92 @@ const legalLinks = [
 
 export default function Footer() {
   const containerRef = useRef<HTMLElement>(null);
-
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end end"],
+    offset: ["start end", "end end"]
   });
 
   const y = useTransform(scrollYProgress, [0, 1], ["50%", "0%"]);
 
   return (
-    <footer
-      ref={containerRef}
-      className="relative mt-0 overflow-hidden border-t border-blue-200/70 bg-[#dbeafe]"
-    >
-      <motion.div
-        style={{ y }}
-        className="w-full bg-[linear-gradient(180deg,#dbeafe_0%,#eaf3ff_42%,#f4f8ff_100%)]"
-      >
+    <footer ref={containerRef} className="relative mt-0 overflow-hidden border-t border-blue-200/70 bg-[#dbeafe]">
+      <motion.div style={{ y }} className="w-full bg-[linear-gradient(180deg,#dbeafe_0%,#eaf3ff_42%,#f4f8ff_100%)]">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(74,111,250,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(74,111,250,0.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35 [mask-image:radial-gradient(65%_55%_at_50%_30%,black,transparent)]" />
-
         <div className="relative max-w-[1320px] mx-auto px-4 md:px-6 py-8 md:py-14 lg:py-16">
-
-          {/* Top Section */}
-          <div className="grid grid-cols-1 gap-8 md:gap-12 rounded-2xl md:rounded-3xl border border-white/75 bg-white/55 p-6 md:p-8 lg:p-10 shadow-[0_20px_55px_rgba(30,58,95,0.12)] backdrop-blur-md sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-
-            {/* Brand */}
-            <div>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 md:gap-3"
-                aria-label="ZecurX Home"
-              >
-                <div className="relative w-10 md:w-14 h-10 md:h-14">
-                  <Image
-                    src={CDN_ASSETS.brand.logo}
-                    alt="ZecurX"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <span className="font-manrope text-lg md:text-2xl font-semibold text-slate-900">
-                  ZecurX
-                </span>
-              </Link>
-              <p className="mt-2 md:mt-4 max-w-xs text-xs md:text-sm leading-relaxed text-slate-600">
-                Security &amp; Technology That Grows With You.
-              </p>
-            </div>
-
-            {/* Services (2-column 4+3 split) */}
-            <div className="lg:col-span-2">
-              <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                Services
-              </h4>
-
-              <ul className="grid grid-cols-2 gap-x-8 gap-y-1.5 md:gap-y-2.5">
-                {footerLinks.Services.map((link, i) => (
-                  <li key={link.label} className={i >= 5 ? "col-start-2" : ""}>
-                    <Link
-                      href={link.href}
-                      className="text-xs md:text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Industries */}
-            <div>
-              <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                Industries
-              </h4>
-              <ul className="space-y-1.5 md:space-y-2.5">
-                {footerLinks.Industries.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-xs md:text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                Resources
-              </h4>
-              <ul className="space-y-1.5 md:space-y-2.5">
-                {footerLinks.Resources.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-xs md:text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div>
-              <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                Company
-              </h4>
-              <ul className="space-y-1.5 md:space-y-2.5">
-                {footerLinks.Company.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-xs md:text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-          </div>
-
-          {/* Bottom */}
-          <div className="mt-6 md:mt-10 flex flex-col items-center justify-between gap-3 md:gap-4 border-t border-blue-200/80 pt-5 md:pt-7 md:flex-row">
-            <p className="text-[10px] md:text-xs text-slate-500">
-              &copy; 2026 ZecurX Inc. All rights reserved.
+        {/* Top Section */}
+        <div className="grid grid-cols-1 gap-8 md:gap-12 rounded-2xl md:rounded-3xl border border-white/75 bg-white/55 p-6 md:p-8 lg:p-10 shadow-[0_20px_55px_rgba(30,58,95,0.12)] backdrop-blur-md xl:grid-cols-4">
+          {/* Brand Column */}
+          <div>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 md:gap-2"
+              aria-label="ZecurX Home"
+            >
+              <div className="relative w-10 md:w-14 h-10 md:h-14">
+                <Image
+                  src={CDN_ASSETS.brand.logo}
+                  alt="ZecurX"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              <Image
+                src={logoText}
+                alt="ZecurX"
+                width={256}
+                height={74}
+                className="h-5 w-auto md:h-6 lg:h-7 object-contain"
+              />
+            </Link>
+            <p className="mt-2 md:mt-4 max-w-xs text-xs md:text-sm leading-relaxed text-slate-600">
+              Security &amp; Technology That Grows With You.
             </p>
-            <div className="flex gap-4 md:gap-8 flex-wrap justify-center md:justify-end">
-              {legalLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-[10px] md:text-xs text-slate-500 transition-colors hover:text-[#3658d8]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
           </div>
 
+          {/* Links Grid */}
+          <div className="xl:col-span-3 grid grid-cols-2 sm:grid-cols-5 gap-4 md:gap-8">
+            {Object.entries(footerLinks).map(([heading, links]) => (
+              <div key={heading}>
+                <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  {heading === "Services2" ? "\u00A0" : heading}
+                </h4>
+                <ul className="space-y-1.5 md:space-y-2.5" role="list">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      <Link
+                        href={link.href}
+                        className="text-xs md:text-sm text-slate-700 transition-colors hover:text-[#3658d8]"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom Section */}
+        <div className="mt-6 md:mt-10 flex flex-col items-center justify-between gap-3 md:gap-4 border-t border-blue-200/80 pt-5 md:pt-7 md:flex-row">
+          <p className="text-[10px] md:text-xs text-slate-500">
+            &copy; 2026 ZecurX Inc. All rights reserved.
+          </p>
+          <div className="flex gap-4 md:gap-8 flex-wrap justify-center md:justify-end">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="text-[10px] md:text-xs text-slate-500 transition-colors hover:text-[#3658d8]"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
         </div>
       </motion.div>
-    </footer>
+      </footer>
   );
 }
