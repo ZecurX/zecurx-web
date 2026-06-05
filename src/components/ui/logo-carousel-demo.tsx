@@ -25,7 +25,7 @@ export function LogoCarouselBasic() {
         <p className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-[14px] py-1 text-xs font-medium tracking-[0.24em] uppercase mb-4 sm:mb-6">
           Trusted by
         </p>
-        <InfiniteSlider gap={18} duration={30} durationOnHover={60} className="mt-[-4px] sm:mt-0">
+        <InfiniteSlider gap={18} duration={60} durationOnHover={110} className="mt-[-4px] sm:mt-0">
           {logos.map((logo, index) => (
             <div
               key={`${logo.alt}-${index}`}
