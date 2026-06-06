@@ -8,7 +8,8 @@ import {
     Calendar, ChevronRight, RefreshCw, TriangleAlert,
     Search, UserPlus, UserCheck, Tag as TagIcon,
     UserRoundPlus, CheckSquare, Square, Filter,
-    ListFilter, Sparkles, ChevronDown
+    ListFilter, Sparkles, ChevronDown,
+    Upload, Download, Paperclip, FileText, Trash2, FileUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +35,7 @@ const SOURCE_LABEL: Record<string, string> = {
     enterprise_lead: 'Enterprise Lead',
     enrolled_student:'Enrolled',
     manual:          'Manual',
+    csv:             'CSV Import',
 };
 
 const STATUS_CONFIG: Record<string, { label: string; cls: string }> = {
@@ -129,6 +131,96 @@ interface Campaign {
     id: string; created_by_name: string; subject: string;
     audience_types: string[]; recipient_count: number; status: string;
     scheduled_at: string | null; sent_at: string | null; created_at: string;
+}
+
+// ─── CSV & attachment helpers ─────────────────────────────────────────────────
+
+interface CSVImportError { row: number; email: string; reason: string; }
+interface CSVImportStats { total: number; imported: number; duplicates: number; errors: CSVImportError[]; }
+interface AttachmentFile  { id: string; file: File; }
+
+const MAX_FILE_SIZE       = 10 * 1024 * 1024;   // 10 MB per file
+const MAX_TOTAL_SIZE      = 25 * 1024 * 1024;   // 25 MB combined
+const ALLOWED_MIME_TYPES  = new Set([
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+]);
+
+function formatFileSize(bytes: number): string {
+    if (bytes < 1024)            return `${bytes} B`;
+    if (bytes < 1024 * 1024)     return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function parseCSVLine(line: string): string[] {
+    const fields: string[] = [];
+    let cur = '';
+    let inQ = false;
+    for (const ch of line) {
+        if (ch === '"')               inQ = !inQ;
+        else if (ch === ',' && !inQ) { fields.push(cur.trim()); cur = ''; }
+        else                          cur += ch;
+    }
+    fields.push(cur.trim());
+    return fields;
+}
+
+function parseCSVData(
+    text: string,
+    existingEmails: Set<string>
+): { recipients: Recipient[]; stats: CSVImportStats } {
+    const lines  = text.trim().split(/\r?\n/);
+    const stats: CSVImportStats = { total: 0, imported: 0, duplicates: 0, errors: [] };
+    if (lines.length < 2) return { recipients: [], stats };
+
+    const hdrs      = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/['"]/g, '').trim());
+    const emailIdx  = hdrs.findIndex(h => ['email','email address','emailaddress'].includes(h));
+    if (emailIdx === -1) {
+        stats.errors.push({ row: 1, email: '', reason: 'No "Email" column found in header' });
+        return { recipients: [], stats };
+    }
+    const nameIdx = hdrs.findIndex(h => ['name','full name','fullname'].includes(h));
+    const fnIdx   = hdrs.findIndex(h => ['first name','firstname','first_name'].includes(h));
+    const lnIdx   = hdrs.findIndex(h => ['last name','lastname','last_name'].includes(h));
+
+    const seenBatch = new Set<string>();
+    const recipients: Recipient[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].trim();
+        if (!row) continue;
+        stats.total++;
+        const fields = parseCSVLine(row);
+        const email  = (fields[emailIdx] ?? '').toLowerCase().replace(/['"]/g, '').trim();
+        if (!email) { stats.errors.push({ row: i + 1, email: '', reason: 'Missing email' }); continue; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { stats.errors.push({ row: i + 1, email, reason: 'Invalid email format' }); continue; }
+        if (existingEmails.has(email) || seenBatch.has(email)) { stats.duplicates++; continue; }
+
+        let name = '';
+        if (nameIdx !== -1) {
+            name = (fields[nameIdx] ?? '').replace(/['"]/g, '').trim();
+        } else if (fnIdx !== -1 || lnIdx !== -1) {
+            const fn = fnIdx !== -1 ? (fields[fnIdx] ?? '').replace(/['"]/g, '').trim() : '';
+            const ln = lnIdx !== -1 ? (fields[lnIdx] ?? '').replace(/['"]/g, '').trim() : '';
+            name = [fn, ln].filter(Boolean).join(' ');
+        }
+        seenBatch.add(email);
+        recipients.push({ email, name: name || email, source: 'csv' });
+        stats.imported++;
+    }
+    return { recipients, stats };
+}
+
+function downloadSampleCSV() {
+    const csv = 'Name,Email,Company,Phone\nJohn Doe,john.doe@example.com,Acme Corp,+1234567890\nJane Smith,jane.smith@example.com,Tech Ltd,+0987654321\n';
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const a   = Object.assign(document.createElement('a'), { href: url, download: 'recipients_sample.csv' });
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 // ─── TemplatePickerModal ─────────────────────────────────────────────────────
@@ -551,15 +643,16 @@ interface ConfirmSendModalProps {
     subject: string; emailBody: string;
     audienceTypes: string[]; customRecipients: Recipient[];
     sendType: 'immediate' | 'scheduled'; scheduledAt: string;
+    attachments: AttachmentFile[];
     onClose: () => void;
     onSent:  (count: number) => void;
 }
 
 function ConfirmSendModal({
     subject, emailBody, audienceTypes, customRecipients,
-    sendType, scheduledAt, onClose, onSent,
+    sendType, scheduledAt, attachments, onClose, onSent,
 }: ConfirmSendModalProps) {
-    const [tab,            setTab]            = useState<'preview' | 'recipients'>('preview');
+    const [tab,            setTab]            = useState<'preview' | 'recipients' | 'attachments'>('preview');
     const [allRecipients,  setAllRecipients]  = useState<Recipient[]>([]);
     const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
     const [isLoading,      setIsLoading]      = useState(true);
@@ -624,17 +717,30 @@ function ConfirmSendModal({
                 .filter(r => selectedEmails.has(r.email))
                 .map(({ email, name }) => ({ email, name }));
 
-            const res  = await fetch('/api/admin/bulk-email/campaigns', {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({
-                    subject, email_body: emailBody,
-                    audience_types:    [],
-                    custom_recipients: finalList,
-                    send_type:    sendType === 'scheduled' ? 'scheduled' : 'immediate',
-                    scheduled_at: sendType === 'scheduled' ? scheduledAt : undefined,
-                }),
-            });
+            let res: Response;
+            if (attachments.length > 0) {
+                const fd = new FormData();
+                fd.append('subject',           subject);
+                fd.append('email_body',        emailBody);
+                fd.append('audience_types',    JSON.stringify([]));
+                fd.append('custom_recipients', JSON.stringify(finalList));
+                fd.append('send_type', sendType === 'scheduled' ? 'scheduled' : 'immediate');
+                if (sendType === 'scheduled') fd.append('scheduled_at', scheduledAt);
+                attachments.forEach(a => fd.append('attachments', a.file, a.file.name));
+                res = await fetch('/api/admin/bulk-email/campaigns', { method: 'POST', body: fd });
+            } else {
+                res = await fetch('/api/admin/bulk-email/campaigns', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        subject, email_body: emailBody,
+                        audience_types:    [],
+                        custom_recipients: finalList,
+                        send_type:    sendType === 'scheduled' ? 'scheduled' : 'immediate',
+                        scheduled_at: sendType === 'scheduled' ? scheduledAt : undefined,
+                    }),
+                });
+            }
             const data = await res.json();
             if (!res.ok) { setSendError(data.error || 'Send failed'); return; }
             onSent(data.campaign?.recipient_count ?? selectedCount);
@@ -670,7 +776,7 @@ function ConfirmSendModal({
 
                 {/* Tabs */}
                 <div className="flex border-b border-white/[0.06] px-5">
-                    {(['preview', 'recipients'] as const).map(t => (
+                    {(['preview', 'recipients', ...(attachments.length > 0 ? ['attachments'] : [])] as Array<'preview' | 'recipients' | 'attachments'>).map(t => (
                         <button key={t} type="button" onClick={() => setTab(t)}
                             className={cn(
                                 'px-4 py-3 text-sm font-medium border-b-2 transition-colors -mb-px',
@@ -680,7 +786,9 @@ function ConfirmSendModal({
                             )}>
                             {t === 'preview'
                                 ? 'Email Preview'
-                                : `Recipients${!isLoading ? ` (${selectedCount}/${allRecipients.length})` : ''}`}
+                                : t === 'recipients'
+                                    ? `Recipients${!isLoading ? ` (${selectedCount}/${allRecipients.length})` : ''}`
+                                    : `Attachments (${attachments.length})`}
                         </button>
                     ))}
                 </div>
@@ -785,6 +893,31 @@ function ConfirmSendModal({
                             )}
                         </div>
                     )}
+
+                    {tab === 'attachments' && (
+                        <div className="p-5 space-y-3">
+                            {attachments.length === 0 ? (
+                                <p className="text-sm text-center text-muted-foreground py-8">No attachments</p>
+                            ) : (
+                                <>
+                                    <div className="space-y-2">
+                                        {attachments.map(a => (
+                                            <div key={a.id} className={cn(cardClass, '!p-3 flex items-center gap-3')}>
+                                                <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium text-foreground truncate">{a.file.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{formatFileSize(a.file.size)}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-muted-foreground text-right">
+                                        {attachments.length} file{attachments.length !== 1 ? 's' : ''} · {formatFileSize(attachments.reduce((s, a) => s + a.file.size, 0))} total
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer */}
@@ -842,6 +975,10 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
     const [emailBody,         setEmailBody]         = useState('');
     const [sendType,          setSendType]          = useState<'immediate' | 'scheduled'>('immediate');
     const [scheduledAt,       setScheduledAt]       = useState('');
+    const [attachments,       setAttachments]       = useState<AttachmentFile[]>([]);
+    const [csvStats,          setCsvStats]          = useState<CSVImportStats | null>(null);
+    const csvInputRef        = useRef<HTMLInputElement>(null);
+    const attachmentInputRef = useRef<HTMLInputElement>(null);
 
     // Audience count (for badge only — no inline list)
     const [recipientCount,    setRecipientCount]    = useState<number | null>(null);
@@ -941,6 +1078,7 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
     const resetComposer = () => {
         setSubject(''); setEmailBody(''); setAudienceTypes([]);
         setCustomRecipients([]); setScheduledAt(''); setSendType('immediate');
+        setAttachments([]); setCsvStats(null);
     };
 
     const handleSaveDraft = async () => {
@@ -951,16 +1089,29 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
         }
         setIsSubmitting(true);
         try {
-            const res  = await fetch('/api/admin/bulk-email/campaigns', {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({
-                    subject, email_body: emailBody,
-                    audience_types:    audienceTypes,
-                    custom_recipients: customRecipients.map(({ email, name }) => ({ email, name })),
-                    send_type: 'draft',
-                }),
-            });
+            const recipients = customRecipients.map(({ email, name }) => ({ email, name }));
+            let res: Response;
+            if (attachments.length > 0) {
+                const fd = new FormData();
+                fd.append('subject',           subject);
+                fd.append('email_body',        emailBody);
+                fd.append('audience_types',    JSON.stringify(audienceTypes));
+                fd.append('custom_recipients', JSON.stringify(recipients));
+                fd.append('send_type',         'draft');
+                attachments.forEach(a => fd.append('attachments', a.file, a.file.name));
+                res = await fetch('/api/admin/bulk-email/campaigns', { method: 'POST', body: fd });
+            } else {
+                res = await fetch('/api/admin/bulk-email/campaigns', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        subject, email_body: emailBody,
+                        audience_types:    audienceTypes,
+                        custom_recipients: recipients,
+                        send_type: 'draft',
+                    }),
+                });
+            }
             const data = await res.json();
             if (!res.ok) { showToast('error', data.error || 'Failed to save draft'); return; }
             showToast('success', 'Draft saved successfully');
@@ -1049,6 +1200,7 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                     subject={subject} emailBody={emailBody}
                     audienceTypes={audienceTypes} customRecipients={customRecipients}
                     sendType={sendType} scheduledAt={scheduledAt}
+                    attachments={attachments}
                     onClose={() => setShowConfirmModal(false)}
                     onSent={count => {
                         setShowConfirmModal(false);
@@ -1210,6 +1362,133 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                     <AddRecipientForm onAdd={addCustomRecipient} />
                 </div>
 
+                {/* ── Import from CSV ── */}
+                <div className="space-y-3 pt-2 border-t border-white/[0.06]">
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <FileUp className="w-4 h-4 text-muted-foreground" />
+                            <p className="text-xs font-medium text-muted-foreground">Import from CSV</p>
+                            <span className="text-[10px] text-muted-foreground/50">Name, Email, Company, Phone…</span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={downloadSampleCSV}
+                            className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <Download className="w-3 h-3" />
+                            Sample CSV
+                        </button>
+                    </div>
+
+                    {/* Hidden file input */}
+                    <input
+                        ref={csvInputRef}
+                        type="file"
+                        accept=".csv,text/csv"
+                        className="hidden"
+                        onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = ev => {
+                                const text = ev.target?.result as string;
+                                const existingEmails = new Set(customRecipients.map(r => r.email));
+                                const { recipients: parsed, stats } = parseCSVData(text, existingEmails);
+                                if (parsed.length > 0) {
+                                    setCustomRecipients(prev => [...prev, ...parsed]);
+                                }
+                                setCsvStats(stats);
+                            };
+                            reader.readAsText(file);
+                            e.target.value = '';
+                        }}
+                    />
+
+                    {/* Drop zone */}
+                    <div
+                        onClick={() => csvInputRef.current?.click()}
+                        onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('border-primary/40', 'bg-primary/5'); }}
+                        onDragLeave={e => { e.currentTarget.classList.remove('border-primary/40', 'bg-primary/5'); }}
+                        onDrop={e => {
+                            e.preventDefault();
+                            e.currentTarget.classList.remove('border-primary/40', 'bg-primary/5');
+                            const file = e.dataTransfer.files[0];
+                            if (!file || !file.name.endsWith('.csv')) return;
+                            const reader = new FileReader();
+                            reader.onload = ev => {
+                                const text = ev.target?.result as string;
+                                const existingEmails = new Set(customRecipients.map(r => r.email));
+                                const { recipients: parsed, stats } = parseCSVData(text, existingEmails);
+                                if (parsed.length > 0) setCustomRecipients(prev => [...prev, ...parsed]);
+                                setCsvStats(stats);
+                            };
+                            reader.readAsText(file);
+                        }}
+                        className={cn(
+                            'flex flex-col items-center justify-center gap-2 py-6 rounded-xl border-2 border-dashed cursor-pointer transition-all',
+                            'border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.02]'
+                        )}
+                    >
+                        <Upload className="w-5 h-5 text-muted-foreground/50" />
+                        <p className="text-xs text-muted-foreground">Click to browse or drag &amp; drop a <strong>.csv</strong> file</p>
+                    </div>
+
+                    {/* Import stats */}
+                    {csvStats && (
+                        <div className={cn(
+                            'rounded-xl border p-4 space-y-2',
+                            csvStats.errors.length > 0
+                                ? 'bg-yellow-500/5 border-yellow-500/20'
+                                : 'bg-emerald-500/5 border-emerald-500/20'
+                        )}>
+                            <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                Import Complete
+                            </p>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                <div className="space-y-0.5">
+                                    <p className="text-muted-foreground/60">Total rows</p>
+                                    <p className="font-semibold text-foreground">{csvStats.total}</p>
+                                </div>
+                                <div className="space-y-0.5">
+                                    <p className="text-muted-foreground/60">Imported</p>
+                                    <p className="font-semibold text-emerald-500">{csvStats.imported}</p>
+                                </div>
+                                <div className="space-y-0.5">
+                                    <p className="text-muted-foreground/60">Duplicates skipped</p>
+                                    <p className="font-semibold text-yellow-500">{csvStats.duplicates}</p>
+                                </div>
+                                <div className="space-y-0.5">
+                                    <p className="text-muted-foreground/60">Errors</p>
+                                    <p className="font-semibold text-red-500">{csvStats.errors.length}</p>
+                                </div>
+                            </div>
+                            {csvStats.errors.length > 0 && (
+                                <details className="mt-1">
+                                    <summary className="text-[11px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+                                        Show {csvStats.errors.length} error{csvStats.errors.length !== 1 ? 's' : ''}
+                                    </summary>
+                                    <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
+                                        {csvStats.errors.map((e, i) => (
+                                            <p key={i} className="text-[11px] text-red-500 flex items-start gap-1.5">
+                                                <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
+                                                Row {e.row}{e.email ? ` (${e.email})` : ''}: {e.reason}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </details>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => setCsvStats(null)}
+                                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                Dismiss
+                            </button>
+                        </div>
+                    )}
+                </div>
+
                 {/* Custom recipient chips */}
                 {customRecipients.length > 0 && (
                     <div className="flex flex-wrap gap-2 pt-1">
@@ -1278,6 +1557,112 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                         <code className="bg-white/[0.05] px-1 rounded">{'{{full_name}}'}</code>,{' '}
                         <code className="bg-white/[0.05] px-1 rounded">{'{{email}}'}</code> for personalization.
                     </p>
+                </div>
+
+                {/* ── Attachments ── */}
+                <div className="space-y-3 pt-2 border-t border-white/[0.06]">
+                    <div className="flex items-center gap-2">
+                        <Paperclip className="w-4 h-4 text-muted-foreground" />
+                        <p className="text-xs font-medium text-muted-foreground">Email Attachments</p>
+                        <span className="text-[10px] text-muted-foreground/50">Max 10 MB/file · 25 MB total · PDF, DOCX, XLSX, JPG, PNG…</span>
+                    </div>
+
+                    {/* Hidden file input */}
+                    <input
+                        ref={attachmentInputRef}
+                        type="file"
+                        multiple
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp"
+                        className="hidden"
+                        onChange={e => {
+                            const files = Array.from(e.target.files ?? []);
+                            const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0);
+                            const errors: string[] = [];
+                            const toAdd: AttachmentFile[] = [];
+                            let running = currentTotal;
+
+                            for (const file of files) {
+                                if (attachments.some(a => a.file.name === file.name && a.file.size === file.size)) {
+                                    errors.push(`${file.name}: already attached`);
+                                    continue;
+                                }
+                                if (!ALLOWED_MIME_TYPES.has(file.type)) {
+                                    errors.push(`${file.name}: unsupported file type`);
+                                    continue;
+                                }
+                                if (file.size > MAX_FILE_SIZE) {
+                                    errors.push(`${file.name}: exceeds 10 MB limit`);
+                                    continue;
+                                }
+                                if (running + file.size > MAX_TOTAL_SIZE) {
+                                    errors.push(`${file.name}: would exceed 25 MB total limit`);
+                                    continue;
+                                }
+                                running += file.size;
+                                toAdd.push({ id: `${Date.now()}-${Math.random()}`, file });
+                            }
+                            if (toAdd.length > 0) setAttachments(prev => [...prev, ...toAdd]);
+                            if (errors.length > 0) showToast('error', errors.join('; '));
+                            e.target.value = '';
+                        }}
+                    />
+
+                    {/* Drop zone */}
+                    <div
+                        onClick={() => attachmentInputRef.current?.click()}
+                        onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('border-primary/40', 'bg-primary/5'); }}
+                        onDragLeave={e => { e.currentTarget.classList.remove('border-primary/40', 'bg-primary/5'); }}
+                        onDrop={e => {
+                            e.preventDefault();
+                            e.currentTarget.classList.remove('border-primary/40', 'bg-primary/5');
+                            const files = Array.from(e.dataTransfer.files);
+                            const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0);
+                            const errors: string[] = [];
+                            const toAdd: AttachmentFile[] = [];
+                            let running = currentTotal;
+                            for (const file of files) {
+                                if (!ALLOWED_MIME_TYPES.has(file.type)) { errors.push(`${file.name}: unsupported type`); continue; }
+                                if (file.size > MAX_FILE_SIZE) { errors.push(`${file.name}: exceeds 10 MB`); continue; }
+                                if (running + file.size > MAX_TOTAL_SIZE) { errors.push(`${file.name}: would exceed 25 MB total`); continue; }
+                                running += file.size;
+                                toAdd.push({ id: `${Date.now()}-${Math.random()}`, file });
+                            }
+                            if (toAdd.length > 0) setAttachments(prev => [...prev, ...toAdd]);
+                            if (errors.length > 0) showToast('error', errors.join('; '));
+                        }}
+                        className={cn(
+                            'flex flex-col items-center justify-center gap-2 py-5 rounded-xl border-2 border-dashed cursor-pointer transition-all',
+                            'border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.02]'
+                        )}
+                    >
+                        <Upload className="w-5 h-5 text-muted-foreground/50" />
+                        <p className="text-xs text-muted-foreground">Click to attach files or drag &amp; drop</p>
+                    </div>
+
+                    {/* Attached file list */}
+                    {attachments.length > 0 && (
+                        <div className="space-y-2">
+                            {attachments.map(a => (
+                                <div key={a.id} className={cn(cardClass, '!p-3 flex items-center gap-3')}>
+                                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-foreground truncate">{a.file.name}</p>
+                                        <p className="text-xs text-muted-foreground">{formatFileSize(a.file.size)}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAttachments(prev => prev.filter(x => x.id !== a.id))}
+                                        className="p-1 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors shrink-0"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            ))}
+                            <p className="text-[11px] text-muted-foreground text-right">
+                                {attachments.length} file{attachments.length !== 1 ? 's' : ''} · {formatFileSize(attachments.reduce((s, a) => s + a.file.size, 0))} / {formatFileSize(MAX_TOTAL_SIZE)}
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 
