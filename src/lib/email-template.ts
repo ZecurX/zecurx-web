@@ -233,11 +233,9 @@ export function brandedEmailTemplate(options: EmailTemplateOptions): string {
                             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="center" style="padding-bottom: 18px;">
-                                        <a href="${SOCIAL.linkedin}" style="display: inline-block; margin: 0 6px; color: #999; text-decoration: none; font-size: 13px; font-weight: 500;">LinkedIn</a>
+                                        <a href="${SOCIAL.linkedin}" style="display: inline-block; margin: 0 6px; color: #555; text-decoration: underline; font-size: 13px; font-weight: 500;">LinkedIn</a>
                                         <span style="color: #ddd;">&nbsp;·&nbsp;</span>
-                                        <a href="${SOCIAL.instagram}" style="display: inline-block; margin: 0 6px; color: #999; text-decoration: none; font-size: 13px; font-weight: 500;">Instagram</a>
-                                        <span style="color: #ddd;">&nbsp;·&nbsp;</span>
-                                        <a href="${SOCIAL.twitter}" style="display: inline-block; margin: 0 6px; color: #999; text-decoration: none; font-size: 13px; font-weight: 500;">X (Twitter)</a>
+                                        <a href="${SOCIAL.instagram}" style="display: inline-block; margin: 0 6px; color: #555; text-decoration: underline; font-size: 13px; font-weight: 500;">Instagram</a>
                                     </td>
                                 </tr>
                             </table>

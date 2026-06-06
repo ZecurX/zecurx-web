@@ -5,6 +5,7 @@ import { AdminJWTPayload, Role, RESOURCES, ACTIONS } from './src/types/auth';
 import { hasPermission } from './src/lib/permissions';
 
 const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = {
+    '/admin': { resource: RESOURCES.DASHBOARD, action: ACTIONS.READ },
     '/admin/users': { resource: RESOURCES.USERS, action: ACTIONS.READ },
     '/admin/customers': { resource: RESOURCES.CUSTOMERS, action: ACTIONS.READ },
     '/admin/sales': { resource: RESOURCES.SALES, action: ACTIONS.READ },
@@ -19,6 +20,15 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/referral-codes': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
     '/admin/partner-referrals': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
     '/admin/system-test': { resource: RESOURCES.SYSTEM_TEST, action: ACTIONS.READ },
+};
+
+// Role-specific fallback pages used when access is denied, so users land somewhere they can use.
+const ROLE_LANDING: Record<string, string> = {
+    super_admin: '/admin',
+    admin:       '/admin/customers',
+    sales:       '/admin/customers',
+    marketing:   '/admin/plans',
+    media:       '/admin/blog',
 };
 
 function getJwtSecret(): Uint8Array {
@@ -65,12 +75,15 @@ export async function middleware(request: NextRequest) {
 
         const pathname = request.nextUrl.pathname;
 
-        for (const [route, permission] of Object.entries(ROUTE_PERMISSIONS)) {
+        // Sort longest route first so specific routes are checked before the short '/admin' catch-all.
+        const sortedRoutes = Object.entries(ROUTE_PERMISSIONS).sort(([a], [b]) => b.length - a.length);
+        for (const [route, permission] of sortedRoutes) {
             if (pathname === route || pathname.startsWith(`${route}/`)) {
                 const userRole = jwtPayload.role as Role;
 
                 if (!hasPermission(userRole, permission.resource as any, permission.action as any)) {
-                    return NextResponse.redirect(new URL('/admin?access_denied=1', request.url));
+                    const landing = ROLE_LANDING[userRole] ?? '/admin/login';
+                    return NextResponse.redirect(new URL(landing, request.url));
                 }
                 break;
             }
@@ -83,5 +96,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/admin', '/admin/:path*'],
 };
