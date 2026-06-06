@@ -21,10 +21,10 @@ export const ROLE_DISPLAY_NAMES: Record<Role, string> = {
 // Role descriptions
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   [ROLES.SUPER_ADMIN]: 'Full system access including all features and analytics',
-  [ROLES.ADMIN]: 'Full business operations access with dashboard and analytics',
-  [ROLES.SALES]: 'Customers, sales, and products management with analytics access',
-  [ROLES.MARKETING]: 'Plans, whitepapers, case studies, and blog management (no dashboard or analytics)',
-  [ROLES.MEDIA]: 'Blog, whitepapers, and case studies management (no dashboard or analytics)',
+  [ROLES.ADMIN]: 'Full business operations access (no financial overview or sales analytics)',
+  [ROLES.SALES]: 'Customers, leads, and products management',
+  [ROLES.MARKETING]: 'Plans, whitepapers, case studies, and blog management',
+  [ROLES.MEDIA]: 'Blog, whitepapers, and case studies management',
 };
 
 // Permissions for each role
@@ -32,9 +32,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   [ROLES.SUPER_ADMIN]: ['*'], // Full access to everything
 
   [ROLES.ADMIN]: [
-    'dashboard:*',
     'customers:*',
-    'sales:*',
     'products:*',
     'leads:*',
     'referral_codes:*',
@@ -55,7 +53,6 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'products:*',
     'leads:*',
     'referral_codes:*',
-    'sales:*',
     'plans:*',
   ],
 

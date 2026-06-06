@@ -53,6 +53,10 @@ export async function sendEmail(options: SendEmailOptions): Promise<void> {
         html: options.html,
         ...(options.replyTo && { replyTo: options.replyTo }),
         ...(options.attachments && options.attachments.length > 0 && { attachments: options.attachments }),
+        trackingSettings: {
+            clickTracking:  { enable: false, enableText: false },
+            openTracking:   { enable: false },
+        },
     };
 
     try {
