@@ -80,10 +80,18 @@ function personalize(template: string, recipient: Recipient): string {
         .replace(/\{\{email\}\}/gi, recipient.email);
 }
 
+interface ParsedAttachment {
+    content: string;      // base64
+    filename: string;
+    type: string;
+    disposition: 'attachment';
+}
+
 async function sendInBatches(
     recipients: Recipient[],
     subject: string,
-    emailBody: string
+    emailBody: string,
+    attachments: ParsedAttachment[] = []
 ): Promise<string | null> {
     const BATCH_SIZE = 50;
     try {
@@ -98,7 +106,12 @@ async function sendInBatches(
                         accent: 'default',
                         includeMarketing: false,
                     });
-                    return sendEmail({ to: recipient.email, subject: personalizedSubject, html });
+                    return sendEmail({
+                        to: recipient.email,
+                        subject: personalizedSubject,
+                        html,
+                        ...(attachments.length > 0 && { attachments }),
+                    });
                 })
             );
         }
@@ -158,22 +171,51 @@ export async function POST(req: NextRequest) {
     try {
         await ensureTable();
 
-        const body = await req.json();
-        const {
-            subject,
-            email_body,
-            audience_types,
-            custom_recipients,
-            send_type,
-            scheduled_at,
-        } = body as {
-            subject: string;
-            email_body: string;
-            audience_types: string[];
-            custom_recipients?: Recipient[];
-            send_type: 'immediate' | 'scheduled' | 'draft';
-            scheduled_at?: string;
-        };
+        // Support both JSON (no attachments) and multipart/form-data (with attachments).
+        let subject: string;
+        let email_body: string;
+        let audience_types: string[];
+        let custom_recipients: Recipient[] | undefined;
+        let send_type: 'immediate' | 'scheduled' | 'draft';
+        let scheduled_at: string | undefined;
+        let attachments: ParsedAttachment[] = [];
+
+        const contentType = req.headers.get('content-type') ?? '';
+
+        if (contentType.includes('multipart/form-data')) {
+            const fd = await req.formData();
+            subject          = (fd.get('subject')          as string) ?? '';
+            email_body       = (fd.get('email_body')       as string) ?? '';
+            audience_types   = JSON.parse((fd.get('audience_types')   as string) || '[]');
+            custom_recipients= JSON.parse((fd.get('custom_recipients')as string) || '[]');
+            send_type        = ((fd.get('send_type') as string) || 'draft') as typeof send_type;
+            scheduled_at     = (fd.get('scheduled_at') as string) || undefined;
+
+            const files = fd.getAll('attachments') as File[];
+            attachments = await Promise.all(
+                files.map(async file => ({
+                    content:     Buffer.from(await file.arrayBuffer()).toString('base64'),
+                    filename:    file.name,
+                    type:        file.type || 'application/octet-stream',
+                    disposition: 'attachment' as const,
+                }))
+            );
+        } else {
+            const body = await req.json() as {
+                subject: string;
+                email_body: string;
+                audience_types: string[];
+                custom_recipients?: Recipient[];
+                send_type: 'immediate' | 'scheduled' | 'draft';
+                scheduled_at?: string;
+            };
+            subject           = body.subject;
+            email_body        = body.email_body;
+            audience_types    = body.audience_types;
+            custom_recipients = body.custom_recipients;
+            send_type         = body.send_type;
+            scheduled_at      = body.scheduled_at;
+        }
 
         if (!subject?.trim()) return NextResponse.json({ error: 'Subject is required' }, { status: 400 });
         if (!email_body?.trim()) return NextResponse.json({ error: 'Email body is required' }, { status: 400 });
@@ -233,7 +275,7 @@ export async function POST(req: NextRequest) {
         );
         const campaignId = campaignRes.rows[0].id;
 
-        const sendError = await sendInBatches(recipients, subject, email_body);
+        const sendError = await sendInBatches(recipients, subject, email_body, attachments);
 
         if (sendError) {
             await query(
