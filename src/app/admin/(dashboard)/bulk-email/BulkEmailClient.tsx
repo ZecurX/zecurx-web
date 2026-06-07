@@ -941,7 +941,7 @@ function ConfirmSendModal({
                                                 </div>
                                                 {a.uploadStatus === 'uploading' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground shrink-0" />}
                                                 {a.uploadStatus === 'done'      && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
-                                                {a.uploadStatus === 'error'     && <AlertCircle  className="w-4 h-4 text-red-500 shrink-0" title={a.uploadError} />}
+                                                {a.uploadStatus === 'error'     && <AlertCircle  className="w-4 h-4 text-red-500 shrink-0" />}
                                             </div>
                                         ))}
                                     </div>
