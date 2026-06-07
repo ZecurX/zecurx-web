@@ -137,7 +137,14 @@ interface Campaign {
 
 interface CSVImportError { row: number; email: string; reason: string; }
 interface CSVImportStats { total: number; imported: number; duplicates: number; errors: CSVImportError[]; }
-interface AttachmentFile  { id: string; file: File; }
+interface AttachmentFile {
+    id: string;
+    file: File;
+    uploadStatus: 'pending' | 'uploading' | 'done' | 'error';
+    publicUrl?: string;
+    s3Key?: string;
+    uploadError?: string;
+}
 
 const MAX_FILE_SIZE       = 10 * 1024 * 1024;   // 10 MB per file
 const MAX_TOTAL_SIZE      = 25 * 1024 * 1024;   // 25 MB combined
@@ -221,6 +228,26 @@ function downloadSampleCSV() {
     const a   = Object.assign(document.createElement('a'), { href: url, download: 'recipients_sample.csv' });
     a.click();
     URL.revokeObjectURL(url);
+}
+
+async function uploadAttachmentToS3(file: File): Promise<{ publicUrl: string; s3Key: string }> {
+    const urlRes = await fetch(
+        `/api/admin/bulk-email/upload-url?filename=${encodeURIComponent(file.name)}&type=${encodeURIComponent(file.type || 'application/octet-stream')}`
+    );
+    if (!urlRes.ok) {
+        const err = await urlRes.json().catch(() => ({})) as { error?: string };
+        throw new Error(err.error || 'Failed to get upload URL');
+    }
+    const { uploadUrl, publicUrl, key } = await urlRes.json() as {
+        uploadUrl: string; publicUrl: string; key: string;
+    };
+    const putRes = await fetch(uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type || 'application/octet-stream' },
+    });
+    if (!putRes.ok) throw new Error(`Upload failed (HTTP ${putRes.status})`);
+    return { publicUrl, s3Key: key };
 }
 
 // ─── TemplatePickerModal ─────────────────────────────────────────────────────
@@ -711,36 +738,40 @@ function ConfirmSendModal({
     const handleSend = async () => {
         setSendError('');
         if (selectedCount === 0) { setSendError('Select at least one recipient'); return; }
+
+        const stillUploading = attachments.filter(a => a.uploadStatus === 'uploading' || a.uploadStatus === 'pending');
+        if (stillUploading.length > 0) {
+            setSendError('Please wait for all attachments to finish uploading');
+            return;
+        }
+        const failedUploads = attachments.filter(a => a.uploadStatus === 'error');
+        if (failedUploads.length > 0) {
+            setSendError(`${failedUploads.length} attachment(s) failed to upload. Remove and re-attach them.`);
+            return;
+        }
+
         setIsSending(true);
         try {
             const finalList = allRecipients
                 .filter(r => selectedEmails.has(r.email))
                 .map(({ email, name }) => ({ email, name }));
 
-            let res: Response;
-            if (attachments.length > 0) {
-                const fd = new FormData();
-                fd.append('subject',           subject);
-                fd.append('email_body',        emailBody);
-                fd.append('audience_types',    JSON.stringify([]));
-                fd.append('custom_recipients', JSON.stringify(finalList));
-                fd.append('send_type', sendType === 'scheduled' ? 'scheduled' : 'immediate');
-                if (sendType === 'scheduled') fd.append('scheduled_at', scheduledAt);
-                attachments.forEach(a => fd.append('attachments', a.file, a.file.name));
-                res = await fetch('/api/admin/bulk-email/campaigns', { method: 'POST', body: fd });
-            } else {
-                res = await fetch('/api/admin/bulk-email/campaigns', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({
-                        subject, email_body: emailBody,
-                        audience_types:    [],
-                        custom_recipients: finalList,
-                        send_type:    sendType === 'scheduled' ? 'scheduled' : 'immediate',
-                        scheduled_at: sendType === 'scheduled' ? scheduledAt : undefined,
-                    }),
-                });
-            }
+            const attachmentUrls = attachments
+                .filter(a => a.uploadStatus === 'done' && a.publicUrl)
+                .map(a => ({ url: a.publicUrl!, filename: a.file.name, type: a.file.type || 'application/octet-stream' }));
+
+            const res = await fetch('/api/admin/bulk-email/campaigns', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    subject, email_body: emailBody,
+                    audience_types:    [],
+                    custom_recipients: finalList,
+                    send_type:    sendType === 'scheduled' ? 'scheduled' : 'immediate',
+                    scheduled_at: sendType === 'scheduled' ? scheduledAt : undefined,
+                    ...(attachmentUrls.length > 0 && { attachment_urls: attachmentUrls }),
+                }),
+            });
             const data = await res.json();
             if (!res.ok) { setSendError(data.error || 'Send failed'); return; }
             onSent(data.campaign?.recipient_count ?? selectedCount);
@@ -908,6 +939,9 @@ function ConfirmSendModal({
                                                     <p className="text-sm font-medium text-foreground truncate">{a.file.name}</p>
                                                     <p className="text-xs text-muted-foreground">{formatFileSize(a.file.size)}</p>
                                                 </div>
+                                                {a.uploadStatus === 'uploading' && <Loader2 className="w-4 h-4 animate-spin text-muted-foreground shrink-0" />}
+                                                {a.uploadStatus === 'done'      && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
+                                                {a.uploadStatus === 'error'     && <AlertCircle  className="w-4 h-4 text-red-500 shrink-0" title={a.uploadError} />}
                                             </div>
                                         ))}
                                     </div>
@@ -1081,6 +1115,49 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
         setAttachments([]); setCsvStats(null);
     };
 
+    const processAttachmentFiles = useCallback((files: File[]) => {
+        const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0);
+        const errors: string[] = [];
+        const toAdd: AttachmentFile[] = [];
+        let running = currentTotal;
+
+        for (const file of files) {
+            if (attachments.some(a => a.file.name === file.name && a.file.size === file.size)) {
+                errors.push(`${file.name}: already attached`); continue;
+            }
+            if (!ALLOWED_MIME_TYPES.has(file.type)) {
+                errors.push(`${file.name}: unsupported file type`); continue;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                errors.push(`${file.name}: exceeds 10 MB limit`); continue;
+            }
+            if (running + file.size > MAX_TOTAL_SIZE) {
+                errors.push(`${file.name}: would exceed 25 MB total`); continue;
+            }
+            running += file.size;
+            toAdd.push({ id: `${Date.now()}-${Math.random()}`, file, uploadStatus: 'uploading' });
+        }
+
+        if (toAdd.length > 0) {
+            setAttachments(prev => [...prev, ...toAdd]);
+            toAdd.forEach(att => {
+                uploadAttachmentToS3(att.file)
+                    .then(({ publicUrl, s3Key }) => {
+                        setAttachments(prev => prev.map(a =>
+                            a.id === att.id ? { ...a, uploadStatus: 'done', publicUrl, s3Key } : a
+                        ));
+                    })
+                    .catch((err: Error) => {
+                        setAttachments(prev => prev.map(a =>
+                            a.id === att.id ? { ...a, uploadStatus: 'error', uploadError: err.message } : a
+                        ));
+                        showToast('error', `Upload failed: ${att.file.name} — ${err.message}`);
+                    });
+            });
+        }
+        if (errors.length > 0) showToast('error', errors.join('; '));
+    }, [attachments, showToast]);
+
     const handleSaveDraft = async () => {
         if (!subject.trim()) { showToast('error', 'Subject is required'); return; }
         if (!emailBody.trim()) { showToast('error', 'Email body is required'); return; }
@@ -1090,28 +1167,16 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
         setIsSubmitting(true);
         try {
             const recipients = customRecipients.map(({ email, name }) => ({ email, name }));
-            let res: Response;
-            if (attachments.length > 0) {
-                const fd = new FormData();
-                fd.append('subject',           subject);
-                fd.append('email_body',        emailBody);
-                fd.append('audience_types',    JSON.stringify(audienceTypes));
-                fd.append('custom_recipients', JSON.stringify(recipients));
-                fd.append('send_type',         'draft');
-                attachments.forEach(a => fd.append('attachments', a.file, a.file.name));
-                res = await fetch('/api/admin/bulk-email/campaigns', { method: 'POST', body: fd });
-            } else {
-                res = await fetch('/api/admin/bulk-email/campaigns', {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({
-                        subject, email_body: emailBody,
-                        audience_types:    audienceTypes,
-                        custom_recipients: recipients,
-                        send_type: 'draft',
-                    }),
-                });
-            }
+            const res = await fetch('/api/admin/bulk-email/campaigns', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    subject, email_body: emailBody,
+                    audience_types:    audienceTypes,
+                    custom_recipients: recipients,
+                    send_type: 'draft',
+                }),
+            });
             const data = await res.json();
             if (!res.ok) { showToast('error', data.error || 'Failed to save draft'); return; }
             showToast('success', 'Draft saved successfully');
@@ -1575,34 +1640,7 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                         accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.webp"
                         className="hidden"
                         onChange={e => {
-                            const files = Array.from(e.target.files ?? []);
-                            const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0);
-                            const errors: string[] = [];
-                            const toAdd: AttachmentFile[] = [];
-                            let running = currentTotal;
-
-                            for (const file of files) {
-                                if (attachments.some(a => a.file.name === file.name && a.file.size === file.size)) {
-                                    errors.push(`${file.name}: already attached`);
-                                    continue;
-                                }
-                                if (!ALLOWED_MIME_TYPES.has(file.type)) {
-                                    errors.push(`${file.name}: unsupported file type`);
-                                    continue;
-                                }
-                                if (file.size > MAX_FILE_SIZE) {
-                                    errors.push(`${file.name}: exceeds 10 MB limit`);
-                                    continue;
-                                }
-                                if (running + file.size > MAX_TOTAL_SIZE) {
-                                    errors.push(`${file.name}: would exceed 25 MB total limit`);
-                                    continue;
-                                }
-                                running += file.size;
-                                toAdd.push({ id: `${Date.now()}-${Math.random()}`, file });
-                            }
-                            if (toAdd.length > 0) setAttachments(prev => [...prev, ...toAdd]);
-                            if (errors.length > 0) showToast('error', errors.join('; '));
+                            processAttachmentFiles(Array.from(e.target.files ?? []));
                             e.target.value = '';
                         }}
                     />
@@ -1615,20 +1653,7 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                         onDrop={e => {
                             e.preventDefault();
                             e.currentTarget.classList.remove('border-primary/40', 'bg-primary/5');
-                            const files = Array.from(e.dataTransfer.files);
-                            const currentTotal = attachments.reduce((s, a) => s + a.file.size, 0);
-                            const errors: string[] = [];
-                            const toAdd: AttachmentFile[] = [];
-                            let running = currentTotal;
-                            for (const file of files) {
-                                if (!ALLOWED_MIME_TYPES.has(file.type)) { errors.push(`${file.name}: unsupported type`); continue; }
-                                if (file.size > MAX_FILE_SIZE) { errors.push(`${file.name}: exceeds 10 MB`); continue; }
-                                if (running + file.size > MAX_TOTAL_SIZE) { errors.push(`${file.name}: would exceed 25 MB total`); continue; }
-                                running += file.size;
-                                toAdd.push({ id: `${Date.now()}-${Math.random()}`, file });
-                            }
-                            if (toAdd.length > 0) setAttachments(prev => [...prev, ...toAdd]);
-                            if (errors.length > 0) showToast('error', errors.join('; '));
+                            processAttachmentFiles(Array.from(e.dataTransfer.files));
                         }}
                         className={cn(
                             'flex flex-col items-center justify-center gap-2 py-5 rounded-xl border-2 border-dashed cursor-pointer transition-all',
@@ -1643,12 +1668,29 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                     {attachments.length > 0 && (
                         <div className="space-y-2">
                             {attachments.map(a => (
-                                <div key={a.id} className={cn(cardClass, '!p-3 flex items-center gap-3')}>
+                                <div key={a.id} className={cn(
+                                    cardClass, '!p-3 flex items-center gap-3',
+                                    a.uploadStatus === 'error' && 'border-red-500/20 bg-red-500/5'
+                                )}>
                                     <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-foreground truncate">{a.file.name}</p>
-                                        <p className="text-xs text-muted-foreground">{formatFileSize(a.file.size)}</p>
+                                        <p className={cn(
+                                            'text-xs',
+                                            a.uploadStatus === 'uploading' ? 'text-primary' :
+                                            a.uploadStatus === 'error'     ? 'text-red-500'  :
+                                            a.uploadStatus === 'done'      ? 'text-emerald-500' :
+                                            'text-muted-foreground'
+                                        )}>
+                                            {a.uploadStatus === 'uploading' ? 'Uploading…' :
+                                             a.uploadStatus === 'error'     ? (a.uploadError ?? 'Upload failed') :
+                                             a.uploadStatus === 'done'      ? formatFileSize(a.file.size) :
+                                             formatFileSize(a.file.size)}
+                                        </p>
                                     </div>
+                                    {a.uploadStatus === 'uploading' && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary shrink-0" />}
+                                    {a.uploadStatus === 'done'      && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />}
+                                    {a.uploadStatus === 'error'     && <AlertCircle  className="w-3.5 h-3.5 text-red-500 shrink-0" />}
                                     <button
                                         type="button"
                                         onClick={() => setAttachments(prev => prev.filter(x => x.id !== a.id))}
@@ -1728,7 +1770,10 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
                 </button>
 
                 <button type="button" onClick={handleOpenSendModal}
-                    disabled={audienceTypes.length === 0 && customRecipients.length === 0}
+                    disabled={
+                        (audienceTypes.length === 0 && customRecipients.length === 0) ||
+                        attachments.some(a => a.uploadStatus === 'uploading' || a.uploadStatus === 'pending')
+                    }
                     className={cn(
                         'inline-flex items-center gap-2 px-5 py-3 text-sm font-medium rounded-xl transition-all min-h-[44px]',
                         'bg-foreground text-background shadow-lg shadow-foreground/10',

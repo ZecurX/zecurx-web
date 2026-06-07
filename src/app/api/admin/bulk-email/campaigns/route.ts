@@ -171,50 +171,39 @@ export async function POST(req: NextRequest) {
     try {
         await ensureTable();
 
-        // Support both JSON (no attachments) and multipart/form-data (with attachments).
-        let subject: string;
-        let email_body: string;
-        let audience_types: string[];
-        let custom_recipients: Recipient[] | undefined;
-        let send_type: 'immediate' | 'scheduled' | 'draft';
-        let scheduled_at: string | undefined;
         let attachments: ParsedAttachment[] = [];
 
-        const contentType = req.headers.get('content-type') ?? '';
+        const body = await req.json() as {
+            subject: string;
+            email_body: string;
+            audience_types: string[];
+            custom_recipients?: Recipient[];
+            send_type: 'immediate' | 'scheduled' | 'draft';
+            scheduled_at?: string;
+            // Pre-uploaded to Hetzner via presigned URL — server fetches & base64-encodes
+            attachment_urls?: Array<{ url: string; filename: string; type: string }>;
+        };
+        const subject           = body.subject;
+        const email_body        = body.email_body;
+        const audience_types    = body.audience_types;
+        const custom_recipients = body.custom_recipients;
+        const send_type         = body.send_type;
+        const scheduled_at      = body.scheduled_at;
 
-        if (contentType.includes('multipart/form-data')) {
-            const fd = await req.formData();
-            subject          = (fd.get('subject')          as string) ?? '';
-            email_body       = (fd.get('email_body')       as string) ?? '';
-            audience_types   = JSON.parse((fd.get('audience_types')   as string) || '[]');
-            custom_recipients= JSON.parse((fd.get('custom_recipients')as string) || '[]');
-            send_type        = ((fd.get('send_type') as string) || 'draft') as typeof send_type;
-            scheduled_at     = (fd.get('scheduled_at') as string) || undefined;
-
-            const files = fd.getAll('attachments') as File[];
+        if (body.attachment_urls?.length) {
             attachments = await Promise.all(
-                files.map(async file => ({
-                    content:     Buffer.from(await file.arrayBuffer()).toString('base64'),
-                    filename:    file.name,
-                    type:        file.type || 'application/octet-stream',
-                    disposition: 'attachment' as const,
-                }))
+                body.attachment_urls.map(async ({ url, filename, type }) => {
+                    const fileRes = await fetch(url);
+                    if (!fileRes.ok) throw new Error(`Failed to fetch attachment: ${filename}`);
+                    const buffer = Buffer.from(await fileRes.arrayBuffer());
+                    return {
+                        content:     buffer.toString('base64'),
+                        filename,
+                        type:        type || 'application/octet-stream',
+                        disposition: 'attachment' as const,
+                    };
+                })
             );
-        } else {
-            const body = await req.json() as {
-                subject: string;
-                email_body: string;
-                audience_types: string[];
-                custom_recipients?: Recipient[];
-                send_type: 'immediate' | 'scheduled' | 'draft';
-                scheduled_at?: string;
-            };
-            subject           = body.subject;
-            email_body        = body.email_body;
-            audience_types    = body.audience_types;
-            custom_recipients = body.custom_recipients;
-            send_type         = body.send_type;
-            scheduled_at      = body.scheduled_at;
         }
 
         if (!subject?.trim()) return NextResponse.json({ error: 'Subject is required' }, { status: 400 });
