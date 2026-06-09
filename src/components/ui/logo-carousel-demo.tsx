@@ -25,7 +25,7 @@ export function LogoCarouselBasic() {
         <p className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-[14px] py-1 text-xs font-medium tracking-[0.24em] uppercase mb-4 sm:mb-6">
           Trusted by
         </p>
-        <InfiniteSlider gap={18} duration={30} durationOnHover={60} className="mt-[-4px] sm:mt-0">
+        <InfiniteSlider gap={18} duration={60} durationOnHover={110} className="mt-[-4px] sm:mt-0">
           {logos.map((logo, index) => (
             <div
               key={`${logo.alt}-${index}`}
@@ -36,7 +36,15 @@ export function LogoCarouselBasic() {
                 alt={logo.alt}
                 width={200}
                 height={72}
-                className={`${logo.size === 'large' ? 'h-24 md:h-32' : 'h-20 md:h-24'} w-auto object-contain grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300`}
+                className={`
+                  ${logo.size === 'large' ? 'h-24 md:h-32' : 'h-20 md:h-24'}
+                  w-auto object-contain
+                  grayscale-0 opacity-100
+                  lg:grayscale lg:opacity-50
+                  lg:hover:grayscale-0
+                  lg:hover:opacity-100
+                  transition-all duration-300
+                `}
               />
             </div>
           ))}
