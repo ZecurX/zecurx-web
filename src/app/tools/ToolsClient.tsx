@@ -38,7 +38,7 @@ const tools = [
     icon: Radar,
     href: "/tools/port-radar",
     image: "/assets/tool-port.webp",
-    lottie: getCdnUrl("lottie/radar.json"),
+    lottie: getCdnUrl("lottie/aiml.json"),
   },
   {
     title: "TLS/SSL Analyzer",
