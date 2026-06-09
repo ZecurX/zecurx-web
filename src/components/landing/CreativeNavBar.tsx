@@ -97,7 +97,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-1 sm:gap-1.5 shrink-0 group">
                             <motion.div
-                                className="relative w-8 h-8 sm:w-10 sm:h-10"
+                                className="relative w-10 h-10 sm:w-12 sm:h-12"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
