@@ -7,46 +7,57 @@ import { Terminal, Cloud, Cpu, ShieldCheck, Zap } from "lucide-react"
 
 const capabilities = [
     {
-        title: "Application Security",
+        title: "Offensive Security & Penetration Testing",
         description:
-            "Deep-dive web, API, and source code security testing. We identify and fix complex logic flaws before they affect your users — not just surface-level scanner results.",
+            "Deep-dive web, API, and infrastructure security testing. We identify and fix complex vulnerabilities before attackers exploit them — not just surface-level scanner results.",
         icon: Terminal,
-        href: "/services/application-security",
-        className: "lg:col-span-3 lg:row-span-2",
+        href: "/services/offensive-security"
     },
     {
         title: "Cloud & DevSecOps",
         description:
             "Continuous cloud posture management and automated CI/CD pipeline security for AWS, GCP, and Azure environments.",
         icon: Cloud,
-        href: "/services/cloud-devsecops",
-        className: "lg:col-span-2 lg:row-span-2",
+        href: "/services/cloud-devsecops"
     },
     {
-        title: "Secure AI Development",
+        title: "Secure AI & LLM Security",
         description:
-            "Advanced threat modeling, LLM sandbox integration, and AI abuse testing for secure GenAI applications. We protect your models and AI agents from prompt injection, data poisoning, and unauthorized access — ensuring your intelligent systems remain trustworthy at scale.",
+            "Advanced threat modeling, LLM sandbox integration, and AI abuse testing for secure GenAI applications.",
         icon: Cpu,
-        href: "/services/secure-ai-development",
-        className: "lg:col-span-4 lg:row-span-1",
+        href: "/services/secure-ai-llm"
+    },
+
+    {
+        title: "Secure Application Development",
+        description:
+            "Embed security into your development lifecycle — from architecture to production.",
+        icon: Terminal,
+        href: "/services/secure-app-dev"
     },
     {
-        title: "Compliance Readiness",
+        title: "SOC, Detection & Response",
         description:
-            "Streamlined pathways to SOC 2, ISO 27001, and DPDP readiness without grinding your engineering team to a halt.",
-        icon: ShieldCheck,
-        href: "/services/compliance-readiness",
-        className: "lg:col-span-2 lg:row-span-1",
-    },
-    {
-        title: "24/7 Security Operations",
-        description:
-            "Always-on DevSecOps integration with real-time monitoring, incident response, and continuous vulnerability management.",
+            "24/7 monitoring, detection, and incident response.",
         icon: Zap,
-        href: "/contact",
-        className: "lg:col-span-2 lg:row-span-1",
+        href: "/services/soc-detection"
     },
-]
+    {
+        title: "Compliance & Governance",
+        description:
+            "SOC 2, ISO 27001, GDPR, and DPDP readiness.",
+        icon: ShieldCheck,
+        href: "/services/compliance-governance"
+    },
+
+    {
+        title: "Web3, Blockchain & NFT Development",
+        description:
+            "Secure smart contracts and decentralized systems with audit-first development.",
+        icon: Cpu,
+        href: "/services/web3-blockchain-nft"
+    },
+];
 
 const CornerPlusIcons = () => (
     <>
@@ -78,42 +89,54 @@ const CapabilityCard: React.FC<{
     description: string
     icon: React.ElementType
     href: string
-    visual?: React.ReactNode
-}> = ({ className = "", title, description, icon: _Icon, href, visual }) => {
+}> = ({ className = "", title, description, icon: Icon, href }) => {
     return (
-        <div
-            className={cn(
-                "relative border border-dashed border-border rounded-2xl p-6 md:p-8 bg-card min-h-[200px]",
-                "flex flex-col justify-between group transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5",
-                className
-            )}
-        >
-            <Link href={href} className="absolute inset-0 z-20" aria-label={title} />
-            <CornerPlusIcons />
-
-            {/* Content */}
-            <div className="relative z-10 space-y-3">
-                {visual && (
-                    <div className="w-full mb-2">
-                        {visual}
-                    </div>
+        <Link href={href} className="block group">
+           <div
+                className={cn(
+                    "relative border border-dashed border-border rounded-2xl p-6 md:p-8 bg-card",
+                    "flex flex-col justify-between h-full",
+                    "min-h-[260px] md:min-h-[300px]",
+                    "transition-all duration-300 cursor-pointer",
+                    "hover:border-[#4c69e4] hover:shadow-2xl hover:shadow-[#4c69e4]/20 hover:-translate-y-2",
+                    className
                 )}
-                <h3 className="text-lg md:text-xl font-manrope font-bold text-[#4c69e4] transition-colors">
-                    {title}
-                </h3>
-                <p className="text-muted-foreground font-manrope font-light leading-relaxed text-sm md:text-base">
-                    {description}
-                </p>
-            </div>
+            >
+                <CornerPlusIcons />
 
-            {/* Bottom arrow hint */}
-            <div className="relative z-10 mt-4 flex items-center text-primary font-manrope font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Learn more
-                <svg className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+                <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                        <Icon className="w-5 h-5 text-[#4c69e4] group-hover:scale-110 transition-transform" />
+                        <h3 className="text-lg md:text-xl font-manrope font-bold text-[#4c69e4] group-hover:text-primary">
+                            {title}
+                        </h3>
+                    </div>
+
+                    <p className="text-muted-foreground font-manrope font-light leading-relaxed text-sm md:text-base">
+                        {description}
+                    </p>
+                </div>
+
+                {/* Strong CTA */}
+                <div className="mt-6 flex items-center justify-between">
+                    <span className="text-sm font-medium text-[#4c69e4]">
+                        Explore
+                    </span>
+
+                    <div className="w-9 h-9 rounded-full bg-[#4c69e4] flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                        <svg
+                            className="w-4 h-4 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </div>
+                </div>
             </div>
-        </div>
+        </Link>
     )
 }
 
@@ -121,8 +144,8 @@ export default function CapabilitiesBento() {
     return (
         <section id="capabilities" className="bg-background border-y border-border/40">
             <div className="mx-auto container max-w-7xl py-16 md:py-24 px-4 md:px-6">
-                {/* Responsive Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 auto-rows-auto gap-4 md:gap-5">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
                     {capabilities.map((cap) => (
                         <CapabilityCard
                             key={cap.title}
@@ -130,12 +153,11 @@ export default function CapabilitiesBento() {
                             description={cap.description}
                             icon={cap.icon}
                             href={cap.href}
-                            className={cap.className}
+                            // className={cap.className}
                         />
                     ))}
                 </div>
 
-                {/* Section Footer */}
                 <div className="max-w-2xl ml-auto text-right px-4 mt-8 lg:-mt-16">
                     <h2 className="text-3xl md:text-5xl lg:text-6xl font-manrope font-light tracking-tighter text-foreground mb-4">
                         Built for <span className="font-newsreader italic text-[#4c69e4]">performance.</span>
