@@ -50,26 +50,26 @@ export default function ParamFinderPage() {
         <ToolPageLayout
             title="Param Finder"
             description="Detect hidden URL parameters that may be vulnerable to injection attacks like XSS, SQLi, and SSRF."
-            icon={Code2}
+            // icon={Code2}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
                     <label htmlFor="url" className="block text-sm font-medium text-foreground mb-3">
                         Target URL
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                         <input
                             type="text"
                             id="url"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder="https://example.com/search"
-                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
+                            className="min-w-0 w-full sm:flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !url.trim()}
-                            className="px-8 py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                            className="w-full sm:w-auto px-8 py-4 sm:py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center sm:min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -94,8 +94,8 @@ export default function ParamFinderPage() {
                         <h3 className="text-lg font-semibold text-foreground mb-4">
                             Found {results.length} parameters
                         </h3>
-                        <div className="bg-background rounded-lg border border-border overflow-hidden">
-                            <table className="w-full">
+                        <div className="bg-background rounded-lg border border-border overflow-x-auto">
+                            <table className="w-full min-w-[480px]">
                                 <thead className="bg-muted/50">
                                     <tr>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Parameter</th>
@@ -105,7 +105,7 @@ export default function ParamFinderPage() {
                                 <tbody className="divide-y divide-border">
                                     {results.map((result, idx) => (
                                         <tr key={idx} className="hover:bg-muted/30 transition-colors">
-                                            <td className="px-4 py-3 font-mono text-sm text-foreground">{result.param}</td>
+                                            <td className="px-4 py-3 font-mono text-sm text-foreground break-all">{result.param}</td>
                                             <td className="px-4 py-3 text-sm text-muted-foreground">{result.type}</td>
                                         </tr>
                                     ))}

@@ -58,26 +58,26 @@ export default function SubdomainFinderPage() {
         <ToolPageLayout
             title="Subdomain Finder"
             description="Discover hidden subdomains and map the complete attack surface of any target domain using advanced enumeration techniques."
-            icon={Search}
+            // icon={Search}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
                     <label htmlFor="domain" className="block text-sm font-medium text-foreground mb-3">
                         Target Domain
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                         <input
                             type="text"
                             id="domain"
                             value={domain}
                             onChange={(e) => setDomain(e.target.value)}
                             placeholder="example.com"
-                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
+                            className="min-w-0 w-full sm:flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !domain.trim()}
-                            className="px-8 py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                            className="w-full sm:w-auto px-8 py-4 sm:py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center sm:min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -102,11 +102,11 @@ export default function SubdomainFinderPage() {
 
                 {results && results.length > 0 && (
                     <div className="border-t border-border pt-8">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                             <h3 className="text-lg font-semibold text-foreground">
                                 Found {results.length} subdomains
                             </h3>
-                            <div className="flex gap-2 text-xs">
+                            <div className="flex flex-wrap gap-2 text-xs">
                                 <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-600">Certificate</span>
                                 <span className="px-2 py-1 rounded bg-orange-500/10 text-orange-600">Bruteforce</span>
                                 <span className="px-2 py-1 rounded bg-green-500/10 text-green-600">Both</span>

@@ -5,16 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
 import { motion, useScroll, useTransform } from "framer-motion";
+import logoText from "../../../design/images/raw/logo-text.png";
 
 const footerLinks = {
   Services: [
-    { label: "Application Security", href: "/services/application-security" },
+    { label: "Offensive Security", href: "/services/offensive-security" },
     { label: "Cloud & DevSecOps", href: "/services/cloud-devsecops" },
-    {
-      label: "Secure AI Development",
-      href: "/services/secure-ai-development",
-    },
-    { label: "Compliance Readiness", href: "/services/compliance-readiness" },
+    { label: "AI & LLM Security", href: "/services/secure-ai-llm" },
+    { label: "AppSec Development", href: "/services/secure-app-dev" },
+  ],
+  "Services2": [
+    { label: "SOC & Response", href: "/services/soc-detection" },
+    { label: "Compliance", href: "/services/compliance-governance" },
+    { label: "Web3 Security", href: "/services/web3-blockchain-nft" },
   ],
   Industries: [
     { label: "SaaS & Startups", href: "/industries" },
@@ -61,7 +64,7 @@ export default function Footer() {
           <div>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 md:gap-3"
+              className="inline-flex items-center gap-1 md:gap-2"
               aria-label="ZecurX Home"
             >
               <div className="relative w-10 md:w-14 h-10 md:h-14">
@@ -72,9 +75,13 @@ export default function Footer() {
                   className="object-contain"
                 />
               </div>
-              <span className="font-manrope text-lg md:text-2xl font-semibold text-slate-900">
-                ZecurX
-              </span>
+              <Image
+                src={logoText}
+                alt="ZecurX"
+                width={256}
+                height={74}
+                className="h-5 w-auto md:h-6 lg:h-7 object-contain"
+              />
             </Link>
             <p className="mt-2 md:mt-4 max-w-xs text-xs md:text-sm leading-relaxed text-slate-600">
               Security &amp; Technology That Grows With You.
@@ -82,11 +89,11 @@ export default function Footer() {
           </div>
 
           {/* Links Grid */}
-          <div className="xl:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-8">
+          <div className="xl:col-span-3 grid grid-cols-2 sm:grid-cols-5 gap-4 md:gap-8">
             {Object.entries(footerLinks).map(([heading, links]) => (
               <div key={heading}>
                 <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  {heading}
+                  {heading === "Services2" ? "\u00A0" : heading}
                 </h4>
                 <ul className="space-y-1.5 md:space-y-2.5" role="list">
                   {links.map((link) => (
