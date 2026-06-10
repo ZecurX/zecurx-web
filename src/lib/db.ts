@@ -2,9 +2,7 @@ import { Pool, QueryResult, QueryResultRow } from 'pg';
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production'
-        ? true  // Production: use SSL with proper verification
-        : { rejectUnauthorized: false }, // Development: accept self-signed certs
+    ssl: { rejectUnauthorized: false },
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
@@ -64,6 +62,7 @@ const VALID_TABLES = new Set([
     'seminar.certificates', 'seminar.certificate_name_requests', 'seminar.otp_verifications', 'seminar.feedback',
     // zecurx_admin schema qualified tables
     'zecurx_admin.plans', 'zecurx_admin.promo_prices', 'zecurx_admin.settings', 'zecurx_admin.course_mapping',
+    'zecurx_admin.bulk_email_campaigns', 'bulk_email_campaigns',
 ]);
 
 // Validate identifiers (table names, column names) to prevent SQL injection

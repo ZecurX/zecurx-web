@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import CartIcon from '@/components/shop/CartIcon';
 import { CDN_ASSETS } from "@/lib/cdn";
 import { desc } from 'framer-motion/client';
+import logoText from "../../../design/images/raw/logo-text.png";
 
 
 //urls object to redirect 
@@ -23,10 +24,41 @@ const navData = {
         href: "/services",
         description: "Expert security services",
         items: [
-            { title: "Application Security", href: "/services/application-security", desc: "Web, API & source code security testing" },
-            { title: "Cloud & DevSecOps", href: "/services/cloud-devsecops", desc: "Cloud misconfig & CI/CD security audits" },
-            { title: "Secure AI Development", href: "/services/secure-ai-development", desc: "LLM security & AI abuse testing" },
-            { title: "Compliance Readiness", href: "/services/compliance-readiness", desc: "ISO 27001, SOC 2 & DPDP preparation" },
+            {
+                title: "Offensive Security & Penetration Testing",
+                href: "/services/offensive-security",
+                desc: "Web, API, and infrastructure penetration testing with real-world attack simulation"
+            },
+            {
+                title: "Cloud & DevSecOps",
+                href: "/services/cloud-devsecops",
+                desc: "Cloud posture management and CI/CD pipeline security across AWS, GCP, and Azure"
+            },
+            {
+                title: "Secure AI & LLM Security",
+                href: "/services/secure-ai-llm",
+                desc: "LLM security, prompt injection protection, and AI abuse testing"
+            },
+            {
+                title: "Secure Application Development",
+                href: "/services/secure-app-dev",
+                desc: "Secure SDLC implementation from design to deployment"
+            },
+            {
+                title: "SOC, Detection & Response",
+                href: "/services/soc-detection",
+                desc: "24/7 monitoring, threat detection, and incident response"
+            },
+            {
+                title: "Compliance & Governance",
+                href: "/services/compliance-governance",
+                desc: "SOC 2, ISO 27001, GDPR and DPDP readiness programs"
+            },
+            {
+                title: "Web3, Blockchain & NFT Development",
+                href: "/services/web3-blockchain-nft",
+                desc: "Smart contract security and decentralized application protection"
+            },
         ]
     },
     resources: {
@@ -103,9 +135,9 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                     <div className="flex items-center justify-between h-14 sm:h-16 px-5 sm:px-6">
 
                         {/* Logo */}
-                        <Link href="/" className="flex items-center gap-2 shrink-0 group">
+                        <Link href="/" className="flex items-center gap-1 sm:gap-1.5 shrink-0 group">
                             <motion.div
-                                className="relative w-8 h-8 sm:w-10 sm:h-10"
+                                className="relative w-10 h-10 sm:w-12 sm:h-12"
                                 whileHover={{ rotate: 5, scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
                             >
@@ -117,9 +149,14 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                     priority
                                 />
                             </motion.div>
-                            <span className={cn("font-manrope font-semibold text-lg sm:text-xl leading-none tracking-tight", forceDark ? "text-white" : "text-foreground")}>
-                                ZecurX
-                            </span>
+                            <Image
+                                src={logoText}
+                                alt="ZecurX"
+                                width={256}
+                                height={74}
+                                className="h-[18px] w-auto sm:h-5 md:h-6 object-contain"
+                                priority
+                            />
                         </Link>
 
                         {/* Desktop Nav */}
@@ -230,7 +267,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 className="p-2 text-foreground hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
                                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                                aria-expanded={mobileMenuOpen}
+                                // aria-expanded={mobileMenuOpen}
                             >
                                 <motion.div
                                     animate={mobileMenuOpen ? "open" : "closed"}
@@ -261,20 +298,25 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <div className="p-4 md:p-5">
                                     <motion.div
                                         className={cn(
-                                            "grid gap-3 items-stretch",
+                                            "grid gap-2",
+                                            activeDropdown === "services" && "items-stretch",
                                             activeDropdown === "academy"
                                                 ? "min-w-[420px] grid-cols-1 md:grid-cols-[1fr_1.1fr]"
+                                                : activeDropdown === "services"
+                                                ? "min-w-[640px] grid-cols-1 md:grid-cols-[0.3fr_1.8fr]"
                                                 : "min-w-[620px] grid-cols-1 md:grid-cols-[1.05fr_1.5fr]"
                                         )}
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.2, delay: 0.05 }}
                                     >
+                                        {/* LEFT PANEL */}
                                         <Link
                                             href={navData[activeDropdown as keyof typeof navData].href}
                                             onClick={() => setActiveDropdown(null)}
                                             className={cn(
-                                                "group flex flex-col justify-between rounded-2xl border p-4 md:p-5 transition-all",
+                                                "group block rounded-xl border p-3 transition-all",
+                                                activeDropdown === "services" && "h-full min-h-[80px] flex flex-col justify-between",
                                                 forceDark
                                                     ? "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
                                                     : "border-sky-100 bg-gradient-to-br from-white/90 via-sky-50/80 to-white/90 hover:border-sky-200"
@@ -309,13 +351,19 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             </span>
                                         </Link>
 
+                                        {/* RIGHT GRID */}
                                         <div className={cn(
                                             "grid gap-2",
-                                            activeDropdown === "academy" ? "grid-cols-1" : "grid-cols-2"
+                                            activeDropdown === "academy"
+                                                ? "grid-cols-1"
+                                                : activeDropdown === "services"
+                                                ? "grid-cols-4"
+                                                : "grid-cols-2"
                                         )}>
                                             {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
                                                 <motion.div
                                                     key={item.title}
+                                                    className={activeDropdown === "services" && i === 4 ? "col-start-1" : ""}
                                                     initial={{ opacity: 0, y: 5 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     transition={{ duration: 0.15, delay: i * 0.02 }}
@@ -325,6 +373,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                                         onClick={() => setActiveDropdown(null)}
                                                         className={cn(
                                                             "group block rounded-xl border p-3 transition-all",
+                                                            activeDropdown === "services" && "h-full min-h-[120px] flex flex-col justify-between",
                                                             forceDark
                                                                 ? "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
                                                                 : "border-sky-100/80 bg-white/80 hover:border-sky-200 hover:bg-white"
@@ -380,7 +429,7 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                             className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background lg:hidden border-l border-border/50 shadow-2xl flex flex-col h-full"
                         >
                             <div className="flex items-center justify-between p-5 border-b border-border/50 shrink-0">
-                                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
+                                <Link href="/" className="flex items-center gap-1 sm:gap-1.5" onClick={() => setMobileMenuOpen(false)}>
                                     <div className="relative w-8 h-8">
                                         <Image
                                             src={CDN_ASSETS.brand.logo}
@@ -389,7 +438,13 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                             className="object-contain"
                                         />
                                     </div>
-                                    <span className="font-manrope font-semibold text-lg leading-none tracking-tight">ZecurX</span>
+                                    <Image
+                                        src={logoText}
+                                        alt="ZecurX"
+                                        width={256}
+                                        height={74}
+                                        className="h-[18px] w-auto sm:h-5 object-contain"
+                                    />
                                 </Link>
                                 <button
                                     onClick={() => setMobileMenuOpen(false)}
@@ -404,21 +459,34 @@ export default function CreativeNavBar({ forceDark = false, showCart = false }: 
                                 <div className="p-6 space-y-2">
                                     {Object.entries(navData).map(([key, data]) => (
                                         <div key={key} className="border-b border-border/40 last:border-0">
-                                            <button
-                                                onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
-                                                className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground group"
-                                            >
-                                                {data.label}
-                                                <ChevronDown
-                                                    className={cn(
-                                                        "w-5 h-5 text-muted-foreground transition-transform duration-200",
-                                                        mobileExpanded === key ? "rotate-180" : "group-hover:text-foreground"
-                                                    )}
-                                                />
-                                            </button>
+                                            <div className="flex items-center justify-between gap-2 py-2">
+                                                <Link
+                                                    href={data.href}
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                    className="flex-1 py-2 text-base font-medium text-foreground rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                                                >
+                                                    {data.label}
+                                                </Link>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
+                                                    className="inline-flex items-center justify-center w-11 h-11 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                                                    aria-label={`${mobileExpanded === key ? "Collapse" : "Expand"} ${data.label} menu`}
+                                                    // aria-expanded={mobileExpanded === key}
+                                                    // aria-controls={`mobile-submenu-${key}`}
+                                                >
+                                                    <ChevronDown
+                                                        className={cn(
+                                                            "w-5 h-5 transition-transform duration-200",
+                                                            mobileExpanded === key && "rotate-180"
+                                                        )}
+                                                    />
+                                                </button>
+                                            </div>
                                             <AnimatePresence>
                                                 {mobileExpanded === key && (
                                                     <motion.div
+                                                        id={`mobile-submenu-${key}`}
                                                         initial={{ height: 0, opacity: 0 }}
                                                         animate={{ height: "auto", opacity: 1 }}
                                                         exit={{ height: 0, opacity: 0 }}

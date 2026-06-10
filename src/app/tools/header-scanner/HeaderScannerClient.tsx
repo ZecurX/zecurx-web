@@ -67,26 +67,26 @@ export default function HeaderScannerPage() {
         <ToolPageLayout
             title="Header Scanner"
             description="Analyze HTTP security headers to verify proper implementation of HSTS, CSP, X-Frame-Options, and more."
-            icon={FileSearch}
+            // icon={FileSearch}
         >
             <form onSubmit={handleSubmit} className="space-y-8">
                 <div>
                     <label htmlFor="url" className="block text-sm font-medium text-foreground mb-3">
                         Target URL
                     </label>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                         <input
                             type="text"
                             id="url"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
                             placeholder="https://example.com"
-                            className="flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
+                            className="min-w-0 w-full sm:flex-1 px-5 py-4 bg-background border border-border/50 rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50 focus:border-[#4c69e4] transition-all !cursor-text relative z-50 shadow-sm font-mono text-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading || !url.trim()}
-                            className="px-8 py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
+                            className="w-full sm:w-auto px-8 py-4 sm:py-3 rounded-xl bg-[#4c69e4] text-white font-semibold font-inter transition-all duration-300 hover:bg-[#375bde] hover:shadow-[0_0_20px_rgba(74,111,250,0.4)] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center sm:min-w-[140px]"
                         >
                             {isLoading ? (
                                 <>
@@ -109,9 +109,9 @@ export default function HeaderScannerPage() {
                 {results && results.length > 0 && (
                     <div className="border-t border-border pt-8">
                         {/* Summary */}
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
                             <h3 className="text-lg font-semibold text-foreground">Security Headers</h3>
-                            <div className="flex gap-4 text-sm">
+                            <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                                 <span className="flex items-center gap-1.5">
                                     <CheckCircle2 className="w-4 h-4 text-green-600" />
                                     <span className="text-muted-foreground">{presentCount} Present</span>
