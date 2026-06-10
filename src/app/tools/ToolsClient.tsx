@@ -196,35 +196,6 @@ export default function ToolsClient() {
           </div>
         </section>
 
-        {/* CTA (UNCHANGED ORIGINAL STYLE) */}
-        <section className="py-24 md:py-32 bg-background border-t border-border/40">
-          <div className="max-w-[1320px] mx-auto px-6 text-center">
-
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Ready to Go Deeper?
-            </h2>
-
-            <p className="text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
-              Join thousands of security researchers using ZecurX tools to discover vulnerabilities faster.
-            </p>
-
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/contact">
-                <button className="bg-[#4c69e4] text-white px-8 py-4 rounded-full hover:bg-[#375bde] transition">
-                  Get Enterprise Access
-                </button>
-              </Link>
-
-              <Link href="/services#ptaas">
-                <button className="border border-border/50 px-8 py-4 rounded-full hover:bg-muted/50 transition">
-                  Explore PTaaS
-                </button>
-              </Link>
-            </div>
-
-          </div>
-        </section>
-
       </div>
 
       <Footer />
