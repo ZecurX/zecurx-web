@@ -8,7 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import CartIcon from '@/components/shop/CartIcon';
 import { CDN_ASSETS } from "@/lib/cdn";
+import { desc } from 'framer-motion/client';
 
+
+//urls object to redirect 
+const urls = [
+    "https://lms.zecurx.com/",
+    "https://ctf.zecurx.com/"
+]
 // Navigation Data
 const navData = {
     services: {
@@ -31,6 +38,8 @@ const navData = {
             { title: "Security Blog", href: "/blog", desc: "Latest insights & technical articles" },
             { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research" },
             { title: "Case Studies", href: "/resources/case-studies", desc: "Real-world security solutions" },
+            { title: "LMS", href: urls[0], desc: "Learn without limits. Grow without boundaries." },
+            { title: "CTF", href: urls[1], desc: "Advanced CTF Platform to Master Ethical hacking" }
         ]
     },
     academy: {
