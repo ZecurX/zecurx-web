@@ -9,13 +9,15 @@ import logoText from "../../../design/images/raw/logo-text.png";
 
 const footerLinks = {
   Services: [
-    { label: "Application Security", href: "/services/application-security" },
+    { label: "Offensive Security", href: "/services/offensive-security" },
     { label: "Cloud & DevSecOps", href: "/services/cloud-devsecops" },
-    {
-      label: "Secure AI Development",
-      href: "/services/secure-ai-development",
-    },
-    { label: "Compliance Readiness", href: "/services/compliance-readiness" },
+    { label: "AI & LLM Security", href: "/services/secure-ai-llm" },
+    { label: "AppSec Development", href: "/services/secure-app-dev" },
+  ],
+  "Services2": [
+    { label: "SOC & Response", href: "/services/soc-detection" },
+    { label: "Compliance", href: "/services/compliance-governance" },
+    { label: "Web3 Security", href: "/services/web3-blockchain-nft" },
   ],
   Industries: [
     { label: "SaaS & Startups", href: "/industries" },
@@ -87,11 +89,11 @@ export default function Footer() {
           </div>
 
           {/* Links Grid */}
-          <div className="xl:col-span-3 grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-8">
+          <div className="xl:col-span-3 grid grid-cols-2 sm:grid-cols-5 gap-4 md:gap-8">
             {Object.entries(footerLinks).map(([heading, links]) => (
               <div key={heading}>
                 <h4 className="mb-3 md:mb-4 font-space-grotesk text-[10px] md:text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  {heading}
+                  {heading === "Services2" ? "\u00A0" : heading}
                 </h4>
                 <ul className="space-y-1.5 md:space-y-2.5" role="list">
                   {links.map((link) => (
