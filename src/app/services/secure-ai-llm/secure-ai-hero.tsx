@@ -16,7 +16,7 @@ function HeroIllustration() {
 
       {/* Center brain/AI icon */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-[#2d1b4e] to-[#0c0a1e] shadow-[0_0_60px_rgba(76,105,228,0.3)] flex items-center justify-center">
+        <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-[#1e2d5f] to-[#0c0a1e] shadow-[0_0_60px_rgba(76,105,228,0.3)] flex items-center justify-center">
           <Brain className="w-14 h-14 text-[#4c69e4]" strokeWidth={1.5} />
         </div>
       </div>
