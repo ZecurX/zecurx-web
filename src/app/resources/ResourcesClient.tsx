@@ -1,30 +1,19 @@
 "use client";
 
-
+import Image from "next/image";
 import React from "react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import {
   ArrowUpRight,
-  BookOpen,
-  Briefcase,
-  FileText,
-  Lightbulb,
-  Shield,
-  Video,
   TrendingUp,
   Search,
   Cloud,
   Scale,
   Bot,
   ArrowRight,
-  BarChart2,
-  ShieldCheck,
-  Presentation,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { HeroWords, heroEnd } from "@/components/ui/hero-words";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
 import { BlurFade } from "@/components/ui/blur-fade";
@@ -32,42 +21,42 @@ import { BlurFade } from "@/components/ui/blur-fade";
 
 const featuredResources = [
   {
-    icon: BookOpen,
+    icon: "/icons/blog.svg",
     title: "ZecurX Blog",
     description:
       "Stay ahead of the curve with expert analysis on the evolving cybersecurity landscape. Our engineers break down emerging threats and practical defense strategies.",
     href: "/blog",
   },
   {
-    icon: FileText,
+    icon: "/icons/paper.svg",
     title: "Whitepapers",
     description:
       "Comprehensive technical documents and strategic reports that provide in-depth perspectives on cybersecurity challenges and frameworks.",
     href: "/resources/whitepapers",
   },
   {
-    icon: Briefcase,
+    icon: "/icons/case.svg",
     title: "Case Studies",
     description:
       "Real-world success stories showcasing how organizations strengthened their security posture and achieved measurable outcomes.",
     href: "/resources/case-studies",
   },
   {
-    icon: BarChart2,
+    icon: "/icons/bulb.svg",
     title: "Research & Insights",
     description:
       "Data-driven research, industry analysis, and proprietary threat intelligence findings that reveal key cybersecurity trends.",
     href: "/resources/research",
   },
   {
-    icon: ShieldCheck,
+    icon: "/icons/shield.svg",
     title: "Security Guides",
     description:
       "Practical playbooks and step-by-step guides designed to help teams implement proven security best practices.",
     href: "/resources/guides",
   },
   {
-    icon: Presentation,
+    icon: "/icons/calendar.svg",
     title: "Seminars",
     description:
       "On-demand and live sessions featuring industry experts discussing security challenges, compliance, and emerging threats.",
@@ -165,7 +154,13 @@ export default function ResourcesClient() {
                             <div className="absolute inset-0 bg-[#4c69e4]/15 blur-xl rounded-full" />
 
                             <div className="relative w-12 h-12 flex items-center justify-center text-[#4c69e4] transition-transform duration-300 group-hover:scale-110">
-                              <item.icon className="w-8 h-8" />
+                              <Image
+                                src={item.icon}
+                                alt={item.title}
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 object-contain"
+                              />
                             </div>
                           </div>
 
