@@ -216,7 +216,6 @@ const methodologySteps = [
 
 const toolingGroups = [
   {
-    icon: "⬡",
     title: "LLM Providers & Models",
     items: [
       "OpenAI GPT-4o, GPT-4 Turbo, GPT-3.5",
@@ -228,7 +227,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "⚙",
     title: "AI Frameworks & Infrastructure",
     items: [
       "LangChain and LlamaIndex (RAG/agent frameworks)",
@@ -240,15 +238,12 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "🏗",
     title: "Deployment Patterns",
     items: [
       "Customer-facing chatbot and virtual assistant deployments",
       "Internal RAG knowledge base and document Q&A systems",
       "AI coding assistants (GitHub Copilot, Cursor, CodeWhisperer)",
       "Multi-agent pipeline and workflow automation systems",
-      "AI-powered API products and SaaS features",
-      "Embedded AI in mobile applications and IoT devices",
     ],
   },
 ];
@@ -309,7 +304,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-16">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e3a5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Why ZecurX
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -322,22 +317,18 @@ export default function SecureAILLMPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "⬡",
                   title: "AI-Native Security Research",
                   desc: "Our AI security practice is staffed by engineers who understand transformer architectures, fine-tuning pipelines, and embedding models from first principles — not security generalists who have read a prompt injection blog post. We test AI systems the way ML engineers build them: with deep knowledge of the internals.",
                 },
                 {
-                  icon: "🔬",
                   title: "OWASP LLM Top 10 Coverage",
                   desc: "Our LLM security testing methodology provides complete coverage of the OWASP LLM Application Security Top 10 — the definitive framework for GenAI vulnerability classification.Every engagement produces findings mapped to this standard, enabling direct comparison against industry benchmarks and regulatory expectations.",
                 },
                 {
-                  icon: "🗺",
                   title: "MITRE ATLAS Framework",
                   desc: "We apply the MITRE ATLAS (Adversarial Threat Landscape for AI Systems) framework to every engagement — the AI security equivalent of the ATT&CK framework for traditional cyber threats. Every attack technique we test is mapped to ATLAS, giving your security team a common language for AI threat communication.",
                 },
                 {
-                  icon: "⚖",
                   title: "Regulation-Aware Practice",
                   desc: "AI regulation is arriving fast — the EU AI Act is in force, India's Digital India Act includes AI governance provisions, and SEBI and RBI are both issuing AI-specific guidance for regulated industries. ZecurX AI security engagements are structured to produce evidence of compliance with emerging AI governance requirements.",
                 },
@@ -345,7 +336,6 @@ export default function SecureAILLMPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xl">{item.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c0a1e] text-lg">
                         {item.title}
                       </h3>
@@ -363,7 +353,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Service Portfolio
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -386,7 +376,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Methodology
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -422,7 +412,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-20">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Deliverables
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -445,7 +435,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-16">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Success Stories
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -524,7 +514,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-16">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Platform Coverage
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -542,7 +532,6 @@ export default function SecureAILLMPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="text-2xl">{group.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c0a1e] text-lg">
                         {group.title}
                       </h3>
@@ -550,7 +539,6 @@ export default function SecureAILLMPage() {
                     <ul className="space-y-2.5">
                       {group.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <span className="text-[#4c69e4] mt-0.5 shrink-0 text-xs">◉</span>
                           <span className="text-slate-600 font-inter text-sm leading-relaxed">
                             {item}
                           </span>
@@ -569,7 +557,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-16">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Standards & Compliance
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -585,7 +573,6 @@ export default function SecureAILLMPage() {
               <BlurFade delay={0.15}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🔬</span>
                     <h3 className="font-manrope font-bold text-[#0c0a1e] text-xl">
                       Technical AI Security Standards
                     </h3>
@@ -593,7 +580,7 @@ export default function SecureAILLMPage() {
                   <ul className="space-y-3">
                     {technicalFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -606,7 +593,6 @@ export default function SecureAILLMPage() {
               <BlurFade delay={0.2}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">⚖</span>
                     <h3 className="font-manrope font-bold text-[#0c0a1e] text-xl">
                       Regulatory & Governance Frameworks
                     </h3>
@@ -614,7 +600,7 @@ export default function SecureAILLMPage() {
                   <ul className="space-y-3">
                     {regulatoryFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -632,7 +618,7 @@ export default function SecureAILLMPage() {
           <div className="max-w-[1320px] mx-auto">
             <BlurFade delay={0.1}>
               <div className="flex flex-col gap-4 text-center max-w-2xl mx-auto mb-16">
-                <span className="inline-flex items-center bg-[#2d1b4e] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
+                <span className="inline-flex items-center bg-[#1e2d5f] text-white font-space-grotesk rounded-md px-3 py-1 text-xs font-medium tracking-widest uppercase mb-2 mx-auto">
                   Engagement Models
                 </span>
                 <h2 className="text-3xl font-bold md:text-5xl font-manrope text-[#0c0a1e]">
@@ -648,22 +634,18 @@ export default function SecureAILLMPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "🔴",
                   title: "Pre-Launch AI Red Team",
                   desc: "Intensive adversarial testing engagement conducted before an AI system goes live — covering LLM penetration testing, agent security audit, access control review, and data poisoning assessment. Fixed scope, fixed timeline. Deliverable: comprehensive findings report with OWASP LLM Top 10 and MITRE ATLAS mapping. Typical duration: 3–6 weeks.",
                 },
                 {
-                  icon: "🗺",
                   title: "AI Threat Model & Architecture Review",
                   desc: "Design-phase security engagement — ZecurX reviews your AI system architecture before development begins, produces a formal STRIDE + ATLAS threat model, and derives security requirements for the engineering team. Most cost-effective intervention point. Deliverable: living threat model document and security requirements specification. Typical duration: 2–3 weeks.",
                 },
                 {
-                  icon: "📡",
                   title: "Continuous AI Monitoring",
                   desc: "Ongoing production AI monitoring — ZecurX deploys and operates the output monitoring pipeline, drift detection, and abuse analytics for your AI system. Monthly reporting on detected threats, policy violations, and behavioural trends. Priced per model deployment. Ideal for regulated industries and high-volume customer-facing AI products.",
                 },
                 {
-                  icon: "🤝",
                   title: "AI Security Retainer",
                   desc: "Dedicated AI security partner — quarterly red team exercises, architecture review for new AI features, continuous monitoring operation, and on-demand threat modelling. For AI-first businesses and enterprises with multiple AI deployments. Includes regulatory advisory as AI governance requirements evolve. Most comprehensive option.",
                 },
@@ -671,7 +653,6 @@ export default function SecureAILLMPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c0a1e] text-lg">
                         {model.title}
                       </h3>
