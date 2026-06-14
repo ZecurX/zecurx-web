@@ -259,7 +259,6 @@ const controlDomains = [
 
 const toolingGroups = [
   {
-    icon: "⚙",
     title: "Compliance Automation",
     items: [
       "Vanta — SOC 2, ISO 27001, HIPAA, PCI evidence",
@@ -271,7 +270,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "🗂",
     title: "GRC Platforms",
     items: [
       "ServiceNow GRC — enterprise risk and compliance",
@@ -283,7 +281,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "🔍",
     title: "Privacy & Data Mapping",
     items: [
       "OneTrust Data Mapping — RoPA and DPIA automation",
@@ -345,22 +342,18 @@ export default function ComplianceGovernancePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "🔬",
                   title: "Security-First, Not Checkbox-First",
                   desc: "ZecurX helps you implement controls that actually work — and then produce the documentation. Our compliance programmes are grounded in the same technical security expertise that powers our penetration testing, SOC, and cloud security practices. The result is a compliance posture that withstands both auditor scrutiny.",
                 },
                 {
-                  icon: "🇮🇳",
                   title: "India-Native Regulatory Expertise",
                   desc: "Deep, current knowledge of India's regulatory environment — DPDPA 2023, CERT-In, RBI, SEBI, IRDAI, and MeitY frameworks — combined with international certification expertise in SOC 2, ISO 27001, GDPR, and PCI-DSS. We speak fluently in both languages, for both Indian regulators and global enterprise customers.",
                 },
                 {
-                  icon: "🔄",
                   title: "Continuous, Not Periodic",
                   desc: "We design compliance programmes that generate evidence continuously — not in a 6-week scramble before the auditor arrives. Automated evidence collection and integrated GRC tooling mean your compliance posture is always audit-ready. Our clients typically reduce audit preparation effort by 40% or more.",
                 },
                 {
-                  icon: "✅",
                   title: "Commercial Outcome Oriented",
                   desc: "Every compliance engagement is structured around your business outcomes — closing a specific enterprise customer, satisfying a specific investor due diligence requirement, meeting a specific regulatory deadline. We understand that the SOC 2 report is not the end goal. The enterprise contract it unlocks is. We align our delivery accordingly.",
                 },
@@ -368,7 +361,6 @@ export default function ComplianceGovernancePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xl">{item.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {item.title}
                       </h3>
@@ -617,7 +609,6 @@ export default function ComplianceGovernancePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="text-2xl">{group.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {group.title}
                       </h3>
@@ -625,7 +616,6 @@ export default function ComplianceGovernancePage() {
                     <ul className="space-y-2.5">
                       {group.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <span className="text-[#4c69e4] mt-0.5 shrink-0 text-xs">◉</span>
                           <span className="text-slate-600 font-inter text-sm leading-relaxed">
                             {item}
                           </span>
@@ -660,22 +650,18 @@ export default function ComplianceGovernancePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "🎯",
                   title: "Certification Sprint",
                   desc: "Fixed-scope, timeline-driven engagement targeting a specific certification — SOC 2 Type I, ISO 27001 initial certification, PCI-DSS SAQ completion, or DPDPA readiness attestation. Defined milestones, weekly progress reporting, and a contractual target completion date. Ideal when a customer deadline or regulatory date drives the timeline.",
                 },
                 {
-                  icon: "🔄",
                   title: "Continuous Compliance Programme",
                   desc: "Ongoing managed compliance programme — ZecurX operates your evidence collection, control monitoring, and programme maintenance as a managed service. Monthly compliance health reports, quarterly control reviews, and annual certification cycle management. Priced on a monthly retainer basis. Ideal for organisations with multiple active frameworks and no internal compliance team.",
                 },
                 {
-                  icon: "🏗",
                   title: "GRC Programme Build",
                   desc: "Comprehensive GRC programme design and implementation — policy framework, risk register, TPRM programme, unified control framework, and GRC platform deployment. Delivered over 12–16 weeks. Designed for organisations scaling beyond individual certifications and establishing enterprise-grade governance infrastructure for PE, IPO, or major enterprise customer readiness.",
                 },
                 {
-                  icon: "👤",
                   title: "Virtual CISO (vCISO)",
                   desc: "A named ZecurX senior security and compliance leader acting as your virtual CISO — owning the security and compliance programme, reporting to the board and executive team, managing relationships with auditors and regulators, and providing strategic security advisory. Monthly engagement. Includes all Layer 06 services as required. Ideal for Series B+ companies preparing for enterprise sales and institutional investment.",
                 },
@@ -683,7 +669,6 @@ export default function ComplianceGovernancePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {model.title}
                       </h3>

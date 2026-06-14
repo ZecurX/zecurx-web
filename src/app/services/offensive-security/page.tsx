@@ -298,7 +298,6 @@ export default function OffensiveSecurityPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-[#4c69e4] text-xl">◉</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {item.title}
                       </h3>
@@ -500,7 +499,6 @@ export default function OffensiveSecurityPage() {
               <BlurFade delay={0.15}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🇮🇳</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       Indian Regulatory Frameworks
                     </h3>
@@ -508,7 +506,6 @@ export default function OffensiveSecurityPage() {
                   <ul className="space-y-3">
                     {indianFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -521,7 +518,6 @@ export default function OffensiveSecurityPage() {
               <BlurFade delay={0.2}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🌐</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       International Methodologies & Standards
                     </h3>
@@ -529,7 +525,6 @@ export default function OffensiveSecurityPage() {
                   <ul className="space-y-3">
                     {internationalFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -564,22 +559,18 @@ export default function OffensiveSecurityPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "📋",
                   title: "Point-in-Time Assessment",
                   desc: "Fixed-scope engagement for a specific application, network segment, or source codebase. Ideal for compliance-driven testing cycles, pre-release security validation, and regulatory audit preparation. Deliverables within 5 business days of engagement close.",
                 },
                 {
-                  icon: "🔄",
                   title: "Continuous Penetration Testing",
                   desc: "Monthly or quarterly retainer-based testing aligned to your release cycle. New features and infrastructure changes are tested as they ship — not 12 months later. Includes a dedicated tester familiar with your environment and codebase.",
                 },
                 {
-                  icon: "🎯",
                   title: "Red Team Retainer",
                   desc: "Annual adversary simulation with quarterly assumed-breach exercises and purple team sessions. Continuously validates your detection and response capability as your environment and the threat landscape evolve. Includes tabletop exercise facilitation.",
                 },
                 {
-                  icon: "🏗️",
                   title: "DevSecOps Integration",
                   desc: "Embedding ZecurX security engineers into your development sprints — security review at the design stage, code review in pull request workflows, and automated SAST/SCA tooling configuration. Security built in, not bolted on.",
                 },
@@ -587,7 +578,6 @@ export default function OffensiveSecurityPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {model.title}
                       </h3>
