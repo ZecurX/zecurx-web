@@ -420,7 +420,6 @@ export default function SOCDetectionResponsePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xl">{item.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {item.title}
                       </h3>
@@ -618,7 +617,6 @@ export default function SOCDetectionResponsePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="text-2xl">{group.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {group.title}
                       </h3>
@@ -626,7 +624,6 @@ export default function SOCDetectionResponsePage() {
                     <ul className="space-y-2.5">
                       {group.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <span className="text-[#4c69e4] mt-0.5 shrink-0 text-xs">◉</span>
                           <span className="text-slate-600 font-inter text-sm leading-relaxed">
                             {item}
                           </span>
@@ -721,7 +718,6 @@ export default function SOCDetectionResponsePage() {
               <BlurFade delay={0.15}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🇮🇳</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       Indian Regulatory Obligations
                     </h3>
@@ -729,7 +725,7 @@ export default function SOCDetectionResponsePage() {
                   <ul className="space-y-3">
                     {indiaFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -742,7 +738,6 @@ export default function SOCDetectionResponsePage() {
               <BlurFade delay={0.2}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🌐</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       International Frameworks
                     </h3>
@@ -750,7 +745,7 @@ export default function SOCDetectionResponsePage() {
                   <ul className="space-y-3">
                     {internationalFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -807,7 +802,6 @@ export default function SOCDetectionResponsePage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {model.title}
                       </h3>
