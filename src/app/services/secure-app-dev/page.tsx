@@ -216,7 +216,6 @@ const sdlcSteps = [
 
 const toolingGroups = [
   {
-    icon: "⬡",
     title: "Frontend & Mobile",
     items: [
       "React, Next.js, Vue.js, Angular (SPA/SSR)",
@@ -228,7 +227,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "⚙",
     title: "Backend & API",
     items: [
       "Node.js / TypeScript, Python (FastAPI, Django)",
@@ -240,7 +238,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "🤖",
     title: "AI & Security Tooling",
     items: [
       "LangChain, LlamaIndex, AutoGen (agent frameworks)",
@@ -322,22 +319,18 @@ export default function SecureAppDevPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "⬡",
                   title: "The Attacker's Perspective In Every Sprint",
                   desc: "ZecurX developers are trained by the same team that conducts our penetration testing engagements. Every developer understands how applications are broken — not just how they are built. The result is code that anticipates adversarial inputs,and treats every external interface as a potential attack surface.",
                 },
                 {
-                  icon: "📋",
                   title: "Security Requirements Before Sprint 1",
                   desc: "Every engagement begins with threat modelling and security requirement definition — before the first user story is written. Authentication models, authorisation boundaries, data classification, encryption requirements, and input validation rules are defined as engineering constraints, not retrospective audits.",
                 },
                 {
-                  icon: "🔬",
                   title: "OWASP-Aligned by Default",
                   desc: "Every web application is built against the OWASP Application Security Verification Standard (ASVS). Every API is designed against the OWASP API Security Top 10. These are not external checklists applied at the end — they are the engineering standards we code to from day one.",
                 },
                 {
-                  icon: "✅",
                   title: "Built to Be Tested and Certified",
                   desc: "Applications built by ZecurX are designed to pass penetration testing — including our own Layer 01 red team. We deliver applications with security documentation, data flow diagrams, threat models, and test evidence that satisfy SOC 2, ISO 27001, PCI-DSS, and regulatory audit requirements without additional remediation effort.",
                 },
@@ -345,7 +338,6 @@ export default function SecureAppDevPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xl">{item.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {item.title}
                       </h3>
@@ -542,7 +534,6 @@ export default function SecureAppDevPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="text-2xl">{group.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {group.title}
                       </h3>
@@ -550,7 +541,6 @@ export default function SecureAppDevPage() {
                     <ul className="space-y-2.5">
                       {group.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <span className="text-[#4c69e4] mt-0.5 shrink-0 text-xs">◉</span>
                           <span className="text-slate-600 font-inter text-sm leading-relaxed">
                             {item}
                           </span>
@@ -585,7 +575,6 @@ export default function SecureAppDevPage() {
               <BlurFade delay={0.15}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">📋</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       Application Security Standards
                     </h3>
@@ -593,7 +582,7 @@ export default function SecureAppDevPage() {
                   <ul className="space-y-3">
                     {appSecStandards.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -606,7 +595,6 @@ export default function SecureAppDevPage() {
               <BlurFade delay={0.2}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">⚖</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       Regulatory & Compliance Alignment
                     </h3>
@@ -614,7 +602,7 @@ export default function SecureAppDevPage() {
                   <ul className="space-y-3">
                     {regulatoryFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
+                        <span className="text-[#4c69e4] mt-1 shrink-0">➤</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -648,22 +636,18 @@ export default function SecureAppDevPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "🏗",
                   title: "Full Product Build",
                   desc: "End-to-end secure application development — ZecurX designs, builds, and delivers the complete application with security embedded throughout. Fixed scope and timeline with milestone-based delivery. Includes security architecture, full SDLC security integration, security documentation package, and post-delivery penetration test. Ideal for greenfield products where security is a differentiator.",
                 },
                 {
-                  icon: "🤝",
                   title: "Embedded Security Engineering",
                   desc: "ZecurX security engineers embedded in your existing development team — participating in sprint planning, conducting security code review in pull requests, owning the security backlog, and mentoring your developers in secure coding practices. Retainer-based monthly engagement. Ideal for product companies with strong engineering teams that need security expertise added to each sprint.",
                 },
                 {
-                  icon: "📐",
                   title: "Architecture Review & Design",
                   desc: "Focused security architecture engagement — threat modelling, security architecture review, and security requirements definition for a new product or major feature. 2–4 week fixed-scope engagement. Deliverable: formal security architecture document with threat model, DFDs, trust boundary map, and security requirements specification. Ideal for products at the design stage before Sprint 1.",
                 },
                 {
-                  icon: "🔄",
                   title: "Security Modernisation Sprint",
                   desc: "Targeted security improvement for existing applications — addressing a penetration test remediation backlog, implementing a missing security control layer, or conducting a focused OWASP ASVS gap remediation. Fixed scope and timeline. Ideal for applications with identified security debt that needs structured remediation before a compliance audit or enterprise customer requirement.",
                 },
@@ -671,7 +655,6 @@ export default function SecureAppDevPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {model.title}
                       </h3>
