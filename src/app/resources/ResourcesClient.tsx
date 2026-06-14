@@ -12,11 +12,13 @@ import {
   Scale,
   Bot,
   ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { CallingLottie } from "@/components/ui/calling-lottie";
 
 
 const featuredResources = [
@@ -221,31 +223,43 @@ export default function ResourcesClient() {
 
 
         {/* CTA Section */}
-        <section className="py-20 md:py-24 relative z-10 px-4">
-          <BlurFade delay={0.2}>
-            <div className="max-w-5xl mx-auto glass-card rounded-3xl p-10 md:p-16 border border-white/70 shadow-[0_18px_44px_rgba(30,58,95,0.10)] relative overflow-hidden text-center bg-white/40">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#dbeafe]/30 to-transparent pointer-events-none" />
+        <section className="py-10 md:py-16 px-4 md:px-6 bg-background border-t border-border/40 relative z-10">
+          <div className="w-full max-w-6xl mx-auto p-5 md:p-12 rounded-2xl bg-background border border-[#4c69e4]/30 overflow-hidden shadow-lg shadow-[#4c69e4]/5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <div className="flex flex-col space-y-4 md:space-y-6 text-center md:text-left items-center md:items-start">
+                <div className="flex items-center space-x-2 text-sm font-medium text-muted-foreground">
+                  <ShieldCheck className="h-4 w-4" />
+                  <span>Secure Your Digital Assets</span>
+                </div>
 
-
-              <div className="relative z-10">
-                <h2 className="text-3xl md:text-5xl font-manrope font-bold text-[#0c1a2e] mb-6">
-                  Ready to secure your <span className="text-[#4c69e4] font-caveat">future?</span>
+                <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
+                  <span className="text-primary">Ready</span> to Secure Your{" "}
+                  <span className="text-primary">Future?</span>
                 </h2>
-                <p className="text-lg text-slate-600 font-inter mb-10 max-w-2xl mx-auto">
+
+                <p className="text-lg text-muted-foreground leading-relaxed">
                   Get full access to our premium whitepapers, research, and security guides by subscribing to our updates.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link href="/contact" className="w-full sm:w-auto relative inline-flex justify-center items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-4 text-[15px] font-semibold font-inter cursor-pointer border border-transparent hover:translate-y-[-5px] hover:shadow-[0px_5px_0px_0px_#92c4fd] active:translate-y-[-3px] active:shadow-[0px_3px_0px_0px_#92c4fd] transition-all duration-200">
-                    Subscribe Now
-                    <ArrowRight className="w-4 h-4" />
+
+                <div>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center h-12 md:h-14 px-6 md:px-8 text-sm md:text-base rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 font-medium transition-all active:scale-95"
+                  >
+                    Subscribe now
                   </Link>
+
                   <Link href="/services" className="w-full sm:w-auto inline-flex justify-center items-center bg-white border border-slate-200 text-[#0c1a2e] rounded-full px-8 py-4 text-[15px] font-semibold font-inter hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200">
                     View Services
                   </Link>
                 </div>
               </div>
+
+              <div className="relative w-full min-h-[200px] md:min-h-[320px] flex items-center justify-center">
+                <CallingLottie />
+              </div>
             </div>
-          </BlurFade>
+          </div>
         </section>
 
 
