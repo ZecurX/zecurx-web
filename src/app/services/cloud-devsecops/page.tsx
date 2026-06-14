@@ -214,7 +214,6 @@ const shiftLeftSteps = [
 
 const toolingGroups = [
   {
-    icon: "☁",
     title: "Cloud Platforms",
     items: [
       "Amazon Web Services (AWS)",
@@ -226,7 +225,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "⬡",
     title: "Container & Orchestration",
     items: [
       "Kubernetes (EKS, GKE, AKS, self-managed)",
@@ -238,7 +236,6 @@ const toolingGroups = [
     ],
   },
   {
-    icon: "⚙",
     title: "DevSecOps Toolchain",
     items: [
       "GitHub Actions, GitLab CI, Jenkins, CircleCI",
@@ -258,8 +255,6 @@ const indianFrameworks = [
   "RBI Cloud Adoption Framework — shared responsibility, data residency, and audit access for banks and NBFCs",
   "SEBI CSCRF — cloud risk management and third-party service provider obligations",
   "DPDPA 2023 — data localisation, cross-border transfer controls, and cloud processor obligations",
-  "MeitY Cloud Services Empanelment — GovCloud procurement security requirements",
-  "IRDAI Cloud Computing Guidelines — insurance sector data and infrastructure security",
 ];
 
 const internationalFrameworks = [
@@ -320,22 +315,18 @@ export default function CloudDevSecOpsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "☁",
                   title: "Multi-Cloud Native Expertise",
-                  desc: "Certified engineers across AWS (CSAA, CSSP), GCP (PCSE), and Azure (AZ-500, SC-100) — not generalists reading cloud documentation, but specialists who have architected, broken, and secured production cloud environments at enterprise scale working efficiently.",
+                  desc: "Certified engineers across AWS (CSAA, CSSP), GCP (PCSE), and Azure (AZ-500, SC-100) — not generalists reading cloud documentation, but specialists who have architected and secured production cloud environments at enterprise scale.",
                 },
                 {
-                  icon: "⚙",
                   title: "Pipeline-Integrated Security",
-                  desc: "We do not deliver security as a separate audit gate that slows delivery. We integrate security tooling, policy checks, and alerting directly into your existing GitHub Actions, GitLab CI, Jenkins, or Azure DevOps pipelines — invisible friction that stops real risks silently.",
+                  desc: "We do not deliver security as a separate audit gate that slows delivery. We integrate security tooling, policy checks, and alerting directly into your existing GitHub Actions, GitLab CI, Jenkins, or Azure DevOps pipelines.",
                 },
                 {
-                  icon: "⬡",
                   title: "Kubernetes-First Practice",
                   desc: "Our container security practice is built around production Kubernetes environments — not theoretical CIS benchmarks. We have hardened clusters running millions of daily requests across EKS, GKE, AKS, and self-managed deployments.",
                 },
                 {
-                  icon: "📋",
                   title: "Compliance-as-Code Delivery",
                   desc: "Every ZecurX cloud engagement maps findings to the frameworks your auditors and regulators require — CIS Benchmarks, NIST CSF, SOC 2, ISO 27001, PCI-DSS, RBI, and SEBI — and delivers remediation in code, not just recommendations.",
                 },
@@ -343,7 +334,6 @@ export default function CloudDevSecOpsPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xl">{item.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {item.title}
                       </h3>
@@ -540,7 +530,6 @@ export default function CloudDevSecOpsPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="text-2xl">{group.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {group.title}
                       </h3>
@@ -548,7 +537,6 @@ export default function CloudDevSecOpsPage() {
                     <ul className="space-y-2.5">
                       {group.items.map((item, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <span className="text-[#4c69e4] mt-0.5 shrink-0 text-xs">◉</span>
                           <span className="text-slate-600 font-inter text-sm leading-relaxed">
                             {item}
                           </span>
@@ -583,7 +571,6 @@ export default function CloudDevSecOpsPage() {
               <BlurFade delay={0.15}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🇮🇳</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       Indian Regulatory Frameworks
                     </h3>
@@ -591,7 +578,6 @@ export default function CloudDevSecOpsPage() {
                   <ul className="space-y-3">
                     {indianFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -604,7 +590,6 @@ export default function CloudDevSecOpsPage() {
               <BlurFade delay={0.2}>
                 <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-2xl">🌐</span>
                     <h3 className="font-manrope font-bold text-[#0c1a2e] text-xl">
                       International Standards & Frameworks
                     </h3>
@@ -612,7 +597,6 @@ export default function CloudDevSecOpsPage() {
                   <ul className="space-y-3">
                     {internationalFrameworks.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-[#4c69e4] mt-1 shrink-0">◉</span>
                         <span className="text-slate-600 font-inter text-sm leading-relaxed">
                           {item}
                         </span>
@@ -646,22 +630,18 @@ export default function CloudDevSecOpsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  icon: "📋",
                   title: "Point-in-Time Assessment",
                   desc: "Scoped cloud security assessment — architecture review, CSPM scan, IaC review, or specific service audit. Fixed deliverable with CVSS-scored findings, executive summary, and remediation guidance. Typical duration 2–4 weeks. Ideal for compliance audit preparation and new environment reviews.",
                 },
                 {
-                  icon: "🔄",
                   title: "Continuous Posture Management",
                   desc: "Ongoing cloud security monitoring with ZecurX as your managed CSPM operator — continuous misconfiguration detection, drift alerting, auto-remediation, and monthly posture reporting. Priced per cloud account. Ideal for regulated industries with continuous compliance obligations.",
                 },
                 {
-                  icon: "🏗",
                   title: "Platform Engineering Embed",
                   desc: "ZecurX cloud security engineers embedded in your platform team — contributing to IaC module library development, pipeline security architecture, Vault deployment, and Kubernetes hardening as named team members. Engagement by sprint or quarterly retainer.",
                 },
                 {
-                  icon: "🚀",
                   title: "Cloud Migration Security",
                   desc: "Security architecture and review for cloud migration programmes — landing zone design, workload security classification, migration wave security gates, and post-migration posture validation. Integrates with AWS MAP, GCP Migrate, and Azure Migrate workstreams.",
                 },
@@ -669,7 +649,6 @@ export default function CloudDevSecOpsPage() {
                 <BlurFade key={i} delay={0.1 + i * 0.05}>
                   <div className="p-8 rounded-2xl border border-slate-200 bg-white shadow-sm h-full">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">{model.icon}</span>
                       <h3 className="font-manrope font-bold text-[#0c1a2e] text-lg">
                         {model.title}
                       </h3>
