@@ -15,6 +15,7 @@ export interface HNStory {
 export interface EnrichedStory extends HNStory {
   categories: string[];
   domain?: string;
+  publishedAt?: string;
 }
 
 const HN_API_BASE = 'https://hacker-news.firebaseio.com/v0';
@@ -64,7 +65,58 @@ function processStory(story: HNStory): EnrichedStory | null {
   };
 }
 
-async function fetchMetadata(url: string): Promise<string | undefined> {
+interface StoryMetadata {
+  description?: string;
+  publishedAt?: string;
+}
+
+function extractMetaContent(html: string, key: string): string | undefined {
+  const patterns = [
+    new RegExp(`<meta\\s+[^>]*(?:property|name|itemprop)=["']${key}["'][^>]*content=["']([^"']*)["'][^>]*>`, 'i'),
+    new RegExp(`<meta\\s+[^>]*content=["']([^"']*)["'][^>]*(?:property|name|itemprop)=["']${key}["'][^>]*>`, 'i')
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match?.[1]) return match[1];
+  }
+
+  return undefined;
+}
+
+function normalizePublishedDate(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return undefined;
+
+  return date.toISOString();
+}
+
+function extractJsonLdPublishedDate(html: string): string | undefined {
+  const scriptPattern = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = scriptPattern.exec(html)) !== null) {
+    try {
+      const data: unknown = JSON.parse(match[1]);
+      const items = Array.isArray(data) ? data : [data];
+
+      for (const item of items) {
+        if (item && typeof item === 'object' && 'datePublished' in item) {
+          const value = (item as { datePublished?: unknown }).datePublished;
+          if (typeof value === 'string') return value;
+        }
+      }
+    } catch {
+      // Ignore malformed JSON-LD and continue checking other blocks.
+    }
+  }
+
+  return undefined;
+}
+
+async function fetchMetadata(url: string): Promise<StoryMetadata> {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -78,19 +130,24 @@ async function fetchMetadata(url: string): Promise<string | undefined> {
     });
     clearTimeout(timeoutId);
 
-    if (!res.ok) return undefined;
+    if (!res.ok) return {};
 
     const html = await res.text();
-    
-    const ogDesc = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i);
-    if (ogDesc && ogDesc[1]) return ogDesc[1];
 
-    const metaDesc = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
-    if (metaDesc && metaDesc[1]) return metaDesc[1];
+    const description = extractMetaContent(html, 'og:description') ??
+      extractMetaContent(html, 'description');
 
-    return undefined;
+    const publishedAt = normalizePublishedDate(
+      extractMetaContent(html, 'article:published_time') ??
+      extractMetaContent(html, 'og:published_time') ??
+      extractMetaContent(html, 'datePublished') ??
+      extractMetaContent(html, 'date') ??
+      extractJsonLdPublishedDate(html)
+    );
+
+    return { description, publishedAt };
   } catch {
-    return undefined;
+    return {};
   }
 }
 
@@ -123,12 +180,17 @@ export async function getTopSecurityStories(limit = 30): Promise<EnrichedStory[]
 
   const enrichedStories = await Promise.all(
     securityStories.map(async (story) => {
-      if (!story.text && story.url) {
-        const description = await fetchMetadata(story.url);
+      if (story.url) {
+        const metadata = await fetchMetadata(story.url);
+        const description = metadata.description;
+        const publishedAt = metadata.publishedAt;
+
         if (description) {
           const truncated = description.length > 200 ? description.substring(0, 197) + '...' : description;
-          return { ...story, text: truncated };
+          return { ...story, text: story.text ?? truncated, publishedAt };
         }
+
+        if (publishedAt) return { ...story, publishedAt };
       }
       return story;
     })
