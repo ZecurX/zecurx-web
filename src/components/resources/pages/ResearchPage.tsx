@@ -80,6 +80,14 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
         return `${Math.floor(diff / 86400)}d ago`;
     };
 
+    const formatArticleDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        });
+    };
+
     const getPageNumbers = () => {
         const pages = [];
         if (totalPages <= 7) {
@@ -249,6 +257,12 @@ export default function ResearchPage({ initialStories = [] }: ResearchPageProps)
                                     {story.text && (
                                         <p className="text-[15px] font-inter text-slate-600 line-clamp-2 mb-6 leading-relaxed">
                                             {story.text}
+                                        </p>
+                                    )}
+
+                                    {story.publishedAt && (
+                                        <p className="text-xs font-inter text-slate-400 mb-6">
+                                            Published {formatArticleDate(story.publishedAt)}
                                         </p>
                                     )}
                                     
