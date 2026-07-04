@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
             "default-src 'self'",
             `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://checkout.razorpay.com https://*.razorpay.com https://*.vercel-scripts.com https://vercel.live`,
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-            "img-src 'self' data: blob: https: http:",
+            "img-src 'self' data: blob: https:",
             "font-src 'self' https://fonts.gstatic.com",
             "connect-src 'self' https://*.razorpay.com https://api.razorpay.com https://*.supabase.co https://*.vercel-insights.com https://vercel.live wss://vercel.live https://zecurx-web.fsn1.your-objectstorage.com",
             "frame-src 'self' https://api.razorpay.com https://*.razorpay.com",
