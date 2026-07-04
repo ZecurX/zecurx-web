@@ -66,6 +66,12 @@ clear-data.sh
 next_full.log
 server.log
 
+# Debug assessment artifacts
+build_error.log
+build_output.log
+out.txt
+all_colors.txt
+
 # landing redesign (separate project)
 landing-redesign/
 
