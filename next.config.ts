@@ -36,6 +36,7 @@ const nextConfig: NextConfig = {
   ],
   images: {
     dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'none'; script-src 'none'; sandbox;",
     qualities: [25, 50, 75],
     formats: ["image/webp"],
     minimumCacheTTL: 2678400, // 31 days
