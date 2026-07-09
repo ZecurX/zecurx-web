@@ -47,6 +47,8 @@ export default function SystemTestPage() {
         storage: { status: "idle" },
     });
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     const [emailTo, setEmailTo] = useState("");
     const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
     const [lmsResetLinkEnabled, setLmsResetLinkEnabled] = useState<boolean>(true);
@@ -215,7 +217,7 @@ export default function SystemTestPage() {
                 </div>
                 <button
                     onClick={runAllTests}
-                    disabled={Object.values(tests).some((t) => t.status === "running")}
+                    disabled={isProduction || Object.values(tests).some((t) => t.status === "running")}
                     className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <RefreshCw className="w-4 h-4" />
@@ -223,16 +225,28 @@ export default function SystemTestPage() {
                 </button>
             </div>
 
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                <div>
-                    <p className="text-sm font-medium text-amber-500">Safe Testing Mode</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        All tests use mock/test data. No real transactions, customers, or
-                        emails to production users will be created.
-                    </p>
+            {isProduction ? (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                        <p className="text-sm font-medium text-red-500">Production Mode Active</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            System tests are disabled in the production environment for security reasons.
+                        </p>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                        <p className="text-sm font-medium text-amber-500">Safe Testing Mode</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            All tests use mock/test data. No real transactions, customers, or
+                            emails to production users will be created.
+                        </p>
+                    </div>
+                </div>
+            )}
 
             <div className={`border rounded-xl p-6 transition-colors ${lmsResetLinkEnabled ? "bg-green-500/10 border-green-500/30" : "bg-amber-500/10 border-amber-500/30"}`}>
                 <div className="flex items-center justify-between">
@@ -308,7 +322,7 @@ export default function SystemTestPage() {
                     </div>
                     <button
                         onClick={testDatabase}
-                        disabled={tests.database.status === "running"}
+                        disabled={isProduction || tests.database.status === "running"}
                         className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50"
                     >
                         Test Connection
@@ -358,7 +372,7 @@ export default function SystemTestPage() {
                         />
                         <button
                             onClick={testEmail}
-                            disabled={tests.email.status === "running"}
+                            disabled={isProduction || tests.email.status === "running"}
                             className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             <Send className="w-4 h-4" />
@@ -397,7 +411,7 @@ export default function SystemTestPage() {
                     </div>
                     <button
                         onClick={testInvoice}
-                        disabled={tests.invoice.status === "running"}
+                        disabled={isProduction || tests.invoice.status === "running"}
                         className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50"
                     >
                         Generate Test Invoice
@@ -439,7 +453,7 @@ export default function SystemTestPage() {
                     </div>
                     <button
                         onClick={testRazorpay}
-                        disabled={tests.razorpay.status === "running"}
+                        disabled={isProduction || tests.razorpay.status === "running"}
                         className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50"
                     >
                         Test Razorpay API
@@ -478,7 +492,7 @@ export default function SystemTestPage() {
                     </div>
                     <button
                         onClick={testWebhook}
-                        disabled={tests.webhook.status === "running"}
+                        disabled={isProduction || tests.webhook.status === "running"}
                         className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50"
                     >
                         Test Webhook Endpoint
@@ -515,7 +529,7 @@ export default function SystemTestPage() {
                     </div>
                     <button
                         onClick={testStorage}
-                        disabled={tests.storage.status === "running"}
+                        disabled={isProduction || tests.storage.status === "running"}
                         className="w-full py-2 px-4 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors disabled:opacity-50"
                     >
                         Test Storage Connection

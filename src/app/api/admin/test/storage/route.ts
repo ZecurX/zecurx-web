@@ -3,6 +3,10 @@ import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { verifySession } from '@/lib/auth';
 
 export async function POST() {
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+    }
+
     try {
         const session = await verifySession();
         if (!session) {

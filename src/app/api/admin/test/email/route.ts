@@ -5,6 +5,10 @@ import { verifySessionFromRequest } from '@/lib/auth';
 import { brandedEmailTemplate } from '@/lib/email-template';
 
 export async function POST(request: NextRequest) {
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+    }
+
     try {
         const body = await request.json();
         const session = await verifySessionFromRequest(request);
