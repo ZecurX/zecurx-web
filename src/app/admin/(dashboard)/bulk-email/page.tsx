@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { AdminJWTPayload, RESOURCES, ACTIONS } from '@/types/auth';
 import { hasPermission } from '@/lib/permissions';
+import { getJwtSecret } from '@/lib/auth';
 import { query } from '@/lib/db';
 import BulkEmailClient from './BulkEmailClient';
 
@@ -13,8 +14,7 @@ export default async function BulkEmailPage() {
     if (!session?.value) redirect('/admin/login');
 
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || process.env.ADMIN_PASSWORD);
-        const { payload } = await jwtVerify(session.value, secret);
+        const { payload } = await jwtVerify(session.value, getJwtSecret());
         const jwt = payload as unknown as AdminJWTPayload;
 
         if (!hasPermission(jwt.role, RESOURCES.BULK_EMAIL, ACTIONS.READ)) {

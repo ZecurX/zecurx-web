@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { checkOrdersRateLimit, getClientIp } from '@/lib/rate-limit';
+import { requirePermission } from '@/lib/auth';
+import { ACTIONS, RESOURCES } from '@/types/auth';
 
 export async function GET(request: NextRequest) {
     try {
+        const authResult = await requirePermission(RESOURCES.SALES, ACTIONS.READ, request);
+        if (!authResult.authorized) {
+            return NextResponse.json(
+                { error: authResult.error },
+                { status: authResult.status }
+            );
+        }
+
         const ip = getClientIp(request);
         const rateLimitResult = await checkOrdersRateLimit(ip);
         if (!rateLimitResult.success) {
