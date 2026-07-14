@@ -39,7 +39,10 @@ function formatDate(dateStr: string) {
 }
 
 function isPast(dateStr: string) {
-    return new Date(dateStr) < new Date();
+    const seminarDate = new Date(dateStr);
+    const today = new Date();
+    // Only mark as past when the next calendar day begins
+    return seminarDate.toDateString() !== today.toDateString() && seminarDate < today;
 }
 
 const FILLER_RE = /\b(maybe not if|maybe|probably|i think|we think|we want to|we want|we will have|we need to|we need|we are going to|we're going to|we plan to)\b/gi;
@@ -177,7 +180,7 @@ function SeminarRow({ seminar }: { seminar: PublicSeminar }) {
     const dateInfo = formatDate(seminar.date);
     const past = isPast(seminar.date);
     const showRegister = seminar.registration_enabled && !past;
-    const showCertificate = seminar.certificate_enabled;
+    const showCertificate = seminar.certificate_enabled || past;
 
     return (
         <div className={`group glass-card relative rounded-3xl p-1.5 border border-slate-200/60 shadow-[0_18px_44px_rgba(30,58,95,0.05)] bg-white/50 hover:shadow-[0_20px_55px_rgba(30,58,95,0.12)] hover:-translate-y-1 transition-all duration-300 overflow-hidden ${past && !showCertificate ? "opacity-60" : ""}`}>

@@ -194,7 +194,7 @@ export default function RegisterPage() {
         );
     }
 
-    const isPast = seminar ? new Date(seminar.date) < new Date() : false;
+    const isPast = seminar ? (() => { const d = new Date(seminar.date); const now = new Date(); return d.toDateString() !== now.toDateString() && d < now; })() : false;
     const registrationClosed = seminar && (isPast || !seminar.registration_enabled);
 
     if (registrationClosed && step !== 'success') {

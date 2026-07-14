@@ -46,7 +46,9 @@ export async function POST(
 
         const seminar = seminarResult.rows[0];
 
-        if (new Date(seminar.date) < new Date()) {
+        const seminarDay = new Date(seminar.date);
+        const now = new Date();
+        if (seminarDay.toDateString() !== now.toDateString() && seminarDay < now) {
             return NextResponse.json(
                 { error: 'Registration is closed for past seminars' },
                 { status: 400 }
