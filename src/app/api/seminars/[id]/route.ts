@@ -29,12 +29,15 @@ export async function GET(
         }
 
         const seminar = result.rows[0];
+        const seminarDay = new Date(seminar.date);
+        const now = new Date();
+        const seminarDayPast = seminarDay.toDateString() !== now.toDateString() && seminarDay < now;
 
         return NextResponse.json({
             success: true,
             seminar: {
                 ...seminar,
-                registration_enabled: new Date(seminar.date) < new Date() ? false : seminar.registration_enabled,
+                registration_enabled: seminarDayPast ? false : seminar.registration_enabled,
             },
         });
 
