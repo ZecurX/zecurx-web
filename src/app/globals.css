@@ -172,6 +172,8 @@
 
   --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
 
+  --animate-fade-slide: fade-slide 0.2s ease-out;
+
   --animate-shiny-text: shiny-text 8s infinite;
 
   --animate-shine: shine var(--duration) infinite linear;
@@ -205,6 +207,13 @@
     background-position: calc(-100% - var(--shiny-width)) 0;}
   30%, 60% {
     background-position: calc(100% + var(--shiny-width)) 0;}}
+  @keyframes fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);}
+  100% {
+    opacity: 1;
+    transform: translateY(0);}}
   @keyframes shine {
   0% {
     background-position: 0% 0%;}
@@ -459,4 +468,62 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+@layer components {
+  /* Updated parent container background */
+  .method-container { background-color: #0c1a2e; }
+
+  .pathStep {
+    position: absolute;
+    width: 180px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white; /* Text color for dark background */
+  }
+
+  /* Adjust these slightly if needed for the specific curve */
+  .step1 { top: 100px; left: 0px; }
+  .step2 { top: 0px; left: 160px; }
+  .step3 { top: 140px; left: 360px; }
+  .step4 { top: 220px; left: 560px; }
+  .step5 { top: 60px; left: 770px; }
+  .step6 { top: 130px; left: 960px; }
+}
+
+.capability-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+}
+
+@layer components {
+  .ripple-wrapper {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .glow-ring {
+    position: absolute;
+    border-radius: 50%;
+    /* This creates the soft blue glow effect */
+    box-shadow: 0 0 30px 10px rgba(76, 105, 228, 0.3);
+    animation: glow-pulse 3s ease-out infinite;
+  }
+
+  @keyframes prominent-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+
+.animate-prominent-pulse {
+  animation: prominent-pulse 2s ease-in-out infinite;
+}
 }

@@ -1,569 +1,418 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, Menu, X, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import CartIcon from '@/components/shop/CartIcon';
+
+import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowRight,
+  Plus,
+  Menu,
+  X,
+  ChevronDown,
+  ArrowUpRight,
+  Shield,
+  Cloud,
+  Bot,
+  Code,
+  Terminal,
+  FileText,
+  Globe,
+  Search,
+  BookOpen,
+  FileSpreadsheet,
+  Briefcase,
+  GraduationCap,
+  Users,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
+import CartIcon from "@/components/shop/CartIcon";
 import { CDN_ASSETS } from "@/lib/cdn";
-import { desc } from 'framer-motion/client';
 import logoText from "../../../design/images/raw/logo-text.png";
 
+const urls = ["https://lms.zecurx.com/", "https://ctf.zecurx.com/"];
 
-//urls object to redirect 
-const urls = [
-    "https://lms.zecurx.com/",
-    "https://ctf.zecurx.com/"
-]
-// Navigation Data
-const navData = {
-    services: {
-        label: "Services",
-        href: "/services",
-        description: "Expert security services",
-        items: [
-            {
-                title: "Offensive Security & Penetration Testing",
-                href: "/services/offensive-security",
-                desc: "Web, API, and infrastructure penetration testing with real-world attack simulation"
-            },
-            {
-                title: "Cloud & DevSecOps",
-                href: "/services/cloud-devsecops",
-                desc: "Cloud posture management and CI/CD pipeline security across AWS, GCP, and Azure"
-            },
-            {
-                title: "Secure AI & LLM Security",
-                href: "/services/secure-ai-llm",
-                desc: "LLM security, prompt injection protection, and AI abuse testing"
-            },
-            {
-                title: "Secure Application Development",
-                href: "/services/secure-app-dev",
-                desc: "Secure SDLC implementation from design to deployment"
-            },
-            {
-                title: "SOC, Detection & Response",
-                href: "/services/soc-detection",
-                desc: "24/7 monitoring, threat detection, and incident response"
-            },
-            {
-                title: "Compliance & Governance",
-                href: "/services/compliance-governance",
-                desc: "SOC 2, ISO 27001, GDPR and DPDP readiness programs"
-            },
-            {
-                title: "Web3, Blockchain & NFT Development",
-                href: "/services/web3-blockchain-nft",
-                desc: "Smart contract security and decentralized application protection"
-            },
-        ]
-    },
-    resources: {
-        label: "Resources",
-        href: "/resources",
-        description: "Security insights & research",
-        items: [
-            { title: "Security Research", href: "/resources/research", desc: "Vulnerability research & advisories" },
-            { title: "Security Blog", href: "/blog", desc: "Latest insights & technical articles" },
-            { title: "Whitepapers", href: "/resources/whitepapers", desc: "In-depth security research" },
-            { title: "Case Studies", href: "/resources/case-studies", desc: "Real-world security solutions" },
-            { title: "LMS", href: urls[0], desc: "Learn without limits. Grow without boundaries." },
-            { title: "CTF", href: urls[1], desc: "Advanced CTF Platform to Master Ethical hacking" }
-        ]
-    },
-    academy: {
-        label: "Academy",
-        href: "/academy",
-        description: "Certified security training",
-        items: [
-            { title: "Training", href: "/academy#courses", desc: "Certified security training programs" },
-            { title: "Seminars", href: "/resources/seminars", desc: "Live workshops & events" },
-        ]
-    }
+const iconMap: Record<string, React.ElementType> = {
+  // Services
+  "Offensive Security & Penetration Testing": Shield,
+  "Cloud & DevSecOps": Cloud,
+  "Secure AI & LLM Security": Bot,
+  "Secure Application Development": Code,
+  "SOC, Detection & Response": Terminal,
+  "Compliance & Governance": FileText,
+  "Web3, Blockchain & NFT Development": Globe,
+  // Resources
+  "Security Research": Search,
+  "Security Blog": BookOpen,
+  Whitepapers: FileSpreadsheet,
+  "Case Studies": Briefcase,
+  LMS: GraduationCap,
+  CTF: Shield,
+  // Academy
+  Training: GraduationCap,
+  Seminars: Users,
 };
 
-export default function CreativeNavBar({ forceDark = false, showCart = false }: { forceDark?: boolean, showCart?: boolean }) {
-    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+const navData = {
+  services: {
+    label: "Services",
+    href: "/services",
+    description: "Expert security services",
+    featuredCta: "View all Services",
+    items: [
+      {
+        title: "Offensive Security & Penetration Testing",
+        href: "/services/offensive-security",
+        desc: "Web, API, and infrastructure penetration testing with real-world attack simulation",
+      },
+      {
+        title: "Cloud & DevSecOps",
+        href: "/services/cloud-devsecops",
+        desc: "Cloud posture management and CI/CD pipeline security across AWS, GCP, and Azure",
+      },
+      {
+        title: "Secure AI & LLM Security",
+        href: "/services/secure-ai-llm",
+        desc: "LLM security, prompt injection protection, and AI abuse testing",
+      },
+      {
+        title: "Secure Application Development",
+        href: "/services/secure-app-dev",
+        desc: "Secure SDLC implementation from design to deployment",
+      },
+      {
+        title: "SOC, Detection & Response",
+        href: "/services/soc-detection",
+        desc: "24/7 monitoring, threat detection, and incident response",
+      },
+      {
+        title: "Compliance & Governance",
+        href: "/services/compliance-governance",
+        desc: "SOC 2, ISO 27001, GDPR and DPDP readiness programs",
+      },
+      {
+        title: "Web3, Blockchain & NFT Development",
+        href: "/services/web3-blockchain-nft",
+        desc: "Smart contract security and decentralized application protection",
+      },
+    ],
+  },
+  resources: {
+    label: "Resources",
+    href: "/resources",
+    description: "Security insights & research",
+    featuredCta: "Explore Resources",
+    items: [
+      {
+        title: "Security Research",
+        href: "/resources/research",
+        desc: "Vulnerability research & advisories",
+      },
+      {
+        title: "Security Blog",
+        href: "/blog",
+        desc: "Latest insights & technical articles",
+      },
+      {
+        title: "Whitepapers",
+        href: "/resources/whitepapers",
+        desc: "In-depth security research",
+      },
+      {
+        title: "Case Studies",
+        href: "/resources/case-studies",
+        desc: "Real-world security solutions",
+      },
+      {
+        title: "LMS",
+        href: urls[0],
+        desc: "Learn without limits. Grow without boundaries.",
+      },
+      {
+        title: "CTF",
+        href: urls[1],
+        desc: "Advanced CTF Platform to Master Ethical hacking",
+      },
+    ],
+  },
+  academy: {
+    label: "Academy",
+    href: "/academy",
+    description: "Certified security training",
+    featuredCta: "Explore Academy",
+    items: [
+      {
+        title: "Training",
+        href: "/academy#courses",
+        desc: "Certified security training programs",
+      },
+      {
+        title: "Seminars",
+        href: "/resources/seminars",
+        desc: "Live workshops & events",
+      },
+    ],
+  },
+};
 
-    useEffect(() => {
-        if (mobileMenuOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => { document.body.style.overflow = ''; };
-    }, [mobileMenuOpen]);
+const simpleLinks = [
+  { label: "Industries", href: "/industries" },
+  { label: "Security Toolkit", href: "/tools" },
+  { label: "How We Work", href: "/how-we-work" },
+];
 
-    const handleMouseEnter = (key: string) => {
-        if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-        setActiveDropdown(key);
+const megaMenus = Object.entries(navData).map(([key, data]) => ({
+  key,
+  label: data.label,
+  href: data.href,
+  description: data.description,
+  featuredCta: data.featuredCta,
+  items: data.items.map((item, i) => ({
+    id: String(i + 1).padStart(2, "0"),
+    title: item.title,
+    description: item.desc,
+    href: item.href,
+  })),
+}));
+
+export default function CreativeNavBar({
+  forceDark = false,
+  showCart = false,
+}: {
+  forceDark?: boolean;
+  showCart?: boolean;
+}) {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
     };
+  }, [mobileMenuOpen]);
 
-    const handleMouseLeave = () => {
-        closeTimeoutRef.current = setTimeout(() => setActiveDropdown(null), 150);
-    };
+  const active = megaMenus.find((m) => m.key === openMenu);
 
-    return (
-        <>
-            {/* Navbar Container - transforms from integrated to floating dock on scroll */}
-            <motion.div
-                initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4"
-            >
-                <motion.header
-                    layout
-                    transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-                    className={cn(
-                        "relative w-full max-w-[1400px]",
-                        "rounded-2xl",
-                        forceDark
-                            ? "bg-black border border-white/10 shadow-2xl shadow-black/50"
-                            : "border border-border",
-                        !forceDark && "shadow-lg",
-                    )}
-                    style={!forceDark ? { backgroundColor: 'rgba(237, 244, 255, 0.85)', backdropFilter: 'blur(12px)' } : undefined}
-                    onMouseLeave={handleMouseLeave}
+  return (
+    <>
+      <div
+        ref={wrapRef}
+        className="fixed top-0 left-0 right-0 z-[999] p-4 md:px-8 pt-6"
+      >
+        <div className="mx-auto max-w-[1180px]">
+          <nav className="flex items-center justify-between rounded-full border border-white/60 bg-white/70 px-5 py-2 shadow-[0_8px_32px_-8px_rgba(91,110,245,0.18)] backdrop-blur-xl">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0">
+              {/* No background, no rounded container—just the icon */}
+              <div className="relative w-8 h-8 flex items-center justify-center">
+                <Image
+                  src="/icons/icon.png"
+                  alt="ZecurX Icon"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
+              </div>
+              <Image
+                src={logoText}
+                alt="ZecurX"
+                width={150}
+                height={40}
+                className="h-5 w-auto object-contain"
+                priority
+              />
+            </Link>
+
+            <div className="hidden lg:flex items-center gap-1 rounded-full bg-white/40 px-1.5 py-1.5">
+              {megaMenus.map((menu) => (
+                <button
+                  key={menu.key}
+                  onMouseEnter={() => setOpenMenu(menu.key)}
+                  onClick={() =>
+                    setOpenMenu(openMenu === menu.key ? null : menu.key)
+                  }
+                  className={cn(
+                    "flex items-center gap-1 rounded-full px-4 py-2 text-[13.5px] font-semibold transition-all",
+                    openMenu === menu.key
+                      ? "bg-white text-[#4C4FE0] shadow-sm"
+                      : "text-[#55577A] hover:bg-white/70",
+                  )}
                 >
-                    <div className="flex items-center justify-between h-14 sm:h-16 px-5 sm:px-6">
+                  {menu.label}{" "}
+                  <ChevronDown
+                    size={13}
+                    className={cn(
+                      "transition-transform duration-200",
+                      openMenu === menu.key ? "rotate-180" : "",
+                    )}
+                  />
+                </button>
+              ))}
+              {simpleLinks.map((l) => (
+                <Link
+                  key={l.label}
+                  href={l.href}
+                  onMouseEnter={() => setOpenMenu(null)}
+                  className="rounded-full px-4 py-2 text-[13.5px] font-semibold text-[#55577A] transition-colors hover:bg-white/70"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
 
-                        {/* Logo */}
-                        <Link href="/" className="flex items-center gap-1 sm:gap-1.5 shrink-0 group">
-                            <motion.div
-                                className="relative w-10 h-10 sm:w-12 sm:h-12"
-                                whileHover={{ rotate: 5, scale: 1.05 }}
-                                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                            >
-                                <Image
-                                    src={CDN_ASSETS.brand.logo}
-                                    alt="ZecurX"
-                                    fill
-                                    className="object-contain"
-                                    priority
-                                />
-                            </motion.div>
-                            <Image
-                                src={logoText}
-                                alt="ZecurX"
-                                width={256}
-                                height={74}
-                                className="h-[18px] w-auto sm:h-5 md:h-6 object-contain"
-                                priority
-                            />
-                        </Link>
+            <div className="flex items-center gap-4">
+              {showCart && <CartIcon />}
+              <Link
+                href="/contact"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[13.5px] font-bold text-white shadow-[0_8px_20px_-6px_rgba(91,110,245,0.55)] transition-transform hover:scale-[1.03]"
+                style={{
+                  background: "linear-gradient(135deg,#5B6EF5,#8B5CF6)",
+                }}
+              >
+                Contact <ArrowUpRight size={15} />
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 text-slate-700"
+              >
+                {mobileMenuOpen ? <X /> : <Menu />}
+              </button>
+            </div>
+          </nav>
 
-                        {/* Desktop Nav */}
-                        <nav className="hidden lg:flex items-center gap-2 relative">
-                            {Object.entries(navData).filter(([key]) => key !== 'academy').map(([key, data]) => (
-                                <Link
-                                    key={key}
-                                    href={data.href}
-                                    className={cn(
-                                        "flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
-                                        activeDropdown === key
-                                            ? (forceDark ? "text-white" : "text-foreground")
-                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
-                                    )}
-                                    onMouseEnter={() => handleMouseEnter(key)}
-                                    onClick={() => {
-                                        setActiveDropdown(null);
-                                        setMobileMenuOpen(false);
-                                    }}
-                                    aria-expanded={activeDropdown === key}
-                                    aria-haspopup="true"
-                                >
-                                    {data.label}
-                                    <ChevronDown className={cn(
-                                        "w-3.5 h-3.5 transition-transform duration-200",
-                                        activeDropdown === key && "rotate-180"
-                                    )} />
-                                </Link>
-                            ))}
-
-                            <Link
-                                href="/industries"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                Industries
-                            </Link>
-                            <Link
-                                href="/tools"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                Security Toolkit
-                            </Link>
-                            <Link
-                                href="/how-we-work"
-                                className={cn(
-                                    "px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
-                                    forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground"
-                                )}
-                            >
-                                How We Work
-                            </Link>
-                        </nav>
-
-                        {/* Right Actions */}
-                        <div className="hidden lg:flex items-center gap-2">
-                            <div
-                                className="relative"
-                                onMouseEnter={() => handleMouseEnter('academy')}
-                            >
-                                <Link
-                                    href="/academy"
-                                    className={cn(
-                                        "flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
-                                        activeDropdown === 'academy'
-                                            ? (forceDark ? "text-white" : "text-foreground")
-                                            : (forceDark ? "text-white/60 hover:text-white" : "text-muted-foreground hover:text-foreground")
-                                    )}
-                                >
-                                    Academy
-                                    <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", activeDropdown === 'academy' && "rotate-180")} />
-                                </Link>
-                            </div>
-
-                            <div className="mx-1 flex items-center gap-3">
-                                {showCart && <CartIcon />}
-                            </div>
-
-                            <div className="relative ml-2">
-                                <Button
-                                    asChild
-                                    className={cn(
-                                        "relative px-6 py-2.5 h-auto rounded-full",
-                                        "border border-transparent bg-[#4c69e4] text-white",
-                                        "hover:bg-[#4c69e4]",
-                                        "shadow-[0px_0px_0px_0px_#92c4fd]",
-                                        "hover:translate-y-[-3px] hover:shadow-[0px_3px_0px_0px_#92c4fd]",
-                                        "active:translate-y-[-2px] active:shadow-[0px_2px_0px_0px_#92c4fd]",
-                                        "transition-transform duration-200"
-                                    )}
-                                >
-                                    <Link href="/contact">
-                                        <span>Contact</span>
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Mobile Toggle */}
-                        <div className="lg:hidden flex items-center gap-3">
-                            {showCart && <CartIcon />}
-                            <button
-                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                className="p-2 text-foreground hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-                                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                                // aria-expanded={mobileMenuOpen}
-                            >
-                                <motion.div
-                                    animate={mobileMenuOpen ? "open" : "closed"}
-                                >
-                                    {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                                </motion.div>
-                            </button>
-                        </div>
+          <AnimatePresence>
+            {active && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                onMouseLeave={() => setOpenMenu(null)}
+                className="absolute left-0 right-0 top-[calc(100%+12px)] z-20 mx-auto max-w-[880px] overflow-hidden rounded-[28px] border border-white/70 bg-white/85 shadow-[0_30px_60px_-20px_rgba(76,79,224,0.35)] backdrop-blur-2xl"
+              >
+                <div className="grid grid-cols-12">
+                  <div
+                    className="col-span-12 md:col-span-4 p-8 flex flex-col justify-between"
+                    style={{
+                      background: "linear-gradient(155deg,#EEF0FE,#F7F1FE)",
+                    }}
+                  >
+                    <div>
+                      <span className="text-[10.5px] font-bold tracking-wide text-[#5B6EF5] uppercase">
+                        Overview
+                      </span>
+                      <h3 className="mt-4 text-[24px] font-extrabold text-[#1A1B2E] leading-tight">
+                        {active.description}
+                      </h3>
                     </div>
+                    <Link
+                      href={active.href}
+                      onClick={() => setOpenMenu(null)}
+                      className="mt-6 inline-flex items-center gap-1.5 text-[13px] font-bold text-[#4C4FE0]"
+                    >
+                      {active.featuredCta} <ArrowUpRight size={14} />
+                    </Link>
+                  </div>
+                  <div className="col-span-12 md:col-span-8 p-4 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {active.items.map((item) => {
+                      // 1. Get the specific icon from your iconMap
+                      const IconComponent = iconMap[item.title];
 
-                    {/* Dropdown */}
-                    <AnimatePresence>
-                        {activeDropdown && activeDropdown in navData && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                                className={cn(
-                                    "overflow-hidden border-t",
-                                    forceDark ? "border-white/10" : "border-border/60"
-                                )}
-                                onMouseEnter={() => {
-                                    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-                                }}
-                                onMouseLeave={handleMouseLeave}
-                            >
-                                <div className="p-4 md:p-5">
-                                    <motion.div
-                                        className={cn(
-                                            "grid gap-2",
-                                            activeDropdown === "services" && "items-stretch",
-                                            activeDropdown === "academy"
-                                                ? "min-w-[420px] grid-cols-1 md:grid-cols-[1fr_1.1fr]"
-                                                : activeDropdown === "services"
-                                                ? "min-w-[640px] grid-cols-1 md:grid-cols-[0.3fr_1.8fr]"
-                                                : "min-w-[620px] grid-cols-1 md:grid-cols-[1.05fr_1.5fr]"
-                                        )}
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.2, delay: 0.05 }}
-                                    >
-                                        {/* LEFT PANEL */}
-                                        <Link
-                                            href={navData[activeDropdown as keyof typeof navData].href}
-                                            onClick={() => setActiveDropdown(null)}
-                                            className={cn(
-                                                "group block rounded-xl border p-3 transition-all",
-                                                activeDropdown === "services" && "h-full min-h-[80px] flex flex-col justify-between",
-                                                forceDark
-                                                    ? "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
-                                                    : "border-sky-100 bg-gradient-to-br from-white/90 via-sky-50/80 to-white/90 hover:border-sky-200"
-                                            )}
-                                        >
-                                            <div>
-                                                <p className={cn(
-                                                    "text-[11px] font-semibold uppercase tracking-[0.1em]",
-                                                    forceDark ? "text-white/60" : "text-sky-700/75"
-                                                )}>
-                                                    {navData[activeDropdown as keyof typeof navData].label}
-                                                </p>
-                                                <h4 className={cn(
-                                                    "mt-2 text-base font-semibold",
-                                                    forceDark ? "text-white" : "text-slate-900"
-                                                )}>
-                                                    Explore {navData[activeDropdown as keyof typeof navData].label}
-                                                </h4>
-                                                <p className={cn(
-                                                    "mt-1.5 text-sm leading-relaxed",
-                                                    forceDark ? "text-white/70" : "text-slate-600"
-                                                )}>
-                                                    {navData[activeDropdown as keyof typeof navData].description}
-                                                </p>
-                                            </div>
-                                            <span className={cn(
-                                                "mt-4 inline-flex items-center gap-1.5 text-sm font-medium",
-                                                forceDark ? "text-white/85" : "text-[#4c69e4]"
-                                            )}>
-                                                View all {navData[activeDropdown as keyof typeof navData].label}
-                                                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                                            </span>
-                                        </Link>
-
-                                        {/* RIGHT GRID */}
-                                        <div className={cn(
-                                            "grid gap-2",
-                                            activeDropdown === "academy"
-                                                ? "grid-cols-1"
-                                                : activeDropdown === "services"
-                                                ? "grid-cols-4"
-                                                : "grid-cols-2"
-                                        )}>
-                                            {navData[activeDropdown as keyof typeof navData].items.map((item, i) => (
-                                                <motion.div
-                                                    key={item.title}
-                                                    className={activeDropdown === "services" && i === 4 ? "col-start-1" : ""}
-                                                    initial={{ opacity: 0, y: 5 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ duration: 0.15, delay: i * 0.02 }}
-                                                >
-                                                    <Link
-                                                        href={item.href}
-                                                        onClick={() => setActiveDropdown(null)}
-                                                        className={cn(
-                                                            "group block rounded-xl border p-3 transition-all",
-                                                            activeDropdown === "services" && "h-full min-h-[120px] flex flex-col justify-between",
-                                                            forceDark
-                                                                ? "border-white/10 bg-white/[0.02] hover:bg-white/[0.04]"
-                                                                : "border-sky-100/80 bg-white/80 hover:border-sky-200 hover:bg-white"
-                                                        )}
-                                                    >
-                                                        <div className="mb-1.5 flex items-center justify-between gap-2">
-                                                            <div className={cn(
-                                                                "text-sm font-semibold transition-colors",
-                                                                forceDark ? "text-white group-hover:text-sky-200" : "text-slate-900 group-hover:text-[#3d5fd9]"
-                                                            )}>
-                                                                {item.title}
-                                                            </div>
-                                                            <ArrowRight className={cn(
-                                                                "h-3.5 w-3.5 transition-all opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5",
-                                                                forceDark ? "text-white/70" : "text-slate-500"
-                                                            )} />
-                                                        </div>
-                                                        <div className={cn(
-                                                            "text-xs leading-relaxed",
-                                                            forceDark ? "text-white/65" : "text-slate-600"
-                                                        )}>
-                                                            {item.desc}
-                                                        </div>
-                                                    </Link>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </motion.header>
-            </motion.div>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {mobileMenuOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-                        />
-
-                        <motion.div
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                            className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background lg:hidden border-l border-border/50 shadow-2xl flex flex-col h-full"
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setOpenMenu(null)}
+                          className="group flex items-start gap-3 rounded-2xl p-3 transition-colors hover:bg-white/90"
                         >
-                            <div className="flex items-center justify-between p-5 border-b border-border/50 shrink-0">
-                                <Link href="/" className="flex items-center gap-1 sm:gap-1.5" onClick={() => setMobileMenuOpen(false)}>
-                                    <div className="relative w-8 h-8">
-                                        <Image
-                                            src={CDN_ASSETS.brand.logo}
-                                            alt="ZecurX"
-                                            fill
-                                            className="object-contain"
-                                        />
-                                    </div>
-                                    <Image
-                                        src={logoText}
-                                        alt="ZecurX"
-                                        width={256}
-                                        height={74}
-                                        className="h-[18px] w-auto sm:h-5 object-contain"
-                                    />
-                                </Link>
-                                <button
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
-                                    aria-label="Close menu"
-                                >
-                                    <X className="w-6 h-6" />
-                                </button>
-                            </div>
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#EEF0FE] group-hover:bg-[#5B6EF5] transition-colors text-[#5B6EF5] group-hover:text-white">
+                            {/* 2. Render the Lucide icon if it exists, otherwise fallback to a default */}
+                            {IconComponent ? (
+                              <IconComponent size={18} />
+                            ) : (
+                              <Shield size={18} />
+                            )}
+                          </div>
+                          <div>
+                            <span className="block text-[13px] font-bold text-[#1A1B2E]">
+                              {item.title}
+                            </span>
+                            <span className="mt-0.5 block text-[11.5px] text-[#8688A6]">
+                              {item.description}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
 
-                            <div className="flex-1 overflow-y-auto min-h-0">
-                                <div className="p-6 space-y-2">
-                                    {Object.entries(navData).map(([key, data]) => (
-                                        <div key={key} className="border-b border-border/40 last:border-0">
-                                            <div className="flex items-center justify-between gap-2 py-2">
-                                                <Link
-                                                    href={data.href}
-                                                    onClick={() => setMobileMenuOpen(false)}
-                                                    className="flex-1 py-2 text-base font-medium text-foreground rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                                                >
-                                                    {data.label}
-                                                </Link>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setMobileExpanded(mobileExpanded === key ? null : key)}
-                                                    className="inline-flex items-center justify-center w-11 h-11 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                                                    aria-label={`${mobileExpanded === key ? "Collapse" : "Expand"} ${data.label} menu`}
-                                                    // aria-expanded={mobileExpanded === key}
-                                                    // aria-controls={`mobile-submenu-${key}`}
-                                                >
-                                                    <ChevronDown
-                                                        className={cn(
-                                                            "w-5 h-5 transition-transform duration-200",
-                                                            mobileExpanded === key && "rotate-180"
-                                                        )}
-                                                    />
-                                                </button>
-                                            </div>
-                                            <AnimatePresence>
-                                                {mobileExpanded === key && (
-                                                    <motion.div
-                                                        id={`mobile-submenu-${key}`}
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: "auto", opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        transition={{ duration: 0.2 }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="pb-4 space-y-1">
-                                                            {data.items.map((item) => (
-                                                                <Link
-                                                                    key={item.title}
-                                                                    href={item.href}
-                                                                    onClick={() => setMobileMenuOpen(false)}
-                                                                    className="block py-2.5 px-4 text-sm text-muted-foreground hover:text-primary hover:bg-muted/50 rounded-md transition-colors"
-                                                                >
-                                                                    {item.title}
-                                                                </Link>
-                                                            ))}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
-                                    ))}
-
-                                    <Link
-                                        href="/industries"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
-                                    >
-                                        Industries
-                                    </Link>
-
-                                    <Link
-                                        href="/tools"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
-                                    >
-                                        Security Toolkit
-                                    </Link>
-
-                                    <Link
-                                        href="/how-we-work"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className="flex items-center justify-between w-full py-4 text-base font-medium text-foreground border-b border-border/40"
-                                    >
-                                        How We Work
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="p-6 border-t border-border/50 bg-muted/30 shrink-0">
-                                <Button
-                                    asChild
-                                    className="w-full py-6 h-auto text-base font-semibold rounded-xl mb-4 bg-[#4c69e4] text-white hover:bg-[#4c69e4] hover:opacity-90"
-                                >
-                                    <Link
-                                        href="/contact"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Get a demo
-                                    </Link>
-                                </Button>
-                                <div className="text-center">
-                                    <p className="text-sm text-muted-foreground mb-2">Experiencing an incident?</p>
-                                    <Link
-                                        href="/contact"
-                                        className="text-sm font-medium text-primary hover:underline"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        Contact Support
-                                    </Link>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </>
-    );
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-[#F4F9FF] lg:hidden shadow-2xl flex flex-col h-full"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <Image src={logoText} alt="ZecurX" width={120} height={30} />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-slate-500"
+                >
+                  <X />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {megaMenus.map((menu) => (
+                  <div key={menu.key}>
+                    <div className="text-sm font-bold text-[#5B6EF5] mb-3">
+                      {menu.label}
+                    </div>
+                    {menu.items.map((item) => (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block py-2 text-[15px] font-medium text-slate-700"
+                      >
+                        {item.title}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+      <div className="h-[84px]" />
+    </>
+  );
 }
