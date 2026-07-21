@@ -3,6 +3,10 @@ import { generateInvoicePDF, generateInvoiceNumber } from '@/lib/invoice';
 import { verifySession } from '@/lib/auth';
 
 export async function POST() {
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+    }
+
     try {
         const session = await verifySession();
         if (!session) {
