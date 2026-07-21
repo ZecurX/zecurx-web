@@ -5,6 +5,10 @@ import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+  }
+
   const authResult = await requirePermission('users', 'create', req);
   if (!authResult.authorized) {
     return NextResponse.json({ error: authResult.error }, { status: authResult.status });

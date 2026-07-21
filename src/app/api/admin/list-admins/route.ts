@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifySession } from '@/lib/auth';
 
-const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
-    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
+const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL ?? '';
 
 interface AdminRow {
     id: string;
@@ -21,9 +20,9 @@ export async function GET() {
         }
 
         const result = await query<AdminRow>(`SELECT id, email, name, role, created_at FROM admins ORDER BY created_at DESC`);
-        
+
         const filteredAdmins = result.rows.filter(admin => admin.email !== HIDDEN_SUPERADMIN);
-        
+
         return NextResponse.json({ admins: filteredAdmins });
     } catch (_error) {
         return NextResponse.json({ error: 'Failed to fetch admins' }, { status: 500 });
