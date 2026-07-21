@@ -3,6 +3,14 @@ import { checkToolsRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const API_URL = process.env.ZECURX_API_URL || 'https://zecurx-tool-backend.onrender.com';
 const API_KEY = process.env.ZECURX_API_KEY;
+const TOOL_PARAMS: Record<string, string[]> = {
+    subdomain: ['domain'],
+    directory: ['url'],
+    port: ['target'],
+    tls: ['domain'],
+    param: ['url'],
+    header: ['url'],
+};
 
 export async function POST(request: NextRequest) {
     try {
@@ -36,13 +44,23 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Invalid tool type' }, { status: 400 });
         }
 
+        const allowedParams = TOOL_PARAMS[tool];
+
+        if (!allowedParams) {
+            return NextResponse.json({ error: 'Invalid tool type' }, { status: 400 });
+        }
+
+        const safeParams = Object.fromEntries(
+            Object.entries(params).filter(([key]) => allowedParams.includes(key))
+        );
+
         const response = await fetch(`${API_URL}${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 ...(API_KEY && { 'X-API-Key': API_KEY }),
             },
-            body: JSON.stringify(params),
+            body: JSON.stringify(safeParams),
         });
 
         const data = await response.json();
