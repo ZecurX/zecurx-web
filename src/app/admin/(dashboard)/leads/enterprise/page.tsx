@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import { query } from "@/lib/db";
 import { hasPermission } from "@/lib/permissions";
+import { getJwtSecret } from "@/lib/auth";
 import { AdminJWTPayload, RESOURCES, ACTIONS } from "@/types/auth";
 import EnterpriseLeadsClient from "./EnterpriseLeadsClient";
 import { EnterpriseLead } from "@/types/lead-types";
@@ -16,8 +17,7 @@ export default async function EnterpriseLeadsPage() {
     }
 
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || process.env.ADMIN_PASSWORD);
-        const { payload } = await jwtVerify(session.value, secret);
+        const { payload } = await jwtVerify(session.value, getJwtSecret());
         const user = payload as unknown as AdminJWTPayload;
 
         if (!hasPermission(user.role, RESOURCES.LEADS, ACTIONS.READ)) {

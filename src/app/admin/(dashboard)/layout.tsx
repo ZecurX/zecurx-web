@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { jwtVerify } from "jose";
 import { AdminJWTPayload, Role, RESOURCES, ACTIONS } from "@/types/auth";
 import { hasPermission } from "@/lib/permissions";
+import { getJwtSecret } from "@/lib/auth";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { AdminSidebar } from "./AdminSidebar";
 
@@ -18,8 +19,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     let userInfo: { id: string; email: string; name: string; role: Role } | null = null;
 
     try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET || process.env.ADMIN_PASSWORD);
-        const { payload } = await jwtVerify(session.value, secret);
+        const { payload } = await jwtVerify(session.value, getJwtSecret());
         const jwtPayload = payload as unknown as AdminJWTPayload;
 
         userInfo = {
