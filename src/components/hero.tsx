@@ -1,25 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import dynamic from "next/dynamic";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { WordRotate } from "@/components/ui/word-rotate";
+import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
 
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-
 export function Hero() {
-  const [animationData, setAnimationData] = useState<object | null>(null);
-
-  useEffect(() => {
-    fetch(getCdnUrl("hero-lottie.json"))
-      .then((res) => res.json())
-      .then(setAnimationData);
-  }, []);
-
   return (
     <section className="relative flex items-center overflow-hidden bg-background contain-paint">
       {/* Organic blue-white blobs — optimized to 3 layers */}
@@ -121,14 +110,10 @@ export function Hero() {
           <BlurFade delay={0.3} inView={true} direction="up">
             <div className="flex items-center justify-center lg:justify-end mt-4 sm:mt-0">
               <div className="w-full max-w-[280px] sm:max-w-[360px] md:max-w-[440px] lg:max-w-[500px] aspect-square">
-                {animationData && (
-                  <Lottie
-                    animationData={animationData}
-                    loop
-                    autoplay
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                )}
+                <LottieAnimation
+                  src={getCdnUrl("hero-lottie.json")}
+                  className="w-full h-full"
+                />
               </div>
             </div>
           </BlurFade>
