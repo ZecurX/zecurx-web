@@ -11,8 +11,9 @@ export function getCdnUrl(path: string): string {
 
   const cleanPath = path.startsWith('/') ? path.slice(1) : path;
 
-  // Lottie files live in public/ and are served same-origin to avoid CORS issues
-  // with the external CDN (which has no Access-Control-Allow-Origin header).
+  // Lottie files are loaded via static dynamic import (src/lib/lottie-registry.ts)
+  // which bundles them at build time, avoiding runtime fetch() failures in production.
+  // Relative paths here serve as the fetch() fallback and for direct URL access.
   if (cleanPath.startsWith('lottie/') || cleanPath.endsWith('.json')) {
     return `/${cleanPath}`;
   }
