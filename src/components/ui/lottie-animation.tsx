@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { LottieRefCurrentProps } from "lottie-react";
+import { loadLottieData } from "@/lib/lottie-registry";
 
 interface LottieAnimationProps {
   src: string;
@@ -24,16 +25,43 @@ export function LottieAnimation({ src, className, speed = 1, fallback = null }: 
   const lottieRef = useRef<LottieRefCurrentProps>(null);
 
   useEffect(() => {
-    // Load lottie-react and animation data in parallel on client only
-    Promise.all([
-      import("lottie-react").then((m) => m.default),
-      fetch(src).then((r) => r.json()),
-    ])
-      .then(([LottieLib, data]) => {
-        setLottie(() => LottieLib as LottieComponent);
+    let cancelled = false;
+
+    async function load() {
+      try {
+        // Load lottie-react dynamically (client only)
+        const lottieModule = await import("lottie-react");
+        const LottieLib = lottieModule.default as LottieComponent;
+
+        if (cancelled) return;
+
+        // Try static import first (bundled at build time, no network request)
+        let data = await loadLottieData(src);
+
+        // Fall back to runtime fetch for files not in the static registry
+        if (!data) {
+          console.warn(`[LottieAnimation] Static import unavailable for "${src}", trying fetch...`);
+          const response = await fetch(src);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          data = await response.json();
+        }
+
+        if (cancelled) return;
+
+        setLottie(() => LottieLib);
         setAnimationData(data);
-      })
-      .catch(() => {});
+      } catch (err) {
+        console.error(`[LottieAnimation] Failed to load "${src}":`, err);
+      }
+    }
+
+    load();
+
+    return () => {
+      cancelled = true;
+    };
   }, [src]);
 
   useEffect(() => {
