@@ -5,8 +5,25 @@ import { Certificate, Seminar } from '@/types/seminar';
 import { sendEmail, toSendGridAttachment } from '@/lib/sendgrid';
 import { uploadToS3 } from '@/lib/s3';
 import { fetchFromCdn } from '@/lib/cdn';
+import { getCertificateTemplateForSeminar } from '@/lib/certificate-template';
 import { brandedEmailTemplate, emailSection, emailCourseCatalog } from '@/lib/email-template';
 import { courses } from '@/lib/courses';
+
+const DEFAULT_TEMPLATE_PDF_PATH = 'templates/certificate-template.pdf';
+const DEFAULT_TEMPLATE_BG_PATH = 'templates/certificate-template-bg.png';
+
+/**
+ * Resolves which certificate template a given seminar's certificates should
+ * use: the seminar's own selection if set, otherwise the library default,
+ * otherwise the bundled default template assets.
+ */
+async function getCertificateTemplateSources(seminarId: string): Promise<{ pdfSource: string; bgSource: string }> {
+    const template = await getCertificateTemplateForSeminar(seminarId);
+    if (template) {
+        return { pdfSource: template.pdf_url, bgSource: template.image_url };
+    }
+    return { pdfSource: DEFAULT_TEMPLATE_PDF_PATH, bgSource: DEFAULT_TEMPLATE_BG_PATH };
+}
 
 interface CertificateData {
     recipientName: string;
@@ -32,7 +49,8 @@ export function generateCertificateId(): string {
 }
 
 export async function generateCertificatePDF(data: CertificateData & { certificateId: string }): Promise<Buffer> {
-    const templateBytes = await fetchFromCdn('templates/certificate-template.pdf');
+    const { pdfSource } = await getCertificateTemplateSources(data.seminarId);
+    const templateBytes = await fetchFromCdn(pdfSource);
     if (!templateBytes) {
         throw new Error('Failed to fetch certificate template from CDN');
     }
@@ -152,7 +170,8 @@ export async function generateCertificatePreview(certificate: Certificate & { lo
     // Scale factor from PDF points to preview pixels
     const _S = 2;
 
-    const bgBuffer = await fetchFromCdn('templates/certificate-template-bg.png');
+    const { bgSource } = await getCertificateTemplateSources(certificate.seminar_id);
+    const bgBuffer = await fetchFromCdn(bgSource);
     if (!bgBuffer) {
         throw new Error('Failed to fetch certificate background from CDN');
     }
