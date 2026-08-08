@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
-import BrochureModal from './BrochureModal';
+import Link from 'next/link';
+import { Eye, Clock, BarChart3, ArrowRight, ChevronRight } from 'lucide-react';
 
 interface CourseCardProps {
     id: string;
@@ -20,215 +20,125 @@ interface CourseCardProps {
     logo?: string;
     pricingType?: 'fixed' | 'contact' | 'institutional';
     inStock?: boolean;
+    unsplashId?: string;
 }
+
+const LEVEL_ACCENT: Record<string, string> = {
+    Beginner: 'bg-emerald-500',
+    Intermediate: 'bg-blue-500',
+    Advanced: 'bg-purple-500',
+    Expert: 'bg-rose-500',
+};
 
 export default function CourseCard({
     id,
     title,
     description,
-    price,
-    originalPrice,
     duration,
-    students: _students = 0,
     level,
     features,
     popular = false,
     delay = 0,
-    brochureLink,
-    logo,
-    pricingType = 'fixed',
-    inStock = true,
+    unsplashId,
 }: CourseCardProps) {
-    const [isPurchased, setIsPurchased] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [isBrochureOpen, setIsBrochureOpen] = useState(false);
-
-    const _handleSuccess = (_paymentId: string) => {
-        setIsPurchased(true);
-        setError(null);
-    };
-
-    const _handleFailure = (errorMessage: string) => {
-        setError(errorMessage);
-        setTimeout(() => setError(null), 5000);
-    };
-
-    const formatPrice = (amount: number | string) => {
-        if (typeof amount === 'string') return amount;
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
+    const imageUrl = unsplashId
+        ? `https://images.unsplash.com/${unsplashId}?w=600&h=340&fit=crop&auto=format&q=80`
+        : null;
 
     return (
-        <>
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay }}
-                viewport={{ once: true }}
-                className="group relative flex flex-col h-full bg-background/50 border border-border/40 hover:border-border/80 hover:bg-muted/30 transition-all duration-300 rounded-2xl overflow-hidden"
-            >
-                {logo && (
-                    <div className="w-full h-36 bg-muted/20 border-b border-border/30 overflow-hidden flex items-center justify-center">
-                        <img src={logo} alt={title} className="h-full w-full object-contain p-6" />
-                    </div>
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay }}
+            viewport={{ once: true }}
+            className="group relative flex flex-col h-full bg-[#111827] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.12] transition-all duration-500 hover:-translate-y-1"
+        >
+            {/* Subtle glow on hover */}
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                style={{
+                    boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.05), 0 0 40px 0 rgba(76,105,228,0.08)',
+                }}
+            />
+
+            {/* Image area */}
+            <div className="relative w-full h-52 overflow-hidden">
+                {imageUrl ? (
+                    <>
+                        <img
+                            src={imageUrl}
+                            alt={title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/40 to-transparent" />
+                    </>
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900" />
                 )}
 
-                {/* Minimal Popular Tag */}
+                {/* Overlay gradient at bottom for text readability */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#111827] to-transparent" />
+
+                {/* Level + duration row */}
+                <div className="absolute top-4 inset-x-4 flex items-center justify-between">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md ${LEVEL_ACCENT[level] || 'bg-slate-500'} text-white shadow-lg`}>
+                        <BarChart3 className="w-3 h-3" />
+                        {level}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold text-white/90 bg-black/30 backdrop-blur-sm rounded-md">
+                        <Clock className="w-3 h-3" />
+                        {duration}
+                    </span>
+                </div>
+
+                {/* Popular tag */}
                 {popular && (
-                    <div className="absolute top-0 right-0">
-                        <span className="inline-block px-3 py-1 text-[10px] uppercase tracking-wider font-bold bg-foreground text-background">
-                            Popular
+                    <div className="absolute bottom-6 left-4">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r from-amber-400 to-orange-400 text-amber-950 rounded-full shadow-lg shadow-amber-500/20">
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            Most Popular
                         </span>
                     </div>
                 )}
+            </div>
 
-                <div className="flex flex-col flex-1 p-8">
-                    {/* Meta */}
-                    <div className="flex items-center gap-3 mb-6 text-xs font-semibold tracking-wide uppercase text-muted-foreground">
-                        <span>{level}</span>
-                        <span className="w-1 h-1 rounded-full bg-border" />
-                        <span>{duration}</span>
-                    </div>
+            {/* Content */}
+            <div className="flex flex-col flex-1 p-6 pt-5">
+                {/* Title */}
+                <h3 className="text-xl font-bold text-white mb-3 leading-snug group-hover:text-[#7b93f5] transition-colors duration-300">
+                    {title}
+                </h3>
+                <p className="text-sm text-slate-400 leading-relaxed mb-5 line-clamp-2 font-light">
+                    {description}
+                </p>
 
-                    {/* Content */}
-                    <h3 className="text-2xl font-manrope font-light text-foreground mb-3 leading-tight">{title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-8 min-h-[40px]">{description}</p>
+                {/* Features */}
+                <ul className="space-y-2.5 mb-6 flex-1">
+                    {features.slice(0, 3).map((feature, idx) => (
+                        <li key={idx} className="text-[13px] text-slate-300 flex items-start gap-2.5">
+                            <span className="w-1 h-1 rounded-full bg-[#4c69e4] shrink-0 mt-2" />
+                            <span className="leading-relaxed">{feature}</span>
+                        </li>
+                    ))}
+                </ul>
 
-                    {/* Features (Minimal List) */}
-                    <ul className="space-y-2 mb-8 flex-1">
-                        {features.slice(0, 4).map((feature, idx) => (
-                            <li key={idx} className="text-sm text-muted-foreground/80 flex items-start gap-2">
-                                <span className="mt-1.5 w-1 h-1 rounded-full bg-primary shrink-0" />
-                                <span>{feature}</span>
-                            </li>
-                        ))}
-                    </ul>
+                {/* View Details Button */}
+                <Link
+                    href={`/academy/${id}`}
+                    className="relative flex items-center justify-between w-full py-3 px-5 text-sm font-semibold text-white rounded-xl overflow-hidden group/btn transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+                >
+                    {/* Button background gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#60a5fa] via-[#3b82f6] to-[#0f172a] opacity-90 group-hover/btn:opacity-100 transition-opacity" />
+                    {/* Shine effect on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
 
-                    {/* Footer */}
-                    <div className="mt-auto pt-6 border-t border-border/50">
-                        {!inStock && (
-                            <div className="flex items-center gap-3 mb-4">
-                                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-muted-foreground">Coming Soon</span>
-                                <span className="flex-1 h-px bg-border/50" />
-                            </div>
-                        )}
-                        {pricingType === 'institutional' ? (
-                            <>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-muted-foreground">Institutional</span>
-                                    <span className="flex-1 h-px bg-border/50" />
-                                </div>
-                                <div className="flex gap-2">
-                                    <a
-                                        href="/contact"
-                                        className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-foreground border border-border hover:bg-muted/30 transition-colors rounded-lg"
-                                    >
-                                        Contact Us
-                                    </a>
-                                    {brochureLink && (
-                                        <button
-                                            onClick={() => setIsBrochureOpen(true)}
-                                            className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-medium bg-transparent text-foreground border border-foreground/20 hover:bg-foreground/5 transition-colors rounded-lg cursor-pointer"
-                                        >
-                                            View Brochure
-                                        </button>
-                                    )}
-                                </div>
-                            </>
-                        ) : pricingType === 'contact' ? (
-                            <>
-                                <div className="flex flex-col mb-6">
-                                    <span className="text-xs text-muted-foreground">Investment</span>
-                                    <span className="text-lg font-bold text-foreground">Contact for Pricing</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <a
-                                        href="/contact"
-                                        className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-foreground border border-border hover:bg-muted/30 transition-colors rounded-lg"
-                                    >
-                                        Contact for Pricing
-                                    </a>
-                                    {brochureLink && (
-                                        <button
-                                            onClick={() => setIsBrochureOpen(true)}
-                                            className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-medium bg-transparent text-foreground border border-foreground/20 hover:bg-foreground/5 transition-colors rounded-lg cursor-pointer"
-                                        >
-                                            View Brochure
-                                        </button>
-                                    )}
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="flex items-end justify-between gap-4 mb-6">
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-muted-foreground">Investment</span>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-xl font-bold text-foreground">{formatPrice(price)}</span>
-                                            {originalPrice && (
-                                                <span className="text-sm text-muted-foreground line-through decoration-red-500/70 decoration-[1.5px]">
-                                                    {formatPrice(originalPrice)}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {error && (
-                                    <div className="mb-3 text-xs text-red-500">
-                                        {error}
-                                    </div>
-                                )}
-
-                                <div className="flex flex-col gap-3 mt-4">
-                                    {isPurchased ? (
-                                        <div className="w-full py-3 text-center text-sm font-medium text-green-500 border border-green-500/20 bg-green-500/5 rounded-lg">
-                                            Enrolled
-                                        </div>
-                                    ) : (
-                                        <div className="flex gap-2">
-                                            {inStock ? (
-                                                <a
-                                                    href={`/checkout?itemId=${id}&type=course`}
-                                                    className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-lg"
-                                                >
-                                                    Enroll Now
-                                                </a>
-                                            ) : (
-                                                <span className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-semibold bg-muted/20 text-muted-foreground border border-border/50 rounded-lg cursor-not-allowed">
-                                                    Not Available
-                                                </span>
-                                            )}
-                                            {brochureLink && (
-                                                <button
-                                                    onClick={() => setIsBrochureOpen(true)}
-                                                    className="flex-1 flex items-center justify-center py-3 px-4 text-sm font-medium bg-transparent text-foreground border border-foreground/20 hover:bg-foreground/5 transition-colors rounded-lg cursor-pointer"
-                                                >
-                                                    View Brochure
-                                                </button>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Functionality: Brochure Modal */}
-            {brochureLink && (
-                <BrochureModal
-                    isOpen={isBrochureOpen}
-                    onClose={() => setIsBrochureOpen(false)}
-                    courseTitle={title}
-                    brochureLink={brochureLink}
-                />
-            )}
-        </>
+                    <span className="relative z-10 flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        View Details
+                    </span>
+                    <ChevronRight className="relative z-10 w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
+                </Link>
+            </div>
+        </motion.div>
     );
 }

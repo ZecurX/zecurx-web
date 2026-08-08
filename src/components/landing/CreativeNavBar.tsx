@@ -178,9 +178,11 @@ const megaMenus = Object.entries(navData).map(([key, data]) => ({
 export default function CreativeNavBar({
   forceDark = false,
   showCart = false,
+  expanded = false,
 }: {
   forceDark?: boolean;
   showCart?: boolean;
+  expanded?: boolean;
 }) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -210,10 +212,18 @@ export default function CreativeNavBar({
     <>
       <div
         ref={wrapRef}
-        className="fixed top-0 left-0 right-0 z-[999] p-4 md:px-8 pt-6"
+        className={cn(
+          "fixed top-0 left-0 right-0 z-[999] transition-all duration-300",
+          expanded
+            ? "p-0 md:px-0 pt-0"
+            : "p-4 md:px-8 pt-6"
+        )}
       >
-        <div className="mx-auto max-w-[1180px]">
-          <nav className="flex items-center justify-between rounded-full border border-white/60 bg-white/70 px-5 py-2 shadow-[0_8px_32px_-8px_rgba(91,110,245,0.18)] backdrop-blur-xl">
+        <div className={cn("mx-auto transition-all duration-300", expanded ? "max-w-full" : "max-w-[1180px]")}>
+          <nav className={cn(
+            "flex items-center justify-between border border-white/60 bg-white/70 px-5 py-2 shadow-[0_8px_32px_-8px_rgba(91,110,245,0.18)] backdrop-blur-xl transition-all duration-300",
+            expanded ? "rounded-none" : "rounded-full"
+          )}>
             <Link href="/" className="flex items-center gap-2.5 shrink-0">
               {/* No background, no rounded container—just the icon */}
               <div className="relative w-8 h-8 flex items-center justify-center">
@@ -412,7 +422,7 @@ export default function CreativeNavBar({
           </>
         )}
       </AnimatePresence>
-      <div className="h-[84px]" />
+      <div className={cn("transition-all duration-300", expanded ? "h-[52px]" : "h-[84px]")} />
     </>
   );
 }
