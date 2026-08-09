@@ -38,8 +38,7 @@ const termsData = [
         title: "4. Payment Terms",
         content: [
             "All invoices must be paid in full within the specified due date.",
-            "Late payments may result in delayed service delivery or temporary suspension.",
-            "Refunds, if applicable, will be provided only under written agreement."
+            "Late payments may result in delayed service delivery or temporary suspension."
         ]
     },
     {
