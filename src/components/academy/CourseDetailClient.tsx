@@ -93,10 +93,6 @@ const faqs = [
         question: "Is there placement assistance?",
         answer: "Yes. We provide resume workshops, mock interviews, and direct referrals to our hiring partners. Our placement rate is 94% across all programs.",
     },
-    {
-        question: "Can I get a refund?",
-        answer: "We offer a 7-day no-questions-asked refund policy. If you're not satisfied with the course content within the first week, you'll receive a full refund.",
-    },
 ];
 
 export default function CourseDetailClient({
