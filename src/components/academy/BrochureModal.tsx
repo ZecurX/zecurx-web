@@ -77,7 +77,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                             {/* Header */}
                             <div className="flex items-start justify-between p-6 pb-2">
                                 <div>
-                                    <h2 className="text-xl font-bold font-manrope">Download Brochure</h2>
+                                    <h2 className="text-xl font-bold font-manrope text-foreground">Download Brochure</h2>
                                     <p className="text-sm text-muted-foreground mt-1">
                                         Enter your details to view the brochure for <br />
                                         <span className="font-semibold text-foreground">{courseTitle}</span>
@@ -99,7 +99,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                                             <Download className="w-6 h-6" />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-medium">Download Started!</h3>
+                                            <h3 className="text-lg font-medium text-foreground">Download Started!</h3>
                                             <p className="text-sm text-muted-foreground">
                                                 Your brochure should open in a new tab shortly.
                                             </p>
@@ -117,7 +117,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                                                 name="name"
                                                 required
                                                 placeholder="John Doe"
-                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -128,7 +128,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                                                 type="email"
                                                 required
                                                 placeholder="john@example.com"
-                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -139,7 +139,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                                                 type="tel"
                                                 required
                                                 placeholder="+91 98765 43210"
-                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+                                                className="flex h-10 w-full rounded-md border border-border bg-muted/20 px-3 py-2 text-sm text-foreground ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                                             />
                                         </div>
 
