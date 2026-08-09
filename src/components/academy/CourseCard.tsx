@@ -30,6 +30,14 @@ const LEVEL_ACCENT: Record<string, string> = {
     Expert: 'bg-rose-500',
 };
 
+// zxCCP, zxCCF, zxCCE, zxCFD - institution-only programs
+const INSTITUTION_ONLY_IDS = new Set([
+    '7f0e2cb3-82c1-4634-9a95-67a2ae14a815',
+    '3613d162-d801-47c6-9305-719f999738c8',
+    'ef34cbc8-c918-4e64-bd88-799863b299e1',
+    '9bce53be-103e-46b9-9fa0-2b91260f38db',
+]);
+
 export default function CourseCard({
     id,
     title,
@@ -44,6 +52,7 @@ export default function CourseCard({
     const imageUrl = unsplashId
         ? `https://images.unsplash.com/${unsplashId}?w=600&h=340&fit=crop&auto=format&q=80`
         : null;
+    const isInstitutionOnly = INSTITUTION_ONLY_IDS.has(id);
 
     return (
         <motion.div
@@ -53,6 +62,13 @@ export default function CourseCard({
             viewport={{ once: true }}
             className="group relative flex flex-col h-full bg-[#111827] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.12] transition-all duration-500 hover:-translate-y-1"
         >
+            {/* Institutions only banner */}
+            {isInstitutionOnly && (
+                <div className="relative z-10 flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-[#4c69e4] to-indigo-500 text-white text-[11px] font-bold uppercase tracking-widest">
+                    Institutions Only
+                </div>
+            )}
+
             {/* Subtle glow on hover */}
             <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
