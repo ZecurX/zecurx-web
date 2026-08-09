@@ -44,6 +44,7 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import EditSeminarDialog from './EditSeminarDialog';
 import EditRegistrationDialog from './EditRegistrationDialog';
+import CertificateTemplateSection from './CertificateTemplateSection';
 
 const STATUS_CONFIG: Record<
   SeminarStatus,
@@ -86,7 +87,7 @@ export default function SeminarDetailPage() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    'details' | 'registrations' | 'feedback' | 'name-requests'
+    'details' | 'registrations' | 'feedback' | 'name-requests' | 'certificate-template'
   >('details');
   const [showEditSeminar, setShowEditSeminar] = useState(false);
   const [editingRegistration, setEditingRegistration] =
@@ -691,6 +692,17 @@ export default function SeminarDetailPage() {
               {nameRequests.filter((r) => r.status === 'pending').length}
             </span>
           )}
+        </button>
+        <button
+          onClick={() => setActiveTab('certificate-template')}
+          className={cn(
+            'px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
+            activeTab === 'certificate-template'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground',
+          )}
+        >
+          Certificate Template
         </button>
       </div>
 
@@ -1500,6 +1512,15 @@ export default function SeminarDetailPage() {
             </div>
           )}
         </div>
+      )}
+
+      {activeTab === 'certificate-template' && (
+        <CertificateTemplateSection
+          seminarId={seminarId}
+          canManage={canManage}
+          selectedTemplateId={seminar.certificate_template_id}
+          onSelectionChange={fetchSeminar}
+        />
       )}
 
       {showEditSeminar && seminar && (
