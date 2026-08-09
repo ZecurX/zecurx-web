@@ -60,6 +60,7 @@ const VALID_TABLES = new Set([
     // Seminar schema qualified tables
     'seminar.seminars', 'seminar.registrations', 'seminar.attendance',
     'seminar.certificates', 'seminar.certificate_name_requests', 'seminar.otp_verifications', 'seminar.feedback',
+    'seminar.certificate_templates',
     // zecurx_admin schema qualified tables
     'zecurx_admin.plans', 'zecurx_admin.promo_prices', 'zecurx_admin.settings', 'zecurx_admin.course_mapping',
     'zecurx_admin.bulk_email_campaigns', 'bulk_email_campaigns',
