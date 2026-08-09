@@ -14,10 +14,15 @@ import {
   CheckCircle,
   Eye,
   X,
+  FlaskConical,
+  Download,
+  ExternalLink,
 } from 'lucide-react';
 import { CertificateTemplate } from '@/types/seminar';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg'];
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -33,11 +38,19 @@ export default function CertificateTemplateSection({
   canManage,
   selectedTemplateId,
   onSelectionChange,
+  seminarTitle,
+  seminarDate,
+  speakerName,
+  organizationName,
 }: {
   seminarId: string;
   canManage: boolean;
   selectedTemplateId: string | null;
   onSelectionChange: () => void;
+  seminarTitle?: string;
+  seminarDate?: string;
+  speakerName?: string;
+  organizationName?: string;
 }) {
   const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,6 +61,58 @@ export default function CertificateTemplateSection({
   const [success, setSuccess] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [viewingTemplate, setViewingTemplate] = useState<{ url: string; title: string } | null>(null);
+
+  const [testName, setTestName] = useState('Jane Doe');
+  const [testTitle, setTestTitle] = useState(seminarTitle || '');
+  const [testDate, setTestDate] = useState((seminarDate || '').slice(0, 10));
+  const [testSpeaker, setTestSpeaker] = useState(speakerName || '');
+  const [testOrganization, setTestOrganization] = useState(organizationName || '');
+  const [testLocation, setTestLocation] = useState('');
+  const [testGenerating, setTestGenerating] = useState(false);
+  const [testError, setTestError] = useState<string | null>(null);
+  const [testPdfUrl, setTestPdfUrl] = useState<string | null>(null);
+
+  const handleTestGenerate = async () => {
+    if (!testName.trim() || !testTitle.trim() || !testDate) {
+      setTestError('Recipient name, seminar title and seminar date are required.');
+      return;
+    }
+
+    setTestGenerating(true);
+    setTestError(null);
+    if (testPdfUrl) URL.revokeObjectURL(testPdfUrl);
+    setTestPdfUrl(null);
+
+    try {
+      const res = await fetch('/api/admin/certificate-template/test-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          seminarId,
+          recipientName: testName.trim(),
+          seminarTitle: testTitle.trim(),
+          seminarDate: testDate,
+          speakerName: testSpeaker.trim() || null,
+          organization: testOrganization.trim() || null,
+          location: testLocation.trim() || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setTestError(data.error || 'Failed to generate test certificate');
+        return;
+      }
+
+      const blob = await res.blob();
+      setTestPdfUrl(URL.createObjectURL(blob));
+    } catch (err) {
+      console.error('Error generating test certificate:', err);
+      setTestError('An error occurred while generating the test certificate');
+    } finally {
+      setTestGenerating(false);
+    }
+  };
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -66,6 +131,12 @@ export default function CertificateTemplateSection({
   useEffect(() => {
     fetchTemplates();
   }, [fetchTemplates]);
+
+  useEffect(() => {
+    return () => {
+      if (testPdfUrl) URL.revokeObjectURL(testPdfUrl);
+    };
+  }, [testPdfUrl]);
 
   const defaultTemplate = templates.find((t) => t.is_default) || null;
 
@@ -453,6 +524,122 @@ export default function CertificateTemplateSection({
           )}
         </div>
       )}
+
+      <div className="bg-card/40 border border-border/50 rounded-xl p-6 space-y-4">
+        <div className="flex items-start gap-3">
+          <FlaskConical className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <div>
+            <h2 className="font-semibold text-foreground">Test Certificate Generation</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Renders a PDF using the exact template this seminar currently uses, with the sample
+              details below. Nothing is saved, emailed, or added to the certificates list &mdash;
+              this is only for checking how the layout looks.
+            </p>
+          </div>
+        </div>
+
+        {testError && (
+          <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 text-red-600 rounded-xl text-sm">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            {testError}
+          </div>
+        )}
+
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-name">Recipient Name</Label>
+            <Input
+              id="test-cert-name"
+              value={testName}
+              onChange={(e) => setTestName(e.target.value)}
+              placeholder="Jane Doe"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-title">Seminar Title</Label>
+            <Input
+              id="test-cert-title"
+              value={testTitle}
+              onChange={(e) => setTestTitle(e.target.value)}
+              placeholder="Intro to Cybersecurity"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-date">Seminar Date</Label>
+            <Input
+              id="test-cert-date"
+              type="date"
+              value={testDate}
+              onChange={(e) => setTestDate(e.target.value)}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-location">Place</Label>
+            <Input
+              id="test-cert-location"
+              value={testLocation}
+              onChange={(e) => setTestLocation(e.target.value)}
+              placeholder="India"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-speaker">Speaker Name</Label>
+            <Input
+              id="test-cert-speaker"
+              value={testSpeaker}
+              onChange={(e) => setTestSpeaker(e.target.value)}
+              placeholder="Optional"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="test-cert-org">Organization</Label>
+            <Input
+              id="test-cert-org"
+              value={testOrganization}
+              onChange={(e) => setTestOrganization(e.target.value)}
+              placeholder="Optional"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={handleTestGenerate} disabled={testGenerating}>
+            {testGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <FlaskConical className="w-4 h-4 mr-2" />
+                Generate Test PDF
+              </>
+            )}
+          </Button>
+          {testPdfUrl && (
+            <>
+              <Button asChild variant="outline">
+                <a href={testPdfUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Open in New Tab
+                </a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href={testPdfUrl} download="certificate-test-preview.pdf">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </a>
+              </Button>
+            </>
+          )}
+        </div>
+
+        {testPdfUrl && (
+          <div className="rounded-lg border border-border/50 overflow-hidden bg-muted" style={{ height: '70vh' }}>
+            <iframe src={testPdfUrl} title="Certificate test preview" className="w-full h-full" />
+          </div>
+        )}
+      </div>
 
       {viewingTemplate && (
         <div
