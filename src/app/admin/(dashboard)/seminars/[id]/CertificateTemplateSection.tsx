@@ -12,6 +12,8 @@ import {
   Star,
   Trash2,
   CheckCircle,
+  Eye,
+  X,
 } from 'lucide-react';
 import { CertificateTemplate } from '@/types/seminar';
 import { cn } from '@/lib/utils';
@@ -45,6 +47,7 @@ export default function CertificateTemplateSection({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [viewingTemplate, setViewingTemplate] = useState<{ url: string; title: string } | null>(null);
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -239,41 +242,60 @@ export default function CertificateTemplateSection({
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Library default "card" - represents "no explicit selection" */}
-        <button
-          onClick={() => selectTemplateForSeminar(null)}
-          disabled={!canManage || busyId !== null || selectedTemplateId === null}
+        <div
           className={cn(
-            'text-left rounded-xl border-2 p-4 transition-colors bg-card/40',
+            'rounded-xl border-2 p-4 transition-colors bg-card/40',
             selectedTemplateId === null
               ? 'border-primary ring-2 ring-primary/20'
-              : 'border-border/50 hover:border-primary/50',
-            !canManage && 'cursor-default',
+              : 'border-border/50',
           )}
         >
-          <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden border border-border/50 bg-muted flex items-center justify-center mb-3">
-            {defaultTemplate ? (
-              <Image
-                src={defaultTemplate.image_url}
-                alt="Library default template"
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            ) : (
-              <ImageIcon className="w-8 h-8 text-muted-foreground" />
-            )}
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <p className="font-medium text-foreground text-sm">Library default</p>
-            {selectedTemplateId === null && (
-              <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {defaultTemplate ? defaultTemplate.name || defaultTemplate.original_filename : 'Bundled ZecurX template'}
-          </p>
+          <button
+            onClick={() => selectTemplateForSeminar(null)}
+            disabled={!canManage || busyId !== null || selectedTemplateId === null}
+            className={cn('block w-full text-left', !canManage && 'cursor-default')}
+          >
+            <div className="relative w-full aspect-[16/9] rounded-lg overflow-hidden border border-border/50 bg-muted flex items-center justify-center mb-3">
+              {defaultTemplate ? (
+                <Image
+                  src={defaultTemplate.image_url}
+                  alt="Library default template"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              ) : (
+                <ImageIcon className="w-8 h-8 text-muted-foreground" />
+              )}
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-medium text-foreground text-sm">Library default</p>
+              {selectedTemplateId === null && (
+                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {defaultTemplate ? defaultTemplate.name || defaultTemplate.original_filename : 'Bundled ZecurX template'}
+            </p>
+          </button>
           {busyId === 'default' && <Loader2 className="w-4 h-4 animate-spin mt-2" />}
-        </button>
+          {defaultTemplate && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full text-xs h-7 mt-3"
+              onClick={() =>
+                setViewingTemplate({
+                  url: defaultTemplate.image_url,
+                  title: defaultTemplate.name || defaultTemplate.original_filename,
+                })
+              }
+            >
+              <Eye className="w-3.5 h-3.5 mr-1.5" />
+              View
+            </Button>
+          )}
+        </div>
 
         {templates.map((template) => {
           const isSelected = selectedTemplateId === template.id;
@@ -318,30 +340,46 @@ export default function CertificateTemplateSection({
                 <span className="text-[10px] text-muted-foreground">{formatFileSize(template.file_size)}</span>
               </div>
 
-              {canManage && (
-                <div className="flex items-center gap-2 mt-3">
-                  {!template.is_default && (
+              <div className="flex items-center gap-2 mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className={cn('text-xs h-7', canManage ? '' : 'flex-1')}
+                  onClick={() =>
+                    setViewingTemplate({
+                      url: template.image_url,
+                      title: template.name || template.original_filename,
+                    })
+                  }
+                >
+                  <Eye className="w-3.5 h-3.5 mr-1.5" />
+                  View
+                </Button>
+                {canManage && (
+                  <>
+                    {!template.is_default && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-xs h-7"
+                        disabled={isBusy}
+                        onClick={() => makeDefault(template.id)}
+                      >
+                        {isBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Set as default'}
+                      </Button>
+                    )}
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="outline"
-                      className="flex-1 text-xs h-7"
+                      className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 shrink-0"
                       disabled={isBusy}
-                      onClick={() => makeDefault(template.id)}
+                      onClick={() => removeTemplate(template.id)}
                     >
-                      {isBusy ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Set as default'}
+                      <Trash2 className="w-3.5 h-3.5" />
                     </Button>
-                  )}
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                    disabled={isBusy}
-                    onClick={() => removeTemplate(template.id)}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              )}
+                  </>
+                )}
+              </div>
             </div>
           );
         })}
@@ -413,6 +451,38 @@ export default function CertificateTemplateSection({
               />
             </label>
           )}
+        </div>
+      )}
+
+      {viewingTemplate && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setViewingTemplate(null)}
+        >
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div
+            className="relative bg-card border border-border rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <p className="font-medium text-foreground text-sm truncate">{viewingTemplate.title}</p>
+              <button
+                onClick={() => setViewingTemplate(null)}
+                className="p-1.5 hover:bg-muted rounded-lg transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative w-full aspect-[16/9] bg-muted">
+              <Image
+                src={viewingTemplate.url}
+                alt={viewingTemplate.title}
+                fill
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
