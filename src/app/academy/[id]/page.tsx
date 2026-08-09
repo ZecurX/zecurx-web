@@ -4,7 +4,7 @@ import CourseDetailPageClient from "./CourseDetailPageClient";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
-    params,
+    params: _params,
 }: {
     params: Promise<{ id: string }>;
 }): Promise<Metadata> {
