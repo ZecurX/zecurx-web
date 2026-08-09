@@ -1520,6 +1520,10 @@ export default function SeminarDetailPage() {
           canManage={canManage}
           selectedTemplateId={seminar.certificate_template_id}
           onSelectionChange={fetchSeminar}
+          seminarTitle={seminar.title}
+          seminarDate={seminar.date}
+          speakerName={seminar.speaker_name}
+          organizationName={seminar.organization_name}
         />
       )}
 
