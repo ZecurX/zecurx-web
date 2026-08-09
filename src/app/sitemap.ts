@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://zecurx.com'
-  
+
   // Static routes with priorities and change frequencies
   const staticRoutes = [
     { url: '', priority: 1.0, changeFrequency: 'daily' as const },
