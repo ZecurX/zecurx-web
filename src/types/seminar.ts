@@ -90,6 +90,7 @@ export interface Seminar {
   certificate_enabled: boolean;
   rejection_reason: string | null;
   blog_slug: string | null;
+  certificate_template_id: string | null;
 
   // Metadata
   created_at: string;
@@ -193,6 +194,25 @@ export interface CertificateNameRequest {
   admin_notes: string | null;
   reviewed_at: string | null;
   reviewed_by: string | null;
+  created_at: string;
+}
+
+// Certificate template library - each seminar can pick one of these; the one
+// marked is_default is used for seminars that haven't picked a specific template.
+export interface CertificateTemplate {
+  id: string;
+  name: string | null;
+  original_filename: string;
+  mime_type: string;
+  file_size: number;
+  image_key: string;
+  image_url: string;
+  pdf_key: string;
+  pdf_url: string;
+  is_default: boolean;
+  uploaded_by_id: string | null;
+  uploaded_by_email: string | null;
+  uploaded_from_seminar_id: string | null;
   created_at: string;
 }
 
@@ -337,6 +357,7 @@ export interface UpdateSeminarRequest {
   registration_enabled?: boolean;
   certificate_enabled?: boolean;
   status?: SeminarStatus;
+  certificate_template_id?: string | null;
 }
 
 export interface MarkAttendanceRequest {
