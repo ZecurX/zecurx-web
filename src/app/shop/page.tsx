@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { Metadata } from "next";
+import Link from "next/link";
 import { Shield, Zap, Package, ArrowRight } from "lucide-react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
@@ -137,13 +138,13 @@ export default async function ShopPage() {
                         ZecurX Academy tutorials, setup guides, and attack vectors
                         for that specific tool.
                       </p>
-                      <a
+                      <Link
                         href="/academy"
                         className="inline-flex items-center text-sm font-bold text-[#4c69e4] group-hover:translate-x-1 transition-transform"
                       >
                         View Academy Preview{" "}
                         <ArrowRight className="w-4 h-4 ml-2" />
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
