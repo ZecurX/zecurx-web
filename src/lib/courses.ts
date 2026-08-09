@@ -18,6 +18,7 @@ export interface CourseData {
     logo?: string;
     pricingType?: 'fixed' | 'contact' | 'institutional';
     inStock?: boolean;
+    unsplashId?: string;
 }
 
 export const courses: CourseData[] = [
@@ -41,6 +42,7 @@ export const courses: CourseData[] = [
         ],
         popular: true,
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/bundle-ai.png',
+        unsplashId: 'photo-1677442136019-21780ecad995',
     },
     {
         id: '06a10be6-115a-4a83-b338-67168abcce1a',
@@ -61,6 +63,7 @@ export const courses: CourseData[] = [
             'Project-Based Learning',
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCPEH.png',
+        unsplashId: 'photo-1555066931-4365d14bab8c',
     },
     {
         id: '1033198a-bf65-4183-9e6e-aab727903039',
@@ -81,6 +84,7 @@ export const courses: CourseData[] = [
             'Industry Standard Tools',
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCPPT.png',
+        unsplashId: 'photo-1562813733-b31f71025d54',
     },
     {
         id: 'b5276793-8c55-4759-8206-3d1a833fe304',
@@ -101,6 +105,7 @@ export const courses: CourseData[] = [
             'Real-world Case Studies',
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxGAIP.png',
+        unsplashId: 'photo-1620712943543-bcc4688e7485',
     },
     {
         id: '7f0e2cb3-82c1-4634-9a95-67a2ae14a815',
@@ -118,6 +123,7 @@ export const courses: CourseData[] = [
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCP.png',
         pricingType: 'institutional',
+        unsplashId: 'photo-1550751827-4bd374c3f58b',
     },
     {
         id: '3613d162-d801-47c6-9305-719f999738c8',
@@ -135,6 +141,7 @@ export const courses: CourseData[] = [
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCF.png',
         pricingType: 'institutional',
+        unsplashId: 'photo-1510511459019-5dda7724fd87',
     },
     {
         id: 'ef34cbc8-c918-4e64-bd88-799863b299e1',
@@ -152,6 +159,7 @@ export const courses: CourseData[] = [
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCCE.png',
         pricingType: 'institutional',
+        unsplashId: 'photo-1507003211169-0a1dd7228f2d',
     },
     {
         id: '9bce53be-103e-46b9-9fa0-2b91260f38db',
@@ -171,6 +179,7 @@ export const courses: CourseData[] = [
         ],
         logo: 'https://zecurx-web.fsn1.your-objectstorage.com/images/courses/zxCFD.png',
         pricingType: 'contact',
+        unsplashId: 'photo-1555949963-ff9fe0c870eb',
     },
 ];
 
