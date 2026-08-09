@@ -64,7 +64,7 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     // Template is 1440 x 810 points, landscape
     const cx = width / 2;
 
-    const white = rgb(1, 1, 1);
+    const black = rgb(0, 0, 0);
 
     const issuedDate = new Date().toLocaleDateString('en-US', {
         day: 'numeric',
@@ -83,16 +83,16 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
     const nameWidth = helveticaBold.widthOfTextAtSize(data.recipientName, nameFontSize);
     page.drawText(data.recipientName, {
         x: cx - nameWidth / 2,
-        y: 460,
+        y: 425,
         size: nameFontSize,
         font: helveticaBold,
-        color: white,
+        color: black,
     });
 
-    // --- Seminar Title (centered, after "demonstrated interest in") ---
+    // --- Seminar Title (centered, directly below the name) ---
     const titleFontSize = data.seminarTitle.length > 40 ? 20 : 24;
     const titleLines = splitTextToLines(data.seminarTitle, 60);
-    let titleY = 320;
+    let titleY = 365;
     for (const line of titleLines) {
         const lineWidth = helveticaBold.widthOfTextAtSize(line, titleFontSize);
         page.drawText(line, {
@@ -100,39 +100,27 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
             y: titleY,
             size: titleFontSize,
             font: helveticaBold,
-            color: white,
+            color: black,
         });
         titleY -= titleFontSize + 6;
     }
 
-    // --- Left Column: Issue Date & Certificate ID ---
-    const labelX1 = 120;
     const labelFontSize = 16;
     const valueFontSize = 24;
 
-    // Issue Date Label
-    page.drawText('Issue Date:', { x: labelX1, y: 155, size: labelFontSize, font: helvetica, color: white });
-    // Issue Date Value
-    page.drawText(issuedDate, { x: labelX1, y: 130, size: valueFontSize, font: helveticaBold, color: white });
+    // --- Issue Date & Certificate ID: the template already prints these labels
+    // near the bottom-right corner, so we only draw the values beside them.
+    // Coordinates are calibrated to the default library template background
+    // ("Seminar_Certificate.png") and may need adjusting if that image changes.
+    const cornerColor = rgb(13 / 255, 49 / 255, 82 / 255);
+    const cornerFontSize = 18;
+    page.drawText(issuedDate, { x: 1094, y: 41, size: cornerFontSize, font: helvetica, color: cornerColor });
+    page.drawText(data.certificateId, { x: 1122, y: 8, size: cornerFontSize, font: helvetica, color: cornerColor });
 
-    // Certificate ID Label
-    page.drawText('Certificate ID:', { x: labelX1, y: 105, size: labelFontSize, font: helvetica, color: white });
-    // Certificate ID Value
-    page.drawText(data.certificateId, { x: labelX1, y: 80, size: valueFontSize, font: helveticaBold, color: white });
-
-    // --- Right Column: Seminar Date & Place ---
-    const labelX2 = 1150;
-
-    // Seminar Date Label
-    page.drawText('Date:', { x: labelX2, y: 155, size: labelFontSize, font: helvetica, color: white });
-    // Seminar Date Value
-    page.drawText(seminarDate, { x: labelX2, y: 130, size: valueFontSize, font: helveticaBold, color: white });
-
-    // Place Label
-    page.drawText('Place:', { x: labelX2, y: 105, size: labelFontSize, font: helvetica, color: white });
-    // Place Value
-    const placeText = data.location || 'India';
-    page.drawText(placeText, { x: labelX2, y: 80, size: valueFontSize, font: helveticaBold, color: white });
+    // --- Upper Left: Seminar Date (clear of the logo above) ---
+    const labelX1 = 120;
+    page.drawText('Date:', { x: labelX1, y: 640, size: labelFontSize, font: helvetica, color: black });
+    page.drawText(seminarDate, { x: labelX1, y: 610, size: valueFontSize, font: helveticaBold, color: black });
 
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
@@ -190,52 +178,45 @@ export async function generateCertificatePreview(certificate: Certificate & { lo
         day: 'numeric', month: 'long', year: 'numeric',
     }));
 
-    // Assume location might be passed via certificate object extension or default
-    const placeText = escapeXml(certificate.location || 'India');
-
     let titleSvg = '';
-    // Y = (810 - 320) * 2 = 490 * 2 = 980
-    let titleY = 980;
+    // Y = (810 - 365) * 2 = 445 * 2 = 890
+    let titleY = 890;
     for (const line of titleLines) {
-        titleSvg += `<text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${titleFontSize}" fill="white">${escapeXml(line)}</text>`;
+        titleSvg += `<text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${titleFontSize}" fill="black">${escapeXml(line)}</text>`;
         titleY += titleFontSize + 12;
     }
 
     // Coordinates logic: Y_svg = (810 - Y_pdf) * 2
-    // Label Y=155 -> Svg Y = (810 - 155)*2 = 1310
-    // Value Y=130 -> Svg Y = (810 - 130)*2 = 1360
-    // Label Y=105 -> Svg Y = (810 - 105)*2 = 1410
-    // Value Y=80  -> Svg Y = (810 - 80)*2 = 1460
+    // Upper label Y=640 -> Svg Y = (810 - 640)*2 = 340
+    // Upper value Y=610 -> Svg Y = (810 - 610)*2 = 400
 
     // X1 = 120 * 2 = 240
     const x1 = 120 * 2;
-    // X2 = 1150 * 2 = 2300
-    const x2 = 1150 * 2;
 
     // Font Sizes:
     // Label: 16 * 2 = 32
     // Value: 24 * 2 = 48
 
+    // Issue Date / Certificate ID values sit beside the labels already printed
+    // on the template (PDF x=1094/1122, y=41/8 -> svg x=2188/2244, y=1538/1604).
+    const cornerFill = '#0D3152';
+
     const svgOverlay = `
     <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-        <!-- Name: Y = (810 - 460) * 2 = 700 -->
-        <text x="${cx}" y="700" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${nameSize}" fill="white">${name}</text>
+        <!-- Name: Y = (810 - 425) * 2 = 770 -->
+        <text x="${cx}" y="770" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${nameSize}" fill="black">${name}</text>
 
         ${titleSvg}
 
-        <!-- Left Column -->
-        <text x="${x1}" y="1310" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="white">Issue Date:</text>
-        <text x="${x1}" y="1360" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="white">${issuedDate}</text>
+        <!-- Issue Date value, beside the printed "Issue Date:" label -->
+        <text x="2188" y="1538" font-family="Helvetica, Arial, sans-serif" font-size="36" fill="${cornerFill}">${issuedDate}</text>
 
-        <text x="${x1}" y="1410" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="white">Certificate ID:</text>
-        <text x="${x1}" y="1460" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="white">${escapeXml(certificate.certificate_id)}</text>
+        <!-- Certificate ID value, beside the printed "Certificate ID:" label -->
+        <text x="2244" y="1604" font-family="Helvetica, Arial, sans-serif" font-size="36" fill="${cornerFill}">${escapeXml(certificate.certificate_id)}</text>
 
-        <!-- Right Column -->
-        <text x="${x2}" y="1310" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="white">Date:</text>
-        <text x="${x2}" y="1360" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="white">${seminarDate}</text>
-
-        <text x="${x2}" y="1410" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="white">Place:</text>
-        <text x="${x2}" y="1460" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="white">${placeText}</text>
+        <!-- Upper Left: Seminar Date (clear of the logo above) -->
+        <text x="${x1}" y="340" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="black">Date:</text>
+        <text x="${x1}" y="400" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="black">${seminarDate}</text>
     </svg>`;
 
     const svgBuffer = Buffer.from(svgOverlay);
