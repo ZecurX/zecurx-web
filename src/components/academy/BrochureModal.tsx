@@ -38,6 +38,7 @@ export default function BrochureModal({ isOpen, onClose, courseTitle, brochureLi
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
+            
 
             if (response.ok) {
                 setIsSuccess(true);
