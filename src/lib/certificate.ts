@@ -78,21 +78,26 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
         year: 'numeric',
     });
 
-    // --- Participant Name (centered, large, in the blank area below "presented to") ---
+    // --- Participant Name (centered, alone in the blank gap between
+    // "presented to" and the "participated in" paragraph) ---
+    // Coordinates below are calibrated against the default library template
+    // ("Seminar_Certificate.png") and may need adjusting if that image changes.
     const nameFontSize = data.recipientName.length > 25 ? 32 : 40;
     const nameWidth = helveticaBold.widthOfTextAtSize(data.recipientName, nameFontSize);
     page.drawText(data.recipientName, {
         x: cx - nameWidth / 2,
-        y: 425,
+        y: 438,
         size: nameFontSize,
         font: helveticaBold,
         color: black,
     });
 
-    // --- Seminar Title (centered, directly below the name) ---
+    // --- Seminar Title (centered, immediately below the "participated in"
+    // paragraph so it reads as its continuation) ---
     const titleFontSize = data.seminarTitle.length > 40 ? 20 : 24;
     const titleLines = splitTextToLines(data.seminarTitle, 60);
-    let titleY = 365;
+    const titleLineHeight = titleFontSize + 6;
+    let titleY = 276;
     for (const line of titleLines) {
         const lineWidth = helveticaBold.widthOfTextAtSize(line, titleFontSize);
         page.drawText(line, {
@@ -102,25 +107,27 @@ export async function generateCertificatePDF(data: CertificateData & { certifica
             font: helveticaBold,
             color: black,
         });
-        titleY -= titleFontSize + 6;
+        titleY -= titleLineHeight;
     }
 
-    const labelFontSize = 16;
-    const valueFontSize = 24;
-
-    // --- Issue Date & Certificate ID: the template already prints these labels
-    // near the bottom-right corner, so we only draw the values beside them.
-    // Coordinates are calibrated to the default library template background
-    // ("Seminar_Certificate.png") and may need adjusting if that image changes.
+    // --- Bottom-right corner: "Issue Date:" and "Certificate ID:" labels are
+    // already printed on the template, so only their values are drawn beside
+    // them. "Date:" isn't printed, so its label is drawn too, stacked
+    // directly above the "Issue Date:" row. ---
     const cornerColor = rgb(13 / 255, 49 / 255, 82 / 255);
-    const cornerFontSize = 18;
-    page.drawText(issuedDate, { x: 1094, y: 41, size: cornerFontSize, font: helvetica, color: cornerColor });
-    page.drawText(data.certificateId, { x: 1122, y: 8, size: cornerFontSize, font: helvetica, color: cornerColor });
+    const cornerLabelSize = 14;
+    const cornerValueSize = 18;
+    const issueDateY = 117;
+    const certIdY = 83;
+    const dateY = issueDateY + 34;
 
-    // --- Upper Left: Seminar Date (clear of the logo above) ---
-    const labelX1 = 120;
-    page.drawText('Date:', { x: labelX1, y: 640, size: labelFontSize, font: helvetica, color: black });
-    page.drawText(seminarDate, { x: labelX1, y: 610, size: valueFontSize, font: helveticaBold, color: black });
+    page.drawText(issuedDate, { x: 1094, y: issueDateY, size: cornerValueSize, font: helvetica, color: cornerColor });
+    page.drawText(data.certificateId, { x: 1122, y: certIdY, size: cornerValueSize, font: helvetica, color: cornerColor });
+
+    const dateLabelX = 966;
+    page.drawText('Date:', { x: dateLabelX, y: dateY, size: cornerLabelSize, font: helvetica, color: cornerColor });
+    const dateLabelWidth = helvetica.widthOfTextAtSize('Date:', cornerLabelSize);
+    page.drawText(seminarDate, { x: dateLabelX + dateLabelWidth + 6, y: dateY, size: cornerValueSize, font: helveticaBold, color: cornerColor });
 
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
@@ -178,45 +185,45 @@ export async function generateCertificatePreview(certificate: Certificate & { lo
         day: 'numeric', month: 'long', year: 'numeric',
     }));
 
+    // Title sits immediately below the "participated in" paragraph, mirroring
+    // generateCertificatePDF's titleY = 276 (svg_y = (810 - pdf_y) * 2).
     let titleSvg = '';
-    // Y = (810 - 365) * 2 = 445 * 2 = 890
-    let titleY = 890;
+    const titleLineHeight = titleFontSize + 12;
+    let titleY = (810 - 276) * 2; // 1068
     for (const line of titleLines) {
         titleSvg += `<text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${titleFontSize}" fill="black">${escapeXml(line)}</text>`;
-        titleY += titleFontSize + 12;
+        titleY += titleLineHeight;
     }
 
-    // Coordinates logic: Y_svg = (810 - Y_pdf) * 2
-    // Upper label Y=640 -> Svg Y = (810 - 640)*2 = 340
-    // Upper value Y=610 -> Svg Y = (810 - 610)*2 = 400
-
-    // X1 = 120 * 2 = 240
-    const x1 = 120 * 2;
-
-    // Font Sizes:
-    // Label: 16 * 2 = 32
-    // Value: 24 * 2 = 48
-
-    // Issue Date / Certificate ID values sit beside the labels already printed
-    // on the template (PDF x=1094/1122, y=41/8 -> svg x=2188/2244, y=1538/1604).
+    // Bottom-right corner: "Issue Date:"/"Certificate ID:" labels are already
+    // printed on the template, so only values are drawn beside them. "Date:"
+    // isn't printed, so its label is drawn too, stacked above "Issue Date:".
+    // Mirrors generateCertificatePDF's issueDateY = 117 / certIdY = 83 via
+    // svg_y = (810 - pdf_y) * 2, svg_x = pdf_x * 2.
     const cornerFill = '#0D3152';
+    const cornerLabelSize = 28;
+    const cornerValueSize = 36;
+    const issueDateY = (810 - 117) * 2; // 1386
+    const certIdY = (810 - 83) * 2; // 1454
+    const dateY = issueDateY - 68;
+
+    const dateLabelX = 966 * 2;
+    const dateLabelWidth = 'Date:'.length * cornerLabelSize * 0.55;
 
     const svgOverlay = `
     <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-        <!-- Name: Y = (810 - 425) * 2 = 770 -->
-        <text x="${cx}" y="770" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${nameSize}" fill="black">${name}</text>
+        <!-- Name: centered alone in the gap after "presented to" -->
+        <text x="${cx}" y="${(810 - 438) * 2}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${nameSize}" fill="black">${name}</text>
 
         ${titleSvg}
 
-        <!-- Issue Date value, beside the printed "Issue Date:" label -->
-        <text x="2188" y="1538" font-family="Helvetica, Arial, sans-serif" font-size="36" fill="${cornerFill}">${issuedDate}</text>
+        <!-- Issue Date / Certificate ID values, beside the labels printed on the template -->
+        <text x="${1094 * 2}" y="${issueDateY}" font-family="Helvetica, Arial, sans-serif" font-size="${cornerValueSize}" fill="${cornerFill}">${issuedDate}</text>
+        <text x="${1122 * 2}" y="${certIdY}" font-family="Helvetica, Arial, sans-serif" font-size="${cornerValueSize}" fill="${cornerFill}">${escapeXml(certificate.certificate_id)}</text>
 
-        <!-- Certificate ID value, beside the printed "Certificate ID:" label -->
-        <text x="2244" y="1604" font-family="Helvetica, Arial, sans-serif" font-size="36" fill="${cornerFill}">${escapeXml(certificate.certificate_id)}</text>
-
-        <!-- Upper Left: Seminar Date (clear of the logo above) -->
-        <text x="${x1}" y="340" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="black">Date:</text>
-        <text x="${x1}" y="400" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="48" fill="black">${seminarDate}</text>
+        <!-- Date: label + value, stacked above Issue Date -->
+        <text x="${dateLabelX}" y="${dateY}" font-family="Helvetica, Arial, sans-serif" font-size="${cornerLabelSize}" fill="${cornerFill}">Date:</text>
+        <text x="${dateLabelX + dateLabelWidth + 12}" y="${dateY}" font-family="Helvetica, Arial, sans-serif" font-weight="bold" font-size="${cornerValueSize}" fill="${cornerFill}">${seminarDate}</text>
     </svg>`;
 
     const svgBuffer = Buffer.from(svgOverlay);
