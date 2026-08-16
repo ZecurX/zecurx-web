@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CDN_ASSETS } from "@/lib/cdn";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "motion/react";
 import logoText from "../../../design/images/raw/logo-text.png";
 
 const footerLinks = {

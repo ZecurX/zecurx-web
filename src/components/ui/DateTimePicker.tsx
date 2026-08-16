@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface DateTimePickerProps {
     name?: string;

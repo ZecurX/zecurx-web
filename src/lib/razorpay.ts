@@ -28,8 +28,3 @@ export function amountToPaise(amount: number): number {
     return Math.round(amount * 100);
 }
 
-// Helper to convert paise to rupees for display
-export function paiseToRupees(paise: number): number {
-    return paise / 100;
-}
-

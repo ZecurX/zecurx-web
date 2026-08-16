@@ -151,9 +151,3 @@ export async function sendOtpEmail(
     }
 }
 
-export async function cleanupExpiredOtps(): Promise<number> {
-    const result = await query(
-        `DELETE FROM seminar.otp_verifications WHERE expires_at < NOW()`
-    );
-    return result.rowCount || 0;
-}

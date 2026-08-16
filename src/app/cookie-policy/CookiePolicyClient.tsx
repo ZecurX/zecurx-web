@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
-import { motion, useScroll } from "framer-motion";
+import { motion, useScroll } from "motion/react";
 import { Mail } from 'lucide-react';
 
 const cookieData = [

@@ -6,20 +6,24 @@ import { createToken, setSessionCookie, getClientIP, getUserAgent } from "@/lib/
 import { logLogin } from "@/lib/audit";
 import { Role } from "@/types/auth";
 
-async function verifyPassword(password: string, hash: string): Promise<boolean> {
+// Legacy admins may still have a bcrypt hash from before the switch to argon2;
+// verify against whichever format is stored and transparently upgrade to argon2 on success.
+async function verifyPassword(password: string, hash: string): Promise<{ valid: boolean; upgradedHash?: string }> {
     if (hash.startsWith('$argon2')) {
-        return argon2.verify(hash, password);
+        return { valid: await argon2.verify(hash, password) };
     }
-    return compare(password, hash);
+    const valid = await compare(password, hash);
+    if (!valid) {
+        return { valid: false };
+    }
+    return { valid: true, upgradedHash: await argon2.hash(password) };
 }
 
 // Super admin emails - all use OTP-based authentication
-const SUPER_USERS = [
-    'zecurxintern@gmail.com',
-    'mohitsen.official16@gmail.com',
-    'hrshpriyam@gmail.com',
-    'alkakumari1976@gmail.com'
-];
+const SUPER_USERS = (process.env.SUPER_ADMIN_EMAILS || '')
+    .split(',')
+    .map(e => e.trim().toLowerCase())
+    .filter(Boolean);
 
 export async function POST(req: NextRequest) {
     try {
@@ -29,7 +33,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Email required" }, { status: 400 });
         }
 
-        const isSuperUser = SUPER_USERS.includes(email);
+        const isSuperUser = SUPER_USERS.includes(String(email).trim().toLowerCase());
 
         if (isSuperUser) {
             // Super User Flow: Uses OTP
@@ -88,10 +92,14 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const isValid = await verifyPassword(password, admin.password_hash);
+        const { valid: isValid, upgradedHash } = await verifyPassword(password, admin.password_hash);
 
         if (!isValid) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+        }
+
+        if (upgradedHash) {
+            await query('UPDATE admins SET password_hash = $1 WHERE id = $2', [upgradedHash, admin.id]);
         }
 
         // Enforce Role Restrictions

@@ -1,12 +1,13 @@
 'use client';
 
-import { motion, useMotionTemplate, useMotionValue, AnimatePresence } from 'framer-motion';
+import { motion, useMotionTemplate, useMotionValue, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { ShoppingBag, AlertCircle, Truck, Check, Cpu, Wifi, Radio } from 'lucide-react';
 import { useState, MouseEvent, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useCartAnimation } from '@/context/CartAnimationContext';
 import { getProductImages } from '@/lib/productImages';
+import { formatPrice } from '@/lib/utils';
 
 interface ProductCardProps {
     id: string;
@@ -55,14 +56,6 @@ export default function ProductCard({
         const { left, top } = e.currentTarget.getBoundingClientRect();
         mouseX.set(e.clientX - left);
         mouseY.set(e.clientY - top);
-    };
-
-    const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
     };
 
     const handleMouseEnter = () => {

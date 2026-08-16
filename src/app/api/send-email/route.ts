@@ -6,6 +6,7 @@ import { query } from '@/lib/db';
 import { checkEmailRateLimit, getClientIp } from '@/lib/rate-limit';
 import { brandedEmailTemplate } from '@/lib/email-template';
 import { escapeHtml } from '@/lib/html-escape';
+import { logger } from '@/lib/logger';
 
 async function saveStudentLead(body: Record<string, unknown>, request: NextRequest, formType: string) {
     try {
@@ -36,7 +37,8 @@ async function saveStudentLead(body: Record<string, unknown>, request: NextReque
                 user_agent,
             ]
         );
-    } catch {
+    } catch (err) {
+        logger.error({ err, email: body.email }, 'Failed to save student lead');
     }
 }
 
@@ -87,7 +89,8 @@ async function saveEnterpriseLead(body: Record<string, unknown>, request: NextRe
                 body.preferredDate as string || null,
             ]
         );
-    } catch {
+    } catch (err) {
+        logger.error({ err, email: body.email }, 'Failed to save enterprise lead');
     }
 }
 
@@ -156,7 +159,8 @@ export async function POST(request: NextRequest) {
                     paymentId: body.paymentId || '',
                     date: new Date().toISOString()
                 });
-            } catch {
+            } catch (err) {
+                logger.error({ err, email }, 'Failed to append lead to Google Sheet');
             }
         }
 
@@ -315,7 +319,8 @@ export async function POST(request: NextRequest) {
             });
             adminEmailSent = true;
 
-        } catch {
+        } catch (err) {
+            logger.error({ err, adminEmail, formType }, 'Failed to send admin notification email');
         }
 
         // Prepare user confirmation email
@@ -390,7 +395,8 @@ export async function POST(request: NextRequest) {
                 }
                 userEmailSent = true;
 
-            } catch {
+            } catch (err) {
+                logger.error({ err, email, formType }, 'Failed to send user confirmation email');
             }
         } else {
             userEmailSent = true;
@@ -417,7 +423,8 @@ export async function POST(request: NextRequest) {
             });
         }
 
-    } catch {
+    } catch (err) {
+        logger.error({ err }, 'Failed to process send-email request');
         return NextResponse.json(
             { success: false, error: 'Failed to process request' },
             { status: 500 }

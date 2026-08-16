@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import validator from "validator";
 import { db } from "@/lib/db";
 import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
@@ -74,8 +75,7 @@ export async function PUT(
         const updateDetails: Record<string, unknown> = {};
 
         if (email !== undefined) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
+            if (!validator.isEmail(email)) {
                 return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
             }
 

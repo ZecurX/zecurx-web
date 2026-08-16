@@ -103,17 +103,6 @@ export async function clearSessionCookie(): Promise<void> {
 }
 
 /**
- * Check if the current session has a specific permission
- */
-export async function hasSessionPermission(resource: Resource, action: Action): Promise<boolean> {
-  const session = await verifySession();
-  if (!session) {
-    return false;
-  }
-  return checkPermission(session.role, resource, action);
-}
-
-/**
  * Require a specific role(s) for an API route
  * Returns the session if authorized, throws/returns error response if not
  */

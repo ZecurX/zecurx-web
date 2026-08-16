@@ -7,6 +7,7 @@ import { sendEmail, toSendGridAttachment } from '@/lib/sendgrid';
 import { processLmsEnrollment } from '@/lib/lms-integration';
 import { incrementReferralCodeUsage } from '@/lib/discount-validation';
 import { brandedEmailTemplate, emailSection } from '@/lib/email-template';
+import { logger } from '@/lib/logger';
 
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
@@ -19,7 +20,8 @@ async function isLmsResetLinkEnabled(): Promise<boolean> {
         if (result.rows.length === 0) return true;
         const val = result.rows[0].value;
         return val === true || val === 'true';
-    } catch {
+    } catch (err) {
+        logger.error({ err }, 'Failed to read lms_reset_link_enabled setting; defaulting to enabled');
         return true;
     }
 }
@@ -137,7 +139,8 @@ async function sendInvoiceEmail(data: {
             html: userEmailHtml,
             attachments: [toSendGridAttachment(invoicePdf, `ZecurX-Invoice-${invoiceNumber}.pdf`)],
         });
-    } catch {
+    } catch (err) {
+        logger.error({ err, email: data.email, paymentId: data.paymentId }, 'Failed to send invoice email to customer');
     }
 
     const adminBodyContent = `
@@ -178,7 +181,8 @@ async function sendInvoiceEmail(data: {
             html: adminEmailHtml,
             attachments: [toSendGridAttachment(invoicePdf, `ZecurX-Invoice-${invoiceNumber}.pdf`)],
         });
-    } catch {
+    } catch (err) {
+        logger.error({ err, adminEmail, paymentId: data.paymentId }, 'Failed to send invoice email to admin');
     }
 }
 
@@ -261,12 +265,10 @@ export async function POST(request: NextRequest) {
                         `, [paymentId, orderId, amount, 'captured', customer.id, planId]);
                         
                         if (notes.referralCode || notes.partnerReferralCode) {
-                            const incremented = await incrementReferralCodeUsage(
+                            await incrementReferralCodeUsage(
                                 notes.referralCode,
                                 notes.partnerReferralCode
                             );
-                            if (incremented) {
-                            }
                         }
                         
                         if (notes.isPromoPrice === 'true' && (notes.promoPrice || notes.promoCode)) {
@@ -286,10 +288,12 @@ export async function POST(request: NextRequest) {
                                         AND (plan_id = $2 OR ($3 ILIKE plan_name_pattern AND plan_name_pattern IS NOT NULL))
                                     `, [parseFloat(notes.promoPrice), notes.itemId, notes.itemName]);
                                 }
-                            } catch {
+                            } catch (err) {
+                                logger.error({ err, promoCode: notes.promoCode, paymentId }, 'Failed to increment promo price usage');
                             }
                         }
-                    } catch {
+                    } catch (err) {
+                        logger.error({ err, paymentId, orderId }, 'Failed to record transaction for captured payment');
                         return NextResponse.json(
                             { error: 'Database transaction failed' },
                             { status: 500 }
@@ -311,10 +315,8 @@ export async function POST(request: NextRequest) {
                         amount,
                     });
                     
-                    if (lmsResult.success && lmsResult.isNewUser) {
-                    } else if (lmsResult.success) {
-                    }
-                } catch {
+                } catch (err) {
+                    logger.error({ err, email: notes.email, paymentId }, 'Failed to process LMS enrollment');
                 }
 
                 // OPTIMIZATION: Run Google Sheets and email in parallel, non-blocking
@@ -364,9 +366,6 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        if (eventType === 'payment.failed') {
-        }
-
         if (eventType === 'refund.created') {
             const refund = event.payload.refund.entity;
             
@@ -378,7 +377,8 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ received: true, event: eventType });
 
-    } catch {
+    } catch (err) {
+        logger.error({ err }, 'Razorpay webhook processing failed');
         return NextResponse.json(
             { error: 'Webhook processing failed' },
             { status: 500 }

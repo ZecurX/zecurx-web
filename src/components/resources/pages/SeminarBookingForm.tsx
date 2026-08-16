@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Loader2, Send, CheckCircle2, AlertCircle, Shield, Award, BookOpen, MapPin, Monitor, ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 

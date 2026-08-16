@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView } from "motion/react"
 
 const STEPS = [
     { step: "01", title: "Discovery & Threat Modeling", description: "We map your architecture, attack surface, and threat model in a focused 2-day workshop — identifying critical risks upfront.", tag: "Days 1–2" },

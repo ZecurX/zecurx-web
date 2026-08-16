@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ShoppingBag, Heart, Truck, Shield, Check, ChevronRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import ProductCard from '@/components/shop/ProductCard';
 import { getProductImages } from '@/lib/productImages';
+import { formatPrice } from '@/lib/utils';
 
 interface Product {
     id: string;
@@ -55,14 +56,6 @@ export default function ProductDetailClient({ productId }: Props) {
             fetchProduct();
         }
     }, [productId]);
-
-    const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
 
     const handleAddToCart = () => {
         if (!product) return;

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
-import * as motion from "framer-motion/client";
+import * as motion from "motion/react-client";
 import {
   CheckCircle2,
   ShieldCheck,

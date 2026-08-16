@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hash } from "bcryptjs";
+import * as argon2 from "argon2";
 import { db } from "@/lib/db";
 import { requireRole, getClientIP, getUserAgent } from "@/lib/auth";
 import { logPasswordReset } from "@/lib/audit";
@@ -38,7 +38,7 @@ export async function POST(
 
         const existingUser = existingResult.rows[0];
 
-        const passwordHash = await hash(new_password, 10);
+        const passwordHash = await argon2.hash(new_password);
 
         await db.query(
             'UPDATE admins SET password_hash = $1, updated_at = NOW() WHERE id = $2',
