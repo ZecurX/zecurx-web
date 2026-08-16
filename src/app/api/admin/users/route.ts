@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hash } from "bcryptjs";
+import validator from "validator";
+import * as argon2 from "argon2";
 import { db } from "@/lib/db";
 import { requirePermission, getClientIP, getUserAgent } from "@/lib/auth";
 import { logCRUD } from "@/lib/audit";
 import { Role, CreateUserRequest, AdminPublic, RESOURCES, ACTIONS } from "@/types/auth";
 import { isValidRole, getAssignableRoles } from "@/lib/permissions";
 
-const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
-    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
+const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL ?? '';
 
 export async function GET(req: NextRequest) {
     const auth = await requirePermission(RESOURCES.USERS, ACTIONS.READ, req);
@@ -50,8 +50,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!validator.isEmail(email)) {
             return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
         }
 
@@ -86,7 +85,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const passwordHash = await hash(password, 10);
+        const passwordHash = await argon2.hash(password);
 
         const insertResult = await db.query<AdminPublic>(
             `INSERT INTO admins (email, password_hash, name, role, is_active, created_by)

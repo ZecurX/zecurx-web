@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
     Search, MoreVertical, Pencil, Trash2, Ticket,
     Check, Copy, CheckSquare, Square, Minus,

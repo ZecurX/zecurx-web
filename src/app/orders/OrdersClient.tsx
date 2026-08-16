@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Package, ChevronDown, ChevronUp, ArrowLeft, ShoppingBag, Truck, CheckCircle, Clock } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
+import { formatPrice } from '@/lib/utils';
 
 interface OrderItem {
     product_id: string;
@@ -78,14 +79,6 @@ export default function OrdersPage() {
         if (email.trim() && orderId.trim()) {
             fetchOrders(email.trim(), orderId.trim());
         }
-    };
-
-    const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
     };
 
     const formatDate = (dateString: string) => {

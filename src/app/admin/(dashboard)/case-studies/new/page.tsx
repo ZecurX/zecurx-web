@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle, Upload, FileText, X, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { generateSlug } from '@/lib/blog-utils';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { CreateCaseStudyRequest, CaseStudyStatus } from '@/types/auth';
 import Image from 'next/image';

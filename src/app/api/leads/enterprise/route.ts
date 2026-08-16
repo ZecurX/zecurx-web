@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import validator from 'validator';
 import { query } from '@/lib/db';
 import { EnterpriseLead, LEAD_STATUS, LEAD_PRIORITY } from '@/types/lead-types';
 import { checkLeadsRateLimit, getClientIp } from '@/lib/rate-limit';
@@ -97,8 +98,7 @@ export async function POST(request: Request) {
             }
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(body.email)) {
+        if (!validator.isEmail(body.email)) {
             return NextResponse.json(
                 { error: 'Invalid email address' },
                 { status: 400 }

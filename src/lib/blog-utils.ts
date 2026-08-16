@@ -7,11 +7,6 @@ export function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength).trim() + '...';
-}
-
 export function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '');
 }

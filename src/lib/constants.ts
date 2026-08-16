@@ -70,26 +70,3 @@ export const SOLUTIONS = [
         icon: "GraduationCap"
     }
 ]
-
-export const PROCESS_STEPS = [
-    {
-        num: "01",
-        title: "Discovery & Assessment",
-        description: "Deep dive into your architecture and risk profile."
-    },
-    {
-        num: "02",
-        title: "Strategy & Architecture",
-        description: "Designing resilient, scalable security controls."
-    },
-    {
-        num: "03",
-        title: "Implementation & Hardening",
-        description: "Deploying defenses precisely and effectively."
-    },
-    {
-        num: "04",
-        title: "Continuous Monitoring",
-        description: "Ongoing vigilance and threat intelligence."
-    }
-]

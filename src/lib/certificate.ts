@@ -303,15 +303,6 @@ export async function getCertificateById(certificateId: string): Promise<Certifi
     return { ...row, location } as Certificate & { location: string };
 }
 
-export async function incrementDownloadCount(certificateId: string): Promise<void> {
-    await query(
-        `UPDATE seminar.certificates 
-         SET download_count = download_count + 1, last_downloaded_at = NOW()
-         WHERE certificate_id = $1`,
-        [certificateId]
-    );
-}
-
 export async function regenerateCertificatePDF(certificate: Certificate): Promise<Buffer> {
     const seminarResult = await query<Seminar>(
         `SELECT * FROM seminar.seminars WHERE id = $1`,

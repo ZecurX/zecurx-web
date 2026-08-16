@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion, UseInViewOptions, Variants } from "framer-motion";
+import { motion, UseInViewOptions, Variants } from "motion/react";
 import { cn } from "@/lib/utils";
 
 type Direction = "up" | "down" | "left" | "right";

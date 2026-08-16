@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { Plus, Search, Star } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import EditPlanDialog from "./EditPlanDialog";
 
 type Plan = {
