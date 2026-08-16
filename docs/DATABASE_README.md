@@ -89,7 +89,7 @@ Related infrastructure that often matters for DB flows:
 - `src/lib/db.ts` — pool setup + base query helpers
 - `src/lib/audit.ts` — audit logging helpers
 - `src/app/api/**/route.ts` — API handlers issuing SQL queries
-- `sql/` — schema evolution scripts
+- `scripts/migrations/` — schema evolution scripts
 
 ---
 
@@ -106,11 +106,11 @@ Related infrastructure that often matters for DB flows:
 
 ## 7) Migration & Change Process
 
-Current approach is SQL-script based (folder: `sql/`).
+Current approach is SQL-script based (folder: `scripts/migrations/`).
 
 When introducing a DB change:
 
-1. Add a new SQL script in `sql/`
+1. Add a new SQL script in `scripts/migrations/`
 2. Update route/lib queries impacted by the change
 3. Validate indexes and query performance
 4. Test locally against realistic data

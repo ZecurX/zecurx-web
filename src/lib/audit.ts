@@ -1,8 +1,7 @@
 import { db } from './db';
 import { AuditAction, AuditLog, Role } from '@/types/auth';
 
-const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL || 
-    Buffer.from('emVjdXJ4aW50ZXJuQGdtYWlsLmNvbQ==', 'base64').toString('utf-8');
+const HIDDEN_SUPERADMIN = process.env.HIDDEN_SUPERADMIN_EMAIL ?? '';
 
 interface AuditLogInput {
   adminId: string;

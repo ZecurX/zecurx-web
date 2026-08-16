@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Shield, UserPlus, Edit, Trash2, KeyRound, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { useAuth } from '@/components/providers/AuthProvider';

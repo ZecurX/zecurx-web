@@ -1,8 +1,22 @@
 import { Pool, QueryResult, QueryResultRow } from 'pg';
 
+// DB_SSL_CA: PEM-encoded CA certificate for the Postgres server, when available.
+// Without it, TLS certificate verification is disabled (vulnerable to MitM) —
+// this is only tolerated as a fallback so local/self-hosted setups keep working;
+// set DB_SSL_CA in production to enable full certificate verification.
+const dbSslCa = process.env.DB_SSL_CA;
+if (!dbSslCa) {
+    console.warn(
+        '[db] DB_SSL_CA is not set — database TLS certificate verification is disabled. ' +
+        'Set DB_SSL_CA to the Postgres server CA certificate to enable verification.'
+    );
+}
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
+    ssl: dbSslCa
+        ? { rejectUnauthorized: true, ca: dbSslCa }
+        : { rejectUnauthorized: false },
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,

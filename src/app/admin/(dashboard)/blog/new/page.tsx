@@ -15,7 +15,7 @@ const RichTextEditor = dynamic(
 import ImageUpload from '@/components/admin/ImageUpload';
 import LabelSelector from '@/components/admin/LabelSelector';
 import { BlogLabel, CreateBlogPostRequest } from '@/types/auth';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { uploadFileToS3 } from '@/lib/upload-utils';
 

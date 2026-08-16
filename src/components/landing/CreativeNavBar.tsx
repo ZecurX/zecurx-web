@@ -25,7 +25,7 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import CartIcon from "@/components/shop/CartIcon";
 import { CDN_ASSETS } from "@/lib/cdn";
 import logoText from "../../../design/images/raw/logo-text.png";

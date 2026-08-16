@@ -109,13 +109,25 @@ export default async function BlogPostPage({ params }: Props) {
 
       relatedPosts = relatedResult.rows;
 
-      for (const rp of relatedPosts) {
-        const rpLabels = await query(`
-          SELECT bl.* FROM blog_labels bl
+      if (relatedPosts.length > 0) {
+        const relatedIds = relatedPosts.map(rp => rp.id);
+        const relatedLabelsResult = await query(`
+          SELECT bpl.blog_post_id, bl.* FROM blog_labels bl
           JOIN blog_post_labels bpl ON bl.id = bpl.label_id
-          WHERE bpl.blog_post_id = $1
-        `, [rp.id]);
-        rp.labels = rpLabels.rows.map((l: Record<string, unknown>) => ({ blog_labels: l }));
+          WHERE bpl.blog_post_id = ANY($1)
+        `, [relatedIds]);
+
+        const relatedLabelsMap: Record<string, Record<string, unknown>[]> = {};
+        relatedLabelsResult.rows.forEach((row: Record<string, unknown>) => {
+          const postId = String(row.blog_post_id);
+          if (!relatedLabelsMap[postId]) relatedLabelsMap[postId] = [];
+          const { blog_post_id: _blog_post_id, ...label } = row;
+          relatedLabelsMap[postId].push(label);
+        });
+
+        for (const rp of relatedPosts) {
+          rp.labels = (relatedLabelsMap[String(rp.id)] || []).map(l => ({ blog_labels: l }));
+        }
       }
     }
 

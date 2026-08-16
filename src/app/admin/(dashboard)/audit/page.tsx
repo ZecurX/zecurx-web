@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Trash2, Filter, X } from 'lucide-react';
 import { RoleBadge } from '@/components/admin/RoleBadge';
 import { AuditLog, AuditAction, Resource } from '@/types/auth';

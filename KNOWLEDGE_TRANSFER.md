@@ -58,7 +58,7 @@ The project is built for **human operators + business workflows**, not just stat
 - `src/components/` — UI components (including admin, forms, landing)
 - `src/lib/` — core business logic/utilities (db/auth/payments/email/rbac)
 - `src/types/` — TypeScript domain types (`auth.ts` is key)
-- `sql/` — migration-like SQL files and schema updates
+- `scripts/migrations/` — migration-like SQL files and schema updates
 - `docs/` — operational/security/RBAC docs
 - `middleware.ts` — admin auth + route permission gate
 
@@ -74,7 +74,7 @@ The project is built for **human operators + business workflows**, not just stat
 - `@radix-ui/*` primitives
 - `class-variance-authority`, `clsx`, `tailwind-merge`
 - `lucide-react`
-- `framer-motion`, `motion`, `lenis`, `lottie-react`
+- `motion`, `lenis`, `lottie-react`
 - `next-themes`, `nextjs-toploader`
 
 ### Forms / validation / safety
@@ -337,10 +337,10 @@ Notable style helpers:
 
 ## 14) SQL and migration handling
 
-- SQL change scripts are in `/sql`
+- SQL change scripts are in `scripts/migrations/`
 - Current model is **script-based migrations** (not an auto-managed migration framework)
 - When changing data model:
-  1. add SQL script in `sql/`
+  1. add SQL script in `scripts/migrations/`
   2. update any dependent query logic in `src/lib` / `src/app/api`
   3. update this KT doc + relevant docs in `/docs`
 

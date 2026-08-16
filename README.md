@@ -71,7 +71,7 @@ Open: [http://localhost:3000](http://localhost:3000)
 - `src/components/` — reusable UI and feature components
 - `src/lib/` — shared business logic/utilities (db, auth, integrations)
 - `src/types/` — shared TypeScript domain types
-- `sql/` — SQL migration/update scripts
+- `scripts/migrations/` — SQL migration/update scripts
 - `docs/` — operational and reference documentation
 - `middleware.ts` — admin route protection and permission checks
 
