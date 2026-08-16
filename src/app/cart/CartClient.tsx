@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, Ticket, X, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
+import { formatPrice } from '@/lib/utils';
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
@@ -21,14 +22,6 @@ export default function CartPage() {
     } | null>(null);
     const [referralError, setReferralError] = useState('');
     const [validatingCode, setValidatingCode] = useState(false);
-
-    const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
 
     const maxDeliveryDays = items.length > 0
         ? Math.max(...items.map(item => item.deliveryDays || 20))

@@ -43,8 +43,12 @@ next-env.d.ts
 
 # opencode
 opencode.jsonc
+.opencode/
 .mcp.json
 nohup.out
+
+# AI planning artifacts
+.planning/
 
 # AI agent configs
 .agent/

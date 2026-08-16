@@ -8,7 +8,7 @@ import {
     StudentLeadFormData
 } from '@/types/lead-types';
 import { Send, CheckCircle2, Loader2, Shield } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 export function StudentEnquiryForm() {
     const [isSubmitting, setIsSubmitting] = useState(false);

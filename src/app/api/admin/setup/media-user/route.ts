@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import * as argon2 from 'argon2';
 import crypto from 'crypto';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth';
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const password = crypto.randomUUID().slice(0, 16);
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await argon2.hash(password);
 
     const result = await db.query(
       `INSERT INTO admins (
@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json({
       error: 'Failed to create media user',
-      details: error instanceof Error ? error.message : 'An error occurred',
     }, { status: 500 });
   }
 }

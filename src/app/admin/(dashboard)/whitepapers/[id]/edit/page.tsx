@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Send, Loader2, AlertCircle, Upload, FileText, X, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { UpdateWhitepaperRequest, WhitepaperStatus, Whitepaper } from '@/types/auth';
 import Image from 'next/image';

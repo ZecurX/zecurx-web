@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { CreditCard, Shield, Lock, ArrowLeft, Mail, Phone, User as UserIcon, CheckCircle2, GraduationCap, MapPin, Ticket, X, Loader2 } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
 import Footer from '@/components/landing/Footer';
 import { useCart } from '@/context/CartContext';
+import { formatPrice } from '@/lib/utils';
 
 declare global {
     interface Window {
@@ -522,14 +523,6 @@ function CheckoutContent() {
         }
 
         setIsLoading(false);
-    };
-
-    const formatPrice = (amount: number) => {
-        return new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-            maximumFractionDigits: 0,
-        }).format(amount);
     };
 
     if (isCartCheckout && items.length === 0 && !purchaseComplete) {

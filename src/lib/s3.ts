@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, ListObjectsV2Command, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Hetzner Object Storage (S3-compatible)
@@ -50,35 +50,6 @@ export async function deleteFromS3(key: string): Promise<void> {
   });
 
   await s3Client.send(command);
-}
-
-/**
- * List files in a folder
- */
-export async function listS3Files(prefix?: string): Promise<string[]> {
-  const command = new ListObjectsV2Command({
-    Bucket: BUCKET_NAME,
-    Prefix: prefix,
-  });
-
-  const response = await s3Client.send(command);
-  return response.Contents?.map(obj => obj.Key || '') || [];
-}
-
-/**
- * Check if a file exists
- */
-export async function fileExistsInS3(key: string): Promise<boolean> {
-  try {
-    const command = new HeadObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    });
-    await s3Client.send(command);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /**

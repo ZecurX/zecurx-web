@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import CreativeNavBar from '@/components/landing/CreativeNavBar';
