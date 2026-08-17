@@ -3,7 +3,7 @@ import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { ArrowRight, Brain, Shield, Database, Eye, Lock, Activity } from "lucide-react";
+import { ArrowRight, Brain, Database, Eye, Activity } from "lucide-react";
 import { SecureAILLMHero } from "./secure-ai-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { ServiceFeatureGrid } from "@/components/ui/service-feature-grid";

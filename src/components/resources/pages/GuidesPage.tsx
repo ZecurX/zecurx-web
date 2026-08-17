@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "motion/react";
 import {
     ArrowLeft,
     Shield,
@@ -11,7 +10,6 @@ import {
     CheckCircle,
     BookOpen
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { BlurFade } from "@/components/ui/blur-fade";

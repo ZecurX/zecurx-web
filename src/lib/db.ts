@@ -78,6 +78,7 @@ const VALID_TABLES = new Set([
     // zecurx_admin schema qualified tables
     'zecurx_admin.plans', 'zecurx_admin.promo_prices', 'zecurx_admin.settings', 'zecurx_admin.course_mapping',
     'zecurx_admin.bulk_email_campaigns', 'bulk_email_campaigns',
+    'zecurx_admin.course_batches', 'zecurx_admin.course_bookings',
 ]);
 
 // Validate identifiers (table names, column names) to prevent SQL injection

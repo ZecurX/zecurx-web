@@ -7,14 +7,11 @@ import {
   CheckCircle2,
   ShieldCheck,
 } from "lucide-react";
-import Image from "next/image";
 import { ServicesHeroSection } from "@/components/ui/hero-section";
 import CapabilitiesBento from "@/components/ui/capabilities-bento";
 import { AppDiagramLottie } from "@/components/ui/app-diagram-lottie";
 import { CallingLottie } from "@/components/ui/calling-lottie";
 import { ToolsPackLottie } from "@/components/ui/tools-pack-lottie";
-
-const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || "https://zecurx-web.fsn1.your-objectstorage.com";
 
 export const metadata: Metadata = {
   title: "Cybersecurity Services | ZecurX",

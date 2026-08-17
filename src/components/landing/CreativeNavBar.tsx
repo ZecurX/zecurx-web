@@ -4,8 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  ArrowRight,
-  Plus,
   Menu,
   X,
   ChevronDown,
@@ -27,7 +25,6 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 import CartIcon from "@/components/shop/CartIcon";
-import { CDN_ASSETS } from "@/lib/cdn";
 import logoText from "../../../design/images/raw/logo-text.png";
 
 const urls = ["https://lms.zecurx.com/", "https://ctf.zecurx.com/"];
@@ -176,11 +173,9 @@ const megaMenus = Object.entries(navData).map(([key, data]) => ({
 }));
 
 export default function CreativeNavBar({
-  forceDark = false,
   showCart = false,
   expanded = false,
 }: {
-  forceDark?: boolean;
   showCart?: boolean;
   expanded?: boolean;
 }) {

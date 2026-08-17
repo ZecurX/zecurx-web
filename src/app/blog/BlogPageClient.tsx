@@ -11,7 +11,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { calculateReadingTime, formatBlogDate } from "@/lib/blog-utils";
-import { motion } from "motion/react";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { cn } from "@/lib/utils";
 
