@@ -11,7 +11,6 @@ import {
   Cloud,
   Scale,
   Bot,
-  ArrowRight,
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";

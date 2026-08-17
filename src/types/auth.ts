@@ -27,6 +27,7 @@ export const RESOURCES = {
   CASE_STUDIES: 'case_studies',
   SETTINGS: 'settings',
   BULK_EMAIL: 'bulk_email',
+  COURSE_BOOKINGS: 'course_bookings',
 } as const;
 
 export type Resource = (typeof RESOURCES)[keyof typeof RESOURCES];

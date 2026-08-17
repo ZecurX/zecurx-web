@@ -17,6 +17,8 @@ const ROUTE_PERMISSIONS: Record<string, { resource: string; action: string }> = 
     '/admin/whitepapers': { resource: RESOURCES.WHITEPAPERS, action: ACTIONS.READ },
     '/admin/case-studies': { resource: RESOURCES.CASE_STUDIES, action: ACTIONS.READ },
     '/admin/seminars': { resource: RESOURCES.SEMINARS, action: ACTIONS.READ },
+    '/admin/course-batches': { resource: RESOURCES.COURSE_BOOKINGS, action: ACTIONS.READ },
+    '/admin/course-bookings': { resource: RESOURCES.COURSE_BOOKINGS, action: ACTIONS.READ },
     '/admin/referral-codes': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
     '/admin/partner-referrals': { resource: RESOURCES.REFERRAL_CODES, action: ACTIONS.READ },
     '/admin/system-test': { resource: RESOURCES.SYSTEM_TEST, action: ACTIONS.READ },

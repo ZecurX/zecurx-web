@@ -126,6 +126,18 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             visible: hasPermission(userInfo.role, RESOURCES.SEMINARS, ACTIONS.READ)
         },
         {
+            href: "/admin/course-batches",
+            label: "Course Batches",
+            icon: "CalendarClock",
+            visible: hasPermission(userInfo.role, RESOURCES.COURSE_BOOKINGS, ACTIONS.READ)
+        },
+        {
+            href: "/admin/course-bookings",
+            label: "Course Bookings",
+            icon: "ClipboardList",
+            visible: hasPermission(userInfo.role, RESOURCES.COURSE_BOOKINGS, ACTIONS.READ)
+        },
+        {
             href: "/admin/bulk-email",
             label: "Bulk Email Campaigns",
             icon: "Mail",

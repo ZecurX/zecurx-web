@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { BlurFade } from "@/components/ui/blur-fade";
 import {
   ArrowRight,
@@ -11,18 +11,12 @@ import {
   Microscope,
   Globe,
   FileText,
-  BarChart,
-  GitBranch,
-  Award,
   CheckCircle2,
   XCircle,
   UserCheck,
   FileSignature,
   Landmark,
   Workflow,
-  LineChart,
-  TerminalSquare,
-  Fingerprint,
   ShieldCheck,
   GlobeLock,
   AlertCircle,
@@ -38,7 +32,7 @@ import Footer from "@/components/landing/Footer";
 import { SOCDetectionHero } from "./soc-detection-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { getCdnUrl } from "@/lib/cdn";
-import { useState, useEffect, useRef } from "react";
+import { useState, type ComponentType } from "react";
 
 // ── DATA ARRAYS (STRICT CONTENT ADHERENCE) ───────────────────────────────────
 
@@ -411,7 +405,7 @@ const internationalFrameworks = [
 // ── GLOBAL SCOPED HELPERS & HOVER CLASSES ────────────────────────────────────
 
 const getCapabilityIcon = (name: string) => {
-  const icons: Record<string, any> = {
+  const icons: Record<string, ComponentType<{ className?: string }>> = {
     Shield,
     AlertTriangle,
     Search,
@@ -421,14 +415,6 @@ const getCapabilityIcon = (name: string) => {
   };
   const IconComponent = icons[name] || Search;
   return <IconComponent className="w-7 h-7 text-[#4c69e4]" />;
-};
-
-const getToolingIcon = (str: string) => {
-  if (str === "📊") return <LineChart className="w-6 h-6 text-[#4c69e4]" />;
-  if (str === "🖥")
-    return <TerminalSquare className="w-6 h-6 text-[#4c69e4]" />;
-  if (str === "🔬") return <Fingerprint className="w-6 h-6 text-[#4c69e4]" />;
-  return null;
 };
 
 const renderComparisonIcon = (s: string) => {
@@ -456,21 +442,9 @@ const glassClasses = `
 // ── EXPORTED MAIN PAGE COMPONENT ──────────────────────────────────────────────
 
 export default function SOCDetectionResponsePage() {
-  const [activeStep, setActiveStep] = useState(0);
   const [activeCapability, setActiveCapability] = useState(0); // Add this line
-  const isHovering = useRef(false);
   const [activeStory, setActiveStory] = useState(0);
 
-  // Auto-cycle logic
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isHovering.current) {
-        setActiveStep((prev) => (prev === socSteps.length - 1 ? 0 : prev + 1));
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
   return (
     <div className="min-h-screen bg-[#f8fbff] flex flex-col font-sans selection:bg-[#4c69e4] selection:text-white relative overflow-hidden">
       <CreativeNavBar />
