@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, ShoppingBag } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
 import { WordRotate } from "@/components/ui/word-rotate";

@@ -46,6 +46,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'users:*',
     'settings:*',
     'bulk_email:*',
+    'course_bookings:*',
   ],
 
   [ROLES.SALES]: [
@@ -54,6 +55,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'leads:*',
     'referral_codes:*',
     'plans:*',
+    'course_bookings:*',
   ],
 
   [ROLES.MARKETING]: [
@@ -196,6 +198,8 @@ export function getSidebarItemsForRole(role: Role): {
     { name: 'Referral Codes', href: '/admin/referral-codes', icon: 'Ticket', resource: RESOURCES.REFERRAL_CODES },
     { name: 'Partner Referrals', href: '/admin/partner-referrals', icon: 'Users', resource: RESOURCES.REFERRAL_CODES },
     { name: 'Seminars', href: '/admin/seminars', icon: 'CalendarDays', resource: RESOURCES.SEMINARS },
+    { name: 'Course Batches', href: '/admin/course-batches', icon: 'CalendarClock', resource: RESOURCES.COURSE_BOOKINGS },
+    { name: 'Course Bookings', href: '/admin/course-bookings', icon: 'ClipboardList', resource: RESOURCES.COURSE_BOOKINGS },
     { name: 'Blog', href: '/admin/blog', icon: 'Newspaper', resource: RESOURCES.BLOG },
     { name: 'Whitepapers', href: '/admin/whitepapers', icon: 'FileText', resource: RESOURCES.WHITEPAPERS },
     { name: 'Case Studies', href: '/admin/case-studies', icon: 'Briefcase', resource: RESOURCES.CASE_STUDIES },

@@ -209,6 +209,64 @@ export async function POST(request: NextRequest) {
             const amount = payment.amount / 100;
             const notes = payment.notes || {};
 
+            // Course booking deposit/balance payments are handled separately from the
+            // generic plan/shop flow below - this webhook branch is the durable safety
+            // net in case the client-facing verify call never completes.
+            if (notes.type === 'course_booking_deposit') {
+                const { confirmDepositPayment, sendBookingConfirmationEmail } = await import('@/lib/course-bookings');
+                const result = await confirmDepositPayment({
+                    orderId,
+                    paymentId,
+                    amount,
+                    notes: {
+                        batchId: notes.batchId,
+                        planId: notes.planId,
+                        name: notes.name,
+                        email: notes.email,
+                        phone: notes.phone,
+                    },
+                });
+
+                if ('booking' in result) {
+                    const [planResult, batchResult] = await Promise.all([
+                        query<{ name: string }>('SELECT name FROM plans WHERE id = $1', [result.booking.plan_id]),
+                        query<{ name: string }>('SELECT name FROM zecurx_admin.course_batches WHERE id = $1', [result.booking.batch_id]),
+                    ]);
+                    await sendBookingConfirmationEmail({
+                        email: result.booking.customer_email,
+                        name: result.booking.customer_name || '',
+                        courseName: planResult.rows[0]?.name || 'Course',
+                        batchName: batchResult.rows[0]?.name || '',
+                        depositAmount: parseFloat(String(result.booking.deposit_amount)),
+                        totalAmount: parseFloat(String(result.booking.total_amount)),
+                        bookingToken: result.booking.booking_token,
+                    }).catch((err) => logger.error({ err }, 'Failed to send booking confirmation email from webhook'));
+                }
+
+                return NextResponse.json({ received: true, event: eventType });
+            }
+
+            if (notes.type === 'course_booking_balance') {
+                const { confirmBalancePayment, sendFullPaymentEmail } = await import('@/lib/course-bookings');
+                const result = await confirmBalancePayment({
+                    orderId,
+                    paymentId,
+                    amount,
+                    notes: { bookingId: notes.bookingId, token: notes.token },
+                });
+
+                if ('booking' in result && result.booking.status === 'fully_paid') {
+                    const planResult = await query<{ name: string }>('SELECT name FROM plans WHERE id = $1', [result.booking.plan_id]);
+                    await sendFullPaymentEmail({
+                        email: result.booking.customer_email,
+                        name: result.booking.customer_name || '',
+                        courseName: planResult.rows[0]?.name || 'Course',
+                    }).catch((err) => logger.error({ err }, 'Failed to send full payment email from webhook'));
+                }
+
+                return NextResponse.json({ received: true, event: eventType });
+            }
+
             // OPTIMIZATION: Single query to get plan details (eliminates N+1 pattern)
             let planData: { id: string; price: number; name: string } | null = null;
             if (notes.itemName) {

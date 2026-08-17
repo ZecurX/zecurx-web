@@ -15,10 +15,7 @@ import {
     Award,
     CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { MagicCard } from "@/components/ui/magic-card";
-import { ScrollAnimation } from "@/components/ui/scroll-animation";
 import Link from "next/link";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import SeminarTestimonials from "./SeminarTestimonials";

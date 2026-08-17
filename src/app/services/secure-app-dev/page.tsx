@@ -3,7 +3,7 @@ import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import Link from "next/link";
 import { BlurFade } from "@/components/ui/blur-fade";
-import { ArrowRight, Code2, Shield, Smartphone, Plug, Bot, Layers } from "lucide-react";
+import { ArrowRight, Code2, Smartphone, Plug, Layers } from "lucide-react";
 import { SecureAppDevHero } from "./secure-app-dev-hero";
 import { ServiceTimeline } from "@/components/ui/service-timeline";
 import { ServiceFeatureGrid } from "@/components/ui/service-feature-grid";

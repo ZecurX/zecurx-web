@@ -26,6 +26,7 @@ import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import BrochureModal from "@/components/academy/BrochureModal";
+import BookSlotModal from "@/components/academy/BookSlotModal";
 
 interface CourseDetailData {
     id: string;
@@ -102,6 +103,7 @@ export default function CourseDetailClient({
 }) {
     const router = useRouter();
     const [isBrochureOpen, setIsBrochureOpen] = useState(false);
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -221,13 +223,13 @@ export default function CourseDetailClient({
                                     Contact for Pricing
                                 </Link>
                             ) : course.inStock ? (
-                                <Link
-                                    href={`/checkout?itemId=${course.id}&type=course`}
+                                <button
+                                    onClick={() => setIsBookingOpen(true)}
                                     className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-2.5 text-sm font-semibold hover:bg-[#3b57d4] transition-all hover:shadow-lg hover:shadow-[#4c69e4]/25"
                                 >
                                     <Calendar className="w-4 h-4" />
                                     Book Your Slot
-                                </Link>
+                                </button>
                             ) : (
                                 <span className="inline-flex items-center gap-2 bg-white/5 text-slate-500 rounded-full px-8 py-2.5 text-sm font-semibold cursor-not-allowed border border-white/[0.06]">
                                     Coming Soon
@@ -480,12 +482,12 @@ export default function CourseDetailClient({
                                             Contact for Pricing
                                         </Link>
                                     ) : course.inStock ? (
-                                        <Link
-                                            href={`/checkout?itemId=${course.id}&type=course`}
+                                        <button
+                                            onClick={() => setIsBookingOpen(true)}
                                             className="block w-full text-center py-3 bg-gradient-to-r from-[#4c69e4] to-indigo-600 text-white rounded-xl text-sm font-semibold hover:from-[#3b57d4] hover:to-indigo-700 transition-all hover:shadow-lg hover:shadow-[#4c69e4]/20"
                                         >
                                             Enroll Now
-                                        </Link>
+                                        </button>
                                     ) : (
                                         <span className="block w-full text-center py-3 bg-white/5 text-slate-500 rounded-xl text-sm font-semibold cursor-not-allowed border border-white/[0.06]">
                                             Coming Soon
@@ -507,6 +509,14 @@ export default function CourseDetailClient({
                     onClose={() => setIsBrochureOpen(false)}
                     courseTitle={course.title}
                     brochureLink={course.brochureLink}
+                />
+            )}
+
+            {isBookingOpen && (
+                <BookSlotModal
+                    courseId={course.id}
+                    courseTitle={course.title}
+                    onClose={() => setIsBookingOpen(false)}
                 />
             )}
         </main>

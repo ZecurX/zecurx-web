@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion } from "motion/react";
 import {
     FileText,
     Download,
@@ -18,7 +17,6 @@ import {
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import { BlurFade } from "@/components/ui/blur-fade";

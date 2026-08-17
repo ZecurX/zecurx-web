@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { ArrowRight, Code2, Shield, Smartphone, Plug, Bot, Layers } from "lucide-react";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
@@ -66,8 +66,6 @@ function HeroIllustration() {
 }
 
 export function SecureAppDevHero() {
-  const [lottieError, setLottieError] = useState(false);
-
   return (
     <section className="relative pt-10 md:pt-14 pb-16 px-6 overflow-hidden">
       {/* Background blurs */}
@@ -127,14 +125,11 @@ export function SecureAppDevHero() {
         {/* ── RIGHT ── */}
         <div className="flex justify-center">
           <div className="bg-white/60 backdrop-blur-sm border border-slate-200 rounded-3xl p-6 shadow-[0_8px_40px_rgba(76,105,228,0.08)] w-full max-w-md">
-            {!lottieError ? (
-              <LottieAnimation
-                src={getCdnUrl("lottie/app_security.json")}
-                className="w-full h-auto"
-              />
-            ) : (
-              <HeroIllustration />
-            )}
+            <LottieAnimation
+              src={getCdnUrl("lottie/app_security.json")}
+              className="w-full h-auto"
+              fallback={<HeroIllustration />}
+            />
           </div>
         </div>
 

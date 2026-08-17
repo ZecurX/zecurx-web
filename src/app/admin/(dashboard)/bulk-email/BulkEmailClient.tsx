@@ -1041,10 +1041,10 @@ export default function BulkEmailClient({ initialCampaigns, totalCount }: BulkEm
     const [historyLoading,setHistoryLoading]= useState(false);
     const [sendingId,     setSendingId]     = useState<string | null>(null);
 
-    const showToast = (type: 'success' | 'error', message: string) => {
+    const showToast = useCallback((type: 'success' | 'error', message: string) => {
         setToast({ type, message });
         setTimeout(() => setToast(null), 5000);
-    };
+    }, []);
 
     // Fetch audience count only (no full list — that's handled by modals)
     const fetchCount = useCallback(async (types: string[]) => {

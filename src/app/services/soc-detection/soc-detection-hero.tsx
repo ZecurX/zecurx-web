@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Radar } from "lucide-react";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import { getCdnUrl } from "@/lib/cdn";
 
 export function SOCDetectionHero() {
-  const [lottieError, setLottieError] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -95,16 +94,15 @@ export function SOCDetectionHero() {
           <div className="md:col-span-5 flex justify-end">
             <div className="relative w-full max-w-[340px]">
               <div className="relative bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_10px_30px_-5px_rgba(0,0,0,0.05)]">
-                {!lottieError ? (
-                  <LottieAnimation
-                    src={getCdnUrl("lottie/sdlc.json")}
-                    className="w-full h-auto"
-                  />
-                ) : (
-                  <div className="w-full aspect-square flex items-center justify-center bg-slate-50 rounded-xl">
-                    <Radar className="w-12 h-12 text-[#4c69e4]" />
-                  </div>
-                )}
+                <LottieAnimation
+                  src={getCdnUrl("lottie/sdlc.json")}
+                  className="w-full h-auto"
+                  fallback={
+                    <div className="w-full aspect-square flex items-center justify-center bg-slate-50 rounded-xl">
+                      <Radar className="w-12 h-12 text-[#4c69e4]" />
+                    </div>
+                  }
+                />
               </div>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, FileSearch, Search, Lock, Code2, FolderSearch, Radar } from "lucide-react";
+import { FileSearch, Search, Lock, Code2, FolderSearch, Radar } from "lucide-react";
 import { getCdnUrl } from "@/lib/cdn";
 import { LottieAnimation } from "@/components/ui/lottie-animation";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
