@@ -158,6 +158,7 @@ const navData = {
 const simpleLinks = [
   { label: "Industries", href: "/industries" },
   { label: "Security Toolkit", href: "/tools" },
+  { label: "About", href: "/about" },
   { label: "How We Work", href: "/how-we-work" },
 ];
 

@@ -32,6 +32,7 @@ const footerLinks = {
     { label: "Academy", href: "/academy" },
   ],
   Company: [
+    { label: "About", href: "/about" },
     { label: "How We Work", href: "/how-we-work" },
     { label: "Contact", href: "/contact" },
   ],

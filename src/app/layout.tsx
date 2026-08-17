@@ -6,6 +6,7 @@ import {
   Newsreader,
   Kalam,
   Poppins,
+  Libre_Caslon_Text,
 } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -16,6 +17,13 @@ import { CartProvider } from "@/context/CartContext";
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-manrope",
+});
+
+const libreCaslon = Libre_Caslon_Text({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-libre-caslon",
 });
 
 const poppins = Poppins({
@@ -150,7 +158,7 @@ export default function RootLayout({
         <StructuredData data={getWebSiteSchema()} />
       </head>
       <body
-        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} ${kalam.variable} antialiased`}
+        className={`${manrope.variable} ${inter.variable} ${spaceGrotesk.variable} ${pixelify.variable} ${newsreader.variable} ${kalam.variable} ${libreCaslon.variable} antialiased`}
       >
         <NextTopLoader
           color="var(--primary)"

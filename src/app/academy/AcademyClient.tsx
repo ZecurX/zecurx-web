@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -10,19 +10,22 @@ import {
   Laptop,
   Target,
   Zap,
-  BookOpen,
   GraduationCap,
-  Terminal,
-  Cpu,
-  Code2,
-  Fingerprint,
 } from "lucide-react";
 import Link from "next/link";
-import CreativeNavBar from "@/components/landing/CreativeNavBar";
-import Footer from "@/components/landing/Footer";
+import EditorialHeader from "@/components/editorial/EditorialHeader";
+import EditorialFooter from "@/components/editorial/EditorialFooter";
 import CourseCard from "@/components/academy/CourseCard";
-import TrustedPartners from "@/components/landing/TrustedPartners";
-import { CourseData, getCourseById } from "@/lib/courses";
+import { CourseData } from "@/lib/courses";
+
+// Verbatim image src values from the supplied academy_code.html mockup
+// (Ethical Hacking / Defensive Architecture / Security Leadership cards),
+// cycled across however many real courses the database returns.
+const ACADEMY_CARD_IMAGES = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCofzRkuVtOfnygu30F3GkuBvM6pc5_xMH6_54QoP61UxLDLm4MHjqgHAtklO8F1Y8hI6_11YnlfYWR217EojNVEaQCZk71bMAPtSSWuB3xpRB6vy3RgI_VCXmljOk6jRZjrZQRQ3kYnsJQ89_XmGddAQq49oFGCZwy-jYCg2KQN9f4aol1p6CWVtYNEsuogDyD79_epfzHedZHAgsfN-v1QfLmEqNCYRJ92AtqC8QJ7kMIWV3PeaYw",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDmAxu5SdF_nRthABNAqer8oCEDQJA3Q39VJ7ABvVrnrB_v7xyN0CfGGRfexgsxYNY76bUGrcI0MoEqE4asQRN1hHbnhunkQQBEP_yaJz7RfI2_LOTkLjQ8iQ6x9rYkhyXdkW34WdZwXkGLMeTiPEvp6jto0GFs3CI5BRjXaqH_AAIy3l8RxNaYbvYfs0lwn38mPc4QyHOWcWBzYITYDBIi6TwJc1s2fwYua4NIq8IM53o3WOrSK_xN",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDBXVyEWO5DTwefp04M05Kc6KSAVIHVXaiDyXxURW60gAhU8PSR3SarFvy7iUJmo9HvsIRS2RIdcnKpqCOo5Xwa_v-RVEHTk5zuKiUSyo7xUVroeWcmEB1XgwKKmWD__ANBRd4SLKttAFWBcqazx8Xz-CzJpKF7xeb5peFyxZdnMsV4Q9JUzCf43739ElR08vG9RUmROGNDmPWKxMQM3hZkdqpAM9j3M_4PPRy_90fFXfFaYb321iC1",
+];
 
 const stats = [
   { icon: Users, value: "2,500+", label: "Trained" },
@@ -31,30 +34,21 @@ const stats = [
   { icon: GraduationCap, value: "94%", label: "Placement" },
 ];
 
-const valueProps = [
+const whyItems = [
   {
-    icon: Fingerprint,
-    title: "ISO Verified",
-    desc: "Globally recognized certification with ISO compliance.",
-    gradient: "from-[#4c69e4] to-indigo-500",
+    icon: Target,
+    title: "Industry-Aligned",
+    desc: "Curriculum developed with input from hiring managers at top security firms. What you learn is exactly what employers need.",
   },
   {
-    icon: Terminal,
-    title: "Live Labs",
-    desc: "Real attack surfaces, real tools, real experience.",
-    gradient: "from-emerald-500 to-teal-600",
+    icon: Zap,
+    title: "Accelerated Learning",
+    desc: "Structured 8-12 week programs designed to take you from foundation to job-ready faster than traditional education.",
   },
   {
-    icon: Cpu,
-    title: "AI-Powered",
-    desc: "Cutting-edge GenAI security curriculum built in.",
-    gradient: "from-purple-500 to-fuchsia-600",
-  },
-  {
-    icon: Code2,
-    title: "Job Ready",
-    desc: "Portfolio projects + placement assistance included.",
-    gradient: "from-amber-500 to-orange-600",
+    icon: Laptop,
+    title: "Cloud Sandbox",
+    desc: "24/7 access to dedicated cloud labs. Practice exploits, defense strategies, and tool configurations on live environments.",
   },
 ];
 
@@ -63,207 +57,135 @@ export default function AcademyClient({
 }: {
   courses: CourseData[];
 }) {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <main className="min-h-screen bg-[#080b14] flex flex-col font-sans text-white">
-      <CreativeNavBar expanded={!scrolled} />
+    <div className="zx-editorial min-h-screen bg-[color:var(--zx-background)] text-[color:var(--zx-on-background)] font-manrope flex flex-col">
+      <EditorialHeader active="academy" />
 
-      <div className="flex-1">
+      <main className="flex-1 pt-20">
         {/* ===== HERO ===== */}
-        <section className="relative pb-24 md:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Grid pattern background */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-              backgroundSize: "60px 60px",
-            }}
-          />
-          {/* Glow orbs */}
-          <div className="absolute top-[-20%] right-[-10%] w-[700px] h-[700px] bg-[#4c69e4]/20 blur-[150px] rounded-full" />
-          <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-500/10 blur-[120px] rounded-full" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/5 blur-[100px] rounded-full" />
+        <section className="relative w-full min-h-[560px] flex flex-col items-center justify-center pt-24 pb-24 px-5 overflow-hidden bg-[color:var(--zx-surface-container-lowest)]">
+          <div aria-hidden="true" className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+            <svg className="w-full h-full">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="1" fill="#1d1c16" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
 
-          <div className="max-w-[1320px] mx-auto w-full relative z-10 pt-24">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-              {/* LEFT */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
+          <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto gap-8">
+            <span className="font-manrope text-[12px] font-semibold text-[color:var(--zx-secondary)] uppercase tracking-[0.2em]">
+              Zecurx Academy
+            </span>
+            <h1 className="font-libre-caslon text-[40px] md:text-[64px] leading-[1.1] tracking-tight text-[color:var(--zx-on-surface)]">
+              Master the Craft.
+            </h1>
+            <p className="text-lg leading-relaxed text-[color:var(--zx-on-surface-variant)] max-w-2xl">
+              Advanced cybersecurity training blending theoretical depth with tactical execution. Elevate your
+              strategic defense capabilities through rigorous, immersive curricula.
+            </p>
+            <div className="flex flex-wrap gap-4 mt-4">
+              <a
+                href="#courses"
+                className="inline-flex items-center gap-2 bg-[color:var(--zx-primary)] text-[color:var(--zx-on-primary)] px-8 py-3 rounded-full font-manrope text-[12px] font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
               >
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-[1.05] tracking-tight">
-                  <span className="text-white">Become a</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-[#4c69e4] via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                    Cybersecurity
-                  </span>
-                  <br />
-                  <span className="text-white">Professional</span>
-                </h1>
-
-                <p className="text-lg md:text-xl text-slate-400 max-w-xl mb-10 leading-relaxed font-light">
-                  Master offensive and defensive security with ISO-verified certifications. 
-                  Train on live targets in dedicated cloud labs under expert mentorship.
-                </p>
-
-                <div className="flex flex-wrap gap-4">
-                  <a
-                    href="#courses"
-                    className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-xl px-8 py-4 text-sm font-semibold hover:bg-[#3b57d4] hover:shadow-lg hover:shadow-[#4c69e4]/25 transition-all active:scale-[0.98]"
-                  >
-                    Explore Programs
-                    <ArrowRight className="w-4 h-4" />
-                  </a>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white rounded-xl px-8 py-4 text-sm font-semibold hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm"
-                  >
-                    Talk to Advisor
-                  </Link>
-                </div>
-
-                {/* Stats row */}
-                <div className="flex gap-8 mt-12 pt-8 border-t border-white/10">
-                  {stats.map((stat, i) => (
-                    <div key={i} className="text-center">
-                      <div className="text-2xl md:text-3xl font-extrabold text-white">{stat.value}</div>
-                      <div className="text-xs text-slate-500 uppercase tracking-wider mt-1">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* RIGHT - Value props */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.15 }}
-                className="space-y-4"
+                Explore Programs
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center bg-transparent text-[color:var(--zx-on-surface)] border border-[color:var(--zx-outline-variant)] px-8 py-3 rounded-full font-manrope text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[color:var(--zx-surface-variant)]/30 transition-colors"
               >
-                {valueProps.map((item, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + i * 0.1 }}
-                    className="group flex items-center gap-5 bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm hover:bg-white/[0.07] hover:border-white/20 transition-all"
-                  >
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform`}>
-                      <item.icon className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white mb-0.5">{item.title}</h3>
-                      <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
+                Talk to Advisor
+              </Link>
+            </div>
+
+            {/* Stats row */}
+            <div className="flex flex-wrap justify-center gap-8 md:gap-12 mt-8 pt-8 border-t border-[color:var(--zx-outline-variant)]/30">
+              {stats.map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="font-libre-caslon text-[28px] text-[color:var(--zx-on-surface)]">{stat.value}</div>
+                  <div className="font-manrope text-[11px] text-[color:var(--zx-on-surface-variant)] uppercase tracking-[0.1em] mt-1">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ===== COURSES ===== */}
-        <section id="courses" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-[#0d1020]">
-          <div className="max-w-[1320px] mx-auto">
+        <section id="courses" className="w-full px-5 md:px-12 lg:px-24 pb-[80px] md:pb-[120px] relative bg-[color:var(--zx-background)]">
+          <div className="max-w-[1280px] mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="flex items-center justify-between mb-16"
             >
-              <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#4c69e4] bg-[#4c69e4]/10 rounded-full mb-4 border border-[#4c69e4]/20">
-                Our Programs
-              </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-                Choose Your{" "}
-                <span className="bg-gradient-to-r from-[#4c69e4] to-indigo-400 bg-clip-text text-transparent">
-                  Certification Path
+              <div>
+                <span className="font-manrope text-[12px] font-semibold text-[color:var(--zx-tertiary)] uppercase tracking-[0.2em]">
+                  Our Programs
                 </span>
-              </h2>
-              <p className="text-slate-400 max-w-2xl mx-auto text-lg font-light">
-                Structured learning tracks from foundational security to advanced penetration testing and AI defense.
-              </p>
+                <h2 className="font-libre-caslon text-[32px] text-[color:var(--zx-on-background)] mt-4">
+                  Choose Your Certification Path
+                </h2>
+              </div>
+              <span className="font-manrope text-[11px] text-[color:var(--zx-on-surface-variant)] uppercase tracking-widest hidden md:block">
+                01 / Curricula
+              </span>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {initialCourses.map((course, i) => {
-                const enriched = { ...course, unsplashId: course.unsplashId || getCourseById(course.id)?.unsplashId };
-                return <CourseCard key={course.id} {...enriched} delay={i * 0.08} />;
-              })}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {initialCourses.map((course, i) => (
+                <CourseCard
+                  key={course.id}
+                  {...course}
+                  cardImage={ACADEMY_CARD_IMAGES[i % ACADEMY_CARD_IMAGES.length]}
+                  delay={i * 0.08}
+                />
+              ))}
             </div>
           </div>
         </section>
 
         {/* ===== WHY ZECURX ===== */}
-        <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[#080b14]" />
-          <div className="absolute inset-0 opacity-[0.02]"
-            style={{
-              backgroundImage: `radial-gradient(circle at 30% 50%, rgba(255,255,255,0.15) 0.5px, transparent 0.5px)`,
-              backgroundSize: "40px 40px",
-            }}
-          />
-
-          <div className="max-w-[1320px] mx-auto relative z-10">
+        <section className="w-full px-5 md:px-12 lg:px-24 py-[80px] md:py-[120px] bg-[color:var(--zx-surface-container-low)]">
+          <div className="max-w-[1280px] mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="text-center mb-16 max-w-2xl mx-auto"
             >
-              <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 rounded-full mb-4 border border-emerald-400/20">
-                Why ZecurX
+              <span className="font-manrope text-[12px] font-semibold text-[color:var(--zx-secondary)] uppercase tracking-[0.2em]">
+                Why Zecurx
               </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4">
-                What Sets Us{" "}
-                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                  Apart
-                </span>
+              <h2 className="font-libre-caslon text-[32px] text-[color:var(--zx-on-surface)] mt-4 mb-4">
+                What Sets Us Apart
               </h2>
-              <p className="text-slate-400 max-w-2xl mx-auto text-lg font-light">
+              <p className="text-[color:var(--zx-on-surface-variant)]">
                 We don&apos;t just teach theory. Every program is built around practical, job-ready skills.
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  icon: Target,
-                  title: "Industry-Aligned",
-                  desc: "Curriculum developed with input from hiring managers at top security firms. What you learn is exactly what employers need.",
-                },
-                {
-                  icon: Zap,
-                  title: "Accelerated Learning",
-                  desc: "Structured 8-12 week programs designed to take you from foundation to job-ready faster than traditional education.",
-                },
-                {
-                  icon: Laptop,
-                  title: "Cloud Sandbox",
-                  desc: "24/7 access to dedicated cloud labs. Practice exploits, defense strategies, and tool configurations on live environments.",
-                },
-              ].map((item, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {whyItems.map((item, i) => (
                 <motion.div
-                  key={i}
+                  key={item.title}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm hover:bg-white/[0.07] transition-all group"
+                  className="bg-[color:var(--zx-surface)] rounded-xl p-8 border border-[color:var(--zx-outline-variant)]/30"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-5 group-hover:bg-[#4c69e4]/20 transition-colors">
-                    <item.icon className="w-6 h-6 text-[#4c69e4]" />
+                  <div className="w-12 h-12 rounded-full bg-[color:var(--zx-secondary-container)] flex items-center justify-center mb-6">
+                    <item.icon className="w-5 h-5 text-[color:var(--zx-on-secondary-container)]" />
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="font-libre-caslon text-[20px] text-[color:var(--zx-on-surface)] mb-3">{item.title}</h3>
+                  <p className="text-sm text-[color:var(--zx-on-surface-variant)] leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -271,54 +193,43 @@ export default function AcademyClient({
         </section>
 
         {/* ===== CTA ===== */}
-        <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-[#0d1020]">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0d1020] via-[#111530] to-[#0d1020]" />
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%)`,
-              backgroundSize: "80px 80px",
-            }}
-          />
-
-          <div className="max-w-[1320px] mx-auto relative z-10 text-center">
+        <section className="w-full px-5 md:px-12 lg:px-24 py-[80px] md:py-[120px] bg-[color:var(--zx-primary-fixed-dim)]">
+          <div className="max-w-[1280px] mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#4c69e4] bg-[#4c69e4]/20 rounded-full mb-4 border border-[#4c69e4]/30">
+              <span className="font-manrope text-[12px] font-semibold text-[color:var(--zx-on-primary-fixed)] uppercase tracking-[0.2em] block mb-4">
                 Enterprise Training
               </span>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+              <h2 className="font-libre-caslon text-[32px] md:text-[40px] text-[color:var(--zx-on-primary-fixed)] mb-6">
                 Ready to Level Up Your Team?
               </h2>
-              <p className="text-slate-400 max-w-xl mx-auto mb-10 text-lg font-light">
+              <p className="text-[color:var(--zx-on-primary-fixed)]/80 max-w-xl mx-auto mb-10">
                 Custom corporate training programs with bulk pricing, dedicated support, and flexible scheduling.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-xl px-8 py-4 text-sm font-semibold hover:bg-[#3b57d4] hover:shadow-lg hover:shadow-[#4c69e4]/25 transition-all active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 bg-[color:var(--zx-primary)] text-[color:var(--zx-on-primary)] rounded-full px-8 py-3 font-manrope text-[12px] font-semibold uppercase tracking-[0.1em] hover:opacity-90 transition-opacity"
                 >
                   Contact Sales
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <a
                   href="#courses"
-                  className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white rounded-xl px-8 py-4 text-sm font-semibold hover:bg-white/10 transition-all"
+                  className="inline-flex items-center gap-2 bg-transparent border border-[color:var(--zx-on-primary-fixed)]/30 text-[color:var(--zx-on-primary-fixed)] rounded-full px-8 py-3 font-manrope text-[12px] font-semibold uppercase tracking-[0.1em] hover:bg-[color:var(--zx-on-primary-fixed)]/5 transition-colors"
                 >
-                  <BookOpen className="w-4 h-4" />
                   Browse Programs
                 </a>
               </div>
             </motion.div>
           </div>
         </section>
+      </main>
 
-        <TrustedPartners />
-      </div>
-
-      <Footer />
-    </main>
+      <EditorialFooter />
+    </div>
   );
 }

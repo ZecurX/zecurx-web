@@ -12,6 +12,7 @@
   --font-space-grotesk: var(--font-space-grotesk);
   --font-newsreader: var(--font-newsreader);
   --font-caveat: var(--font-caveat);
+  --font-libre-caslon: var(--font-libre-caslon);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -237,6 +238,55 @@ body {
 /* Offset for fixed navbar when scrolling to anchors */
 [id] {
   scroll-margin-top: 100px;
+}
+
+/* ── Zecurx Light editorial theme (About / Academy / Services revamp) ───
+   Scoped under .zx-editorial so it never leaks into the rest of the site,
+   which still runs on the --background/--primary tokens above. Values
+   come from DESIGN.md. ── */
+.zx-editorial {
+  --zx-surface: #fef9f0;
+  --zx-surface-dim: #ded9d1;
+  --zx-surface-bright: #fef9f0;
+  --zx-surface-container-lowest: #ffffff;
+  --zx-surface-container-low: #f8f3ea;
+  --zx-surface-container: #f2ede4;
+  --zx-surface-container-high: #ece8df;
+  --zx-surface-container-highest: #e7e2d9;
+  --zx-surface-variant: #e7e2d9;
+  --zx-on-surface: #1d1c16;
+  --zx-on-surface-variant: #48464c;
+  --zx-inverse-surface: #32302a;
+  --zx-inverse-on-surface: #f5f0e7;
+  --zx-outline: #79767c;
+  --zx-outline-variant: #cac5cc;
+  --zx-primary: #191623;
+  --zx-on-primary: #ffffff;
+  --zx-primary-container: #2e2a38;
+  --zx-on-primary-container: #9791a2;
+  --zx-primary-fixed: #e7dff2;
+  --zx-primary-fixed-dim: #cbc3d6;
+  --zx-on-primary-fixed: #1d1a27;
+  --zx-secondary: #25695b;
+  --zx-on-secondary: #ffffff;
+  --zx-secondary-container: #adf0de;
+  --zx-on-secondary-container: #2c6f61;
+  --zx-secondary-fixed: #adf0de;
+  --zx-secondary-fixed-dim: #91d3c2;
+  --zx-tertiary: #17171d;
+  --zx-on-tertiary: #ffffff;
+  --zx-tertiary-container: #2b2b32;
+  --zx-on-tertiary-container: #94929a;
+  --zx-tertiary-fixed: #e4e1ea;
+  --zx-error: #ba1a1a;
+  --zx-on-error: #ffffff;
+  --zx-error-container: #ffdad6;
+  --zx-on-error-container: #93000a;
+  --zx-background: #fef9f0;
+  --zx-on-background: #1d1c16;
+
+  background-color: var(--zx-background);
+  color: var(--zx-on-background);
 }
 
 :root {
