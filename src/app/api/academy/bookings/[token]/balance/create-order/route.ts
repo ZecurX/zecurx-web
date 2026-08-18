@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 import { query } from '@/lib/db';
 import { checkPaymentRateLimit, getClientIp } from '@/lib/rate-limit';
-import { CourseBooking } from '@/lib/course-bookings';
+import { CourseBooking, remainingBalance } from '@/lib/course-bookings';
 
 export async function POST(
     request: NextRequest,
@@ -41,7 +41,7 @@ export async function POST(
             return NextResponse.json({ error: 'This booking cannot accept a balance payment' }, { status: 400 });
         }
 
-        const remaining = parseFloat(String(booking.total_amount)) - parseFloat(String(booking.amount_paid));
+        const remaining = remainingBalance(booking);
         if (remaining <= 0) {
             return NextResponse.json({ error: 'No remaining balance' }, { status: 400 });
         }

@@ -1,4 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import fs from 'fs';
+import path from 'path';
 
 interface InvoiceData {
     invoiceNumber: string;
@@ -28,8 +30,9 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
     const darkGray = rgb(0.2, 0.2, 0.2);
     const mediumGray = rgb(0.4, 0.4, 0.4);
     const lightGray = rgb(0.6, 0.6, 0.6);
-    const accentColor = rgb(0.1, 0.4, 0.8);
-    
+    // Brand accent (#4c69e4), used sitewide, in place of the previous ad hoc blue.
+    const accentColor = rgb(76 / 255, 105 / 255, 228 / 255);
+
     page.drawRectangle({
         x: 0,
         y: height - 120,
@@ -37,15 +40,37 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         height: 120,
         color: rgb(0.05, 0.05, 0.1),
     });
-    
-    page.drawText('ZECURX', {
-        x: margin,
-        y: height - 60,
-        size: 32,
-        font: helveticaBold,
-        color: rgb(1, 1, 1),
+    // Thin accent line under the header band ties the invoice to the brand color.
+    page.drawRectangle({
+        x: 0,
+        y: height - 120,
+        width: width,
+        height: 3,
+        color: accentColor,
     });
-    
+
+    try {
+        const logoBytes = fs.readFileSync(path.join(process.cwd(), 'design/images/raw/logo-text.png'));
+        const logoImage = await pdfDoc.embedPng(logoBytes);
+        const logoHeight = 34;
+        const logoWidth = (logoImage.width / logoImage.height) * logoHeight;
+        page.drawImage(logoImage, {
+            x: margin,
+            y: height - 60 - logoHeight / 2,
+            width: logoWidth,
+            height: logoHeight,
+        });
+    } catch {
+        // Fall back to a text wordmark if the logo asset can't be read for any reason.
+        page.drawText('ZECURX', {
+            x: margin,
+            y: height - 60,
+            size: 32,
+            font: helveticaBold,
+            color: rgb(1, 1, 1),
+        });
+    }
+
     page.drawText('Cybersecurity Solutions', {
         x: margin,
         y: height - 85,
@@ -53,7 +78,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         font: helvetica,
         color: rgb(0.7, 0.7, 0.7),
     });
-    
+
     page.drawText('INVOICE', {
         x: width - margin - 100,
         y: height - 60,
@@ -361,7 +386,16 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
         font: helvetica,
         color: mediumGray,
     });
-    
+
+    // Thin brand-colored bar at the very bottom of the page, echoing the header accent.
+    page.drawRectangle({
+        x: 0,
+        y: 0,
+        width,
+        height: 4,
+        color: accentColor,
+    });
+
     const pdfBytes = await pdfDoc.save();
     return Buffer.from(pdfBytes);
 }

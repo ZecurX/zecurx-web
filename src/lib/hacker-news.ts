@@ -152,13 +152,18 @@ async function fetchMetadata(url: string): Promise<StoryMetadata> {
 }
 
 export async function getTopSecurityStories(limit = 30): Promise<EnrichedStory[]> {
-  const res = await fetch(`${HN_API_BASE}/newstories.json`, { 
-    next: { revalidate: 1800 }
-  });
-  
-  if (!res.ok) throw new Error('Failed to fetch top stories');
-  
-  const ids: number[] = await res.json();
+  let ids: number[];
+  try {
+    const res = await fetch(`${HN_API_BASE}/newstories.json`, {
+      next: { revalidate: 1800 }
+    });
+
+    if (!res.ok) throw new Error('Failed to fetch top stories');
+
+    ids = await res.json();
+  } catch {
+    return [];
+  }
   
   const storiesToFetch = ids.slice(0, 150);
   

@@ -78,6 +78,9 @@ export async function POST(
                 email: result.booking.customer_email,
                 name: result.booking.customer_name || '',
                 courseName: planResult.rows[0]?.name || 'Course',
+                amountPaid: parseFloat(String(result.booking.amount_paid)),
+                discountAmount: parseFloat(String(result.booking.discount_amount)) || 0,
+                couponCode: result.booking.referral_code || result.booking.partner_referral_code || null,
             });
         }
 
