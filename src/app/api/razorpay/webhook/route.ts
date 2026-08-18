@@ -209,11 +209,11 @@ export async function POST(request: NextRequest) {
             const amount = payment.amount / 100;
             const notes = payment.notes || {};
 
-            // Course booking deposit/balance payments are handled separately from the
-            // generic plan/shop flow below - this webhook branch is the durable safety
-            // net in case the client-facing verify call never completes.
-            if (notes.type === 'course_booking_deposit') {
-                const { confirmDepositPayment, sendBookingConfirmationEmail } = await import('@/lib/course-bookings');
+            // Course booking payments (deposit, full, or balance) are handled separately
+            // from the generic plan/shop flow below - this webhook branch is the durable
+            // safety net in case the client-facing verify call never completes.
+            if (notes.type === 'course_booking_deposit' || notes.type === 'course_booking_full') {
+                const { confirmDepositPayment, sendBookingConfirmationEmail, sendFullPaymentEmail } = await import('@/lib/course-bookings');
                 const result = await confirmDepositPayment({
                     orderId,
                     paymentId,
@@ -224,23 +224,46 @@ export async function POST(request: NextRequest) {
                         name: notes.name,
                         email: notes.email,
                         phone: notes.phone,
+                        paymentOption: notes.paymentOption,
+                        referralCode: notes.referralCode || undefined,
+                        partnerReferralCode: notes.partnerReferralCode || undefined,
+                        isPartnerReferral: notes.isPartnerReferral,
+                        partnerReferralId: notes.partnerReferralId || undefined,
+                        discountType: notes.discountType || undefined,
+                        discountValue: notes.discountValue || undefined,
+                        discountAmount: notes.discountAmount || undefined,
                     },
                 });
 
                 if ('booking' in result) {
-                    const [planResult, batchResult] = await Promise.all([
-                        query<{ name: string }>('SELECT name FROM plans WHERE id = $1', [result.booking.plan_id]),
-                        query<{ name: string }>('SELECT name FROM zecurx_admin.course_batches WHERE id = $1', [result.booking.batch_id]),
-                    ]);
-                    await sendBookingConfirmationEmail({
-                        email: result.booking.customer_email,
-                        name: result.booking.customer_name || '',
-                        courseName: planResult.rows[0]?.name || 'Course',
-                        batchName: batchResult.rows[0]?.name || '',
-                        depositAmount: parseFloat(String(result.booking.deposit_amount)),
-                        totalAmount: parseFloat(String(result.booking.total_amount)),
-                        bookingToken: result.booking.booking_token,
-                    }).catch((err) => logger.error({ err }, 'Failed to send booking confirmation email from webhook'));
+                    const planResult = await query<{ name: string }>('SELECT name FROM plans WHERE id = $1', [result.booking.plan_id]);
+                    const courseName = planResult.rows[0]?.name || 'Course';
+                    const discountAmount = parseFloat(String(result.booking.discount_amount)) || 0;
+                    const couponCode = result.booking.referral_code || result.booking.partner_referral_code || null;
+
+                    if (result.booking.status === 'fully_paid') {
+                        await sendFullPaymentEmail({
+                            email: result.booking.customer_email,
+                            name: result.booking.customer_name || '',
+                            courseName,
+                            amountPaid: parseFloat(String(result.booking.amount_paid)),
+                            discountAmount,
+                            couponCode,
+                        }).catch((err) => logger.error({ err }, 'Failed to send full payment email from webhook'));
+                    } else {
+                        const batchResult = await query<{ name: string }>('SELECT name FROM zecurx_admin.course_batches WHERE id = $1', [result.booking.batch_id]);
+                        await sendBookingConfirmationEmail({
+                            email: result.booking.customer_email,
+                            name: result.booking.customer_name || '',
+                            courseName,
+                            batchName: batchResult.rows[0]?.name || '',
+                            depositAmount: parseFloat(String(result.booking.deposit_amount)),
+                            totalAmount: parseFloat(String(result.booking.total_amount)),
+                            discountAmount,
+                            couponCode,
+                            bookingToken: result.booking.booking_token,
+                        }).catch((err) => logger.error({ err }, 'Failed to send booking confirmation email from webhook'));
+                    }
                 }
 
                 return NextResponse.json({ received: true, event: eventType });
@@ -261,6 +284,9 @@ export async function POST(request: NextRequest) {
                         email: result.booking.customer_email,
                         name: result.booking.customer_name || '',
                         courseName: planResult.rows[0]?.name || 'Course',
+                        amountPaid: parseFloat(String(result.booking.amount_paid)),
+                        discountAmount: parseFloat(String(result.booking.discount_amount)) || 0,
+                        couponCode: result.booking.referral_code || result.booking.partner_referral_code || null,
                     }).catch((err) => logger.error({ err }, 'Failed to send full payment email from webhook'));
                 }
 

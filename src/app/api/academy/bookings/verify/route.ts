@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { query } from '@/lib/db';
-import { confirmDepositPayment, sendBookingConfirmationEmail, DEPOSIT_AMOUNT } from '@/lib/course-bookings';
+import { confirmDepositPayment, sendBookingConfirmationEmail, sendFullPaymentEmail, DEPOSIT_AMOUNT } from '@/lib/course-bookings';
 
 export async function POST(request: NextRequest) {
     try {
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
             amountInRupees = Number(order.amount) / 100;
         }
 
-        if (!notes || notes.type !== 'course_booking_deposit') {
+        if (!notes || (notes.type !== 'course_booking_deposit' && notes.type !== 'course_booking_full')) {
             return NextResponse.json({ success: false, error: 'Invalid booking order' }, { status: 400 });
         }
 
@@ -66,6 +66,14 @@ export async function POST(request: NextRequest) {
                 name: notes.name,
                 email: notes.email,
                 phone: notes.phone,
+                paymentOption: notes.paymentOption,
+                referralCode: notes.referralCode || undefined,
+                partnerReferralCode: notes.partnerReferralCode || undefined,
+                isPartnerReferral: notes.isPartnerReferral,
+                partnerReferralId: notes.partnerReferralId || undefined,
+                discountType: notes.discountType || undefined,
+                discountValue: notes.discountValue || undefined,
+                discountAmount: notes.discountAmount || undefined,
             },
         });
 
@@ -74,21 +82,38 @@ export async function POST(request: NextRequest) {
         }
 
         const planResult = await query<{ name: string }>('SELECT name FROM plans WHERE id = $1', [result.booking.plan_id]);
-        const batchResult = await query<{ name: string }>('SELECT name FROM zecurx_admin.course_batches WHERE id = $1', [result.booking.batch_id]);
+        const courseName = planResult.rows[0]?.name || 'Course';
+        const discountAmount = parseFloat(String(result.booking.discount_amount)) || 0;
+        const couponCode = result.booking.referral_code || result.booking.partner_referral_code || null;
 
-        await sendBookingConfirmationEmail({
-            email: result.booking.customer_email,
-            name: result.booking.customer_name || '',
-            courseName: planResult.rows[0]?.name || 'Course',
-            batchName: batchResult.rows[0]?.name || '',
-            depositAmount: parseFloat(String(result.booking.deposit_amount)),
-            totalAmount: parseFloat(String(result.booking.total_amount)),
-            bookingToken: result.booking.booking_token,
-        });
+        if (result.booking.status === 'fully_paid') {
+            await sendFullPaymentEmail({
+                email: result.booking.customer_email,
+                name: result.booking.customer_name || '',
+                courseName,
+                amountPaid: parseFloat(String(result.booking.amount_paid)),
+                discountAmount,
+                couponCode,
+            });
+        } else {
+            const batchResult = await query<{ name: string }>('SELECT name FROM zecurx_admin.course_batches WHERE id = $1', [result.booking.batch_id]);
+            await sendBookingConfirmationEmail({
+                email: result.booking.customer_email,
+                name: result.booking.customer_name || '',
+                courseName,
+                batchName: batchResult.rows[0]?.name || '',
+                depositAmount: parseFloat(String(result.booking.deposit_amount)),
+                totalAmount: parseFloat(String(result.booking.total_amount)),
+                discountAmount,
+                couponCode,
+                bookingToken: result.booking.booking_token,
+            });
+        }
 
         return NextResponse.json({
             success: true,
             bookingToken: result.booking.booking_token,
+            status: result.booking.status,
         });
     } catch (error) {
         console.error('Error verifying booking payment:', error);

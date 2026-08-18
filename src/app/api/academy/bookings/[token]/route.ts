@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-import { computeBookingBadge, CourseBooking } from '@/lib/course-bookings';
+import { computeBookingBadge, remainingBalance, CourseBooking } from '@/lib/course-bookings';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,10 +32,13 @@ export async function GET(
             batchStartDate: booking.batch_start_date,
             status: booking.status,
             badge: computeBookingBadge(booking),
+            paymentOption: booking.payment_option,
             depositAmount: parseFloat(String(booking.deposit_amount)),
             totalAmount: parseFloat(String(booking.total_amount)),
             amountPaid: parseFloat(String(booking.amount_paid)),
-            remainingBalance: Math.max(0, parseFloat(String(booking.total_amount)) - parseFloat(String(booking.amount_paid))),
+            discountAmount: parseFloat(String(booking.discount_amount)) || 0,
+            couponCode: booking.referral_code || booking.partner_referral_code || null,
+            remainingBalance: remainingBalance(booking),
             paymentDueAt: booking.payment_due_at,
             customerName: booking.customer_name,
             customerEmail: booking.customer_email,
