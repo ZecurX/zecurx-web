@@ -2,9 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { X, Loader2, CheckCircle2, Users, Calendar } from "lucide-react";
+import { X, Loader2, CheckCircle2, Users, Calendar, Ticket, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+interface RazorpayMethodConfig {
+    display?: {
+        blocks?: Record<string, { name: string; instruments: { method: string }[] }>;
+        sequence?: string[];
+        preferences?: { show_default_blocks?: boolean };
+    };
+}
 
 interface RazorpayOptions {
     key: string;
@@ -17,6 +25,7 @@ interface RazorpayOptions {
     prefill?: { name?: string; email?: string; contact?: string };
     theme?: { color?: string };
     modal?: { ondismiss?: () => void };
+    config?: RazorpayMethodConfig;
 }
 
 interface RazorpayResponse {
@@ -33,32 +42,57 @@ function getRazorpayConstructor(): new (options: RazorpayOptions) => RazorpayIns
     return (window as unknown as { Razorpay: new (options: RazorpayOptions) => RazorpayInstance }).Razorpay;
 }
 
+// Surfaces EMI as a payment method for lump-sum charges. Whether EMI actually appears still
+// depends on Razorpay having it enabled on the merchant account and the card issuer supporting it.
+const EMI_CHECKOUT_CONFIG: RazorpayMethodConfig = {
+    display: {
+        blocks: {
+            emi: { name: 'Pay via EMI', instruments: [{ method: 'emi' }] },
+            other: { name: 'Other Payment Methods', instruments: [{ method: 'card' }, { method: 'netbanking' }, { method: 'wallet' }, { method: 'upi' }] },
+        },
+        sequence: ['block.emi', 'block.other'],
+        preferences: { show_default_blocks: false },
+    },
+};
+
 interface Slot {
     id: string;
     name: string;
     startDate: string;
-    endDate: string | null;
-    capacity: number;
     seatsRemaining: number;
+}
+
+interface AppliedCoupon {
+    code: string;
+    discountAmount: number;
+    isPartnerReferral: boolean;
+    partnerName?: string;
 }
 
 interface BookSlotModalProps {
     courseId: string;
     courseTitle: string;
+    coursePrice: number;
     onClose: () => void;
 }
 
 const DEPOSIT_AMOUNT = 2000;
 
-export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSlotModalProps) {
+export default function BookSlotModal({ courseId, courseTitle, coursePrice, onClose }: BookSlotModalProps) {
     const [slots, setSlots] = useState<Slot[]>([]);
     const [loadingSlots, setLoadingSlots] = useState(true);
     const [selectedSlotId, setSelectedSlotId] = useState('');
+    const [paymentOption, setPaymentOption] = useState<'deposit' | 'full'>('deposit');
     const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const [bookingResult, setBookingResult] = useState<{ bookingToken: string; totalAmount: number } | null>(null);
+    const [bookingResult, setBookingResult] = useState<{ bookingToken: string; paymentOption: 'deposit' | 'full'; remaining: number } | null>(null);
+
+    const [couponInput, setCouponInput] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+    const [couponError, setCouponError] = useState('');
+    const [validatingCoupon, setValidatingCoupon] = useState(false);
 
     useEffect(() => {
         fetch(`/api/academy/courses/${courseId}/slots`)
@@ -80,6 +114,71 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
         document.body.appendChild(script);
     }, []);
 
+    const discountBaseAmount = paymentOption === 'full' ? coursePrice : coursePrice - DEPOSIT_AMOUNT;
+
+    // Re-validate against the new base amount if the payment option changes while a coupon is applied.
+    useEffect(() => {
+        if (appliedCoupon) {
+            validateCoupon(appliedCoupon.code);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [paymentOption]);
+
+    const validateCoupon = async (codeToValidate: string) => {
+        if (!codeToValidate.trim()) return;
+        setValidatingCoupon(true);
+        setCouponError('');
+
+        try {
+            const regularRes = await fetch('/api/referral-codes/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: codeToValidate.trim(), order_amount: discountBaseAmount }),
+            });
+            const regularData = await regularRes.json();
+
+            if (regularRes.status >= 500) {
+                setCouponError(regularData.error || 'Service temporarily unavailable. Please try again later.');
+                return;
+            }
+
+            if (regularData.valid) {
+                setAppliedCoupon({ code: regularData.code, discountAmount: regularData.discount_amount, isPartnerReferral: false });
+                setCouponInput('');
+                return;
+            }
+
+            const partnerRes = await fetch('/api/partner-referrals/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: codeToValidate.trim(), order_amount: discountBaseAmount, customer_email: formData.email || undefined }),
+            });
+            const partnerData = await partnerRes.json();
+
+            if (partnerRes.status >= 500) {
+                setCouponError(partnerData.error || 'Service temporarily unavailable. Please try again later.');
+                return;
+            }
+
+            if (partnerData.valid) {
+                setAppliedCoupon({
+                    code: partnerData.code,
+                    discountAmount: partnerData.discount_amount,
+                    isPartnerReferral: true,
+                    partnerName: partnerData.partner_name,
+                });
+                setCouponInput('');
+                return;
+            }
+
+            setCouponError(partnerData.error || regularData.error || 'Invalid code');
+        } catch {
+            setCouponError('Failed to validate code');
+        } finally {
+            setValidatingCoupon(false);
+        }
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
@@ -90,6 +189,11 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) &&
         formData.phone.trim().length >= 10;
 
+    const discountAmount = appliedCoupon?.discountAmount || 0;
+    const remainingAfterDeposit = Math.max(0, coursePrice - DEPOSIT_AMOUNT - discountAmount);
+    const fullCharge = Math.max(0, coursePrice - discountAmount);
+    const amountDueNow = paymentOption === 'deposit' ? DEPOSIT_AMOUNT : fullCharge;
+
     const handleBook = async () => {
         if (!isFormValid || !scriptLoaded || isSubmitting) return;
         setIsSubmitting(true);
@@ -99,7 +203,14 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
             const orderRes = await fetch('/api/academy/bookings/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ batchId: selectedSlotId, ...formData }),
+                body: JSON.stringify({
+                    batchId: selectedSlotId,
+                    ...formData,
+                    paymentOption,
+                    referralCode: appliedCoupon && !appliedCoupon.isPartnerReferral ? appliedCoupon.code : undefined,
+                    partnerReferralCode: appliedCoupon?.isPartnerReferral ? appliedCoupon.code : undefined,
+                    discountAmount: appliedCoupon?.discountAmount || 0,
+                }),
             });
             const orderData = await orderRes.json();
 
@@ -112,7 +223,7 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: 'ZecurX',
-                description: `Slot Booking - ${orderData.courseName}`,
+                description: `${paymentOption === 'full' ? 'Course Payment' : 'Slot Booking'} - ${orderData.courseName}`,
                 order_id: orderData.orderId,
                 handler: async (response: RazorpayResponse) => {
                     try {
@@ -126,7 +237,8 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                         if (verifyData.success) {
                             setBookingResult({
                                 bookingToken: verifyData.bookingToken,
-                                totalAmount: orderData.totalAmount,
+                                paymentOption,
+                                remaining: paymentOption === 'deposit' ? remainingAfterDeposit : 0,
                             });
                         } else {
                             setError(verifyData.error || 'Payment verification failed');
@@ -144,6 +256,7 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                 },
                 theme: { color: '#4c69e4' },
                 modal: { ondismiss: () => setIsSubmitting(false) },
+                ...(paymentOption === 'full' ? { config: EMI_CHECKOUT_CONFIG } : {}),
             };
 
             const RazorpayCtor = getRazorpayConstructor();
@@ -157,6 +270,7 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
 
     const formatDate = (dateStr: string) =>
         new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const formatMoney = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
     return (
         <>
@@ -175,7 +289,7 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                     <div className="flex items-start justify-between p-6 pb-2 shrink-0">
                         <div>
                             <h2 className="text-xl font-bold text-white">
-                                {bookingResult ? 'Slot Booked!' : 'Book Your Slot'}
+                                {bookingResult ? (bookingResult.paymentOption === 'full' ? 'Payment Complete!' : 'Slot Booked!') : 'Book Your Slot'}
                             </h2>
                             {!bookingResult && (
                                 <p className="text-sm text-slate-400 mt-1">{courseTitle}</p>
@@ -193,10 +307,16 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                                     <CheckCircle2 className="w-7 h-7" />
                                 </div>
                                 <div>
-                                    <p className="text-slate-300 text-sm leading-relaxed">
-                                        Your ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} deposit is confirmed and your seat is reserved.
-                                        We&apos;ve emailed you a link to pay the remaining ₹{(bookingResult.totalAmount - DEPOSIT_AMOUNT).toLocaleString('en-IN')} balance within 15 days.
-                                    </p>
+                                    {bookingResult.paymentOption === 'full' ? (
+                                        <p className="text-slate-300 text-sm leading-relaxed">
+                                            You&apos;ve paid in full and your seat is reserved. We&apos;ve emailed your confirmation and invoice.
+                                        </p>
+                                    ) : (
+                                        <p className="text-slate-300 text-sm leading-relaxed">
+                                            Your ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} deposit is confirmed and your seat is reserved.
+                                            We&apos;ve emailed you a link to pay the remaining {formatMoney(bookingResult.remaining)} balance within 15 days.
+                                        </p>
+                                    )}
                                 </div>
                                 <Link
                                     href={`/academy/booking/${bookingResult.bookingToken}`}
@@ -263,6 +383,94 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                                     </div>
                                 </div>
 
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                        Payment Option
+                                    </label>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentOption('deposit')}
+                                            className={`w-full text-left p-3 rounded-xl border transition-all ${
+                                                paymentOption === 'deposit'
+                                                    ? 'border-[#4c69e4] bg-[#4c69e4]/10'
+                                                    : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                            }`}
+                                        >
+                                            <p className="text-sm font-semibold text-white">Pay ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} Now, Rest in 15 Days</p>
+                                            <p className="text-xs text-slate-400 mt-1">
+                                                Then {formatMoney(remainingAfterDeposit)}{discountAmount > 0 && (
+                                                    <span className="text-slate-500 line-through ml-1">{formatMoney(coursePrice - DEPOSIT_AMOUNT)}</span>
+                                                )} within 15 days
+                                            </p>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setPaymentOption('full')}
+                                            className={`w-full text-left p-3 rounded-xl border transition-all ${
+                                                paymentOption === 'full'
+                                                    ? 'border-[#4c69e4] bg-[#4c69e4]/10'
+                                                    : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <p className="text-sm font-semibold text-white">Pay Full Amount Now</p>
+                                                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
+                                                    <CreditCard className="w-3 h-3" />
+                                                    EMI Available on Credit Cards
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-slate-400 mt-1">
+                                                {formatMoney(fullCharge)}{discountAmount > 0 && (
+                                                    <span className="text-slate-500 line-through ml-1">{formatMoney(coursePrice)}</span>
+                                                )}
+                                            </p>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                        Coupon Code
+                                    </label>
+                                    {appliedCoupon ? (
+                                        <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2.5">
+                                            <div className="flex items-center gap-2">
+                                                <Ticket className="w-4 h-4 text-emerald-400" />
+                                                <span className="text-sm font-medium text-emerald-400">{appliedCoupon.code}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-semibold text-emerald-400">-{formatMoney(appliedCoupon.discountAmount)}</span>
+                                                <button
+                                                    onClick={() => { setAppliedCoupon(null); setCouponError(''); }}
+                                                    className="p-1 hover:bg-emerald-500/20 rounded transition-colors"
+                                                >
+                                                    <X className="w-3.5 h-3.5 text-emerald-400" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-1.5">
+                                            <div className="flex gap-2">
+                                                <input
+                                                    value={couponInput}
+                                                    onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                                                    placeholder="Enter coupon code"
+                                                    className="flex-1 h-10 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm uppercase text-white placeholder:text-slate-500 placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                                                />
+                                                <button
+                                                    onClick={() => validateCoupon(couponInput)}
+                                                    disabled={!couponInput.trim() || validatingCoupon}
+                                                    className="px-4 h-10 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white rounded-lg transition-colors"
+                                                >
+                                                    {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                                                </button>
+                                            </div>
+                                            {couponError && <p className="text-xs text-red-400">{couponError}</p>}
+                                        </div>
+                                    )}
+                                </div>
+
                                 <div className="space-y-3">
                                     <input
                                         name="name"
@@ -299,11 +507,13 @@ export default function BookSlotModal({ courseId, courseTitle, onClose }: BookSl
                                     {isSubmitting ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
-                                        `Pay ₹${DEPOSIT_AMOUNT.toLocaleString('en-IN')} to Book Your Slot`
+                                        `Pay ${formatMoney(amountDueNow)} ${paymentOption === 'deposit' ? 'to Book Your Slot' : 'Now'}`
                                     )}
                                 </button>
                                 <p className="text-xs text-slate-500 text-center">
-                                    Secures your seat. The remaining course fee is payable within 15 days.
+                                    {paymentOption === 'deposit'
+                                        ? 'Secures your seat. The remaining course fee is payable within 15 days.'
+                                        : 'Full course fee, paid securely via Razorpay.'}
                                 </p>
                             </div>
                         )}

@@ -12,6 +12,10 @@ interface DBBatch {
     seats_booked: number;
 }
 
+// Deliberately shown lower than the true remaining count (never higher) to create urgency.
+// Tune this single constant if the business wants a different ratio.
+const SEAT_DISPLAY_FACTOR = 0.6;
+
 export async function GET(
     _request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -27,14 +31,19 @@ export async function GET(
             [id]
         );
 
-        const slots = result.rows.map((row) => ({
-            id: row.id,
-            name: row.name,
-            startDate: row.start_date,
-            endDate: row.end_date,
-            capacity: row.capacity,
-            seatsRemaining: Math.max(0, row.capacity - row.seats_booked),
-        }));
+        const slots = result.rows.map((row) => {
+            const actualRemaining = Math.max(0, row.capacity - row.seats_booked);
+            const displayRemaining = actualRemaining === 0
+                ? 0
+                : Math.max(1, Math.min(actualRemaining, Math.ceil(actualRemaining * SEAT_DISPLAY_FACTOR)));
+
+            return {
+                id: row.id,
+                name: row.name,
+                startDate: row.start_date,
+                seatsRemaining: displayRemaining,
+            };
+        });
 
         return NextResponse.json({ slots });
     } catch (error) {

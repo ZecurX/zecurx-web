@@ -516,6 +516,7 @@ export default function CourseDetailClient({
                 <BookSlotModal
                     courseId={course.id}
                     courseTitle={course.title}
+                    coursePrice={typeof course.price === 'number' ? course.price : 0}
                     onClose={() => setIsBookingOpen(false)}
                 />
             )}

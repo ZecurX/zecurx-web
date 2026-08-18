@@ -13,9 +13,12 @@ interface Booking {
     batchName: string;
     status: 'pending_deposit' | 'slot_booked' | 'fully_paid' | 'cancelled';
     badge: 'paid' | 'payment_due' | 'fully_paid' | null;
+    paymentOption: 'deposit' | 'full';
     depositAmount: number;
     totalAmount: number;
     amountPaid: number;
+    discountAmount: number;
+    couponCode: string | null;
     courseAccessEnabled: boolean;
     createdAt: string;
 }
@@ -143,7 +146,15 @@ export default function CourseBookingsPage() {
                                     </p>
                                     <p className="text-sm text-foreground mt-2 font-medium">
                                         {formatCurrency(booking.amountPaid)} / {formatCurrency(booking.totalAmount)} paid
+                                        <span className="text-xs text-muted-foreground font-normal ml-2">
+                                            ({booking.paymentOption === 'full' ? 'paid in full' : 'deposit + balance'})
+                                        </span>
                                     </p>
+                                    {booking.couponCode && (
+                                        <p className="text-xs text-emerald-600 mt-1">
+                                            Coupon {booking.couponCode} applied — {formatCurrency(booking.discountAmount)} off
+                                        </p>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center gap-3 shrink-0">

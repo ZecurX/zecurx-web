@@ -3,6 +3,7 @@ import validator from 'validator';
 import { getRazorpay, amountToPaise, CURRENCY } from '@/lib/razorpay';
 import { query } from '@/lib/db';
 import { checkPaymentRateLimit, getClientIp } from '@/lib/rate-limit';
+import { validateDiscount } from '@/lib/discount-validation';
 import { DEPOSIT_AMOUNT } from '@/lib/course-bookings';
 
 export async function POST(request: NextRequest) {
@@ -18,7 +19,13 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const { batchId, name, email, phone } = body;
+        const {
+            batchId, name, email, phone,
+            paymentOption: rawPaymentOption,
+            referralCode, partnerReferralCode,
+            discountAmount: clientDiscountAmount = 0,
+        } = body;
+        const paymentOption: 'deposit' | 'full' = rawPaymentOption === 'full' ? 'full' : 'deposit';
 
         if (!batchId || !name || !email || !phone) {
             return NextResponse.json(
@@ -68,21 +75,85 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'This batch is fully booked' }, { status: 409 });
         }
 
+        const planPrice = parseFloat(batch.price);
+
+        // Discount applies to the remaining balance in the deposit path (never the deposit
+        // itself), or to the full fee in the full-payment path.
+        const discountBaseAmount = paymentOption === 'full' ? planPrice : planPrice - DEPOSIT_AMOUNT;
+
+        let verifiedDiscount = 0;
+        let discountType: string | null = null;
+        let discountValue: number | null = null;
+        let isPartnerReferral = false;
+        let partnerReferralId: string | null = null;
+
+        if (clientDiscountAmount > 0 && (referralCode || partnerReferralCode)) {
+            const discountResult = await validateDiscount(
+                discountBaseAmount,
+                clientDiscountAmount,
+                referralCode || null,
+                partnerReferralCode || null
+            );
+
+            if (!discountResult.valid) {
+                return NextResponse.json(
+                    { error: discountResult.error || 'Invalid or expired coupon code' },
+                    { status: 400 }
+                );
+            }
+
+            verifiedDiscount = discountResult.verifiedDiscount;
+
+            if (referralCode) {
+                const codeRow = await query<{ discount_type: string; discount_value: string }>(
+                    `SELECT discount_type, discount_value FROM public.referral_codes WHERE code = $1`,
+                    [String(referralCode).toUpperCase().trim()]
+                );
+                if (codeRow.rows.length > 0) {
+                    discountType = codeRow.rows[0].discount_type;
+                    discountValue = parseFloat(codeRow.rows[0].discount_value);
+                }
+            } else if (partnerReferralCode) {
+                isPartnerReferral = true;
+                const codeRow = await query<{ id: string; user_discount_type: string; user_discount_value: string }>(
+                    `SELECT id, user_discount_type, user_discount_value FROM public.partner_referrals WHERE code = $1`,
+                    [String(partnerReferralCode).toUpperCase().trim()]
+                );
+                if (codeRow.rows.length > 0) {
+                    partnerReferralId = codeRow.rows[0].id;
+                    discountType = codeRow.rows[0].user_discount_type;
+                    discountValue = parseFloat(codeRow.rows[0].user_discount_value);
+                }
+            }
+        }
+
+        const chargeAmount = paymentOption === 'full'
+            ? Math.max(0, planPrice - verifiedDiscount)
+            : DEPOSIT_AMOUNT;
+
         const sanitizedName = validator.escape(String(name).trim()).substring(0, 255);
         const sanitizedEmail = validator.normalizeEmail(String(email)) || String(email);
         const sanitizedPhone = String(phone).replace(/[^0-9+\-\s()]/g, '').substring(0, 20);
 
         const order = await getRazorpay().orders.create({
-            amount: amountToPaise(DEPOSIT_AMOUNT),
+            amount: amountToPaise(chargeAmount),
             currency: CURRENCY,
             receipt: `booking_${Date.now().toString().slice(-8)}_${Math.random().toString(36).substring(2, 6)}`,
             notes: {
-                type: 'course_booking_deposit',
+                type: paymentOption === 'full' ? 'course_booking_full' : 'course_booking_deposit',
                 batchId: batch.id,
                 planId: batch.plan_id,
                 name: sanitizedName,
                 email: sanitizedEmail,
                 phone: sanitizedPhone,
+                paymentOption,
+                referralCode: referralCode || '',
+                partnerReferralCode: partnerReferralCode || '',
+                isPartnerReferral: isPartnerReferral ? 'true' : 'false',
+                partnerReferralId: partnerReferralId || '',
+                discountType: discountType || '',
+                discountValue: discountValue != null ? String(discountValue) : '',
+                discountAmount: String(verifiedDiscount),
             },
         });
 
@@ -92,8 +163,11 @@ export async function POST(request: NextRequest) {
             currency: order.currency,
             courseName: batch.plan_name,
             batchName: batch.name,
+            paymentOption,
             depositAmount: DEPOSIT_AMOUNT,
-            totalAmount: parseFloat(batch.price),
+            totalAmount: planPrice,
+            discountAmount: verifiedDiscount,
+            chargeAmount,
         });
     } catch (error) {
         console.error('Error creating booking order:', error);

@@ -6,6 +6,14 @@ import { CheckCircle2, AlertTriangle, Loader2, Calendar, CreditCard } from "luci
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 
+interface RazorpayMethodConfig {
+    display?: {
+        blocks?: Record<string, { name: string; instruments: { method: string }[] }>;
+        sequence?: string[];
+        preferences?: { show_default_blocks?: boolean };
+    };
+}
+
 interface RazorpayOptions {
     key: string;
     amount: number;
@@ -16,7 +24,21 @@ interface RazorpayOptions {
     handler: (response: RazorpayResponse) => void;
     theme?: { color?: string };
     modal?: { ondismiss?: () => void };
+    config?: RazorpayMethodConfig;
 }
+
+// Surfaces EMI as a payment method for this lump-sum charge. Whether EMI actually appears
+// still depends on Razorpay having it enabled on the merchant account and the card issuer.
+const EMI_CHECKOUT_CONFIG: RazorpayMethodConfig = {
+    display: {
+        blocks: {
+            emi: { name: 'Pay via EMI', instruments: [{ method: 'emi' }] },
+            other: { name: 'Other Payment Methods', instruments: [{ method: 'card' }, { method: 'netbanking' }, { method: 'wallet' }, { method: 'upi' }] },
+        },
+        sequence: ['block.emi', 'block.other'],
+        preferences: { show_default_blocks: false },
+    },
+};
 
 interface RazorpayResponse {
     razorpay_payment_id: string;
@@ -38,9 +60,12 @@ interface BookingDetails {
     batchStartDate: string;
     status: 'pending_deposit' | 'slot_booked' | 'fully_paid' | 'cancelled';
     badge: 'paid' | 'payment_due' | 'fully_paid' | null;
+    paymentOption: 'deposit' | 'full';
     depositAmount: number;
     totalAmount: number;
     amountPaid: number;
+    discountAmount: number;
+    couponCode: string | null;
     remainingBalance: number;
     paymentDueAt: string | null;
     customerName: string | null;
@@ -139,6 +164,7 @@ export default function BookingStatusPage() {
                 },
                 theme: { color: '#4c69e4' },
                 modal: { ondismiss: () => setIsPaying(false) },
+                config: EMI_CHECKOUT_CONFIG,
             };
 
             const RazorpayCtor = getRazorpayConstructor();
@@ -203,6 +229,14 @@ export default function BookingStatusPage() {
                                     <span className="text-slate-400">Amount Paid</span>
                                     <span className="font-medium text-emerald-400">{formatCurrency(booking.amountPaid)}</span>
                                 </div>
+                                {booking.discountAmount > 0 && (
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-slate-400">
+                                            Coupon {booking.couponCode ? <span className="text-emerald-400 font-medium">{booking.couponCode}</span> : ''} Applied
+                                        </span>
+                                        <span className="font-medium text-emerald-400">-{formatCurrency(booking.discountAmount)}</span>
+                                    </div>
+                                )}
                                 {booking.remainingBalance > 0 && (
                                     <div className="flex justify-between text-base font-semibold pt-2 border-t border-white/10">
                                         <span>Remaining Balance</span>
@@ -223,6 +257,12 @@ export default function BookingStatusPage() {
                                         </p>
                                     )}
                                     {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
+                                    <div className="flex justify-center mb-3">
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
+                                            <CreditCard className="w-3 h-3" />
+                                            EMI Available on Credit Cards
+                                        </span>
+                                    </div>
                                     <button
                                         onClick={handlePayBalance}
                                         disabled={isPaying || !scriptLoaded}
