@@ -93,6 +93,7 @@ export default function BookSlotModal({ courseId, courseTitle, coursePrice, onCl
     const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
     const [couponError, setCouponError] = useState('');
     const [validatingCoupon, setValidatingCoupon] = useState(false);
+    const [showCouponField, setShowCouponField] = useState(false);
 
     useEffect(() => {
         fetch(`/api/academy/courses/${courseId}/slots`)
@@ -429,47 +430,52 @@ export default function BookSlotModal({ courseId, courseTitle, coursePrice, onCl
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                        Coupon Code
-                                    </label>
-                                    {appliedCoupon ? (
-                                        <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2.5">
-                                            <div className="flex items-center gap-2">
-                                                <Ticket className="w-4 h-4 text-emerald-400" />
-                                                <span className="text-sm font-medium text-emerald-400">{appliedCoupon.code}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-semibold text-emerald-400">-{formatMoney(appliedCoupon.discountAmount)}</span>
-                                                <button
-                                                    onClick={() => { setAppliedCoupon(null); setCouponError(''); }}
-                                                    className="p-1 hover:bg-emerald-500/20 rounded transition-colors"
-                                                >
-                                                    <X className="w-3.5 h-3.5 text-emerald-400" />
-                                                </button>
-                                            </div>
+                                {appliedCoupon ? (
+                                    <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2.5">
+                                        <div className="flex items-center gap-2">
+                                            <Ticket className="w-4 h-4 text-emerald-400" />
+                                            <span className="text-sm font-medium text-emerald-400">{appliedCoupon.code}</span>
                                         </div>
-                                    ) : (
-                                        <div className="space-y-1.5">
-                                            <div className="flex gap-2">
-                                                <input
-                                                    value={couponInput}
-                                                    onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
-                                                    placeholder="Enter coupon code"
-                                                    className="flex-1 h-10 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm uppercase text-white placeholder:text-slate-500 placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
-                                                />
-                                                <button
-                                                    onClick={() => validateCoupon(couponInput)}
-                                                    disabled={!couponInput.trim() || validatingCoupon}
-                                                    className="px-4 h-10 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white rounded-lg transition-colors"
-                                                >
-                                                    {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
-                                                </button>
-                                            </div>
-                                            {couponError && <p className="text-xs text-red-400">{couponError}</p>}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-emerald-400">-{formatMoney(appliedCoupon.discountAmount)}</span>
+                                            <button
+                                                onClick={() => { setAppliedCoupon(null); setCouponError(''); }}
+                                                className="p-1 hover:bg-emerald-500/20 rounded transition-colors"
+                                            >
+                                                <X className="w-3.5 h-3.5 text-emerald-400" />
+                                            </button>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                ) : showCouponField ? (
+                                    <div className="space-y-1.5">
+                                        <div className="flex gap-2">
+                                            <input
+                                                autoFocus
+                                                value={couponInput}
+                                                onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                                                placeholder="Enter coupon code"
+                                                className="flex-1 h-10 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm uppercase text-white placeholder:text-slate-500 placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                                            />
+                                            <button
+                                                onClick={() => validateCoupon(couponInput)}
+                                                disabled={!couponInput.trim() || validatingCoupon}
+                                                className="px-4 h-10 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white rounded-lg transition-colors"
+                                            >
+                                                {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
+                                            </button>
+                                        </div>
+                                        {couponError && <p className="text-xs text-red-400">{couponError}</p>}
+                                    </div>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowCouponField(true)}
+                                        className="flex items-center gap-1.5 text-xs text-[#7b93f5] hover:text-[#9db0f9] transition-colors"
+                                    >
+                                        <Ticket className="w-3.5 h-3.5" />
+                                        Have a coupon code?
+                                    </button>
+                                )}
 
                                 <div className="space-y-3">
                                     <input
