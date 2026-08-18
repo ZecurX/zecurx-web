@@ -23,8 +23,10 @@ const pool = new Pool({
 });
 
 pool.on('connect', (client) => {
-    client.query('SET search_path TO zecurx_admin, seminar, public');
-    client.query('SET statement_timeout = 10000');
+    // Combined into one query so the two SET statements run sequentially over the simple
+    // query protocol, instead of firing concurrently on the same client (which pg deprecated).
+    client.query('SET search_path TO zecurx_admin, seminar, public; SET statement_timeout = 10000;')
+        .catch((err) => console.error('Failed to initialize new pool connection', err));
 });
 
 pool.on('error', (err) => {
