@@ -72,9 +72,9 @@ interface BookingDetails {
 }
 
 const BADGE_CONFIG: Record<string, { label: string; color: string }> = {
-    paid: { label: 'Paid', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    payment_due: { label: 'Payment Due', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
-    fully_paid: { label: 'Fully Paid', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    paid: { label: 'Paid', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+    payment_due: { label: 'Payment Due', color: 'bg-red-50 text-red-600 border-red-200' },
+    fully_paid: { label: 'Fully Paid', color: 'bg-blue-50 text-blue-700 border-blue-200' },
 };
 
 export default function BookingStatusPage() {
@@ -183,24 +183,24 @@ export default function BookingStatusPage() {
         new Date(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
     return (
-        <main className="min-h-screen bg-[#080b14] flex flex-col font-sans text-white">
+        <main className="min-h-screen bg-background flex flex-col font-sans text-foreground">
             <CreativeNavBar />
 
             <div className="flex-1 pt-32 pb-20 px-4 sm:px-6">
                 <div className="max-w-lg mx-auto">
                     {loading ? (
                         <div className="flex items-center justify-center py-24">
-                            <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                         </div>
                     ) : notFound ? (
                         <div className="text-center py-24">
-                            <h1 className="text-2xl font-bold mb-2">Booking Not Found</h1>
-                            <p className="text-slate-400">This booking link is invalid or has expired.</p>
+                            <h1 className="text-2xl font-manrope font-bold mb-2">Booking Not Found</h1>
+                            <p className="text-muted-foreground">This booking link is invalid or has expired.</p>
                         </div>
                     ) : booking ? (
-                        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8">
+                        <div className="bg-card border border-border rounded-2xl p-8">
                             <div className="flex items-center justify-between mb-6">
-                                <h1 className="text-2xl font-bold">Your Booking</h1>
+                                <h1 className="text-2xl font-manrope font-bold text-foreground">Your Booking</h1>
                                 {booking.badge && (
                                     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${BADGE_CONFIG[booking.badge].color}`}>
                                         {booking.badge === 'payment_due' ? <AlertTriangle className="w-3 h-3" /> : <CheckCircle2 className="w-3 h-3" />}
@@ -211,34 +211,34 @@ export default function BookingStatusPage() {
 
                             <div className="space-y-4 mb-6">
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase tracking-wider">Course</p>
-                                    <p className="text-lg font-semibold">{booking.courseName}</p>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Course</p>
+                                    <p className="text-lg font-semibold text-foreground">{booking.courseName}</p>
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-slate-300">
-                                    <Calendar className="w-4 h-4 text-slate-500" />
+                                <div className="flex items-center gap-2 text-sm text-foreground/90">
+                                    <Calendar className="w-4 h-4 text-muted-foreground" />
                                     {booking.batchName} — starts {formatDate(booking.batchStartDate)}
                                 </div>
                             </div>
 
-                            <div className="border-t border-white/10 pt-6 space-y-2 mb-6">
+                            <div className="border-t border-border pt-6 space-y-2 mb-6">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-400">Total Course Fee</span>
-                                    <span className="font-medium">{formatCurrency(booking.totalAmount)}</span>
+                                    <span className="text-muted-foreground">Total Course Fee</span>
+                                    <span className="font-medium text-foreground">{formatCurrency(booking.totalAmount)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-slate-400">Amount Paid</span>
-                                    <span className="font-medium text-emerald-400">{formatCurrency(booking.amountPaid)}</span>
+                                    <span className="text-muted-foreground">Amount Paid</span>
+                                    <span className="font-medium text-emerald-700">{formatCurrency(booking.amountPaid)}</span>
                                 </div>
                                 {booking.discountAmount > 0 && (
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-400">
-                                            Coupon {booking.couponCode ? <span className="text-emerald-400 font-medium">{booking.couponCode}</span> : ''} Applied
+                                        <span className="text-muted-foreground">
+                                            Coupon {booking.couponCode ? <span className="text-emerald-700 font-medium">{booking.couponCode}</span> : ''} Applied
                                         </span>
-                                        <span className="font-medium text-emerald-400">-{formatCurrency(booking.discountAmount)}</span>
+                                        <span className="font-medium text-emerald-700">-{formatCurrency(booking.discountAmount)}</span>
                                     </div>
                                 )}
                                 {booking.remainingBalance > 0 && (
-                                    <div className="flex justify-between text-base font-semibold pt-2 border-t border-white/10">
+                                    <div className="flex justify-between text-base font-semibold pt-2 border-t border-border text-foreground">
                                         <span>Remaining Balance</span>
                                         <span>{formatCurrency(booking.remainingBalance)}</span>
                                     </div>
@@ -246,19 +246,19 @@ export default function BookingStatusPage() {
                             </div>
 
                             {booking.status === 'fully_paid' ? (
-                                <p className="text-sm text-slate-300 bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                                <p className="text-sm text-foreground/90 bg-blue-50 border border-blue-200 rounded-lg p-4">
                                     You&apos;re all set! Our team will enable your course access shortly and reach out with onboarding details.
                                 </p>
                             ) : (
                                 <>
                                     {booking.badge === 'payment_due' && (
-                                        <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4">
+                                        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                                             Your payment is overdue. Please complete payment to retain your slot.
                                         </p>
                                     )}
-                                    {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
+                                    {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
                                     <div className="flex justify-center mb-3">
-                                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
                                             <CreditCard className="w-3 h-3" />
                                             EMI Available on Credit Cards
                                         </span>
@@ -266,7 +266,7 @@ export default function BookingStatusPage() {
                                     <button
                                         onClick={handlePayBalance}
                                         disabled={isPaying || !scriptLoaded}
-                                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm bg-[#4c69e4] text-white hover:bg-[#3b57d4] transition-all disabled:opacity-40"
+                                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white hover:bg-[#3b57d4] transition-all disabled:opacity-40"
                                     >
                                         {isPaying ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />

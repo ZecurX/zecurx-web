@@ -55,10 +55,10 @@ export default function BookPageClient({ courseId }: { courseId: string }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#080b14]">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 text-[#4c69e4] animate-spin" />
-                    <p className="text-slate-500 text-sm">Loading...</p>
+                    <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+                    <p className="text-muted-foreground text-sm">Loading...</p>
                 </div>
             </div>
         );
@@ -66,15 +66,15 @@ export default function BookPageClient({ courseId }: { courseId: string }) {
 
     if (error || !course) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#080b14]">
+            <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-4 text-center max-w-md">
                     <AlertCircle className="w-10 h-10 text-red-500" />
-                    <p className="text-slate-300 font-medium">
+                    <p className="text-foreground font-medium">
                         {error || "Course not found"}
                     </p>
                     <button
                         onClick={() => router.push("/academy")}
-                        className="text-sm text-[#4c69e4] hover:underline"
+                        className="text-sm text-blue-600 hover:underline"
                     >
                         Back to Academy
                     </button>
