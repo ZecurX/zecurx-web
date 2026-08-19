@@ -69,18 +69,23 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <div className="border-b border-border py-5">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between text-left"
+                className="w-full flex items-center justify-between text-left group"
             >
-                <span className="font-semibold text-foreground pr-4">{question}</span>
+                <span className="font-semibold text-foreground pr-4 transition-colors group-hover:text-blue-600">{question}</span>
                 <ChevronDown
-                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
                 />
             </button>
-            {open && (
-                <p className="text-muted-foreground text-sm leading-relaxed mt-3 max-w-2xl">
-                    {answer}
-                </p>
-            )}
+            <div
+                className="grid transition-all duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+            >
+                <div className="overflow-hidden">
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-3 pr-8 max-w-2xl">
+                        {answer}
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }
@@ -95,39 +100,39 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
 
             <div className="flex-1">
                 {/* ===== HERO ===== */}
-                <section className="pt-28 pb-12 md:pt-36 md:pb-16 px-4 sm:px-6 lg:px-8">
+                <section className="pt-28 pb-14 md:pt-36 md:pb-20 px-4 sm:px-6 lg:px-8">
                     <div className="max-w-[1200px] mx-auto">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
+                            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Back to Course
                         </button>
 
-                        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+                        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                             <div>
                                 <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
                                     Book Your Slot
                                 </span>
                                 <h1
-                                    className="mt-3 text-3xl sm:text-4xl md:text-5xl font-manrope font-bold text-foreground mb-5 leading-[1.1]"
-                                    style={{ letterSpacing: "-0.02em" }}
+                                    className="mt-3 text-3xl sm:text-4xl md:text-[2.75rem] font-manrope font-bold text-foreground mb-6 leading-[1.12]"
+                                    style={{ letterSpacing: "-0.025em" }}
                                 >
                                     Your seat in <span className="text-blue-600">{course.title}</span> is one step away
                                 </h1>
-                                <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-xl">
+                                <p className="text-lg text-muted-foreground leading-relaxed mb-9 max-w-xl">
                                     Reserve today, learn from mentors who&apos;ve actually done the job, and join a
                                     community of learners who look out for each other long after the course ends.
                                 </p>
 
-                                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                                <div className="flex flex-wrap gap-x-7 gap-y-3 text-sm text-foreground/80">
                                     {[
                                         { icon: ShieldCheck, label: "ISO Verified" },
                                         { icon: Laptop, label: "Live Cloud Labs" },
                                         { icon: Heart, label: "Mentor Support" },
                                     ].map((badge, i) => (
-                                        <span key={i} className="inline-flex items-center gap-1.5">
+                                        <span key={i} className="inline-flex items-center gap-2">
                                             <badge.icon className="w-4 h-4 text-blue-600" />
                                             {badge.label}
                                         </span>
@@ -135,7 +140,7 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                                 </div>
                             </div>
 
-                            <div className="rounded-2xl overflow-hidden border border-border">
+                            <div className="rounded-3xl overflow-hidden border border-border shadow-xl shadow-slate-900/[0.06]">
                                 <img
                                     src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=700&fit=crop&auto=format&q=80"
                                     alt="Students engaged in a hands-on cybersecurity class"
@@ -147,26 +152,26 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                 </section>
 
                 {/* ===== MAIN: content + booking form ===== */}
-                <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 border-t border-border">
-                    <div className="max-w-[1200px] mx-auto grid lg:grid-cols-5 gap-12">
+                <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-t border-border">
+                    <div className="max-w-[1200px] mx-auto grid lg:grid-cols-5 gap-12 lg:gap-16">
                         {/* LEFT: persuasive content */}
-                        <div className="lg:col-span-3 space-y-16">
+                        <div className="lg:col-span-3 space-y-20">
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-8">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-8" style={{ letterSpacing: "-0.015em" }}>
                                     What It&apos;s Actually Like to Learn Here
                                 </h2>
-                                <div className="grid sm:grid-cols-3 gap-4">
+                                <div className="grid sm:grid-cols-3 gap-5">
                                     {gallery.map((item, i) => (
-                                        <div key={i} className="rounded-2xl overflow-hidden border border-border group">
+                                        <div key={i} className="rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-lg hover:shadow-slate-900/[0.06] transition-shadow duration-300 group">
                                             <div className="aspect-[4/3] overflow-hidden">
                                                 <img
                                                     src={item.src}
                                                     alt={item.caption}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                     loading="lazy"
                                                 />
                                             </div>
-                                            <p className="text-xs text-muted-foreground leading-relaxed p-3">
+                                            <p className="text-xs text-muted-foreground leading-relaxed p-4">
                                                 {item.caption}
                                             </p>
                                         </div>
@@ -174,7 +179,7 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                                 </div>
                             </div>
 
-                            <div className="relative rounded-2xl overflow-hidden border border-border">
+                            <div className="relative rounded-2xl overflow-hidden border border-border shadow-lg shadow-slate-900/[0.06]">
                                 <img
                                     src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1100&h=500&fit=crop&auto=format&q=80"
                                     alt="Team celebrating together"
@@ -193,7 +198,7 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                             </div>
 
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-4">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-5" style={{ letterSpacing: "-0.015em" }}>
                                     Frequently Asked Questions
                                 </h2>
                                 <div>
@@ -206,9 +211,9 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
 
                         {/* RIGHT: booking form */}
                         <div className="lg:col-span-2">
-                            <div className="lg:sticky lg:top-28 bg-card border border-border rounded-2xl p-6 shadow-sm">
+                            <div className="lg:sticky lg:top-28 bg-card border border-border rounded-2xl p-7 shadow-xl shadow-slate-900/[0.05]">
                                 <h3 className="text-lg font-manrope font-bold text-foreground mb-1">Book Your Slot</h3>
-                                <p className="text-sm text-muted-foreground mb-5">{course.title}</p>
+                                <p className="text-sm text-muted-foreground mb-6">{course.title}</p>
                                 <BookingForm courseId={course.id} courseTitle={course.title} coursePrice={coursePrice} />
                             </div>
                         </div>

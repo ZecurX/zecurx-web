@@ -69,28 +69,28 @@ export default function AcademyClient({
         <section className="relative overflow-hidden">
           <DotPattern width={18} height={18} cr={1.1} randomOpacity className="text-slate-400" />
 
-          <div className="max-w-[1320px] mx-auto w-full relative z-10 px-4 sm:px-6 lg:px-8 pt-16 pb-16 md:pt-20 md:pb-20">
+          <div className="max-w-[1320px] mx-auto w-full relative z-10 px-4 sm:px-6 lg:px-8 pt-20 pb-20 md:pt-28 md:pb-28">
             <BlurFade delay={0.1} inView direction="up">
               <h1
-                className="text-4xl sm:text-5xl md:text-6xl font-manrope font-bold text-foreground leading-[1.1] max-w-2xl"
-                style={{ letterSpacing: "-0.02em" }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-manrope font-bold text-foreground leading-[1.08] max-w-3xl"
+                style={{ letterSpacing: "-0.025em" }}
               >
                 Become a <span className="text-blue-600">cybersecurity</span> professional
               </h1>
             </BlurFade>
 
             <BlurFade delay={0.2} inView direction="up">
-              <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-xl">
+              <p className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
                 Master offensive and defensive security with ISO-verified certifications.
                 Train on live targets in dedicated cloud labs, under expert mentorship.
               </p>
             </BlurFade>
 
             <BlurFade delay={0.3} inView direction="up">
-              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
+              <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-start gap-4">
                 <a href="#courses" className="group/cta pb-[5px] inline-block">
                   <button
-                    className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-7 sm:px-8 py-4 sm:py-3.5 text-base sm:text-sm font-semibold cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
+                    className="relative w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-4 sm:py-3.5 text-base sm:text-sm font-semibold cursor-pointer border border-transparent shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta:translate-y-[-5px] group-hover/cta:shadow-[0px_5px_0px_0px_#92c4fd] group-active/cta:translate-y-[-3px] group-active/cta:shadow-[0px_3px_0px_0px_#92c4fd] transition-transform duration-200"
                     style={{ transitionTimingFunction: "cubic-bezier(0.32, 0.72, 0, 1)" }}
                   >
                     Explore Programs
@@ -98,7 +98,7 @@ export default function AcademyClient({
                   </button>
                 </a>
                 <Link href="/contact" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto border border-border bg-background text-foreground rounded-full px-7 sm:px-8 py-4 sm:py-3.5 text-base sm:text-sm font-medium cursor-pointer transition-colors duration-200 hover:border-slate-300">
+                  <button className="w-full sm:w-auto border border-border bg-background text-foreground rounded-full px-8 py-4 sm:py-3.5 text-base sm:text-sm font-medium cursor-pointer transition-all duration-200 hover:border-slate-300 hover:shadow-sm">
                     Talk to Advisor
                   </button>
                 </Link>
@@ -107,13 +107,15 @@ export default function AcademyClient({
 
             {/* Value props — plain row, no card chrome */}
             <BlurFade delay={0.4} inView direction="up">
-              <div className="mt-14 pt-8 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6">
+              <div className="mt-16 pt-9 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-8">
                 {valueProps.map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <item.icon className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div key={i} className="flex items-start gap-3.5">
+                    <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 shrink-0">
+                      <item.icon className="w-4 h-4 text-blue-600" />
+                    </span>
                     <div>
                       <div className="text-sm font-semibold text-foreground">{item.title}</div>
-                      <div className="text-xs text-muted-foreground leading-relaxed mt-0.5">{item.desc}</div>
+                      <div className="text-[13px] text-muted-foreground leading-relaxed mt-0.5">{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -123,13 +125,13 @@ export default function AcademyClient({
         </section>
 
         {/* ===== COURSES ===== */}
-        <section id="courses" className="py-20 md:py-24 px-4 sm:px-6 lg:px-8 border-t border-border">
+        <section id="courses" className="py-24 md:py-28 px-4 sm:px-6 lg:px-8 border-t border-border">
           <div className="max-w-[1320px] mx-auto">
-            <BlurFade inView className="mb-12 md:mb-14 max-w-2xl">
+            <BlurFade inView className="mb-14 md:mb-16 max-w-2xl">
               <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
                 Our Programs
               </span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-manrope font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>
+              <h2 className="mt-3 text-3xl md:text-[2.75rem] font-manrope font-bold text-foreground leading-tight" style={{ letterSpacing: "-0.025em" }}>
                 Choose your certification path
               </h2>
               <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
@@ -137,7 +139,7 @@ export default function AcademyClient({
               </p>
             </BlurFade>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
               {initialCourses.map((course, i) => {
                 const enriched = { ...course, unsplashId: course.unsplashId || getCourseById(course.id)?.unsplashId };
                 return <CourseCard key={course.id} {...enriched} delay={i * 0.06} />;
@@ -147,13 +149,13 @@ export default function AcademyClient({
         </section>
 
         {/* ===== WHY ZECURX ===== */}
-        <section className="py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#eef4ff] border-t border-border">
+        <section className="py-24 md:py-28 px-4 sm:px-6 lg:px-8 bg-[#f4f8ff] border-t border-border">
           <div className="max-w-[1320px] mx-auto">
-            <BlurFade inView className="mb-12 md:mb-14 max-w-2xl">
+            <BlurFade inView className="mb-14 md:mb-16 max-w-2xl">
               <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
                 Why ZecurX
               </span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-manrope font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>
+              <h2 className="mt-3 text-3xl md:text-[2.75rem] font-manrope font-bold text-foreground leading-tight" style={{ letterSpacing: "-0.025em" }}>
                 What sets us apart
               </h2>
               <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
@@ -161,7 +163,7 @@ export default function AcademyClient({
               </p>
             </BlurFade>
 
-            <div className="grid md:grid-cols-3 gap-8 md:gap-10">
+            <div className="grid md:grid-cols-3 gap-x-10 gap-y-12 md:divide-x md:divide-border/70">
               {differentiators.map((item, i) => (
                 <motion.div
                   key={i}
@@ -169,10 +171,13 @@ export default function AcademyClient({
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
+                  className={i > 0 ? "md:pl-10" : ""}
                 >
-                  <item.icon className="w-6 h-6 text-blue-600 mb-4" />
-                  <h3 className="text-lg font-manrope font-bold text-foreground mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <span className="flex items-center justify-center w-11 h-11 rounded-xl bg-white border border-border shadow-sm mb-5">
+                    <item.icon className="w-[18px] h-[18px] text-blue-600" />
+                  </span>
+                  <h3 className="text-lg font-manrope font-bold text-foreground mb-2.5" style={{ letterSpacing: "-0.01em" }}>{item.title}</h3>
+                  <p className="text-[15px] text-muted-foreground leading-relaxed">{item.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -180,16 +185,16 @@ export default function AcademyClient({
         </section>
 
         {/* ===== CTA ===== */}
-        <section className="py-20 md:py-24 px-4 sm:px-6 lg:px-8 border-t border-border">
+        <section className="py-24 md:py-28 px-4 sm:px-6 lg:px-8 border-t border-border">
           <div className="max-w-[1320px] mx-auto text-center">
             <BlurFade inView>
-              <h2 className="text-3xl md:text-4xl font-manrope font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>
-                Ready to level up your team?
+              <h2 className="text-3xl md:text-[2.75rem] font-manrope font-bold text-foreground leading-tight" style={{ letterSpacing: "-0.025em" }}>
+                Ready to level up your <span className="font-newsreader italic font-normal text-blue-600">team?</span>
               </h2>
-              <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
+              <p className="mt-5 text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed">
                 Custom corporate training programs with bulk pricing, dedicated support, and flexible scheduling.
               </p>
-              <div className="mt-8 flex flex-wrap gap-4 justify-center">
+              <div className="mt-10 flex flex-wrap gap-4 justify-center">
                 <Link href="/contact" className="group/cta2 pb-[5px] inline-block">
                   <button
                     className="relative inline-flex items-center justify-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-3.5 text-sm font-semibold cursor-pointer shadow-[0px_0px_0px_0px_#92c4fd] group-hover/cta2:translate-y-[-5px] group-hover/cta2:shadow-[0px_5px_0px_0px_#92c4fd] transition-transform duration-200"
@@ -201,7 +206,7 @@ export default function AcademyClient({
                 </Link>
                 <a
                   href="#courses"
-                  className="inline-flex items-center gap-2 border border-border bg-background text-foreground rounded-full px-8 py-3.5 text-sm font-medium hover:border-slate-300 transition-colors"
+                  className="inline-flex items-center gap-2 border border-border bg-background text-foreground rounded-full px-8 py-3.5 text-sm font-medium hover:border-slate-300 hover:shadow-sm transition-all"
                 >
                   Browse Programs
                 </a>

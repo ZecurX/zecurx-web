@@ -292,12 +292,12 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
     }
 
     return (
-        <div className="space-y-5">
-            <div className="space-y-2">
+        <div className="space-y-6">
+            <div className="space-y-2.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Choose a Batch
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     {slots.map((slot) => {
                         const isFull = slot.seatsRemaining <= 0;
                         const isSelected = selectedSlotId === slot.id;
@@ -307,22 +307,27 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                                 type="button"
                                 disabled={isFull}
                                 onClick={() => setSelectedSlotId(slot.id)}
-                                className={`w-full text-left p-3 rounded-xl border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                                className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                                     isSelected
-                                        ? 'border-[#4c69e4] bg-[#4c69e4]/5'
+                                        ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
                                         : 'border-border bg-background hover:border-slate-300'
                                 }`}
                             >
-                                <p className="text-sm font-semibold text-foreground">{slot.name}</p>
-                                <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                        <Calendar className="w-3 h-3" />
-                                        {formatDate(slot.startDate)}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Users className="w-3 h-3" />
-                                        {isFull ? 'Full' : `${slot.seatsRemaining} seats left`}
-                                    </span>
+                                <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${isSelected ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                                    {isSelected && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                                </span>
+                                <div>
+                                    <p className="text-sm font-semibold text-foreground">{slot.name}</p>
+                                    <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
+                                        <span className="flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" />
+                                            {formatDate(slot.startDate)}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <Users className="w-3 h-3" />
+                                            {isFull ? 'Full' : `${slot.seatsRemaining} seats left`}
+                                        </span>
+                                    </div>
                                 </div>
                             </button>
                         );
@@ -330,48 +335,58 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                 </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Payment Option
                 </label>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-2.5">
                     <button
                         type="button"
                         onClick={() => setPaymentOption('deposit')}
-                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                        className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all ${
                             paymentOption === 'deposit'
-                                ? 'border-[#4c69e4] bg-[#4c69e4]/5'
+                                ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
                                 : 'border-border bg-background hover:border-slate-300'
                         }`}
                     >
-                        <p className="text-sm font-semibold text-foreground">Pay ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} Now, Rest in 15 Days</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Then {formatMoney(remainingAfterDeposit)}{discountAmount > 0 && (
-                                <span className="line-through ml-1">{formatMoney(coursePrice - DEPOSIT_AMOUNT)}</span>
-                            )} within 15 days
-                        </p>
+                        <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${paymentOption === 'deposit' ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                            {paymentOption === 'deposit' && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                        </span>
+                        <div>
+                            <p className="text-sm font-semibold text-foreground">Pay ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} Now, Rest in 15 Days</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Then {formatMoney(remainingAfterDeposit)}{discountAmount > 0 && (
+                                    <span className="line-through ml-1">{formatMoney(coursePrice - DEPOSIT_AMOUNT)}</span>
+                                )} within 15 days
+                            </p>
+                        </div>
                     </button>
                     <button
                         type="button"
                         onClick={() => setPaymentOption('full')}
-                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                        className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all ${
                             paymentOption === 'full'
-                                ? 'border-[#4c69e4] bg-[#4c69e4]/5'
+                                ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
                                 : 'border-border bg-background hover:border-slate-300'
                         }`}
                     >
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-foreground">Pay Full Amount Now</p>
-                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700">
-                                <CreditCard className="w-3 h-3" />
-                                EMI Available
-                            </span>
+                        <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${paymentOption === 'full' ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                            {paymentOption === 'full' && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                        </span>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="text-sm font-semibold text-foreground">Pay Full Amount Now</p>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 shrink-0">
+                                    <CreditCard className="w-3 h-3" />
+                                    EMI Available
+                                </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                {formatMoney(fullCharge)}{discountAmount > 0 && (
+                                    <span className="line-through ml-1">{formatMoney(coursePrice)}</span>
+                                )}
+                            </p>
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {formatMoney(fullCharge)}{discountAmount > 0 && (
-                                <span className="line-through ml-1">{formatMoney(coursePrice)}</span>
-                            )}
-                        </p>
                     </button>
                 </div>
             </div>
@@ -454,7 +469,7 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
             <button
                 onClick={handleBook}
                 disabled={!isFormValid || isSubmitting || !scriptLoaded}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white hover:bg-[#3b57d4] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white shadow-md shadow-[#4c69e4]/20 hover:bg-[#3b57d4] hover:shadow-lg hover:shadow-[#4c69e4]/25 hover:-translate-y-px transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none"
             >
                 {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

@@ -198,7 +198,7 @@ export default function BookingStatusPage() {
                             <p className="text-muted-foreground">This booking link is invalid or has expired.</p>
                         </div>
                     ) : booking ? (
-                        <div className="bg-card border border-border rounded-2xl p-8">
+                        <div className="bg-card border border-border rounded-2xl p-8 shadow-xl shadow-slate-900/[0.06]">
                             <div className="flex items-center justify-between mb-6">
                                 <h1 className="text-2xl font-manrope font-bold text-foreground">Your Booking</h1>
                                 {booking.badge && (
@@ -266,7 +266,7 @@ export default function BookingStatusPage() {
                                     <button
                                         onClick={handlePayBalance}
                                         disabled={isPaying || !scriptLoaded}
-                                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white hover:bg-[#3b57d4] transition-all disabled:opacity-40"
+                                        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white shadow-md shadow-[#4c69e4]/20 hover:bg-[#3b57d4] hover:shadow-lg hover:shadow-[#4c69e4]/25 hover:-translate-y-px transition-all disabled:opacity-40 disabled:hover:translate-y-0 disabled:shadow-none"
                                     >
                                         {isPaying ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />

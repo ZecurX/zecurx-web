@@ -50,18 +50,23 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <div className="border-b border-border py-5">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between text-left"
+                className="w-full flex items-center justify-between text-left group"
             >
-                <span className="font-semibold text-foreground pr-4">{question}</span>
+                <span className="font-semibold text-foreground pr-4 transition-colors group-hover:text-blue-600">{question}</span>
                 <ChevronDown
-                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
                 />
             </button>
-            {open && (
-                <p className="text-muted-foreground text-sm leading-relaxed mt-3 max-w-2xl">
-                    {answer}
-                </p>
-            )}
+            <div
+                className="grid transition-all duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+            >
+                <div className="overflow-hidden">
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-3 pr-8 max-w-2xl">
+                        {answer}
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }
@@ -133,7 +138,7 @@ export default function CourseDetailClient({
         : null;
 
     const EnrollCTA = ({ full = false }: { full?: boolean }) => {
-        const base = "inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold transition-colors";
+        const base = "inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold transition-all duration-200 shadow-md shadow-[#4c69e4]/15 hover:shadow-lg hover:shadow-[#4c69e4]/25 hover:-translate-y-px";
         if (course.pricingType === "institutional") {
             return (
                 <Link href="/contact" className={`${base} bg-[#4c69e4] text-white hover:bg-[#3b57d4] ${full ? "w-full" : ""}`}>
@@ -159,7 +164,7 @@ export default function CourseDetailClient({
             );
         }
         return (
-            <span className={`${base} bg-muted text-muted-foreground cursor-not-allowed border border-border ${full ? "w-full" : ""}`}>
+            <span className={`inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold bg-muted text-muted-foreground cursor-not-allowed border border-border ${full ? "w-full" : ""}`}>
                 Coming Soon
             </span>
         );
@@ -171,36 +176,36 @@ export default function CourseDetailClient({
 
             <div className="flex-1">
                 {/* ===== HERO ===== */}
-                <section className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 md:pt-20">
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 md:pt-24">
                     <button
                         onClick={() => router.back()}
-                        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
+                        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back to Academy
                     </button>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                         <BlurFade inView direction="up">
                             <h1
-                                className="text-3xl sm:text-4xl md:text-5xl font-manrope font-bold text-foreground leading-[1.1] mb-5"
-                                style={{ letterSpacing: "-0.02em" }}
+                                className="text-4xl sm:text-5xl md:text-[3.25rem] font-manrope font-bold text-foreground leading-[1.08] mb-6"
+                                style={{ letterSpacing: "-0.025em" }}
                             >
                                 {course.title}
                             </h1>
-                            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-6">
+                            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8">
                                 {course.description}
                             </p>
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                                <span className="inline-flex items-center gap-1.5">
+                            <div className="flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-foreground/80">
+                                <span className="inline-flex items-center gap-2">
                                     <BarChart3 className="w-4 h-4 text-blue-600" />
                                     {course.level}
                                 </span>
-                                <span className="inline-flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-2">
                                     <Clock className="w-4 h-4 text-blue-600" />
                                     {course.duration}
                                 </span>
-                                <span className="inline-flex items-center gap-1.5">
+                                <span className="inline-flex items-center gap-2">
                                     <Award className="w-4 h-4 text-blue-600" />
                                     ISO Verified Certification
                                 </span>
@@ -208,7 +213,7 @@ export default function CourseDetailClient({
                         </BlurFade>
 
                         <BlurFade delay={0.15} inView direction="up">
-                            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-border bg-muted">
+                            <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-border bg-muted shadow-xl shadow-slate-900/[0.06]">
                                 {heroImage && (
                                     <img
                                         src={heroImage}
@@ -222,7 +227,7 @@ export default function CourseDetailClient({
                 </section>
 
                 {/* ===== STICKY ACTION BAR ===== */}
-                <section className="sticky top-20 z-30 bg-background/95 backdrop-blur-md border-y border-border">
+                <section className="sticky top-20 z-30 bg-background/90 backdrop-blur-md border-y border-border shadow-[0_1px_12px_rgba(15,23,42,0.04)]">
                     <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-baseline gap-3">
                             <span className="text-2xl font-manrope font-bold text-foreground">
@@ -243,7 +248,7 @@ export default function CourseDetailClient({
                             {course.brochureLink && (
                                 <button
                                     onClick={() => setIsBrochureOpen(true)}
-                                    className="inline-flex items-center gap-2 border border-border text-foreground rounded-full px-6 py-3 text-sm font-semibold hover:border-slate-300 transition-colors"
+                                    className="inline-flex items-center gap-2 border border-border text-foreground rounded-full px-6 py-3 text-sm font-semibold hover:border-slate-300 hover:bg-muted/50 transition-colors"
                                 >
                                     <Download className="w-4 h-4" />
                                     Brochure
@@ -255,13 +260,13 @@ export default function CourseDetailClient({
                 </section>
 
                 {/* ===== CONTENT BODY ===== */}
-                <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+                <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-14 lg:gap-20">
                         {/* LEFT COLUMN - Main content */}
-                        <div className="lg:col-span-2 space-y-16">
+                        <div className="lg:col-span-2 space-y-20">
                             {/* Overview */}
                             <section>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-6">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-7" style={{ letterSpacing: "-0.015em" }}>
                                     Course Overview
                                 </h2>
                                 <div className="text-muted-foreground leading-relaxed space-y-4">
@@ -283,14 +288,14 @@ export default function CourseDetailClient({
 
                             {/* What You'll Learn */}
                             <section>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-8">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-9" style={{ letterSpacing: "-0.015em" }}>
                                     What You&apos;ll Learn
                                 </h2>
-                                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+                                <div className="grid sm:grid-cols-2 gap-x-10 gap-y-5">
                                     {course.features.map((feature, idx) => (
                                         <div key={idx} className="flex items-start gap-3">
-                                            <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                                            <span className="text-sm text-foreground/90 leading-relaxed">
+                                            <CheckCircle2 className="w-[18px] h-[18px] text-blue-600 shrink-0 mt-0.5" />
+                                            <span className="text-[15px] text-foreground/90 leading-relaxed">
                                                 {feature}
                                             </span>
                                         </div>
@@ -300,13 +305,15 @@ export default function CourseDetailClient({
 
                             {/* Who Is This For */}
                             <section>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-8">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-9" style={{ letterSpacing: "-0.015em" }}>
                                     Who Is This Course For?
                                 </h2>
-                                <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="grid sm:grid-cols-2 gap-x-10 gap-y-7">
                                     {audience.map((item, i) => (
-                                        <div key={i} className="flex gap-3">
-                                            <item.icon className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+                                        <div key={i} className="flex gap-3.5">
+                                            <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 shrink-0">
+                                                <item.icon className="w-4 h-4 text-blue-600" />
+                                            </span>
                                             <div>
                                                 <h4 className="font-semibold text-foreground mb-1">{item.title}</h4>
                                                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -318,17 +325,17 @@ export default function CourseDetailClient({
 
                             {/* Career Opportunities */}
                             <section>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-6">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-6" style={{ letterSpacing: "-0.015em" }}>
                                     Career Opportunities
                                 </h2>
-                                <p className="text-muted-foreground mb-6 leading-relaxed max-w-2xl">
+                                <p className="text-muted-foreground mb-7 leading-relaxed max-w-2xl">
                                     Graduates of this program are well-positioned for roles across the cybersecurity spectrum.
                                     Our alumni work at leading organizations including Fortune 500 companies, government agencies,
                                     and top cybersecurity consultancies.
                                 </p>
-                                <div className="grid sm:grid-cols-2 gap-3">
+                                <div className="grid sm:grid-cols-2 gap-3.5">
                                     {careerRoles.map((role, i) => (
-                                        <div key={i} className="flex items-center gap-2 text-sm text-foreground/90">
+                                        <div key={i} className="flex items-center gap-2.5 text-sm text-foreground/90">
                                             <Briefcase className="w-4 h-4 text-blue-600 shrink-0" />
                                             {role}
                                         </div>
@@ -338,7 +345,7 @@ export default function CourseDetailClient({
 
                             {/* FAQ */}
                             <section>
-                                <h2 className="text-2xl md:text-3xl font-manrope font-bold text-foreground mb-4">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-5" style={{ letterSpacing: "-0.015em" }}>
                                     Frequently Asked Questions
                                 </h2>
                                 <div>
@@ -353,7 +360,7 @@ export default function CourseDetailClient({
                         <div className="lg:col-span-1">
                             <div className="sticky top-[150px] space-y-6">
                                 {/* Quick Info */}
-                                <div className="rounded-2xl border border-border bg-muted p-6">
+                                <div className="rounded-2xl border border-border bg-muted/60 p-7">
                                     <h3 className="text-base font-manrope font-bold text-foreground mb-5">Course Details</h3>
                                     <div className="space-y-4">
                                         {[
@@ -378,19 +385,19 @@ export default function CourseDetailClient({
                                 </div>
 
                                 {/* Enroll Card */}
-                                <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+                                <div className="rounded-2xl border border-border bg-card p-7 shadow-xl shadow-slate-900/[0.05]">
                                     <h3 className="text-base font-manrope font-bold text-foreground mb-2">Ready to advance your career?</h3>
                                     <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
                                         Join {course.students || 0}+ professionals who have grown their careers with this program.
                                     </p>
-                                    <ul className="space-y-2 mb-5">
+                                    <ul className="space-y-2.5 mb-6">
                                         {[
                                             "ISO Verified Certification",
                                             "Hands-on Cloud Lab Access",
                                             "Industry Expert Mentorship",
                                             "Placement Assistance",
                                         ].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-2 text-sm text-foreground/90">
+                                            <li key={i} className="flex items-center gap-2.5 text-sm text-foreground/90">
                                                 <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                                 {item}
                                             </li>
