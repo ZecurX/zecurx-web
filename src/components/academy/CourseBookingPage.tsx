@@ -4,15 +4,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
     ArrowLeft,
-    Users,
-    Award,
-    Globe,
-    GraduationCap,
     ShieldCheck,
     Laptop,
     Heart,
     ChevronDown,
-    ChevronUp,
 } from "lucide-react";
 import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
@@ -29,13 +24,6 @@ interface CourseBookingPageProps {
         level: string;
     };
 }
-
-const stats = [
-    { icon: Users, value: "2,500+", label: "Trained" },
-    { icon: Award, value: "8", label: "Certifications" },
-    { icon: Globe, value: "15+", label: "Countries" },
-    { icon: GraduationCap, value: "94%", label: "Placement" },
-];
 
 const gallery = [
     {
@@ -78,23 +66,26 @@ const faqs = [
 function FAQItem({ question, answer }: { question: string; answer: string }) {
     const [open, setOpen] = useState(false);
     return (
-        <div className="border border-white/[0.06] rounded-xl overflow-hidden bg-white/[0.02]">
+        <div className="border-b border-border py-5">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.04] transition-colors"
+                className="w-full flex items-center justify-between text-left group"
             >
-                <span className="font-semibold text-white pr-4">{question}</span>
-                {open ? (
-                    <ChevronUp className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-500 shrink-0" />
-                )}
+                <span className="font-semibold text-foreground pr-4 transition-colors group-hover:text-blue-600">{question}</span>
+                <ChevronDown
+                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                />
             </button>
-            {open && (
-                <div className="px-5 pb-5">
-                    <p className="text-slate-400 text-sm leading-relaxed">{answer}</p>
+            <div
+                className="grid transition-all duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+            >
+                <div className="overflow-hidden">
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-3 pr-8 max-w-2xl">
+                        {answer}
+                    </p>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
@@ -104,105 +95,83 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
     const coursePrice = typeof course.price === "number" ? course.price : 0;
 
     return (
-        <main className="min-h-screen bg-[#080b14] flex flex-col font-sans text-white">
+        <main className="min-h-screen bg-background flex flex-col font-sans text-foreground">
             <CreativeNavBar />
 
             <div className="flex-1">
                 {/* ===== HERO ===== */}
-                <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 px-6 overflow-hidden">
-                    <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#4c69e4]/15 blur-[150px] rounded-full pointer-events-none" />
-
-                    <div className="max-w-[1200px] mx-auto relative z-10">
+                <section className="pt-28 pb-14 md:pt-36 md:pb-20 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-[1200px] mx-auto">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors mb-8"
+                            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Back to Course
                         </button>
 
-                        <div className="grid lg:grid-cols-2 gap-12 items-center">
+                        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                             <div>
-                                <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-widest text-[#4c69e4] bg-[#4c69e4]/10 rounded-full mb-5 border border-[#4c69e4]/20">
+                                <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
                                     Book Your Slot
                                 </span>
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-5 leading-[1.1] tracking-tight">
-                                    Your seat in{" "}
-                                    <span className="bg-gradient-to-r from-[#4c69e4] via-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                                        {course.title}
-                                    </span>{" "}
-                                    is one step away
+                                <h1
+                                    className="mt-3 text-3xl sm:text-4xl md:text-[2.75rem] font-manrope font-bold text-foreground mb-6 leading-[1.12]"
+                                    style={{ letterSpacing: "-0.025em" }}
+                                >
+                                    Your seat in <span className="text-blue-600">{course.title}</span> is one step away
                                 </h1>
-                                <p className="text-lg text-slate-400 leading-relaxed mb-8 max-w-xl">
+                                <p className="text-lg text-muted-foreground leading-relaxed mb-9 max-w-xl">
                                     Reserve today, learn from mentors who&apos;ve actually done the job, and join a
                                     community of learners who look out for each other long after the course ends.
                                 </p>
 
-                                <div className="flex flex-wrap gap-3">
+                                <div className="flex flex-wrap gap-x-7 gap-y-3 text-sm text-foreground/80">
                                     {[
                                         { icon: ShieldCheck, label: "ISO Verified" },
                                         { icon: Laptop, label: "Live Cloud Labs" },
                                         { icon: Heart, label: "Mentor Support" },
                                     ].map((badge, i) => (
-                                        <span
-                                            key={i}
-                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/5 border border-white/10 rounded-full"
-                                        >
-                                            <badge.icon className="w-3.5 h-3.5 text-[#4c69e4]" />
+                                        <span key={i} className="inline-flex items-center gap-2">
+                                            <badge.icon className="w-4 h-4 text-blue-600" />
                                             {badge.label}
                                         </span>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                            <div className="rounded-3xl overflow-hidden border border-border shadow-xl shadow-slate-900/[0.06]">
                                 <img
                                     src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&h=700&fit=crop&auto=format&q=80"
                                     alt="Students engaged in a hands-on cybersecurity class"
                                     className="w-full h-full object-cover aspect-[9/7]"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#080b14]/60 via-transparent to-transparent" />
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {/* ===== STATS ===== */}
-                <section className="py-10 px-6 border-y border-white/[0.06] bg-[#0d1020]">
-                    <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-                        {stats.map((stat, i) => (
-                            <div key={i} className="text-center">
-                                <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-extrabold text-white">
-                                    <stat.icon className="w-5 h-5 text-[#4c69e4]" />
-                                    {stat.value}
-                                </div>
-                                <div className="text-xs text-slate-500 uppercase tracking-wider mt-1">{stat.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
                 {/* ===== MAIN: content + booking form ===== */}
-                <section className="py-16 md:py-24 px-6">
-                    <div className="max-w-[1200px] mx-auto grid lg:grid-cols-5 gap-12">
+                <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 border-t border-border">
+                    <div className="max-w-[1200px] mx-auto grid lg:grid-cols-5 gap-12 lg:gap-16">
                         {/* LEFT: persuasive content */}
-                        <div className="lg:col-span-3 space-y-16">
+                        <div className="lg:col-span-3 space-y-20">
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-8" style={{ letterSpacing: "-0.015em" }}>
                                     What It&apos;s Actually Like to Learn Here
                                 </h2>
-                                <div className="grid sm:grid-cols-3 gap-4">
+                                <div className="grid sm:grid-cols-3 gap-5">
                                     {gallery.map((item, i) => (
-                                        <div key={i} className="rounded-2xl overflow-hidden border border-white/[0.06] group">
+                                        <div key={i} className="rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-lg hover:shadow-slate-900/[0.06] transition-shadow duration-300 group">
                                             <div className="aspect-[4/3] overflow-hidden">
                                                 <img
                                                     src={item.src}
                                                     alt={item.caption}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                     loading="lazy"
                                                 />
                                             </div>
-                                            <p className="text-xs text-slate-400 leading-relaxed p-3 bg-white/[0.02]">
+                                            <p className="text-xs text-muted-foreground leading-relaxed p-4">
                                                 {item.caption}
                                             </p>
                                         </div>
@@ -210,18 +179,18 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                                 </div>
                             </div>
 
-                            <div className="relative rounded-3xl overflow-hidden border border-white/10">
+                            <div className="relative rounded-2xl overflow-hidden border border-border shadow-lg shadow-slate-900/[0.06]">
                                 <img
                                     src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1100&h=500&fit=crop&auto=format&q=80"
                                     alt="Team celebrating together"
                                     className="w-full h-64 md:h-80 object-cover"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#080b14] via-[#080b14]/40 to-transparent flex items-end p-8">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex items-end p-8">
                                     <div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                                        <h3 className="text-xl md:text-2xl font-manrope font-bold text-white mb-2">
                                             Join a community that has your back
                                         </h3>
-                                        <p className="text-sm text-slate-300 max-w-md">
+                                        <p className="text-sm text-white/85 max-w-md">
                                             Alumni network, dedicated Slack channels, and mentors who stay reachable long after graduation day.
                                         </p>
                                     </div>
@@ -229,10 +198,10 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
                             </div>
 
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-5" style={{ letterSpacing: "-0.015em" }}>
                                     Frequently Asked Questions
                                 </h2>
-                                <div className="space-y-3">
+                                <div>
                                     {faqs.map((faq, i) => (
                                         <FAQItem key={i} {...faq} />
                                     ))}
@@ -242,9 +211,9 @@ export default function CourseBookingPage({ course }: CourseBookingPageProps) {
 
                         {/* RIGHT: booking form */}
                         <div className="lg:col-span-2">
-                            <div className="lg:sticky lg:top-28 bg-white/[0.03] border border-white/10 rounded-2xl p-6 shadow-2xl">
-                                <h3 className="text-lg font-bold text-white mb-1">Book Your Slot</h3>
-                                <p className="text-sm text-slate-400 mb-5">{course.title}</p>
+                            <div className="lg:sticky lg:top-28 bg-card border border-border rounded-2xl p-7 shadow-xl shadow-slate-900/[0.05]">
+                                <h3 className="text-lg font-manrope font-bold text-foreground mb-1">Book Your Slot</h3>
+                                <p className="text-sm text-muted-foreground mb-6">{course.title}</p>
                                 <BookingForm courseId={course.id} courseTitle={course.title} coursePrice={coursePrice} />
                             </div>
                         </div>

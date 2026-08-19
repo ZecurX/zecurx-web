@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import Link from 'next/link';
-import { Eye, Clock, BarChart3, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, Clock, BarChart3, Star } from 'lucide-react';
 
 interface CourseCardProps {
     id: string;
@@ -23,13 +23,6 @@ interface CourseCardProps {
     unsplashId?: string;
 }
 
-const LEVEL_ACCENT: Record<string, string> = {
-    Beginner: 'bg-emerald-500',
-    Intermediate: 'bg-blue-500',
-    Advanced: 'bg-purple-500',
-    Expert: 'bg-rose-500',
-};
-
 export default function CourseCard({
     id,
     title,
@@ -43,109 +36,83 @@ export default function CourseCard({
     pricingType,
 }: CourseCardProps) {
     const imageUrl = unsplashId
-        ? `https://images.unsplash.com/${unsplashId}?w=600&h=340&fit=crop&auto=format&q=80`
+        ? `https://images.unsplash.com/${unsplashId}?w=700&h=440&fit=crop&auto=format&q=80`
         : null;
     const isInstitutionOnly = pricingType === 'institutional';
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay }}
             viewport={{ once: true }}
-            className="group relative flex flex-col h-full bg-[#111827] rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.12] transition-all duration-500 hover:-translate-y-1"
+            className="group flex flex-col h-full bg-card rounded-2xl border border-border overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/[0.06] hover:-translate-y-1 hover:border-transparent"
         >
-            {/* Institutions only banner */}
             {isInstitutionOnly && (
-                <div className="relative z-10 flex items-center justify-center gap-1.5 py-1.5 bg-gradient-to-r from-[#4c69e4] to-indigo-500 text-white text-[11px] font-bold uppercase tracking-widest">
+                <div className="py-1.5 bg-muted text-center text-foreground/80 text-[11px] font-semibold uppercase tracking-wide border-b border-border">
                     Institutions Only
                 </div>
             )}
 
-            {/* Subtle glow on hover */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                    boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.05), 0 0 40px 0 rgba(76,105,228,0.08)',
-                }}
-            />
-
-            {/* Image area */}
-            <div className="relative w-full h-52 overflow-hidden">
-                {imageUrl ? (
-                    <>
-                        <img
-                            src={imageUrl}
-                            alt={title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/40 to-transparent" />
-                    </>
-                ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900" />
-                )}
-
-                {/* Overlay gradient at bottom for text readability */}
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#111827] to-transparent" />
-
-                {/* Level + duration row */}
-                <div className="absolute top-4 inset-x-4 flex items-center justify-between">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest rounded-md ${LEVEL_ACCENT[level] || 'bg-slate-500'} text-white shadow-lg`}>
-                        <BarChart3 className="w-3 h-3" />
-                        {level}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-semibold text-white/90 bg-black/30 backdrop-blur-sm rounded-md">
-                        <Clock className="w-3 h-3" />
-                        {duration}
-                    </span>
-                </div>
-
-                {/* Popular tag */}
-                {popular && (
-                    <div className="absolute bottom-6 left-4">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-gradient-to-r from-amber-400 to-orange-400 text-amber-950 rounded-full shadow-lg shadow-amber-500/20">
-                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            Most Popular
-                        </span>
-                    </div>
+            {/* Image */}
+            <div className="relative w-full h-48 overflow-hidden bg-muted">
+                {imageUrl && (
+                    <img
+                        src={imageUrl}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                        loading="lazy"
+                    />
                 )}
             </div>
 
             {/* Content */}
-            <div className="flex flex-col flex-1 p-6 pt-5">
-                {/* Title */}
-                <h3 className="text-xl font-bold text-white mb-3 leading-snug group-hover:text-[#7b93f5] transition-colors duration-300">
+            <div className="flex flex-col flex-1 p-7">
+                {/* Meta row */}
+                <div className="flex items-center justify-between mb-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                        <BarChart3 className="w-3.5 h-3.5 text-blue-600/70" />
+                        {level}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-blue-600/70" />
+                        {duration}
+                    </span>
+                </div>
+
+                {popular && (
+                    <span className="inline-flex items-center gap-1 mb-2.5 text-xs font-semibold text-blue-600">
+                        <Star className="w-3 h-3 fill-blue-600" />
+                        Most Popular
+                    </span>
+                )}
+
+                <h3 className="font-manrope font-bold text-xl text-foreground leading-snug mb-2.5" style={{ letterSpacing: "-0.01em" }}>
                     {title}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-5 line-clamp-2 font-light">
+                <p className="text-[15px] text-muted-foreground leading-relaxed mb-5 line-clamp-2">
                     {description}
                 </p>
 
-                {/* Features */}
-                <ul className="space-y-2.5 mb-6 flex-1">
-                    {features.slice(0, 3).map((feature, idx) => (
-                        <li key={idx} className="text-[13px] text-slate-300 flex items-start gap-2.5">
-                            <span className="w-1 h-1 rounded-full bg-[#4c69e4] shrink-0 mt-2" />
-                            <span className="leading-relaxed">{feature}</span>
-                        </li>
-                    ))}
-                </ul>
+                {features.length > 0 && (
+                    <ul className="space-y-2 mb-7 flex-1">
+                        {features.slice(0, 2).map((feature, idx) => (
+                            <li key={idx} className="text-[13.5px] text-foreground/80 flex items-start gap-2.5">
+                                <span className="w-1 h-1 rounded-full bg-blue-600 shrink-0 mt-[7px]" />
+                                <span className="leading-relaxed">{feature}</span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-                {/* View Details Button */}
                 <Link
                     href={`/academy/${id}`}
-                    className="relative flex items-center justify-between w-full py-3 px-5 text-sm font-semibold text-white rounded-xl overflow-hidden group/btn transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+                    className="mt-auto flex items-center justify-between pt-5 border-t border-border"
                 >
-                    {/* Button background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#60a5fa] via-[#3b82f6] to-[#0f172a] opacity-90 group-hover/btn:opacity-100 transition-opacity" />
-                    {/* Shine effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
-
-                    <span className="relative z-10 flex items-center gap-2">
-                        <Eye className="w-4 h-4" />
-                        View Details
+                    <span className="text-sm font-semibold text-foreground">View Program</span>
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-muted text-foreground transition-all duration-300 group-hover:bg-[#4c69e4] group-hover:text-white group-hover:shadow-md group-hover:shadow-[#4c69e4]/25">
+                        <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-45" />
                     </span>
-                    <ChevronRight className="relative z-10 w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
                 </Link>
             </div>
         </motion.div>

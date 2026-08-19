@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "motion/react";
 import {
     ArrowLeft,
     Clock,
@@ -14,7 +13,6 @@ import {
     Globe,
     Star,
     ChevronDown,
-    ChevronUp,
     Target,
     Laptop,
     MessageCircle,
@@ -26,6 +24,7 @@ import CreativeNavBar from "@/components/landing/CreativeNavBar";
 import Footer from "@/components/landing/Footer";
 import TrustedPartners from "@/components/landing/TrustedPartners";
 import BrochureModal from "@/components/academy/BrochureModal";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 interface CourseDetailData {
     id: string;
@@ -45,33 +44,29 @@ interface CourseDetailData {
     unsplashId?: string;
 }
 
-const LEVEL_GRADIENT: Record<string, string> = {
-    Beginner: "from-emerald-600 to-teal-700",
-    Intermediate: "from-blue-600 to-indigo-700",
-    Advanced: "from-cyan-600 to-blue-800",
-    Expert: "from-indigo-700 to-slate-900",
-};
-
 function FAQItem({ question, answer }: { question: string; answer: string }) {
     const [open, setOpen] = useState(false);
     return (
-        <div className="border border-white/[0.06] rounded-xl overflow-hidden bg-white/[0.02]">
+        <div className="border-b border-border py-5">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full flex items-center justify-between p-5 text-left hover:bg-white/[0.04] transition-colors"
+                className="w-full flex items-center justify-between text-left group"
             >
-                <span className="font-semibold text-white pr-4">{question}</span>
-                {open ? (
-                    <ChevronUp className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                ) : (
-                    <ChevronDown className="w-5 h-5 text-slate-500 shrink-0" />
-                )}
+                <span className="font-semibold text-foreground pr-4 transition-colors group-hover:text-blue-600">{question}</span>
+                <ChevronDown
+                    className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                />
             </button>
-            {open && (
-                <div className="px-5 pb-5">
-                    <p className="text-slate-400 text-sm leading-relaxed">{answer}</p>
+            <div
+                className="grid transition-all duration-300 ease-out"
+                style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+            >
+                <div className="overflow-hidden">
+                    <p className="text-muted-foreground text-sm leading-relaxed mt-3 pr-8 max-w-2xl">
+                        {answer}
+                    </p>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
@@ -93,6 +88,24 @@ const faqs = [
         question: "Is there placement assistance?",
         answer: "Yes. We provide resume workshops, mock interviews, and direct referrals to our hiring partners. Our placement rate is 94% across all programs.",
     },
+];
+
+const careerRoles = [
+    "Security Analyst",
+    "Penetration Tester",
+    "Security Engineer",
+    "Incident Responder",
+    "Security Consultant",
+    "SOC Analyst",
+    "Vulnerability Researcher",
+    "Cloud Security Engineer",
+];
+
+const audience = [
+    { icon: Target, title: "Aspiring Security Professionals", desc: "Individuals looking to break into cybersecurity with a structured, industry-recognized certification." },
+    { icon: Laptop, title: "IT Professionals", desc: "System administrators, network engineers, and developers wanting to add security expertise to their skillset." },
+    { icon: Briefcase, title: "Career Switchers", desc: "Professionals from other fields seeking to transition into the high-demand cybersecurity industry." },
+    { icon: Star, title: "Students & Graduates", desc: "Recent graduates and college students wanting to stand out with practical, verifiable security credentials." },
 ];
 
 export default function CourseDetailClient({
@@ -121,76 +134,113 @@ export default function CourseDetailClient({
     };
 
     const heroImage = course.unsplashId
-        ? `https://images.unsplash.com/${course.unsplashId}?w=1400&h=500&fit=crop&auto=format&q=85`
+        ? `https://images.unsplash.com/${course.unsplashId}?w=900&h=700&fit=crop&auto=format&q=85`
         : null;
 
+    const EnrollCTA = ({ full = false }: { full?: boolean }) => {
+        const base = "inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold transition-all duration-200 shadow-md shadow-[#4c69e4]/15 hover:shadow-lg hover:shadow-[#4c69e4]/25 hover:-translate-y-px";
+        if (course.pricingType === "institutional") {
+            return (
+                <Link href="/contact" className={`${base} bg-[#4c69e4] text-white hover:bg-[#3b57d4] ${full ? "w-full" : ""}`}>
+                    <Calendar className="w-4 h-4" />
+                    Book Your Slot
+                </Link>
+            );
+        }
+        if (course.pricingType === "contact") {
+            return (
+                <Link href="/contact" className={`${base} bg-[#4c69e4] text-white hover:bg-[#3b57d4] ${full ? "w-full" : ""}`}>
+                    <Calendar className="w-4 h-4" />
+                    Contact for Pricing
+                </Link>
+            );
+        }
+        if (course.inStock) {
+            return (
+                <Link href={`/academy/${course.id}/book`} className={`${base} bg-[#4c69e4] text-white hover:bg-[#3b57d4] ${full ? "w-full" : ""}`}>
+                    <Calendar className="w-4 h-4" />
+                    Enroll Now
+                </Link>
+            );
+        }
+        return (
+            <span className={`inline-flex items-center justify-center gap-2 rounded-full px-8 py-3 text-sm font-semibold bg-muted text-muted-foreground cursor-not-allowed border border-border ${full ? "w-full" : ""}`}>
+                Coming Soon
+            </span>
+        );
+    };
+
     return (
-        <main className="min-h-screen bg-[#080b14] flex flex-col font-sans text-white">
+        <main className="min-h-screen bg-background flex flex-col font-sans text-foreground">
             <CreativeNavBar expanded={!scrolled} />
 
             <div className="flex-1">
-                {/* ===== HERO BANNER ===== */}
-                <section className="relative">
-                    {/* Hero image background */}
-                    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
-                        {/* Subtle top fade for text readability */}
-                        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/30 to-transparent z-10 pointer-events-none" />
-                        {heroImage ? (
-                            <>
-                                <img
-                                    src={heroImage}
-                                    alt={course.title}
-                                    className="w-full h-full object-cover"
-                                />
-                                <div className={`absolute inset-0 bg-gradient-to-r ${LEVEL_GRADIENT[course.level] || "from-slate-700 to-slate-800"} opacity-75`} />
-                            </>
-                        ) : (
-                            <div className={`w-full h-full bg-gradient-to-r ${LEVEL_GRADIENT[course.level] || "from-slate-700 to-slate-800"}`} />
-                        )}
+                {/* ===== HERO ===== */}
+                <section className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-14 md:pt-24">
+                    <button
+                        onClick={() => router.back()}
+                        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Academy
+                    </button>
 
-                        {/* Overlay content */}
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="max-w-[1320px] mx-auto px-6 w-full">
-                                <div className="max-w-2xl">
-                                    {/* Back link */}
-                                    <button
-                                        onClick={() => router.back()}
-                                        className="inline-flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors mb-6"
-                                    >
-                                        <ArrowLeft className="w-4 h-4" />
-                                        Back to Academy
-                                    </button>
-
-                                    {/* Badges */}
-                                    <div className="flex flex-wrap items-center gap-3 mb-5" />
-
-                                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight tracking-tight">
-                                        {course.title}
-                                    </h1>
-                                    <p className="text-lg text-white/80 leading-relaxed max-w-xl">
-                                        {course.description}
-                                    </p>
-                                </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+                        <BlurFade inView direction="up">
+                            <h1
+                                className="text-4xl sm:text-5xl md:text-[3.25rem] font-manrope font-bold text-foreground leading-[1.08] mb-6"
+                                style={{ letterSpacing: "-0.025em" }}
+                            >
+                                {course.title}
+                            </h1>
+                            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8">
+                                {course.description}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-x-7 gap-y-3 text-sm text-foreground/80">
+                                <span className="inline-flex items-center gap-2">
+                                    <BarChart3 className="w-4 h-4 text-blue-600" />
+                                    {course.level}
+                                </span>
+                                <span className="inline-flex items-center gap-2">
+                                    <Clock className="w-4 h-4 text-blue-600" />
+                                    {course.duration}
+                                </span>
+                                <span className="inline-flex items-center gap-2">
+                                    <Award className="w-4 h-4 text-blue-600" />
+                                    ISO Verified Certification
+                                </span>
                             </div>
-                        </div>
+                        </BlurFade>
+
+                        <BlurFade delay={0.15} inView direction="up">
+                            <div className="w-full aspect-[4/3] rounded-3xl overflow-hidden border border-border bg-muted shadow-xl shadow-slate-900/[0.06]">
+                                {heroImage && (
+                                    <img
+                                        src={heroImage}
+                                        alt={course.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                )}
+                            </div>
+                        </BlurFade>
                     </div>
                 </section>
 
                 {/* ===== STICKY ACTION BAR ===== */}
-                <section className="sticky top-20 z-30 bg-[#0d1020]/95 backdrop-blur-md border-b border-white/[0.06] shadow-lg">
-                    <div className="max-w-[1320px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                <section className="sticky top-20 z-30 bg-background/90 backdrop-blur-md border-y border-border shadow-[0_1px_12px_rgba(15,23,42,0.04)]">
+                    <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-baseline gap-3">
-                            <span className="text-2xl font-extrabold text-white">
+                            <span className="text-2xl font-manrope font-bold text-foreground">
                                 {formatPrice(course.price)}
                             </span>
                             {course.originalPrice && (
-                                <span className="text-base text-slate-500 line-through">
+                                <span className="text-base text-muted-foreground line-through">
                                     {formatPrice(course.originalPrice)}
                                 </span>
                             )}
                             {course.originalPrice && typeof course.price === "number" && typeof course.originalPrice === "number" && (
-                                <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
-                                    {Math.round((1 - course.price / course.originalPrice) * 100)}% OFF
+                                <span className="text-xs font-semibold text-blue-600">
+                                    {Math.round((1 - course.price / course.originalPrice) * 100)}% off
                                 </span>
                             )}
                         </div>
@@ -198,300 +248,163 @@ export default function CourseDetailClient({
                             {course.brochureLink && (
                                 <button
                                     onClick={() => setIsBrochureOpen(true)}
-                                    className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-white/10 hover:border-white/20 transition-all"
+                                    className="inline-flex items-center gap-2 border border-border text-foreground rounded-full px-6 py-3 text-sm font-semibold hover:border-slate-300 hover:bg-muted/50 transition-colors"
                                 >
                                     <Download className="w-4 h-4" />
-                                    Download Brochure
+                                    Brochure
                                 </button>
                             )}
-                            {course.pricingType === "institutional" ? (
-                                <Link
-                                    href="/contact"
-                                    className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-2.5 text-sm font-semibold hover:bg-[#3b57d4] transition-all hover:shadow-lg hover:shadow-[#4c69e4]/25"
-                                >
-                                    <Calendar className="w-4 h-4" />
-                                    Book Your Slot
-                                </Link>
-                            ) : course.pricingType === "contact" ? (
-                                <Link
-                                    href="/contact"
-                                    className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-2.5 text-sm font-semibold hover:bg-[#3b57d4] transition-all"
-                                >
-                                    <Calendar className="w-4 h-4" />
-                                    Contact for Pricing
-                                </Link>
-                            ) : course.inStock ? (
-                                <Link
-                                    href={`/academy/${course.id}/book`}
-                                    className="inline-flex items-center gap-2 bg-[#4c69e4] text-white rounded-full px-8 py-2.5 text-sm font-semibold hover:bg-[#3b57d4] transition-all hover:shadow-lg hover:shadow-[#4c69e4]/25"
-                                >
-                                    <Calendar className="w-4 h-4" />
-                                    Book Your Slot
-                                </Link>
-                            ) : (
-                                <span className="inline-flex items-center gap-2 bg-white/5 text-slate-500 rounded-full px-8 py-2.5 text-sm font-semibold cursor-not-allowed border border-white/[0.06]">
-                                    Coming Soon
-                                </span>
-                            )}
+                            <EnrollCTA />
                         </div>
                     </div>
                 </section>
 
                 {/* ===== CONTENT BODY ===== */}
-                <div className="max-w-[1320px] mx-auto px-6 py-12 md:py-20">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+                <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-14 lg:gap-20">
                         {/* LEFT COLUMN - Main content */}
-                        <div className="lg:col-span-2 space-y-16">
+                        <div className="lg:col-span-2 space-y-20">
                             {/* Overview */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-6">
+                            <section>
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-7" style={{ letterSpacing: "-0.015em" }}>
                                     Course Overview
                                 </h2>
-                                <div className="text-slate-300 leading-relaxed space-y-4">
-                                    <p className="text-lg text-slate-200">
+                                <div className="text-muted-foreground leading-relaxed space-y-4">
+                                    <p className="text-lg text-foreground/90">
                                         {course.description}
                                     </p>
                                     <p>
-                                        This comprehensive program is designed to equip you with the practical skills and theoretical 
-                                        knowledge needed to excel in today&apos;s rapidly evolving cybersecurity landscape. Through a blend 
-                                        of instructor-led sessions, hands-on lab exercises, and real-world case studies, you&apos;ll gain 
-                                        deep expertise that directly translates to workplace readiness.
+                                        This program is designed to equip you with the practical skills and theoretical
+                                        knowledge needed to excel in today&apos;s rapidly evolving cybersecurity landscape. Through a blend
+                                        of instructor-led sessions, hands-on lab exercises, and real-world case studies, you&apos;ll gain
+                                        expertise that directly translates to workplace readiness.
                                     </p>
                                     <p>
-                                        Our curriculum is continuously updated to reflect the latest threat vectors, attack methodologies, 
-                                        and defense strategies. You&apos;ll learn from active industry practitioners who bring current, 
-                                        battlefield-tested knowledge to every session.
-                                    </p>
-                                    <p>
-                                        By the end of this course, you&apos;ll have built a portfolio of practical projects, earned an 
-                                        ISO-verified certification, and developed the confidence to tackle real-world security challenges. 
-                                        Whether you&apos;re starting your cybersecurity journey or advancing to the next level, this program 
-                                        provides the foundation for long-term career growth.
+                                        By the end of this course, you&apos;ll have built a portfolio of practical projects, earned an
+                                        ISO-verified certification, and developed the confidence to tackle real-world security challenges.
                                     </p>
                                 </div>
-                            </motion.section>
+                            </section>
 
                             {/* What You'll Learn */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                            <section>
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-9" style={{ letterSpacing: "-0.015em" }}>
                                     What You&apos;ll Learn
                                 </h2>
-                                <div className="grid sm:grid-cols-2 gap-4">
+                                <div className="grid sm:grid-cols-2 gap-x-10 gap-y-5">
                                     {course.features.map((feature, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="group flex items-center gap-4 p-5 bg-white/[0.03] rounded-xl border border-white/[0.06] hover:border-[#4c69e4]/30 hover:bg-white/[0.05] transition-all duration-300"
-                                        >
-                                            <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-[#4c69e4]/20 to-indigo-500/20 border border-[#4c69e4]/20 flex items-center justify-center text-xs font-bold text-[#4c69e4] group-hover:bg-[#4c69e4] group-hover:text-white group-hover:border-[#4c69e4] transition-all">
-                                                {String(idx + 1).padStart(2, "0")}
-                                            </span>
-                                            <span className="text-slate-300 text-sm leading-relaxed group-hover:text-white transition-colors">
+                                        <div key={idx} className="flex items-start gap-3">
+                                            <CheckCircle2 className="w-[18px] h-[18px] text-blue-600 shrink-0 mt-0.5" />
+                                            <span className="text-[15px] text-foreground/90 leading-relaxed">
                                                 {feature}
                                             </span>
                                         </div>
                                     ))}
                                 </div>
-                            </motion.section>
+                            </section>
 
                             {/* Who Is This For */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                            <section>
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-9" style={{ letterSpacing: "-0.015em" }}>
                                     Who Is This Course For?
                                 </h2>
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    {[
-                                        { icon: Target, title: "Aspiring Security Professionals", desc: "Individuals looking to break into cybersecurity with a structured, industry-recognized certification." },
-                                        { icon: Laptop, title: "IT Professionals", desc: "System administrators, network engineers, and developers wanting to add security expertise to their skillset." },
-                                        { icon: Briefcase, title: "Career Switchers", desc: "Professionals from other fields seeking to transition into the high-demand cybersecurity industry." },
-                                        { icon: Star, title: "Students & Graduates", desc: "Recent graduates and college students wanting to stand out with practical, verifiable security credentials." },
-                                    ].map((item, i) => (
-                                        <div key={i} className="flex gap-4 p-5 bg-white/[0.03] rounded-xl border border-white/[0.06] hover:border-white/[0.1] transition-colors">
-                                            <div className="w-10 h-10 rounded-xl bg-[#4c69e4]/10 flex items-center justify-center shrink-0">
-                                                <item.icon className="w-5 h-5 text-[#4c69e4]" />
-                                            </div>
+                                <div className="grid sm:grid-cols-2 gap-x-10 gap-y-7">
+                                    {audience.map((item, i) => (
+                                        <div key={i} className="flex gap-3.5">
+                                            <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-50 shrink-0">
+                                                <item.icon className="w-4 h-4 text-blue-600" />
+                                            </span>
                                             <div>
-                                                <h4 className="font-bold text-white mb-1">{item.title}</h4>
-                                                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                                                <h4 className="font-semibold text-foreground mb-1">{item.title}</h4>
+                                                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </motion.section>
+                            </section>
 
                             {/* Career Opportunities */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                            <section>
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-6" style={{ letterSpacing: "-0.015em" }}>
                                     Career Opportunities
                                 </h2>
-                                <div className="bg-white/[0.03] rounded-2xl border border-white/[0.06] p-8">
-                                    <p className="text-slate-400 mb-6 leading-relaxed">
-                                        Graduates of this program are well-positioned for roles across the cybersecurity spectrum. 
-                                        Our alumni work at leading organizations including Fortune 500 companies, government agencies, 
-                                        and top cybersecurity consultancies.
-                                    </p>
-                                    <div className="grid sm:grid-cols-2 gap-3">
-                                        {[
-                                            "Security Analyst",
-                                            "Penetration Tester",
-                                            "Security Engineer",
-                                            "Incident Responder",
-                                            "Security Consultant",
-                                            "SOC Analyst",
-                                            "Vulnerability Researcher",
-                                            "Cloud Security Engineer",
-                                        ].map((role, i) => (
-                                            <div key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                                                <Briefcase className="w-4 h-4 text-[#4c69e4] shrink-0" />
-                                                {role}
-                                            </div>
-                                        ))}
-                                    </div>
+                                <p className="text-muted-foreground mb-7 leading-relaxed max-w-2xl">
+                                    Graduates of this program are well-positioned for roles across the cybersecurity spectrum.
+                                    Our alumni work at leading organizations including Fortune 500 companies, government agencies,
+                                    and top cybersecurity consultancies.
+                                </p>
+                                <div className="grid sm:grid-cols-2 gap-3.5">
+                                    {careerRoles.map((role, i) => (
+                                        <div key={i} className="flex items-center gap-2.5 text-sm text-foreground/90">
+                                            <Briefcase className="w-4 h-4 text-blue-600 shrink-0" />
+                                            {role}
+                                        </div>
+                                    ))}
                                 </div>
-                            </motion.section>
+                            </section>
 
                             {/* FAQ */}
-                            <motion.section
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                            >
-                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-8">
+                            <section>
+                                <h2 className="text-2xl md:text-[1.75rem] font-manrope font-bold text-foreground mb-5" style={{ letterSpacing: "-0.015em" }}>
                                     Frequently Asked Questions
                                 </h2>
-                                <div className="space-y-3">
+                                <div>
                                     {faqs.map((faq, i) => (
                                         <FAQItem key={i} {...faq} />
                                     ))}
                                 </div>
-                            </motion.section>
+                            </section>
                         </div>
 
                         {/* RIGHT COLUMN - Sidebar */}
                         <div className="lg:col-span-1">
-                            <div className="sticky top-[140px] space-y-6">
+                            <div className="sticky top-[150px] space-y-6">
                                 {/* Quick Info */}
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    className="bg-white/[0.03] rounded-2xl border border-white/[0.06] p-6"
-                                >
-                                    <h3 className="text-lg font-bold text-white mb-5">Course Details</h3>
+                                <div className="rounded-2xl border border-border bg-muted/60 p-7">
+                                    <h3 className="text-base font-manrope font-bold text-foreground mb-5">Course Details</h3>
                                     <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <Clock className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Duration</p>
-                                                <p className="text-sm font-semibold text-slate-200">{course.duration}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <BarChart3 className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Level</p>
-                                                <p className="text-sm font-semibold text-slate-200">{course.level}</p>
-                                            </div>
-                                        </div>
-                                        {course.students && course.students > 0 && (
-                                            <div className="flex items-center gap-3">
-                                                <Users className="w-5 h-5 text-[#4c69e4] shrink-0" />
+                                        {[
+                                            { icon: Clock, label: "Duration", value: course.duration },
+                                            { icon: BarChart3, label: "Level", value: course.level },
+                                            ...(course.students && course.students > 0
+                                                ? [{ icon: Users, label: "Learners", value: `${course.students}+ enrolled` }]
+                                                : []),
+                                            { icon: Award, label: "Certificate", value: "ISO Verified" },
+                                            { icon: Globe, label: "Language", value: "English" },
+                                            { icon: MessageCircle, label: "Support", value: "24/7 Slack + Email" },
+                                        ].map((row, i) => (
+                                            <div key={i} className="flex items-center gap-3">
+                                                <row.icon className="w-4 h-4 text-blue-600 shrink-0" />
                                                 <div>
-                                                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Learners</p>
-                                                    <p className="text-sm font-semibold text-slate-200">{course.students}+ Enrolled</p>
+                                                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">{row.label}</p>
+                                                    <p className="text-sm font-medium text-foreground">{row.value}</p>
                                                 </div>
                                             </div>
-                                        )}
-                                        <div className="flex items-center gap-3">
-                                            <Award className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Certificate</p>
-                                                <p className="text-sm font-semibold text-slate-200">ISO Verified</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <Globe className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Language</p>
-                                                <p className="text-sm font-semibold text-slate-200">English</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <MessageCircle className="w-5 h-5 text-[#4c69e4] shrink-0" />
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Support</p>
-                                                <p className="text-sm font-semibold text-slate-200">24/7 Slack + Email</p>
-                                            </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                </motion.div>
+                                </div>
 
                                 {/* Enroll Card */}
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    className="bg-gradient-to-br from-[#111530] to-[#0d1020] rounded-2xl border border-white/[0.06] p-6 shadow-xl"
-                                >
-                                    <h3 className="text-lg font-bold text-white mb-3">Ready to Advance Your Career?</h3>
-                                    <p className="text-sm text-slate-400 mb-5 leading-relaxed">
-                                        Join {course.students || 0}+ professionals who have transformed their careers with this program.
+                                <div className="rounded-2xl border border-border bg-card p-7 shadow-xl shadow-slate-900/[0.05]">
+                                    <h3 className="text-base font-manrope font-bold text-foreground mb-2">Ready to advance your career?</h3>
+                                    <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
+                                        Join {course.students || 0}+ professionals who have grown their careers with this program.
                                     </p>
-                                    <ul className="space-y-2 mb-5">
+                                    <ul className="space-y-2.5 mb-6">
                                         {[
                                             "ISO Verified Certification",
                                             "Hands-on Cloud Lab Access",
                                             "Industry Expert Mentorship",
                                             "Placement Assistance",
                                         ].map((item, i) => (
-                                            <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                                                <CheckCircle2 className="w-4 h-4 text-[#4c69e4] shrink-0" />
+                                            <li key={i} className="flex items-center gap-2.5 text-sm text-foreground/90">
+                                                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
                                                 {item}
                                             </li>
                                         ))}
                                     </ul>
-                                    {course.pricingType === "institutional" ? (
-                                        <Link
-                                            href="/contact"
-                                            className="block w-full text-center py-3 bg-[#4c69e4] text-white rounded-xl text-sm font-semibold hover:bg-[#3b57d4] transition-colors"
-                                        >
-                                            Contact Us
-                                        </Link>
-                                    ) : course.pricingType === "contact" ? (
-                                        <Link
-                                            href="/contact"
-                                            className="block w-full text-center py-3 bg-[#4c69e4] text-white rounded-xl text-sm font-semibold hover:bg-[#3b57d4] transition-colors"
-                                        >
-                                            Contact for Pricing
-                                        </Link>
-                                    ) : course.inStock ? (
-                                        <Link
-                                            href={`/academy/${course.id}/book`}
-                                            className="block w-full text-center py-3 bg-gradient-to-r from-[#4c69e4] to-indigo-600 text-white rounded-xl text-sm font-semibold hover:from-[#3b57d4] hover:to-indigo-700 transition-all hover:shadow-lg hover:shadow-[#4c69e4]/20"
-                                        >
-                                            Enroll Now
-                                        </Link>
-                                    ) : (
-                                        <span className="block w-full text-center py-3 bg-white/5 text-slate-500 rounded-xl text-sm font-semibold cursor-not-allowed border border-white/[0.06]">
-                                            Coming Soon
-                                        </span>
-                                    )}
-                                </motion.div>
+                                    <EnrollCTA full />
+                                </div>
                             </div>
                         </div>
                     </div>

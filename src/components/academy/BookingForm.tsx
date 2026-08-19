@@ -270,7 +270,7 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
     if (loadingSlots) {
         return (
             <div className="flex items-center justify-center py-16">
-                <Loader2 className="w-6 h-6 animate-spin text-slate-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
             </div>
         );
     }
@@ -278,7 +278,7 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
     if (slots.length === 0) {
         return (
             <div className="text-center py-10 space-y-4">
-                <p className="text-slate-400 text-sm max-w-sm mx-auto">
+                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                     No batches are currently open for booking. Get in touch and we&apos;ll help you find the next available slot.
                 </p>
                 <Link
@@ -292,12 +292,12 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
     }
 
     return (
-        <div className="space-y-5">
-            <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="space-y-6">
+            <div className="space-y-2.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Choose a Batch
                 </label>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                     {slots.map((slot) => {
                         const isFull = slot.seatsRemaining <= 0;
                         const isSelected = selectedSlotId === slot.id;
@@ -307,22 +307,27 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                                 type="button"
                                 disabled={isFull}
                                 onClick={() => setSelectedSlotId(slot.id)}
-                                className={`w-full text-left p-3 rounded-xl border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                                className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
                                     isSelected
-                                        ? 'border-[#4c69e4] bg-[#4c69e4]/10'
-                                        : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                        ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
+                                        : 'border-border bg-background hover:border-slate-300'
                                 }`}
                             >
-                                <p className="text-sm font-semibold text-white">{slot.name}</p>
-                                <div className="flex items-center gap-4 mt-1.5 text-xs text-slate-400">
-                                    <span className="flex items-center gap-1">
-                                        <Calendar className="w-3 h-3" />
-                                        {formatDate(slot.startDate)}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Users className="w-3 h-3" />
-                                        {isFull ? 'Full' : `${slot.seatsRemaining} seats left`}
-                                    </span>
+                                <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${isSelected ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                                    {isSelected && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                                </span>
+                                <div>
+                                    <p className="text-sm font-semibold text-foreground">{slot.name}</p>
+                                    <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
+                                        <span className="flex items-center gap-1">
+                                            <Calendar className="w-3 h-3" />
+                                            {formatDate(slot.startDate)}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <Users className="w-3 h-3" />
+                                            {isFull ? 'Full' : `${slot.seatsRemaining} seats left`}
+                                        </span>
+                                    </div>
                                 </div>
                             </button>
                         );
@@ -330,65 +335,75 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                 </div>
             </div>
 
-            <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            <div className="space-y-2.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Payment Option
                 </label>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="grid grid-cols-1 gap-2.5">
                     <button
                         type="button"
                         onClick={() => setPaymentOption('deposit')}
-                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                        className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all ${
                             paymentOption === 'deposit'
-                                ? 'border-[#4c69e4] bg-[#4c69e4]/10'
-                                : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
+                                : 'border-border bg-background hover:border-slate-300'
                         }`}
                     >
-                        <p className="text-sm font-semibold text-white">Pay ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} Now, Rest in 15 Days</p>
-                        <p className="text-xs text-slate-400 mt-1">
-                            Then {formatMoney(remainingAfterDeposit)}{discountAmount > 0 && (
-                                <span className="text-slate-500 line-through ml-1">{formatMoney(coursePrice - DEPOSIT_AMOUNT)}</span>
-                            )} within 15 days
-                        </p>
+                        <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${paymentOption === 'deposit' ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                            {paymentOption === 'deposit' && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                        </span>
+                        <div>
+                            <p className="text-sm font-semibold text-foreground">Pay ₹{DEPOSIT_AMOUNT.toLocaleString('en-IN')} Now, Rest in 15 Days</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                Then {formatMoney(remainingAfterDeposit)}{discountAmount > 0 && (
+                                    <span className="line-through ml-1">{formatMoney(coursePrice - DEPOSIT_AMOUNT)}</span>
+                                )} within 15 days
+                            </p>
+                        </div>
                     </button>
                     <button
                         type="button"
                         onClick={() => setPaymentOption('full')}
-                        className={`w-full text-left p-3 rounded-xl border transition-all ${
+                        className={`w-full flex items-start gap-3 text-left p-3.5 rounded-xl border transition-all ${
                             paymentOption === 'full'
-                                ? 'border-[#4c69e4] bg-[#4c69e4]/10'
-                                : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                ? 'border-[#4c69e4] bg-[#4c69e4]/5 shadow-sm shadow-[#4c69e4]/10'
+                                : 'border-border bg-background hover:border-slate-300'
                         }`}
                     >
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm font-semibold text-white">Pay Full Amount Now</p>
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">
-                                <CreditCard className="w-3 h-3" />
-                                EMI Available on Credit Cards
-                            </span>
+                        <span className={`mt-0.5 flex items-center justify-center w-4 h-4 rounded-full border shrink-0 transition-colors ${paymentOption === 'full' ? 'border-[#4c69e4]' : 'border-slate-300'}`}>
+                            {paymentOption === 'full' && <span className="w-2 h-2 rounded-full bg-[#4c69e4]" />}
+                        </span>
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="text-sm font-semibold text-foreground">Pay Full Amount Now</p>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 shrink-0">
+                                    <CreditCard className="w-3 h-3" />
+                                    EMI Available
+                                </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                                {formatMoney(fullCharge)}{discountAmount > 0 && (
+                                    <span className="line-through ml-1">{formatMoney(coursePrice)}</span>
+                                )}
+                            </p>
                         </div>
-                        <p className="text-xs text-slate-400 mt-1">
-                            {formatMoney(fullCharge)}{discountAmount > 0 && (
-                                <span className="text-slate-500 line-through ml-1">{formatMoney(coursePrice)}</span>
-                            )}
-                        </p>
                     </button>
                 </div>
             </div>
 
             {appliedCoupon ? (
-                <div className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-2.5">
+                <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-lg p-2.5">
                     <div className="flex items-center gap-2">
-                        <Ticket className="w-4 h-4 text-emerald-400" />
-                        <span className="text-sm font-medium text-emerald-400">{appliedCoupon.code}</span>
+                        <Ticket className="w-4 h-4 text-emerald-700" />
+                        <span className="text-sm font-medium text-emerald-700">{appliedCoupon.code}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-emerald-400">-{formatMoney(appliedCoupon.discountAmount)}</span>
+                        <span className="text-sm font-semibold text-emerald-700">-{formatMoney(appliedCoupon.discountAmount)}</span>
                         <button
                             onClick={() => { setAppliedCoupon(null); setCouponError(''); }}
-                            className="p-1 hover:bg-emerald-500/20 rounded transition-colors"
+                            className="p-1 hover:bg-emerald-100 rounded transition-colors"
                         >
-                            <X className="w-3.5 h-3.5 text-emerald-400" />
+                            <X className="w-3.5 h-3.5 text-emerald-700" />
                         </button>
                     </div>
                 </div>
@@ -400,23 +415,23 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                             value={couponInput}
                             onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
                             placeholder="Enter coupon code"
-                            className="flex-1 h-10 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm uppercase text-white placeholder:text-slate-500 placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                            className="flex-1 h-10 rounded-lg border border-border bg-background px-3 text-sm uppercase text-foreground placeholder:text-muted-foreground placeholder:normal-case focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/40"
                         />
                         <button
                             onClick={() => validateCoupon(couponInput)}
                             disabled={!couponInput.trim() || validatingCoupon}
-                            className="px-4 h-10 bg-white/5 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-white rounded-lg transition-colors"
+                            className="px-4 h-10 border border-border hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium text-foreground rounded-lg transition-colors"
                         >
                             {validatingCoupon ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
                         </button>
                     </div>
-                    {couponError && <p className="text-xs text-red-400">{couponError}</p>}
+                    {couponError && <p className="text-xs text-red-500">{couponError}</p>}
                 </div>
             ) : (
                 <button
                     type="button"
                     onClick={() => setShowCouponField(true)}
-                    className="flex items-center gap-1.5 text-xs text-[#7b93f5] hover:text-[#9db0f9] transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 transition-colors"
                 >
                     <Ticket className="w-3.5 h-3.5" />
                     Have a coupon code?
@@ -429,7 +444,7 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full h-11 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                    className="w-full h-11 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/40"
                 />
                 <input
                     name="email"
@@ -437,7 +452,7 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                     placeholder="Email Address"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full h-11 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                    className="w-full h-11 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/40"
                 />
                 <input
                     name="phone"
@@ -445,16 +460,16 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                     placeholder="Mobile Number"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full h-11 rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/50"
+                    className="w-full h-11 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#4c69e4]/40"
                 />
             </div>
 
-            {error && <p className="text-sm text-red-400 font-medium">{error}</p>}
+            {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
 
             <button
                 onClick={handleBook}
                 disabled={!isFormValid || isSubmitting || !scriptLoaded}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-sm bg-[#4c69e4] text-white hover:bg-[#3b57d4] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full font-semibold text-sm bg-[#4c69e4] text-white shadow-md shadow-[#4c69e4]/20 hover:bg-[#3b57d4] hover:shadow-lg hover:shadow-[#4c69e4]/25 hover:-translate-y-px transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none"
             >
                 {isSubmitting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -462,14 +477,14 @@ export default function BookingForm({ courseId, courseTitle, coursePrice }: Book
                     `Pay ${formatMoney(amountDueNow)} ${paymentOption === 'deposit' ? 'to Book Your Slot' : 'Now'}`
                 )}
             </button>
-            <p className="text-xs text-slate-500 text-center">
+            <p className="text-xs text-muted-foreground text-center">
                 {paymentOption === 'deposit'
                     ? 'Secures your seat. The remaining course fee is payable within 15 days.'
                     : 'Full course fee, paid securely via Razorpay.'}
             </p>
-            <p className="text-[11px] text-slate-600 text-center leading-relaxed">
+            <p className="text-[11px] text-muted-foreground/80 text-center leading-relaxed">
                 {courseTitle} · By continuing you agree to our{' '}
-                <Link href="/terms-of-service" className="underline hover:text-slate-400">Terms of Service</Link>.
+                <Link href="/terms-of-service" className="underline hover:text-foreground">Terms of Service</Link>.
             </p>
         </div>
     );
